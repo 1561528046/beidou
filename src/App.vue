@@ -1,10 +1,7 @@
 <template>
   <div id="app">
-    <Nav></Nav>
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <base-nav></base-nav>
+    <base-slidebar></base-slidebar>
     <router-view/>
   </div>
 </template>
@@ -29,10 +26,12 @@
 }
 </style>
 <script>
-import Nav from "@/components/nav/index.vue";
+import baseNav from "@/components/base-nav.vue";
+import baseSlidebar from "@/components/base-slidebar.vue";
 export default {
   components: {
-    Nav
+    baseNav,
+    baseSlidebar
   }
 }
 </script>
