@@ -1,14 +1,35 @@
 <template>
   <div id="app">
-    <base-nav></base-nav>
-    <base-slidebar></base-slidebar>
-    <router-view/>
+
+    <el-container>
+      <el-header style="padding:0;">
+        <base-nav></base-nav>
+      </el-header>
+      <el-container>
+        <el-aside width="200px">
+          <base-slidebar></base-slidebar>
+        </el-aside>
+        <el-main>
+          <router-view></router-view>
+        </el-main>
+      </el-container>
+    </el-container>
+
   </div>
 </template>
 
 <style lang="less">
+html,
+body,
+#app,
+.el-container,
+.el-menu,
+.base-slide-bar {
+  height: 100%;
+  overflow-y: auto;
+}
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -33,5 +54,5 @@ export default {
     baseNav,
     baseSlidebar
   }
-}
+};
 </script>
