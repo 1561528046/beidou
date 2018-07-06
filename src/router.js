@@ -13,7 +13,7 @@ export default new Router({
     {
       path: "/monitor",
       name: "monitor",
-      component: () => import("./views/Monitor.vue"),
+      component: () => import("./views/monitor/index.vue"),
       meta: { name: "地图监控" },
       children: [
         {
@@ -34,19 +34,20 @@ export default new Router({
           path: "vehicle",
           name: "vehicle",
           meta: { name: "车辆管理" },
-          component: () => import("./views/manage/vehicle/newed/index.vue"),
+          component: () => import("./views/manage/vehicle/index.vue"),
           children: [
             {
               path: "newed",
               name: "newed",
               meta: { name: "新增车辆管理" },
-              component: () => import("./views/manage/vehicle/index.vue"),
+              component: () => import("./views/manage/vehicle/newed/index.vue"),
               children: [
                 {
                   path: "add",
                   name: "add",
                   meta: { name: "新增车辆管理-添加" },
-                  component: () => import("./views/About.vue")
+                  component: () =>
+                    import("./views/manage/vehicle/newed/add.vue")
                 }
               ]
             }
