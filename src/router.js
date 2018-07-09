@@ -31,7 +31,7 @@ export default new Router({
       component: () => import("./views/manage/index.vue"),
       children: [
         {
-          path: "vehicle",
+          path: "/vehicle",
           name: "vehicle",
           meta: { name: "车辆管理" },
           component: () => import("./views/manage/vehicle/index.vue"),
@@ -40,16 +40,13 @@ export default new Router({
               path: "newed",
               name: "newed",
               meta: { name: "新增车辆管理" },
-              component: () => import("./views/manage/vehicle/newed/index.vue"),
-              children: [
-                {
-                  path: "add",
-                  name: "add",
-                  meta: { name: "新增车辆管理-添加" },
-                  component: () =>
-                    import("./views/manage/vehicle/newed/add.vue")
-                }
-              ]
+              component: () => import("./views/manage/vehicle/newed/index.vue")
+            },
+            {
+              path: "add",
+              name: "add",
+              meta: { name: "新增车辆管理-添加", hidden: true },
+              component: () => import("./views/manage/vehicle/newed/add.vue")
             }
           ]
         },

@@ -1,9 +1,13 @@
 <template>
   <div>
     <!-- 面包屑 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item v-for="route in $route.matched" :to="route" :key="route.path">{{route.meta.name}}</el-breadcrumb-item>
-    </el-breadcrumb>
+    <div class="admin-breadcurmb">
+
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item v-for="route in $route.matched" :to="route" :key="route.path">{{route.meta.name}}</el-breadcrumb-item>
+      </el-breadcrumb>
+      <h2 style="text-align:left; font-weight:normal; font-size:20px;padding-top:10px;">后退Win10 {{$route.meta.name}}</h2>
+    </div>
 
     <!-- 视图路由 -->
     <base-routeing :routes="routes"></base-routeing>
@@ -15,17 +19,15 @@
 <script>
 import baseRouteing from "@/components/base-routeing.vue";
 export default {
+  created: function() {},
   computed: {
     routes() {
-      //根据matched找到当前路由的同级路由
-      var router = this.$router.options.routes;
-      if (this.$route.matched.length) {
-        this.$route.matched.map(matchedRoute => {
-          router = router.filter(route => {
-            return matchedRoute.name == route.name;
-          })[0].children;
+      var routes = window.routerDict[this.$route.name];
+      console.log(routes);
+      if (routes.children) {
+        return routes.children.filter(route => {
+          return !route.meta.hidden;
         });
-        return router;
       } else {
         return [];
       }

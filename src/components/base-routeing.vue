@@ -18,6 +18,7 @@ export default {
   width: 200px;
   height: 200px;
   margin: 15px;
+  background: #fff;
   border: 1px solid #ddd;
   line-height: 200px;
   text-align: center;

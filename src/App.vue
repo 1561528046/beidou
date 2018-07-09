@@ -6,10 +6,7 @@
         <base-nav></base-nav>
       </el-header>
       <el-container>
-        <el-aside width="200px">
-          <base-slidebar></base-slidebar>
-        </el-aside>
-        <el-main>
+        <el-main style="padding:0;">
           <router-view></router-view>
         </el-main>
       </el-container>
