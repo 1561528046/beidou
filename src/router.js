@@ -33,52 +33,58 @@ export default new Router({
         {
           path: "/vehicle",
           name: "vehicle",
-          meta: { name: "车辆管理" },
+          meta: { name: "车辆管理", icon: "iconfont icon-car-fill" },
           component: () => import("./views/manage/vehicle/index.vue"),
           children: [
             {
-              path: "newed",
-              name: "newed",
+              path: "new",
+              name: "new",
               meta: { name: "新增车辆管理" },
-              component: () => import("./views/manage/vehicle/newed/index.vue")
+              component: () => import("./views/manage/vehicle/new/index.vue")
             },
             {
-              path: "add",
-              name: "add",
+              path: "new/add",
+              name: "new-add",
               meta: { name: "新增车辆管理-添加", hidden: true },
-              component: () => import("./views/manage/vehicle/newed/add.vue")
+              component: () => import("./views/manage/vehicle/new/add.vue")
+            },
+            {
+              path: "position",
+              name: "position",
+              meta: { name: "新增车辆管理" },
+              component: () => import("./views/manage/vehicle/new/index.vue")
             }
           ]
         },
         {
           path: "terminal",
           name: "terminal",
-          meta: { name: "终端管理" }
+          meta: { name: "终端管理", icon: "iconfont icon-boxplot-fill" }
         },
         {
           path: "user",
           name: "user",
-          meta: { name: "用户管理" }
+          meta: { name: "用户管理", icon: "iconfont icon-team" }
         },
         {
           path: "vehicle-setting",
           name: "vehicle-setting",
-          meta: { name: "车辆参数设置" }
+          meta: { name: "车辆参数设置", icon: "iconfont icon-setting-fill" }
         },
         {
           path: "report",
           name: "report",
-          meta: { name: "报表" }
+          meta: { name: "报表", icon: "iconfont icon-fund-fill" }
         },
         {
           path: "server-state",
           name: "server-state",
-          meta: { name: "服务器状态" }
+          meta: { name: "服务器状态", icon: "iconfont icon-sever-fill" }
         },
         {
           path: "product",
           name: "product",
-          meta: { name: "订单管理" }
+          meta: { name: "订单管理", icon: "iconfont icon-cluster" }
         }
       ]
     }

@@ -1,12 +1,15 @@
 <template>
-  <div class="base-slide-bar">
-    <el-menu :default-active="$route.name" :collapse="isCollapse" v-if="routes[0]">
-      <template v-for="route in routes[0].children">
-        <el-menu-item :index="route.name" :key="route.name">
-          <router-link :to="route" class="item">{{route.meta.name}}</router-link>
+  <div class="base-slide-bar" style="box-shadow: 0 0 4px #333; z-index:1;">
+    <el-menu :default-active="$route.name" class="slide-bar" :collapse="true" background-color="#001529" text-color="rgba(255, 255, 255, 0.65)" active-text-color="#1890ff" style="border-right:0;">
+      <el-submenu :index="route.name" v-for="route in routes">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">{{route.meta.name}}</span>
+        </template>
+        <el-menu-item v-for="childrenRoute in route.children" :index="childrenRoute.name">
+          <router-link :to="{name:childrenRoute.name}">{{childrenRoute.meta.name}}</router-link>
         </el-menu-item>
-      </template>
-
+      </el-submenu>
     </el-menu>
   </div>
 </template>
@@ -18,11 +21,13 @@ export default {
   },
   computed: {
     routes() {
-      // return this.$router.options.routes
-      window.a = this;
-      if (this.$route.matched.length) {
-        return this.$router.options.routes.filter(parentRoute => {
-          return parentRoute.path == this.$route.matched[0].path;
+      if (this.$route.matched.length == 0) {
+        return [];
+      }
+      var routes = window.routerDict[this.$route.matched[0].name];
+      if (routes.children) {
+        return routes.children.filter(route => {
+          return !route.meta.hidden;
         });
       } else {
         return [];
@@ -34,5 +39,9 @@ export default {
 <style scoped>
 .item {
   display: block;
+}
+.slide-bar:not(.el-menu--collapse) {
+  width: 200px;
+  min-height: 400px;
 }
 </style>

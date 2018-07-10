@@ -1,12 +1,14 @@
 <template>
   <div id="app">
-
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_740558_20fcif9cs56.css">
     <el-container>
       <el-header style="padding:0;">
         <base-nav></base-nav>
       </el-header>
+
       <el-container>
-        <el-main style="padding:0;">
+        <base-slidebar></base-slidebar>
+        <el-main>
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -23,24 +25,12 @@ body,
 .el-menu,
 .base-slide-bar {
   height: 100%;
-  overflow-y: auto;
+  // overflow-y: auto;
 }
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 </style>
 <script>

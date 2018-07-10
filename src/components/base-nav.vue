@@ -1,6 +1,6 @@
 <template>
 
-  <el-row type="flex" class="row-bg" style="background:#001529;box-shadow: 0 0 4px #333;z-index: 1;">
+  <el-row type="flex" class="row-bg" style="background:#001529;box-shadow: 0 0 4px #333;z-index: 2;">
     <el-col :span="3">
       <div class="admin-header-left">
         <a href="/" class="brand">Logo</a>
