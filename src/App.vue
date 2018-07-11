@@ -7,8 +7,8 @@
       </el-header>
 
       <el-container>
-        <base-slidebar></base-slidebar>
-        <el-main>
+        <!-- <base-slidebar></base-slidebar> -->
+        <el-main style="padding:0;">
           <router-view></router-view>
         </el-main>
       </el-container>

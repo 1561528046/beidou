@@ -44,3 +44,21 @@ a {
 .admin-header-right .el-dropdown-link {
   color: #fff;
 }
+.admin-table-container {
+  margin: 20px;
+  background: #fff;
+  padding: 24px 32px;
+}
+.admin-table-actions {
+  padding-bottom: 20px;
+}
+.admin-table-list {
+  border-radius: 4px;
+}
+.admin-table-list thead th {
+  background: #fafafa;
+}
+.admin-table-pager {
+  padding-top: 20px;
+  text-align: right;
+}
