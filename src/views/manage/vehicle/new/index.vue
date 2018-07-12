@@ -57,6 +57,9 @@
 <script>
 /* eslint-disable */
 export default {
+  created() {
+    this.$ajax.get("/t1");
+  },
   data() {
     return {
       currentPage: 1,
