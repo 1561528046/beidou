@@ -31,7 +31,7 @@
     </div>
     <div class="admin-table-actions">
       <el-button type="primary" size="small" icon="el-icon-search">添加</el-button>
-      <el-button type="primary" size="small">导出1
+      <el-button type="primary" size="small">导出
         <i class="el-icon-upload el-icon--right"></i>
       </el-button>
     </div>
