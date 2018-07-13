@@ -10,7 +10,7 @@
     </div>
 
     <!-- 视图路由 -->
-    <base-routeing :routes="routes"></base-routeing>
+    <base-routeing :routes="routes" v-if="routerDict[this.$route.name].children"></base-routeing>
 
     <!-- 视图 -->
     <router-view></router-view>
@@ -21,6 +21,9 @@ import baseRouteing from "@/components/base-routeing.vue";
 export default {
   created: function() {},
   computed: {
+    routerDict() {
+      return window.routerDict;
+    },
     routes() {
       var routes = window.routerDict[this.$route.name];
       if (routes.children) {

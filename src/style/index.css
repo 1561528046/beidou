@@ -1,5 +1,8 @@
 body {
   font-family: Microsoft YaHei, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, SimSun, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
 }
 * {
   padding: 0;
@@ -11,6 +14,10 @@ a {
 }
 .el-container {
   background: #f0f2f5;
+}
+.el-main {
+  overflow: auto;
+  height: 100%;
 }
 .admin-breadcurmb {
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
