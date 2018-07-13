@@ -6,9 +6,9 @@ import "element-ui/lib/theme-chalk/index.css";
 import "@/style/index.less";
 import router from "./router";
 import axios from "axios";
-//https://www.easy-mock.com/mock/5b46ade66c716f5074cd9dc4/t1
+//创建axios实例，注入mock拦截
 var axios1 = axios.create({
-  baseURL: "https://www.easy-mock.com/mock/5b46ade66c716f5074cd9dc4/",
+  baseURL: "http://192.168.88.6:8888/app/mock/17/",
   timeout: 2000
 });
 Vue.prototype.$ajax = axios1;
