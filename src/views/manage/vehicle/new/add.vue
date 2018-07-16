@@ -4,7 +4,7 @@
       <el-card shadow="hover">
         <div slot="header" class="clearfix">
           <span>卡片名称1</span>
-          <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+          <el-button style="float: right; padding: 3px 0" type="text">操作按钮1</el-button>
         </div>
         asdasdasd
       </el-card>
