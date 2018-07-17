@@ -98,6 +98,11 @@
           <span>普通货运车辆 </span>
         </div>
         <el-row :gutter="30">
+          <el-col :span="24">
+            <div class="el-tag el-tag--warning" style="display:block;text-align:center;margin-bottom:15px;">
+              提示：请正确填写车辆信息。为了不影响车辆审核结果,请填写正确道路运输证号!【核定载质量】与【准牵引总质量】两项至少填一项； 下载填写要求说明
+            </div>
+          </el-col>
           <el-col :span="8">
             <el-form-item label="车辆识别代码/车架号" prop="name">
               <el-input v-model="formData.name"></el-input>
