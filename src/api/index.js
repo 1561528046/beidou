@@ -46,3 +46,9 @@ export const getVehicleList = query => {
     params: query
   });
 };
+
+export const getArea = query => {
+  return ajax.get("/get_area", {
+    params: query
+  });
+};

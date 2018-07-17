@@ -8,7 +8,8 @@
         <el-row :gutter="30">
           <el-col :span="8">
             <el-form-item label="服务到期日期" prop="end_date">
-              <el-input v-model="formData.end_date"></el-input>
+              <el-date-picker v-model="formData.end_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -30,7 +31,7 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="服务接入地址">
-              <el-cascader :options="options2" @active-item-change="handleItemChange" :props="props"></el-cascader>
+              <city-select v-model="formData.area"></city-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -57,6 +58,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item label="染料种类" prop="flue_type">
+              <el-select v-model="formData.flue_type" placeholder="">
+                <el-option :label="fuleType.name" :value="value" v-for="(fuleType,value) in $dict.fule_type" :key="fuleType.name">
+                  {{fuleType.name}}
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="车牌号">
               <el-row>
                 <el-col :span="11">
@@ -65,22 +75,14 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="11" :offset="1">
-                  <el-form-item prop="date2">
+                  <el-form-item prop="plate_color">
                     <el-select v-model="formData.plate_color" placeholder="">
                       <div slot="prefix">
-                        <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="$dict.plate_color(formData.plate_color)"> </span>
+                        <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="$dict.get_plate_color(formData.plate_color).style"> </span>
                       </div>
-                      <el-option label="黄色" value="1">
-                        <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="$dict.plate_color(1)"> </span>
-                        黄色
-                      </el-option>
-                      <el-option label="蓝色" value="2">
-                        <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="$dict.plate_color(1)"> </span>
-                        蓝色
-                      </el-option>
-                      <el-option label="绿色" value="3">
-                        <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="$dict.plate_color(3)"> </span>
-                        绿色
+                      <el-option :label="plateColor.name" :value="value" v-for="(plateColor,value) in plate_colors" :key="plateColor.name">
+                        <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="plateColor.style"> </span>
+                        {{plateColor.name}}
                       </el-option>
                     </el-select>
                   </el-form-item>
@@ -187,10 +189,13 @@
 //   "其他车辆"
 // ];
 import { rules } from "@/utils/rules.js";
+import moment from "moment";
+import citySelect from "@/components/city-select.vue";
 export default {
   data() {
     return {
       formData: {
+        area: [13000, 13001, 13000],
         name: "",
         end_date: "", //到期日期
         vehicle_type: "", //车辆类型
@@ -239,19 +244,29 @@ export default {
         valid_date_check: "", //检验有效期至：
         insurance_type: "" //车辆保险种类：
       },
-      options2: [
-        {
-          label: "江苏",
-          cities: []
-        },
-        {
-          label: "浙江",
-          cities: []
-        }
-      ],
-      props: {
-        value: "label",
-        children: "cities"
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "今天",
+            onClick(picker) {
+              picker.$emit("pick", new Date());
+            }
+          },
+          {
+            text: "一年后",
+            onClick(picker) {
+              const date = moment(new Date()).add(1, "year");
+              picker.$emit("pick", date);
+            }
+          },
+          {
+            text: "两年后",
+            onClick(picker) {
+              const date = moment(new Date()).add(2, "year");
+              picker.$emit("pick", date);
+            }
+          }
+        ]
       },
       rules: {
         ...rules,
@@ -287,28 +302,23 @@ export default {
       }
     };
   },
-  methods: {
-    handleItemChange(val) {
-      setTimeout(() => {
-        if (val.indexOf("江苏") > -1 && !this.options2[0].cities.length) {
-          this.options2[0].cities = [
-            {
-              label: "南京"
-            }
-          ];
-        } else if (
-          val.indexOf("浙江") > -1 &&
-          !this.options2[1].cities.length
-        ) {
-          this.options2[1].cities = [
-            {
-              label: "杭州"
-            }
-          ];
-        }
-      }, 300);
+  computed: {
+    plate_colors: function() {
+      var result = Object.assign({}, this.$dict.plate_color);
+      if (this.formData.flue_type == 3) {
+        //如果燃油种类是电 只能选择黄绿色车牌
+        delete result["1"];
+        delete result["2"];
+      } else {
+        delete result["3"];
+      }
+      this.$set(this.formData, "plate_color", "");
+      return result;
     }
-  }
+  },
+  created() {},
+  methods: {},
+  components: { citySelect }
 };
 </script>
 <style scoped lang="less">
