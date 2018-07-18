@@ -1,21 +1,23 @@
 <template>
   <div class="home">
-    Monitor!
-    普通货运车辆
-    危险品车辆
-    长途客运、班线车辆
-    城市公共交通车辆
+    <div id="container" style="width:100%;height:400px;"></div>
+    <div id="container1" style="width:100%;height:100px;"></div>
+    <div id="container2" style="width:100%;height:200px;"></div>
+    <div id="container3" style="width:100%;height:300px;"></div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
+  import initMap from "@/utils/map.js";
+  export default {
+    created() {
+      initMap(function () {
+        new window.AMap.Map("container");
+        new window.AMap.Map("container1");
+        new window.AMap.Map("container2");
+        new window.AMap.Map("container3");
+      })
 
-// export default {
-//   name: 'home',
-//   components: {
-//     HelloWorld
-//   }
-// }
+    },
+  }
 </script>
