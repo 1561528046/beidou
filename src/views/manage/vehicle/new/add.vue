@@ -1,6 +1,7 @@
 <template>
   <div class="vehicle-form">
     <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small">
+      <!-- 服务商信息 -->
       <el-card shadow="hover">
         <div slot="header" class="clearfix">
           <span>服务商信息 </span>
@@ -8,7 +9,7 @@
         <el-row :gutter="30">
           <el-col :span="8">
             <el-form-item label="服务到期日期" prop="end_date">
-              <el-date-picker v-model="formData.end_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期">
+              <el-date-picker v-model="formData.end_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -24,19 +25,32 @@
           </el-col>
         </el-row>
       </el-card>
+
+      <!-- 车辆落户信息 -->
       <el-card shadow="hover">
         <div slot="header" class="clearfix">
           <span>车辆落户信息 </span>
         </div>
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="服务接入地址">
-              <city-select v-model="formData.area"></city-select>
+            <el-form-item label="道路运输证号" prop="road_transport">
+              <el-input v-model="formData.road_transport"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="行驶证发证日期" prop="drivecard_release_date">
+              <el-date-picker v-model="formData.drivecard_release_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="所属地区">
+              <city-select v-model="formData.area" style="width:100%;"></city-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="接入车辆类型" prop="vehicle_type">
-              <el-select v-model="formData.vehicle_type" placeholder="接入车辆类型">
+              <el-select v-model="formData.vehicle_type" placeholder="接入车辆类型" style="width:100%;">
                 <el-option label="普通货运车辆" value="1"></el-option>
                 <el-option label="危险品车辆" value="2"></el-option>
                 <el-option label="长途客运、班线车辆" value="3"></el-option>
@@ -51,15 +65,15 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="接入车辆状态" prop="vehicle_type">
-              <el-select v-model="formData.vehicle_type" placeholder="接入车辆类型">
+              <el-select v-model="formData.vehicle_type" placeholder="接入车辆类型" style="width:100%;">
                 <el-option label="新增" value="1"></el-option>
                 <el-option label="转网" value="2"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="染料种类" prop="flue_type">
-              <el-select v-model="formData.flue_type" placeholder="">
+            <el-form-item label="燃料种类" prop="flue_type">
+              <el-select v-model="formData.flue_type" placeholder="燃料种类" style="width:100%;">
                 <el-option :label="fuleType.name" :value="value" v-for="(fuleType,value) in $dict.fule_type" :key="fuleType.name">
                   {{fuleType.name}}
                 </el-option>
@@ -67,14 +81,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车牌号">
+            <el-form-item label="车牌号" style="margin-bottom:0;">
               <el-row>
                 <el-col :span="11">
                   <el-form-item prop="vehicle_no" :rules="rules.vehicle_no">
                     <el-input v-model="formData.vehicle_no"></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="11" :offset="1">
+                <el-col :span="12" :offset="1">
                   <el-form-item prop="plate_color">
                     <el-select v-model="formData.plate_color" placeholder="">
                       <div slot="prefix">
@@ -90,6 +104,22 @@
               </el-row>
             </el-form-item>
           </el-col>
+
+          <el-col :span="8">
+            <el-form-item label="业户/车主" prop="companyname">
+              <el-input v-model="formData.companyname"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="联系人" prop="vehicle_owner_name">
+              <el-input v-model="formData.vehicle_owner_name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="联系人手机" prop="vehicle_owner_phone">
+              <el-input v-model="formData.vehicle_owner_phone"></el-input>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-card>
 
@@ -99,8 +129,9 @@
         </div>
         <el-row :gutter="30">
           <el-col :span="24">
-            <div class="el-tag el-tag--warning" style="display:block;text-align:center;margin-bottom:15px;">
-              提示：请正确填写车辆信息。为了不影响车辆审核结果,请填写正确道路运输证号!【核定载质量】与【准牵引总质量】两项至少填一项； 下载填写要求说明
+            <div class="el-tag el-tag--warning" style="display:block;text-align:center;margin-bottom:15px; height:auto;">
+              提示：请正确填写车辆信息。为了不影响车辆审核结果,请填写正确道路运输证号!<br>【核定载质量】与【准牵引总质量】两项至少填一项；
+              <a href="#" style="color:blue;">下载填写要求说明</a>
             </div>
           </el-col>
           <el-col :span="8">
@@ -110,39 +141,78 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="车辆品牌">
-              <el-input v-model="formData.name"></el-input>
+              <el-input v-model="formData.vbrand_name"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车辆型号">
-              <el-input v-model="formData.name"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-card>
-      <el-card shadow="hover" v-if="formData.vehicle_type==2">
-        <div slot="header" class="clearfix">
-          <span>危险品车辆 </span>
-        </div>
-        <el-row :gutter="30">
-          <el-col :span="8">
-            <el-form-item label="车辆识别代码/车架号" prop="name">
-              <el-input v-model="formData.name"></el-input>
+            <el-form-item label="车辆类型">
+              <el-input v-model="formData.prod_code_text"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车辆品牌">
-              <el-input v-model="formData.name"></el-input>
+            <el-form-item label="发动机号">
+              <el-input v-model="formData.engine_no"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车辆型号">
-              <el-input v-model="formData.name"></el-input>
+            <el-form-item label="发动机型号">
+              <el-input v-model="formData.prod_code_text"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="总质量(kg)">
+              <el-input v-model="formData.vehicle_ton"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="核定载质量(kg)">
+              <el-input v-model="formData.load_ton"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="准牵引总质量(kg)">
+              <el-input v-model="formData.vehicle_draw_ton"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="外廓尺寸(mm)长">
+              <el-input v-model="formData.vehicle_length"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="宽">
+              <el-input v-model="formData.vehicle_width"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="高">
+              <el-input v-model="formData.vehicle_height"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="货厢内部尺寸(mm)长">
+              <el-input v-model="formData.box_length"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="宽">
+              <el-input v-model="formData.box_width"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="高">
+              <el-input v-model="formData.box_height"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="轴数">
+              <el-input v-model="formData.vehicle_axis"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-card>
 
+      <!-- 终端信息 -->
       <el-card shadow="hover">
         <div slot="header" class="clearfix">
           <span>终端信息
@@ -176,6 +246,9 @@
           </el-col>
         </el-row>
       </el-card>
+      <el-form-item style="text-align:center;">
+        <el-button type="primary" @click="onSubmit" size="large">立即创建</el-button>
+      </el-form-item>
 
       <!-- <button @click="$router.go(-1)">a</button> -->
     </el-form>
