@@ -2,7 +2,7 @@ import axios from "axios";
 import { Message } from "element-ui";
 // 创建axios实例
 const ajax = axios.create({
-  baseURL: "http://192.168.88.6:8888/app/mock/17",
+  baseURL: "http://192.168.88.6:5000/mock/11/",
   timeout: 5000 // request timeout
 });
 // 添加请求拦截器
@@ -42,7 +42,7 @@ ajax.interceptors.response.use(
   }
 );
 export const getVehicleList = query => {
-  return ajax.get("/vehicle", {
+  return ajax.get("/get_vehicle", {
     params: query
   });
 };

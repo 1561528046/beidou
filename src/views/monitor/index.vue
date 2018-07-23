@@ -5,6 +5,7 @@
 </template>
 
 <script>
+  /*eslint-disable*/
   import initMap from "@/utils/map.js";
   export default {
     data() {
@@ -18,7 +19,7 @@
           var map = new AMap.Map('container', {
             viewMode: '3D',
             pitch: 55,
-            rotation: -45,
+            rotation: -45
           });
           var pathArr = [
             { status: "4", point: [75, 38.118117] },
@@ -31,18 +32,6 @@
             { status: "4", point: [75, 38.818117] },
 
           ];
-          var canvasDir = document.createElement('canvas')
-          var width = 24;
-          canvasDir.width = width;
-          canvasDir.height = width;
-          var context = canvasDir.getContext('2d');
-          context.strokeStyle = 'red';
-          context.lineJoin = 'round';
-          context.lineWidth = 8;
-          context.moveTo(-4, width - 4);
-          context.lineTo(width / 2, 6);
-          context.lineTo(width + 4, width - 4);
-          context.stroke();
           //1正常（绿色）
           //2异常（黄色）
           //3离线 （灰色）
@@ -124,32 +113,24 @@
           overlayGroup.addOverlays(markerArr);
 
           map.add(overlayGroup);
-          // map.add(lineArr)
           map.setFitView()
 
-          // var polyline3 = new AMap.Polyline({
-          //   path: pathArr,            // 设置线覆盖物路径
-          //   showDir: true,
-          //   isOutline: true,
-          //   strokeOpacity: 0.5,
-          //   dirImg: canvasDir,
-          //   strokeColor: '#3366cc',   // 线颜色
-          //   strokeWeight: 10           // 线宽
-          // });
-          // setInterval(() => {
-          //   context.clearRect(0, 0, width, width);
-          //   context.strokeStyle = 'rgba(' + Math.floor(Math.random() * 255) + ',' + Math.floor(Math.random() * 255) + ',255,1)';
-          //   context.lineJoin = 'round';
-          //   context.lineWidth = 8;
-          //   context.moveTo(-4, width - 4);
-          //   context.lineTo(width / 2, 6);
-          //   context.lineTo(width + 4, width - 4);
-          //   context.stroke();
-          //   polyline3.setOptions({
-          //     dirImg: canvasDir,
-          //   });
-          // }, 100)
-
+          var object3Dlayer = new AMap.Object3DLayer();
+          var bounds = [
+            new AMap.LngLat(116, 39),
+            new AMap.LngLat(117, 39),
+            new AMap.LngLat(117, 40),
+            new AMap.LngLat(116, 40)
+          ];
+          var height = 50000;
+          var color = '#0088ff';//rgba
+          var prism = new AMap.Object3D.Prism({
+            path: bounds,
+            height: height,
+            color: color
+          });
+          object3Dlayer.add(prism);
+          map.add(object3Dlayer);
 
         })
       })

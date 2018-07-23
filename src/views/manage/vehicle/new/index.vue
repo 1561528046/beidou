@@ -54,21 +54,21 @@
         </el-button>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="contract_date" label="到期日期" sortable width="180" :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
+        <el-table-column prop="end_date" label="到期日期" sortable width="180" :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
           :filter-method="filterHandler">
         </el-table-column>
-        <el-table-column prop="license" label="车牌号">
+        <el-table-column prop="vehicle_no" label="车牌号">
         </el-table-column>
-        <el-table-column prop="vin" label="vin">
+        <el-table-column prop="vin_code" label="vin">
         </el-table-column>
         <el-table-column prop="terminal_no" label="terminal_no"></el-table-column>
         <el-table-column prop="simid" label="simid"></el-table-column>
-        <el-table-column prop="owner" label="车主"></el-table-column>
-        <el-table-column prop="linkman" label="联系人"></el-table-column>
-        <el-table-column prop="tel" label="联系电话"></el-table-column>
+        <el-table-column prop="vehicle_owner_name" label="车主"></el-table-column>
+        <el-table-column prop="vehicle_owner_name" label="联系人"></el-table-column>
+        <el-table-column prop="vehicle_owner_phone" label="联系电话"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[20, 40, 80, 100]"
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
           :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
         </el-pagination>
       </div>
