@@ -57,9 +57,18 @@ export default new Router({
           ]
         },
         {
-          path: "terminal",
-          name: "terminal",
-          meta: { name: "终端管理", icon: "iconfont icon-boxplot-fill" }
+          path: "device",
+          name: "device",
+          meta: { name: "终端管理", icon: "iconfont icon-boxplot-fill" },
+          component: () => import("./views/manage/device/index.vue"),
+          children: [
+            {
+              path: "device",
+              name: "device-device",
+              meta: { name: "设备管理", icon: "iconfont icon-boxplot-fill" },
+              component: () => import("./views/manage/device/device/index.vue")
+            }
+          ]
         },
         {
           path: "user",

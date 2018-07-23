@@ -52,3 +52,8 @@ export const getArea = query => {
     params: query
   });
 };
+export const getDeviceList = query => {
+  return ajax.get("/device", {
+    params: query
+  });
+};

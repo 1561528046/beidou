@@ -33,5 +33,16 @@ export const dict = {
   },
   get_fule_type: function(key) {
     return this.fule_type[key] || {};
+  },
+  device_type: {
+    "1": "定位终端",
+    "2": "视频终端"
+  },
+  get_device_type: function(key) {
+    console.log(this.device_type[key]);
+    if (typeof key == "object") {
+      return this.device_type[key.device_type] || {};
+    }
+    return this.device_type[key] || {};
   }
 };
