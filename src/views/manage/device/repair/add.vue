@@ -8,42 +8,17 @@
                 </div>
                 <el-row :gutter="20">
                     <el-col :span="8">
-                        <el-form-item label="设备类型">
+                        <el-form-item label="维修原因">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="设备Id">
+                        <el-form-item label="返厂时间">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="Sim Id">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="协议类型">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="设备厂家">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="设备序列号">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="摄像头数量" style="margin-bottom:0;">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="存储介质">
+                        <el-form-item label="物流信息">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>

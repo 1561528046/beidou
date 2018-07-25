@@ -4,46 +4,16 @@
             <!-- 设备信息 -->
             <el-card shadow="hover">
                 <div slot="header" class="clearfix">
-                    <span>设备信息 </span>
+                    <span>终端信息 </span>
                 </div>
                 <el-row :gutter="20">
                     <el-col :span="8">
-                        <el-form-item label="设备类型">
+                        <el-form-item label="厂商名称">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="设备Id">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="Sim Id">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="协议类型">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="设备厂家">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="设备序列号">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="摄像头数量" style="margin-bottom:0;">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="存储介质">
+                        <el-form-item label="厂商类型">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>

@@ -56,6 +56,7 @@ export const getArea = query => {
     params: query
   });
 };
+//设备管理
 export const getDeviceList = query => {
   return ajax.get("/device/GetAll", {
     params: query
@@ -72,11 +73,27 @@ export const getDeviceUpdate = query => {
   });
 };
 export const getDeviceDelete = query => {
-  return ajax.post("/device/Delete", {
+  query = qs.stringify(query);
+  return ajax.post("/device/Delete", query);
+};
+// 维修设备管理
+export const getDeviceRepairList = query => {
+  return ajax.get("/device_repair/GetAll", {
     params: query
   });
 };
-
+// SIM卡管理
+export const getDeviceSimList = query => {
+  return ajax.get("/sim/GetAll", {
+    params: query
+  });
+};
+// 终端厂商管理
+export const getDeviceCompany = query => {
+  return ajax.get("/device_company/GetAll", {
+    params: query
+  });
+};
 export const getUserList = query => {
   return ajax.get("/user/GetUserByPage", {
     params: query

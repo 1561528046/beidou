@@ -6,13 +6,10 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="设备类型">
-              <el-select v-model="value" placeholder="请选择">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
+              <select-devicetype v-model="tableQuery.device_type"></select-devicetype>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <!-- <el-col :span="6">
             <el-form-item label="设备序列号">
               <el-input placeholder="请输入内容"></el-input>
             </el-form-item>
@@ -34,10 +31,10 @@
                 </el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="6" style="padding-top: 30px;">
+          </el-col>-->
+          <el-col :span="6">
             <el-form-item>
-              <!-- <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button> -->
+              <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
@@ -88,7 +85,7 @@
   </div>
 </template>
 <script>
-  /* eslint-disable */
+  import selectDevicetype from "@/components/select-devicetype.vue";
   import { getDeviceList } from "@/api/index.js";
   export default {
     created() {
@@ -97,20 +94,6 @@
     data() {
       return {
         isCollapse: false,
-        options: [{
-          value: '选项1',
-          label: '定位终端'
-        }, {
-          value: '选项2',
-          label: '视频终端'
-        }],
-        optionq: [{
-          value: "选项1",
-          label: "808部标协议"
-        }, {
-          value: "选项2",
-          label: "1078部标协议"
-        }],
         tableQuery: {
           user: "",
           region: "",
@@ -125,7 +108,7 @@
       };
     },
     methods: {
-      formatter(row, column) {
+      formatter(row) {
         return row.address;
       },
       filterTag(value, row) {
@@ -153,15 +136,21 @@
           })
           .catch(() => { });
       }
-    }
+    },
+    components: { selectDevicetype }
   };
 </script>
 <style>
-  .el-form-item__label {
-    width: 85px !important;
+  .el-select {
+    width: 100%;
   }
 
-  .el-col-6 {
-    width: 16% !important;
+  .el-form-item__label {
+    width: 82px !important;
+    text-align: center !important;
+  }
+
+  .el-form-item__content {
+    margin-left: 85px !important;
   }
 </style>

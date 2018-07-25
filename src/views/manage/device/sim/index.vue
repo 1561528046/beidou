@@ -44,7 +44,7 @@
         <el-card shadow="always">
             <div class="admin-table-actions">
                 <el-button type="primary" size="small">
-                    <router-link :to="{name:'new-add'}" style="display: block;">
+                    <router-link :to="{name:'sim-add'}" style="display: block;">
                         <i class="el-icon-upload el-icon--right"></i> 添加
                     </router-link>
                 </el-button>
@@ -62,7 +62,15 @@
                 <el-table-column prop="user_id" label="分配客户"></el-table-column>
                 <el-table-column prop="state" label="当前状态"></el-table-column>
                 <el-table-column prop="note" label="备注"></el-table-column>
-                <el-table-column prop="time" label="添加时间"></el-table-column>
+
+                <el-table-column fixed="right" label="操作" width="100">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="small">
+                            <router-link :to="{name:'sim-update'}" style="display: block;">编辑
+                            </router-link>
+                        </el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <div class="admin-table-pager">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
@@ -74,7 +82,7 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getDeviceList } from "@/api/index.js";
+    import { getDeviceSimList } from "@/api/index.js";
     export default {
         created() {
             this.getTable();
@@ -117,7 +125,7 @@
             },
             getTable() {
                 this.tableLoading = true;
-                getDeviceList(this.tableQuery)
+                getDeviceSimList(this.tableQuery)
                     .then(res => {
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
