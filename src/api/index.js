@@ -53,7 +53,22 @@ export const getArea = query => {
   });
 };
 export const getDeviceList = query => {
-  return ajax.get("/device", {
+  return ajax.get("/device/GetAll", {
+    params: query
+  });
+};
+export const getDeviceAdd = query => {
+  return ajax.post("/device/Add", {
+    params: query
+  });
+};
+export const getDeviceUpdate = query => {
+  return ajax.post("/device/Update", {
+    params: query
+  });
+};
+export const getDeviceDelete = query => {
+  return ajax.post("/device/Delete", {
     params: query
   });
 };
