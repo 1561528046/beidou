@@ -5,5 +5,25 @@ export const rules = {
   ],
   vehicle_type: [
     { required: true, message: "请选择车辆类型", trigger: "change" }
+  ],
+  user_name: [
+    { required: true, message: "请输入用户名", trigger: "change" },
+    {
+      required: true,
+      min: 3,
+      max: 20,
+      message: "长度在 3 到 20 个字符",
+      trigger: "change"
+    }
+  ],
+  pass_word: [
+    { required: true, message: "请输入密码", trigger: "change" },
+    {
+      required: true,
+      min: 3,
+      max: 20,
+      message: "长度在 3 到 20 个字符",
+      trigger: "change"
+    }
   ]
 };
