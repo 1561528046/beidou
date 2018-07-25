@@ -54,16 +54,21 @@
         </el-button>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="end_date" label="到期日期" sortable width="180">
-        </el-table-column>
+        <!-- <el-table-column prop="device_id" label="设备Id">
+        </el-table-column> -->
         <el-table-column prop="device_type" label="设备类型" :formatter="(row)=>{return this.$dict.get_device_type(row.device_type)}">
         </el-table-column>
         <el-table-column prop="device_no" label="设备序列号"> </el-table-column>
+        <!-- <el-table-column prop="company_id" label="设备厂家Id"></el-table-column> -->
         <el-table-column prop="company_name" label="设备厂商"></el-table-column>
-        <el-table-column prop="simid" label="simid"></el-table-column>
-        <el-table-column prop="protocol_type" label="协议类型"></el-table-column>
+        <el-table-column prop="sim_id" label="simid"></el-table-column>
+        <el-table-column prop="protocol_type" label="协议类型" :formatter="(row)=>{return this.$dict.get_protocol_type(row.protocol_type)}">
+        </el-table-column>
         <el-table-column prop="install_date" label="安装日期"></el-table-column>
-        <el-table-column prop="vehicle_owner_phone" label="联系电话"></el-table-column>
+        <el-table-column prop="camera_num" label="摄像头数量"></el-table-column>
+        <el-table-column prop="save_media" label="存储介质" :formatter="(row)=>{return this.$dict.get_save_media(row.save_media)}"></el-table-column>
+        <el-table-column prop="state" label="状态" :formatter="(row)=>{return this.$dict.get_state(row.state)}"></el-table-column>
+        <el-table-column prop="time" label="添加时间"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"

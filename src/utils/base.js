@@ -39,10 +39,43 @@ export const dict = {
     "2": "视频终端"
   },
   get_device_type: function(key) {
-    console.log(this.device_type[key]);
-    if (typeof key == "object") {
-      return this.device_type[key.device_type] || {};
-    }
-    return this.device_type[key] || {};
+    return this.device_type[key] || "--";
+  },
+  protocol_type: {
+    "1": "808部标协议",
+    "2": "1078部标协议"
+  },
+  get_protocol_type: function(key) {
+    return this.protocol_type[key] || "--";
+  },
+  state: {
+    "1": "正常",
+    "2": "删除"
+  },
+  get_state: function(key) {
+    return this.state[key] || "--";
+  },
+  save_media: {
+    "1": "硬盘",
+    "2": "sd卡"
+  },
+  get_save_media: function(key) {
+    return this.save_media[key] || "--";
+  },
+  repair_state: {
+    "1": "维修",
+    "2": "已修复",
+    "3": "报废",
+    "4": "更换"
+  },
+  get_repair_state: function(key) {
+    return this.repair_state[key] || "--";
+  },
+  company_type: {
+    "1": "前装厂商",
+    "2": "后装厂商"
+  },
+  get_company_type: function(key) {
+    return this.company_type[key] || "--";
   }
 };
