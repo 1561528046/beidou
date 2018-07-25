@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import user from "@/router/user.js";
 Vue.use(Router);
 
 export default new Router({
@@ -97,11 +98,7 @@ export default new Router({
             }
           ]
         },
-        {
-          path: "user",
-          name: "user",
-          meta: { name: "用户管理", icon: "iconfont icon-team" }
-        },
+        user,
         {
           path: "vehicle-setting",
           name: "vehicle-setting",
