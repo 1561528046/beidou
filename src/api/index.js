@@ -1,7 +1,11 @@
 import axios from "axios";
 import { Message } from "element-ui";
+import qs from "qs";
 // 创建axios实例
 const ajax = axios.create({
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded" //请求头
+  },
   baseURL: "http://192.168.88.6:5000/mock/11/",
   timeout: 5000 // request timeout
 });
@@ -71,4 +75,14 @@ export const getDeviceDelete = query => {
   return ajax.post("/device/Delete", {
     params: query
   });
+};
+
+export const getUserList = query => {
+  return ajax.get("/user/GetUserByPage", {
+    params: query
+  });
+};
+export const addUser = query => {
+  query = qs.stringify(query);
+  return ajax.post("user/AddUser", query);
 };

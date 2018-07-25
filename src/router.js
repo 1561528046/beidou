@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import user from "@/router/user.js";
-import vehicle from "@/router/user.js";
+import vehicle from "@/router/vehicle.js";
 import device from "@/router/device.js";
 Vue.use(Router);
 

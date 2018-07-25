@@ -77,5 +77,16 @@ export const dict = {
   },
   get_company_type: function(key) {
     return this.company_type[key] || "--";
+  },
+  //所属行业(单纯记录 非必填):普货，长途，出租，校车，公交车等等
+  industry: {
+    "1": "普货",
+    "2": "长途",
+    "3": "出租",
+    "4": "校车",
+    "5": "公交车"
+  },
+  get_industry: function(key) {
+    return this.industry[key] || "--";
   }
 };

@@ -1,12 +1,11 @@
 <template>
     <div class="admin-table-container">
         <el-card shadow="always" class="admin-table-search">
-
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
+                        <el-form-item label="所属区域">
+                            <city-select v-model="tableQuery.area" style="width:100%;"></city-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
@@ -15,8 +14,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
+                        <el-form-item label="用户账号">
+                            <el-input v-model="tableQuery.user_name" placeholder="用户账号"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6" v-show="isCollapse">
@@ -43,21 +42,26 @@
         </el-card>
         <el-card shadow="always">
             <div class="admin-table-actions">
-                <el-button type="primary" size="small">
-                    <router-link :to="{name:'new-add'}" style="display: block;">
+                <router-link :to="{name:'user_add'}">
+                    <el-button type="primary" size="small">
                         <i class="el-icon-upload el-icon--right"></i> 添加
-                    </router-link>
-                </el-button>
-
-                <el-button type="primary" size="small">导出
-                    <i class="el-icon-upload el-icon--right"></i>
-                </el-button>
+                    </el-button>
+                </router-link>
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="company_id" label="设备厂商Id"></el-table-column>
-                <el-table-column prop="company_name" label="设备厂商名称"> </el-table-column>
-                <el-table-column prop="company_type" label="设备厂商类型" :formatter="(row)=>{return this.$dict.get_company_type(row.company_type)}">
+                <el-table-column prop="user_name" label="用户帐号"></el-table-column>
+                <el-table-column prop="province_name" label="所属地区">
+                    <template slot-scope="scope">
+                        {{scope.row.province_name}} {{scope.row.city_name}} {{scope.row.county_name}}
+                    </template>
                 </el-table-column>
+                <el-table-column prop="linkman" label="联系人"></el-table-column>
+                <el-table-column prop="tel" label="联系电话"> </el-table-column>
+                <el-table-column prop="vehicle_type" label="所属行业" :formatter="(row)=>{return this.$dict.get_industry(row.vehicle_type)}">
+                </el-table-column>
+                <el-table-column prop="address" label="地址"> </el-table-column>
+                <el-table-column prop="device_num" label="授权总量"> </el-table-column>
+                <el-table-column prop="role_name" label="所属角色"> </el-table-column>
             </el-table>
             <div class="admin-table-pager">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
@@ -69,7 +73,8 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getDeviceList } from "@/api/index.js";
+    import { getUserList } from "@/api/index.js";
+    import citySelect from "@/components/city-select.vue";
     export default {
         created() {
             this.getTable();
@@ -112,13 +117,14 @@
             },
             getTable() {
                 this.tableLoading = true;
-                getDeviceList(this.tableQuery)
+                getUserList(this.tableQuery)
                     .then(res => {
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
                     })
                     .catch(() => { });
             }
-        }
+        },
+        components: { citySelect }
     };
 </script>
