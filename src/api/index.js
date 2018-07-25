@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Message } from "element-ui";
+
 // 创建axios实例
 const ajax = axios.create({
   baseURL: "http://192.168.88.6:5000/mock/11/",
