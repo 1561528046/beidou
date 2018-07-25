@@ -6,7 +6,7 @@ import "element-ui/lib/theme-chalk/index.css";
 import "@/style/index.less";
 import router from "./router";
 import axios from "axios";
-import { dict } from "./utils/base";
+import { dict, utils } from "./utils/base";
 //创建axios实例，注入mock拦截
 var axios1 = axios.create({
   baseURL: "http://192.168.88.6:8888/app/mock/17/",
@@ -14,6 +14,7 @@ var axios1 = axios.create({
 });
 Vue.prototype.$ajax = axios1;
 Vue.prototype.$dict = dict;
+Vue.prototype.$utils = utils;
 window.routerDict = {};
 function createRouterMap(router, $parent) {
   router.map(route => {

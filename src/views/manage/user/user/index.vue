@@ -42,7 +42,7 @@
         </el-card>
         <el-card shadow="always">
             <div class="admin-table-actions">
-                <router-link :to="{name:'user_add'}">
+                <router-link :to="user_type==1?{name:'user_person_add'}:{name:'user_company_add'}">
                     <el-button type="primary" size="small">
                         <i class="el-icon-upload el-icon--right"></i> 添加
                     </el-button>
@@ -62,6 +62,12 @@
                 <el-table-column prop="address" label="地址"> </el-table-column>
                 <el-table-column prop="device_num" label="授权总量"> </el-table-column>
                 <el-table-column prop="role_name" label="所属角色"> </el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <router-link :to="{name: 'user_company_update',params:{user_id:scope.row.user_id}}">编辑</router-link>
+                        <!-- {{scope.row.province_name}} {{scope.row.city_name}} {{scope.row.county_name}} -->
+                    </template>
+                </el-table-column>
             </el-table>
             <div class="admin-table-pager">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
@@ -83,6 +89,7 @@
             return {
                 isCollapse: false,
                 tableQuery: {
+                    area: [],
                     user: "",
                     region: "",
                     size: 10,
@@ -95,6 +102,7 @@
                 tableLoading: true
             };
         },
+        props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
         methods: {
             formatter(row, column) {
                 return row.address;
@@ -117,7 +125,9 @@
             },
             getTable() {
                 this.tableLoading = true;
-                getUserList(this.tableQuery)
+                var areaObj = this.$utils.formatArea(this.tableQuery.area);
+                var query = Object.assign({}, this.tableQuery, areaObj);
+                getUserList(query)
                     .then(res => {
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
@@ -128,3 +138,11 @@
         components: { citySelect }
     };
 </script>
+<style scoped lang="less">
+    .vehicle-form {
+        padding: 20px;
+        .el-card {
+            margin-bottom: 20px;
+        }
+    }
+</style>

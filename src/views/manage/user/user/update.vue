@@ -53,11 +53,12 @@
 <script>
   import { rules } from "@/utils/rules.js";
   import citySelect from "@/components/city-select.vue";
-  import { addUser } from "@/api/index.js";
+  import { addUser, getUser } from "@/api/index.js";
   export default {
     data() {
       return {
         formData: {
+          user_id: this.$route.params.user_id,
           area: [],
           "user_name": "",
           pass_word: "",
@@ -100,7 +101,13 @@
     computed: {},
     props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
     created() {
-
+      getUser({ user_id: this.formData.user_id }).then((res) => {
+        if (res.data.code == 0 && res.data.data.length) {
+          var mixinData = Object.assign({}, this.formData, res.data.data[0]);
+          mixinData.re_pass_word = mixinData.pass_word;
+          this.$set(this.$data, "formData", mixinData);
+        }
+      })
     },
     methods: {
       validatePassword(rule, value, callback) {

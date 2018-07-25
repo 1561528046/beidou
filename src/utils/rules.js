@@ -15,15 +15,5 @@ export const rules = {
       message: "长度在 3 到 20 个字符",
       trigger: "change"
     }
-  ],
-  pass_word: [
-    { required: true, message: "请输入密码", trigger: "change" },
-    {
-      required: true,
-      min: 3,
-      max: 20,
-      message: "长度在 3 到 20 个字符",
-      trigger: "change"
-    }
   ]
 };

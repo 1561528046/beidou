@@ -71,3 +71,9 @@ a {
   padding-top: 20px;
   text-align: right;
 }
+.post-form {
+  padding: 20px;
+}
+.post-form .el-card {
+  margin-bottom: 20px;
+}

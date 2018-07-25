@@ -90,3 +90,5 @@ export const dict = {
     return this.industry[key] || "--";
   }
 };
+import utils from "@/utils/utils";
+export { utils };

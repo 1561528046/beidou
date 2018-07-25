@@ -13,11 +13,11 @@ const ajax = axios.create({
 ajax.interceptors.request.use(
   function(config) {
     // 在发送请求之前做些什么
-    Message({
-      message: "发送请求",
-      type: "success",
-      duration: 5 * 1000
-    });
+    // Message({
+    //   message: "发送请求",
+    //   type: "success",
+    //   duration: 5 * 1000
+    // });
 
     return config;
   },
@@ -30,11 +30,26 @@ ajax.interceptors.request.use(
 // 添加响应拦截器
 ajax.interceptors.response.use(
   function(response) {
+    if (typeof response.data == "string") {
+      Message({
+        showClose: true,
+        message: "JSON格式错误！",
+        type: "error"
+      });
+    }
+    if (response.status != 200) {
+      Message({
+        showClose: true,
+        message: "接口错误，错误码" + response.status,
+        type: "error"
+      });
+
+      return response;
+    }
     // 对响应数据做点什么
     return response;
   },
   function(error) {
-    console.log(arguments);
     // 对响应错误做点什么
     console.warn("请求错误", error); // for debug
     Message({
@@ -70,4 +85,9 @@ export const getUserList = query => {
 export const addUser = query => {
   query = qs.stringify(query);
   return ajax.post("user/AddUser", query);
+};
+export const getUser = query => {
+  return ajax.get("/user/GetUserById", {
+    params: query
+  });
 };
