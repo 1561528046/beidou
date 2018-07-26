@@ -74,8 +74,13 @@ export const getArea = query => {
 };
 
 //设备管理
-export const DeviceList = query => {
+export const getDeviceAll = query => {
   return ajax.get("/device/GetAll", {
+    params: query
+  });
+};
+export const DeviceList = query => {
+  return ajax.get("/device/GetListByPage", {
     params: query
   });
 };
@@ -100,8 +105,34 @@ export const delDevice = query => {
 };
 
 // 维修设备管理
-export const getDeviceRepairList = query => {
+export const getDeviceRepairAll = query => {
   return ajax.get("/device_repair/GetAll", {
+    params: query
+  });
+};
+export const getDeviceRepairList = query => {
+  return ajax.get("/device_repair/GetListByPage", {
+    params: query
+  });
+};
+export const getDeviceRepair = query => {
+  return ajax.get("/device_repair/GetByID", {
+    params: query
+  });
+};
+export const addDeviceRepair = query => {
+  query = qs.stringify(query);
+  return ajax.post("/device_repair/Add", query);
+};
+export const updateDeviceRepair = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device_repair/Update", queryQS, {
+    params: query
+  });
+};
+export const delDeviceRepair = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("device_repair/Delete", queryQS, {
     params: query
   });
 };
@@ -152,67 +183,67 @@ export const addDeviceCompany = query => {
 
 //用户管理
 export const getUserAll = query => {
-  return ajax.get("/user/GetUserAll", {
+  return ajax.get("/user/GetAll", {
     params: query
   });
 };
 
 export const getUserList = query => {
-  return ajax.get("/user/GetUserByPage", {
+  return ajax.get("/user/GetListByPage", {
     params: query
   });
 };
 export const getUser = query => {
-  return ajax.get("/user/GetUserById", {
+  return ajax.get("/user/GetById", {
     params: query
   });
 };
 export const addUser = query => {
   query = qs.stringify(query);
-  return ajax.post("user/AddUser", query);
+  return ajax.post("user/Add", query);
 };
 export const updateUser = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("user/UpdateUser", queryQS, {
+  return ajax.post("user/Update", queryQS, {
     params: query
   });
 };
 export const delUser = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("user/DeleteUser", queryQS, {
+  return ajax.post("user/Delete", queryQS, {
     params: query
   });
 };
 
 //司机信息管理
 export const getDriverAll = query => {
-  return ajax.get("/user/GetDriverAll", {
+  return ajax.get("/driver/GetAll", {
     params: query
   });
 };
 export const getDriverList = query => {
-  return ajax.get("/user/GetDriverByPage", {
+  return ajax.get("/driver/GetListByPage", {
     params: query
   });
 };
 export const addDriver = query => {
   query = qs.stringify(query);
-  return ajax.post("user/AddDriver", query);
+  return ajax.post("/driver/Add", query);
 };
 export const updateDriver = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("user/UpdateDriver", queryQS, {
+  return ajax.post("/driver/Update", queryQS, {
     params: query
   });
 };
 export const delDriver = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("user/DeleteDriver", queryQS, {
+  return ajax.post("/driver/Delete", queryQS, {
     params: query
   });
 };
 export const getDriver = query => {
-  return ajax.get("/user/GetDriverById", {
+  return ajax.get("/driver/GetById", {
     params: query
   });
 };

@@ -100,7 +100,7 @@
             }
         },
         created() {
-            getDevice({ device_id: this.formData.device_id }).then((res) => {
+            getDevice({ id: this.formData.device_id }).then((res) => {
                 if (res.data.code == 0 && res.data.data.length) {
                     var mixinData = Object.assign({}, this.formData, res.data.data[0]);
                     this.$set(this.$data, "formData", mixinData);
@@ -116,7 +116,7 @@
                             .then(res => {
                                 if (res.data.code == 0) {
                                     this.$message.success(res.data.msg);
-                                    this.$router.push({ "name": "device-sim" })
+                                    this.$router.push({ "name": "device-device" })
                                 } else {
                                     this.$message.error(res.data.msg);
                                 }
