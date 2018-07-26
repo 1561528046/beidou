@@ -53,7 +53,6 @@
                 </el-button> -->
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="company_id" label="设备厂商Id"></el-table-column>
                 <el-table-column prop="company_name" label="设备厂商名称"> </el-table-column>
                 <el-table-column prop="company_type" label="设备厂商类型" :formatter="(row)=>{return this.$dict.get_company_type(row.company_type)}">
                 </el-table-column>

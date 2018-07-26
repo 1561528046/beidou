@@ -139,16 +139,4 @@
   };
 </script>
 <style>
-  .el-select {
-    width: 100%;
-  }
-
-  .el-form-item__label {
-    width: 82px !important;
-    text-align: center !important;
-  }
-
-  .el-form-item__content {
-    margin-left: 85px !important;
-  }
 </style>

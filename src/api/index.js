@@ -6,7 +6,7 @@ const ajax = axios.create({
   headers: {
     "Content-Type": "application/x-www-form-urlencoded" //请求头
   },
-  //baseURL: "http://192.168.88.6:5000/mock/11/",
+  // baseURL: "http://192.168.88.6:5000/mock/11/",
   baseURL: "http://192.168.88.100:725/api/",
   timeout: 5000 // request timeout
 });
@@ -115,12 +115,11 @@ export const getDeviceCompany = query => {
     params: query
   });
 };
-<<<<<<< HEAD
-// 用户管理
-=======
-
+export const getDeviceCompanyAdd = query => {
+  query = qs.stringify(query);
+  return ajax.post("/device_company/Add", query);
+};
 //用户管理
->>>>>>> 8e393256e3cea36fecb4c510562281ecdcc6e2bd
 export const getUserList = query => {
   return ajax.get("/user/GetUserByPage", {
     params: query

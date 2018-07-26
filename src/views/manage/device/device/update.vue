@@ -16,11 +16,6 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="20">
-                        <el-form-item label="设备Id">
-                            <el-input v-model="formData.device_id"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="20">
                         <el-form-item label="Sim Id">
                             <el-input v-model="formData.sim_id"></el-input>
                         </el-form-item>
@@ -83,7 +78,6 @@
                     user_id: this.$route.params.user_id,
                     area: [],
                     "device_type": "",
-                    "device_id": "",
                     "sim_id": "",
                     "protocol_type": "",
                     "company_name": "",
