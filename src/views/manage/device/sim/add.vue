@@ -6,7 +6,6 @@
                 <div slot="header" class="clearfix">
                     <span>SIM卡信息 </span>
                 </div>
-<<<<<<< HEAD
                 <el-form-item prop="sim_no" label="SIM卡号">
                     <el-input v-model="formData.sim_no"></el-input>
                 </el-form-item>
@@ -23,45 +22,6 @@
                 <el-form-item prop="note" label="备注">
                     <el-input v-model="formData.note"></el-input>
                 </el-form-item>
-=======
-                <el-row :gutter="20">
-                    <el-col :span="20">
-                        <el-form-item label="添加时间">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-form-item label="SIM卡号">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-form-item label="ICCID">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-form-item label="所属运营商">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-form-item label="当前状态">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-form-item label="分配客户">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-form-item label="备注">
-                            <el-input></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
->>>>>>> 989ed2b1f199a953300d8dd14adafc5bb75145fe
             </el-card>
 
             <el-form-item style="text-align:center;">

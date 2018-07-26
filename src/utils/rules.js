@@ -15,13 +15,6 @@ export const rules = {
       trigger: "change"
     }
   ],
-<<<<<<< HEAD
-  sim_no: [
-    {
-      min: 11,
-      max: 12,
-      message: "请输入11~12位SIM卡号",
-=======
   device_type: [
     { required: true, message: "请选择设备类型", trigger: "change" }
   ],
@@ -42,7 +35,6 @@ export const rules = {
       min: 11,
       max: 14,
       message: "长度在 11 到 14 个字符",
->>>>>>> 989ed2b1f199a953300d8dd14adafc5bb75145fe
       trigger: "change"
     }
   ]
