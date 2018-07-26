@@ -28,7 +28,7 @@
 <script>
     import { rules } from "@/utils/rules.js";
     import citySelect from "@/components/city-select.vue";
-    import { getDeviceCompanyAdd } from "@/api/index.js";
+    import { addDeviceCompany } from "@/api/index.js";
     export default {
         data() {
             return {
@@ -68,7 +68,7 @@
                         var areaObj = this.$utils.formatArea(this.formData.area);
                         var postData = Object.assign({}, this.formData, areaObj);
                         postData.device_total = postData.device_total || 0;
-                        getDeviceCompanyAdd(postData)
+                        addDeviceCompany(postData)
                             .then(res => {
                                 console.log(res)
                                 if (res.data.code == 0) {
