@@ -69,7 +69,7 @@
     </div>
 </template>
 <script>
-    /* eslint-disable */
+
     import { getUserList } from "@/api/index.js";
     import citySelect from "@/components/city-select.vue";
     export default {

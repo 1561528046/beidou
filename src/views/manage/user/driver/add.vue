@@ -5,42 +5,25 @@
         <div slot="header" class="clearfix">
           <span>添加用户 </span>
         </div>
-        <el-form-item label="用户帐号" prop="user_name">
-          <el-input v-model="formData.user_name"></el-input>
+        <el-form-item label="司机卡id" prop="driver_card_id">
+          <el-input v-model="formData.driver_card_id" maxlength="10"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="pass_word">
-          <el-input v-model="formData.pass_word" type="password"></el-input>
+        <el-form-item label="姓名" prop="driver_name">
+          <el-input v-model="formData.driver_name" maxlength="20"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="re_pass_word">
-          <el-input v-model="formData.re_pass_word" type="password"></el-input>
-        </el-form-item>
-        <el-form-item label="所属角色" prop="role_id">
-          <el-select v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;">
-            <el-option label="代理" value="1"></el-option>
-            <el-option label="监控员" value="2"></el-option>
-          </el-select>
-        </el-form-item>
-        <template v-if="user_type==2">
-          <el-form-item label="公司名称" prop="company">
-            <el-input v-model="formData.company" maxlength="255"></el-input>
-          </el-form-item>
-          <el-form-item label="所属行业" prop="industry">
-            <el-input v-model="formData.industry" maxlength="255"></el-input>
-          </el-form-item>
-          <el-form-item label="所属地区">
-            <city-select v-model="formData.area" style="width:100%;"></city-select>
-          </el-form-item>
-        </template>
-        <el-form-item label="联系人" prop="linkman">
-          <el-input v-model="formData.linkman" maxlength="20"></el-input>
-        </el-form-item>
-
         <el-form-item label="联系电话" prop="tel">
           <el-input v-model="formData.tel" maxlength="20"></el-input>
         </el-form-item>
-
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="formData.address"></el-input>
+        <el-form-item label="驾驶证有效期" prop="license_validity">
+          <el-date-picker v-model="formData.license_validity" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd"
+            style="width:100%;">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="身份证 " prop="identity_id">
+          <el-input v-model="formData.identity_id" maxlength="20"></el-input>
+        </el-form-item>
+        <el-form-item label="选择车辆" prop="vehicle_id">
+          <el-input v-model="formData.vehicle_id"></el-input>
         </el-form-item>
       </el-card>
 
@@ -52,48 +35,21 @@
 </template>
 <script>
   import { rules } from "@/utils/rules.js";
-  import citySelect from "@/components/city-select.vue";
   import { addUser } from "@/api/index.js";
   export default {
     data() {
       return {
         formData: {
-          area: [],
-          "user_name": "",
-          pass_word: "",
-          re_pass_word: "",
-          "province_id": "",
-          "city_id": "",
-          "county_id": "",
-          "company": "",
-          "industry": "",
-          "linkman": "",
+          "driver_card_id": "",
+          "driver_name": "",
           "tel": "",
-          "address": "",
-          "device_num": "",
-          "role_id": "",
+          "license_validity": "",
+          "identity_id": "",
+          "vehicle_id": "",
         },
         rules: {
           ...rules,
-          role_id: [{ required: true, message: "必须选择角色", trigger: "change" }],
-          re_pass_word: [
-            {
-              trigger: "blur",
-              component: this,
-              validator: this.validatePassword2
-            },
-            { required: true, message: "两次密码不一样", trigger: "blur" }
-          ],
-          pass_word: [
-            {
-              required: true,
-              min: 3,
-              max: 20,
-              message: "长度在 3 到 20 个字符",
-              trigger: "change",
-              validator: this.validatePassword
-            }
-          ]
+          driver_card_id: [{ required: true, message: "必须填写司机卡ID", trigger: "change" }],
         }
       };
     },
@@ -126,13 +82,10 @@
       formSubmit() {
         this.$refs.baseForm.validate((isVaildate, errorItem) => {
           if (isVaildate) {
-            this.tableLoading = true;
-            var areaObj = this.$utils.formatArea(this.formData.area);
-            var postData = Object.assign({}, this.formData, areaObj);
+            var postData = Object.assign({}, this.formData);
             addUser(postData)
               .then(res => {
-                this.$set(this.$data, "tableData", res.data);
-                this.tableLoading = false;
+                console.log(res);
               })
               .catch(() => { });
           } else {
@@ -150,6 +103,5 @@
         })
       }
     },
-    components: { citySelect }
   };
 </script>

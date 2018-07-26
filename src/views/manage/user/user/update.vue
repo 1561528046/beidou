@@ -42,6 +42,10 @@
         <el-form-item label="地址" prop="address">
           <el-input v-model="formData.address"></el-input>
         </el-form-item>
+        <el-form-item label="授权总量" prop="device_total">
+          <el-switch v-model="device_total_turn"> </el-switch>
+          <el-input v-model="formData.device_total" v-if="device_total_turn"></el-input>
+        </el-form-item>
       </el-card>
 
       <el-form-item style="text-align:center; padding-top:20px;">
@@ -53,10 +57,11 @@
 <script>
   import { rules } from "@/utils/rules.js";
   import citySelect from "@/components/city-select.vue";
-  import { addUser, getUser } from "@/api/index.js";
+  import { updateUser, getUser } from "@/api/index.js";
   export default {
     data() {
       return {
+        device_total_turn: true,
         formData: {
           user_id: this.$route.params.user_id,
           area: [],
@@ -72,6 +77,7 @@
           "tel": "",
           "address": "",
           "device_num": "",
+          "device_total": "",
           "role_id": "",
         },
         rules: {
@@ -98,7 +104,11 @@
         }
       };
     },
-    computed: {},
+    watch: {
+      "device_total_turn": function () {
+        this.formData.device_total = "";
+      }
+    },
     props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
     created() {
       getUser({ user_id: this.formData.user_id }).then((res) => {
@@ -106,6 +116,10 @@
           var mixinData = Object.assign({}, this.formData, res.data.data[0]);
           mixinData.re_pass_word = mixinData.pass_word;
           mixinData.area = [mixinData.province_id, mixinData.city_id, mixinData.county_id];
+          if (mixinData.device_total == 0) {
+            this.device_total_turn = false;
+          }
+
           this.$set(this.$data, "formData", mixinData);
         }
       })
@@ -137,7 +151,7 @@
             this.tableLoading = true;
             var areaObj = this.$utils.formatArea(this.formData.area);
             var postData = Object.assign({}, this.formData, areaObj);
-            addUser(postData)
+            updateUser(postData)
               .then(res => {
                 this.$set(this.$data, "tableData", res.data);
                 this.tableLoading = false;
