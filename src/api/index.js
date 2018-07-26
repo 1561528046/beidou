@@ -144,7 +144,6 @@ export const getDeviceCompanyAdd = query => {
   query = qs.stringify(query);
   return ajax.post("/device_company/Add", query);
 };
-//用户管理
 
 //用户管理
 export const getUserAll = query => {
