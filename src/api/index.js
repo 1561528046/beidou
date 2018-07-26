@@ -140,13 +140,11 @@ export const getDeviceCompany = query => {
     params: query
   });
 };
-<<<<<<< HEAD
 export const getDeviceCompanyAdd = query => {
   query = qs.stringify(query);
   return ajax.post("/device_company/Add", query);
 };
 //用户管理
-=======
 
 //用户管理
 export const getUserAll = query => {
@@ -155,7 +153,6 @@ export const getUserAll = query => {
   });
 };
 
->>>>>>> f6b908f4f14d3b59024f48c0bfc9102cd0900342
 export const getUserList = query => {
   return ajax.get("/user/GetUserByPage", {
     params: query

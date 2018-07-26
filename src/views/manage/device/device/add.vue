@@ -27,8 +27,8 @@
                 </el-form-item>
                 <el-form-item label="状态" prop="state">
                     <el-select v-model="formData.state" placeholder="选择协议类型" style="width:100%;">
-                        <el-option label="808部标协议" value="1"></el-option>
-                        <el-option label="1078部标协议" value="2"></el-option>
+                        <el-option label="正常" value="1"></el-option>
+                        <el-option label="删除" value="2"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="设备序列号" prop="device_no">
