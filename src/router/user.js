@@ -38,6 +38,35 @@ export default {
       meta: { name: "添加个人用户", hidden: true },
       props: { user_type: 1 }, //根据user_type区分公司还是个人 1个人 2公司
       component: () => import("@/views/manage/user/user/add.vue")
+    },
+    {
+      path: "user_person_update/:user_id",
+      name: "user_person_update",
+      meta: { name: "编辑个人用户", hidden: true },
+      props: { user_type: 2 }, //根据user_type区分公司还是个人 1个人 2公司
+      component: () => import("@/views/manage/user/user/update.vue")
+    },
+
+    /**
+     * 司机信息
+     */
+    {
+      path: "driver",
+      name: "driver",
+      meta: { name: "司机信息管理", icon: "iconfont icon-team" },
+      component: () => import("@/views/manage/user/driver/index.vue")
+    },
+    {
+      path: "driver_add",
+      name: "driver_add",
+      meta: { name: "添加司机", hidden: true },
+      component: () => import("@/views/manage/user/driver/add.vue")
+    },
+    {
+      path: "driver_update/:user_id",
+      name: "driver_update",
+      meta: { name: "编辑个人用户", hidden: true },
+      component: () => import("@/views/manage/user/driver/update.vue")
     }
   ]
 };

@@ -64,8 +64,7 @@
                 <el-table-column prop="role_name" label="所属角色"> </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <router-link :to="{name: 'user_company_update',params:{user_id:scope.row.user_id}}">编辑</router-link>
-                        <!-- {{scope.row.province_name}} {{scope.row.city_name}} {{scope.row.county_name}} -->
+                        <router-link :to="{name: 'user_person_update',params:{user_id:scope.row.user_id}}">编辑</router-link>
                     </template>
                 </el-table-column>
             </el-table>
