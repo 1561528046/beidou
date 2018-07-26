@@ -56,6 +56,13 @@
                 <el-table-column prop="company_name" label="设备厂商名称"> </el-table-column>
                 <el-table-column prop="company_type" label="设备厂商类型" :formatter="(row)=>{return this.$dict.get_company_type(row.company_type)}">
                 </el-table-column>
+                <el-table-column fixed="right" label="操作" width="100">
+                    <template slot-scope="scope">
+                        <el-button type="primary" size="small" @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}})">
+                            编辑
+                        </el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <div class="admin-table-pager">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
@@ -67,7 +74,7 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getDeviceCompany } from "@/api/index.js";
+    import { getDeviceCompanyAll } from "@/api/index.js";
     export default {
         created() {
             this.getTable();
@@ -110,7 +117,7 @@
             },
             getTable() {
                 this.tableLoading = true;
-                getDeviceCompany(this.tableQuery)
+                getDeviceCompanyAll(this.tableQuery)
                     .then(res => {
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
