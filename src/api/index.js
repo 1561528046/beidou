@@ -78,12 +78,17 @@ export const getDeviceList = query => {
     params: query
   });
 };
-export const getDeviceAdd = query => {
-  return ajax.post("/device/Add", {
+export const getDeviceOneList = query => {
+  return ajax.get("/device/GetByID", {
     params: query
   });
 };
+export const getDeviceAdd = query => {
+  query = qs.stringify(query);
+  return ajax.post("/device/Add", query);
+};
 export const getDeviceUpdate = query => {
+  query = qs.stringify(query);
   return ajax.post("/device/Update", {
     params: query
   });
@@ -115,13 +120,20 @@ export const getDeviceCompany = query => {
     params: query
   });
 };
+<<<<<<< HEAD
+// 用户管理
+=======
 
 //用户管理
+<<<<<<< HEAD
 export const getUserAll = query => {
   return ajax.get("/user/GetUserAll", {
     params: query
   });
 };
+=======
+>>>>>>> 8e393256e3cea36fecb4c510562281ecdcc6e2bd
+>>>>>>> 989ed2b1f199a953300d8dd14adafc5bb75145fe
 export const getUserList = query => {
   return ajax.get("/user/GetUserByPage", {
     params: query

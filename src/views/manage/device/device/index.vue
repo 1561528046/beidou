@@ -23,15 +23,12 @@
             <el-form-item label="simid">
               <el-input placeholder="请输入内容"></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="协议类型">
-              <el-select v-model="value" placeholder="请选择">
-                <el-option v-for="item in optionq" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
           </el-col>-->
+          <!-- <el-col :span="6">
+            <el-form-item label="协议类型">
+              <select-protocoltype v-model="tableQuery.protocol_type"></select-protocoltype>
+            </el-form-item>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
@@ -43,11 +40,11 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <el-button type="primary" size="small">
-          <router-link :to="{name:'device-add'}" style="display: block;">
+        <router-link :to="{name:'device-add'}" style="display: block;">
+          <el-button type="primary" size="small" class="small-button">
             <i class="el-icon-upload el-icon--right"></i> 添加
-          </router-link>
-        </el-button>
+          </el-button>
+        </router-link>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <!-- <el-table-column prop="device_id" label="设备Id">
@@ -86,6 +83,7 @@
 </template>
 <script>
   import selectDevicetype from "@/components/select-devicetype.vue";
+  // import selectProtocoltype from "@/components/select-protocoltype.vue";
   import { getDeviceList } from "@/api/index.js";
   export default {
     created() {
@@ -137,7 +135,7 @@
           .catch(() => { });
       }
     },
-    components: { selectDevicetype }
+    components: { selectDevicetype },
   };
 </script>
 <style>
