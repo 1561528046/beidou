@@ -73,27 +73,27 @@ export const getArea = query => {
   });
 };
 //设备管理
-export const getDeviceList = query => {
+export const DeviceList = query => {
   return ajax.get("/device/GetAll", {
     params: query
   });
 };
-export const getDeviceOneList = query => {
+export const getDevice = query => {
   return ajax.get("/device/GetByID", {
     params: query
   });
 };
-export const getDeviceAdd = query => {
+export const addDevice = query => {
   query = qs.stringify(query);
   return ajax.post("/device/Add", query);
 };
-export const getDeviceUpdate = query => {
+export const updateDevice = query => {
   query = qs.stringify(query);
   return ajax.post("/device/Update", {
     params: query
   });
 };
-export const getDeviceDelete = query => {
+export const delDevice = query => {
   query = qs.stringify(query);
   return ajax.post("/device/Delete", query);
 };
@@ -140,7 +140,7 @@ export const getDeviceCompany = query => {
     params: query
   });
 };
-export const getDeviceCompanyAdd = query => {
+export const addDeviceCompany = query => {
   query = qs.stringify(query);
   return ajax.post("/device_company/Add", query);
 };
@@ -154,6 +154,11 @@ export const getUserAll = query => {
 
 export const getUserList = query => {
   return ajax.get("/user/GetUserByPage", {
+    params: query
+  });
+};
+export const getUser = query => {
+  return ajax.get("/user/GetUserById", {
     params: query
   });
 };
@@ -171,12 +176,6 @@ export const delUser = query => {
     params: query
   });
 };
-export const getUser = query => {
-  return ajax.get("/user/GetUserById", {
-    params: query
-  });
-};
-
 //司机信息管理
 export const getDriverAll = query => {
   return ajax.get("/user/GetDriverAll", {
