@@ -7,19 +7,31 @@
                     <span>设备信息 </span>
                 </div>
                 <el-row :gutter="20">
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="维修原因">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="返厂时间">
-                            <el-input></el-input>
+                            <el-date-picker v-model="formData.drivecard_release_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期"
+                                style="width:100%;">
+                            </el-date-picker>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="物流信息">
-                            <el-input></el-input>
+                            <el-input v-model="formData.logistics"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="20">
+                        <el-form-item label="维修状态">
+                            <el-select v-model="formData.state" placeholder="选择维修状态" style="width:100%;">
+                                <el-option label="修复" value="1"></el-option>
+                                <el-option label="已修复" value="2"></el-option>
+                                <el-option label="报废" value="1"></el-option>
+                                <el-option label="更换" value="2"></el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -34,17 +46,6 @@
     </div>
 </template>
 <script>
-    // [
-    //   "普通货运车辆",
-    //   "危险品车辆",
-    //   "长途客运、班线车辆",
-    //   "城市公共交通车辆",
-    //   "出租车",
-    //   "网约车",
-    //   "校车",
-    //   "警务车辆",
-    //   "其他车辆"
-    // ];
     import { rules } from "@/utils/rules.js";
     import moment from "moment";
     import citySelect from "@/components/city-select.vue";
@@ -52,54 +53,10 @@
         data() {
             return {
                 formData: {
-                    area: [13000, 13001, 13000],
-                    name: "",
-                    end_date: "", //到期日期
-                    vehicle_type: "", //车辆类型
-                    road_transport: "", //道路运输证号
-                    drivecard_release_date: "", //行驶证发证日期
-                    fule_type: "", //燃料种类*
-                    vehicle_no: "", //车牌号*
-                    plate_color: "", //车牌颜色*
-                    area_code: "", //所属地区*
-                    city_id: "", //所属地区*
-                    county: "", //所属地区*
-                    companyname: "", //车主/业户*
-                    vehicle_owner_name: "", //联系人*
-                    vehicle_owner_phone: "", //联系人手机*
-                    //车辆基本信息
-                    vin_code: "", //车辆识别代码/车架号*
-                    vbrand_name: "", //车辆品牌：*
-                    prod_code_text: "", //车辆型号：*
-                    engine_no: "", //发动机号：*
-                    engine_type: "", //发动机型号：*
-                    vehicle_ton: "", //总质量(kg)：*
-                    load_ton: "", //核定载质量(kg)：*
-                    vehicle_draw_ton: "", //准牵引总质量(kg)：*
-                    vehicle_length: "", //外廓尺寸(mm)长：*
-                    vehicle_width: "", //宽：*
-                    vehicle_height: "", //高：*
-                    box_length: "", //货厢内部尺寸(mm)长：*
-                    box_width: "", //宽：*
-                    box_height: "", //高：*
-                    vehicle_axis: "", //轴数：*
-                    registration_certificate_file: "", //车辆登记证1：
-                    registration_certificate_file2: "", //车辆登记证2：
-                    driving_lic_or_cert_file: "", //车辆合格证/行驶证：
-                    vehicle_body_photo_file: "", //车身照片：
-                    //终端信息
-                    tmac: "", //终端_i_d：*
-                    commaddr: "", //_s_i_m卡卡号：*
-                    //其它信息
-                    out_factory_time: "", //车辆出厂时间：
-                    vehicle_color: "", //车身颜色：
-                    vehicle_business_scope: "", //经营范围：
-                    vehicle_tyre_number: "", //轮胎数：
-                    vehicle_tyre_size: "", //轮胎规格：
-                    corp_road_transport: "", //道路运输经营许可证号：
-                    insurance_expirate_time: "", //车辆保险到期时间：
-                    valid_date_check: "", //检验有效期至：
-                    insurance_type: "" //车辆保险种类：
+                    "back_time": "",
+                    "reason": "",
+                    "logistics": "",
+                    "state": ""
                 },
                 pickerOptions: {
                     shortcuts: [

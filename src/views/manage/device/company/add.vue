@@ -7,12 +7,12 @@
                     <span>终端信息 </span>
                 </div>
                 <el-row :gutter="20">
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="厂商名称">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="厂商类型">
                             <el-input></el-input>
                         </el-form-item>

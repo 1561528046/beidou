@@ -43,15 +43,14 @@
         </el-card>
         <el-card shadow="always">
             <div class="admin-table-actions">
-                <el-button type="primary" size="small">
-                    <router-link :to="{name:'sim-add'}" style="display: block;">
+                <router-link :to="{name:'sim-add'}" style="display: block;">
+                    <el-button type="primary" size="small">
                         <i class="el-icon-upload el-icon--right"></i> 添加
-                    </router-link>
-                </el-button>
-
-                <el-button type="primary" size="small">导出
+                    </el-button>
+                </router-link>
+                <!-- <el-button type="primary" size="small">导出
                     <i class="el-icon-upload el-icon--right"></i>
-                </el-button>
+                </el-button> -->
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
                 <el-table-column prop="sim_no" label="Sim卡号">

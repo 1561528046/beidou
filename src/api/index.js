@@ -78,11 +78,11 @@ export const getDeviceList = query => {
   });
 };
 export const getDeviceAdd = query => {
-  return ajax.post("/device/Add", {
-    params: query
-  });
+  query = qs.stringify(query);
+  return ajax.post("/device/Add", query);
 };
 export const getDeviceUpdate = query => {
+  query = qs.stringify(query);
   return ajax.post("/device/Update", {
     params: query
   });

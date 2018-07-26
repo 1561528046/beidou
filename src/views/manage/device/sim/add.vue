@@ -7,37 +7,37 @@
                     <span>SIM卡信息 </span>
                 </div>
                 <el-row :gutter="20">
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="添加时间">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="SIM卡号">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="ICCID">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="所属运营商">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="当前状态">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="分配客户">
                             <el-input></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="20">
                         <el-form-item label="备注">
                             <el-input></el-input>
                         </el-form-item>
