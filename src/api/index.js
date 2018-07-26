@@ -149,7 +149,7 @@ export const getSimList = query => {
   });
 };
 export const getSim = query => {
-  return ajax.get("/user/GetByID", {
+  return ajax.get("/sim/GetByID", {
     params: query
   });
 };

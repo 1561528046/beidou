@@ -88,6 +88,13 @@ export const dict = {
   },
   get_industry: function(key) {
     return this.industry[key] || "--";
+  },
+  sim_state: {
+    "1": "已使用",
+    "2": "未使用"
+  },
+  get_sim_state: function(key) {
+    return this.sim_state[key] || "--";
   }
 };
 import utils from "@/utils/utils";
