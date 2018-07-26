@@ -148,13 +148,20 @@
       formSubmit() {
         this.$refs.baseForm.validate((isVaildate, errorItem) => {
           if (isVaildate) {
-            this.tableLoading = true;
             var areaObj = this.$utils.formatArea(this.formData.area);
             var postData = Object.assign({}, this.formData, areaObj);
             updateUser(postData)
               .then(res => {
-                this.$set(this.$data, "tableData", res.data);
-                this.tableLoading = false;
+                if (res.data.code == 0) {
+                  this.$message.success(res.data.msg);
+                  if (this.$props.user_type == 1) {
+                    this.$router.push({ "name": "user_person" })
+                  } else {
+                    this.$router.push({ "name": "user_company" })
+                  }
+                } else {
+                  this.$message.error(res.data.msg);
+                }
               })
               .catch(() => { });
           } else {

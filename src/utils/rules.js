@@ -9,10 +9,17 @@ export const rules = {
   user_name: [
     { required: true, message: "请输入用户名", trigger: "change" },
     {
-      required: true,
       min: 3,
       max: 20,
       message: "长度在 3 到 20 个字符",
+      trigger: "change"
+    }
+  ],
+  sim_no: [
+    {
+      min: 11,
+      max: 12,
+      message: "请输入11~12位SIM卡号",
       trigger: "change"
     }
   ]

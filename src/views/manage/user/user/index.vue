@@ -5,7 +5,7 @@
                 <el-row :gutter="30">
                     <el-col :span="6">
                         <el-form-item label="所属区域">
-                            <city-select v-model="tableQuery.area" style="width:100%;"></city-select>
+                            <!-- <city-select v-model="tableQuery.area" style="width:100%;"></city-select> -->
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
@@ -48,27 +48,26 @@
                     </el-button>
                 </router-link>
             </div>
-            <el-table :data="tableData.data " v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
-                <el-table-column prop="user_name " label="用户帐号 "></el-table-column>
-                <el-table-column prop="province_name " label="所属地区 ">
+            <el-table :data="tableData.data" v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
+                <el-table-column prop="user_name" label="用户帐号 " :formatter="baseFormatter"></el-table-column>
+                <el-table-column prop="province_name" label="所属地区 ">
                     <template slot-scope="scope ">
                         {{scope.row.province_name}} {{scope.row.city_name}} {{scope.row.county_name}}
                     </template>
                 </el-table-column>
-                <el-table-column prop="linkman " label="联系人 "></el-table-column>
-                <el-table-column prop="tel " label="联系电话 "> </el-table-column>
-                <el-table-column prop="vehicle_type " label="所属行业 " :formatter="(row)=>{return this.$dict.get_industry(row.vehicle_type)}">
+                <el-table-column prop="linkman" label="联系人" :formatter="baseFormatter"></el-table-column>
+                <el-table-column prop="tel" label="联系电话 " :formatter="baseFormatter"> </el-table-column>
+                <el-table-column prop="vehicle_type" label="所属行业 " :formatter="(row)=>{return this.$dict.get_industry(row.vehicle_type)}">
                 </el-table-column>
-                <el-table-column prop="address" label="地址"> </el-table-column>
-                <el-table-column prop="device_num" label="授权总量"> </el-table-column>
-                <el-table-column prop="role_name" label="所属角色"> </el-table-column>
+                <el-table-column prop="address" label="地址" :formatter="baseFormatter"> </el-table-column>
+                <el-table-column prop="device_total" label="授权总量" :formatter="baseFormatter"> </el-table-column>
+                <el-table-column prop="role_name" label="所属角色" :formatter="baseFormatter"> </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button-group>
                             <el-button size="mini" type="primary" icon="el-icon-edit" @click="$router.push({name: 'user_person_update',params:{user_id:scope.row.user_id}})">编辑</el-button>
                             <el-button size="mini" type="primary" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
                         </el-button-group>
-                        <!-- <router-link :to="{name: 'user_person_update',params:{user_id:scope.row.user_id}}">编辑</router-link> -->
                     </template>
                 </el-table-column>
             </el-table>
@@ -96,7 +95,8 @@
                     user: "",
                     region: "",
                     size: 10,
-                    page: 1
+                    page: 1,
+                    user_type: this.$props.user_type
                 },
                 tableData: {
                     total: 0,
@@ -107,6 +107,9 @@
         },
         props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
         methods: {
+            baseFormatter(row, column, cellValue, index) {
+                return cellValue || "--";
+            },
             handleSizeChange(val) {
                 this.tableQuery.page = 1;
                 this.tableQuery.limit = val;
@@ -131,7 +134,12 @@
                 this.$confirm('确认删除？')
                     .then(_ => {
                         delUser(scope.row).then((res) => {
-                            console.log(res)
+                            if (res.data.code == 0) {
+                                this.$message.success(res.data.msg);
+                                this.getTable();
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
                         })
                     })
                     .catch(_ => { });

@@ -104,6 +104,11 @@ export const getDeviceSimList = query => {
     params: query
   });
 };
+export const addSim = query => {
+  query = qs.stringify(query);
+  return ajax.post("sim/Add", query);
+};
+
 // 终端厂商管理
 export const getDeviceCompany = query => {
   return ajax.get("/device_company/GetAll", {
@@ -112,6 +117,11 @@ export const getDeviceCompany = query => {
 };
 
 //用户管理
+export const getUserAll = query => {
+  return ajax.get("/user/GetUserAll", {
+    params: query
+  });
+};
 export const getUserList = query => {
   return ajax.get("/user/GetUserByPage", {
     params: query
@@ -126,11 +136,44 @@ export const updateUser = query => {
   return ajax.post("user/UpdateUser", query);
 };
 export const delUser = query => {
-  query = qs.stringify(query);
-  return ajax.post("user/DeleteUser", query);
+  var queryQS = qs.stringify(query);
+  return ajax.post("user/DeleteUser", queryQS, {
+    params: query
+  });
 };
 export const getUser = query => {
   return ajax.get("/user/GetUserById", {
+    params: query
+  });
+};
+
+//司机信息管理
+export const getDriverAll = query => {
+  return ajax.get("/user/GetDriverAll", {
+    params: query
+  });
+};
+export const getDriverList = query => {
+  return ajax.get("/user/GetDriverByPage", {
+    params: query
+  });
+};
+export const addDriver = query => {
+  query = qs.stringify(query);
+  return ajax.post("user/AddDriver", query);
+};
+export const updateDriver = query => {
+  query = qs.stringify(query);
+  return ajax.post("user/UpdateDriver", query);
+};
+export const delDriver = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("user/DeleteDriver", queryQS, {
+    params: query
+  });
+};
+export const getDriver = query => {
+  return ajax.get("/user/GetDriverById", {
     params: query
   });
 };
