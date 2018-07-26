@@ -1,14 +1,11 @@
 <template>
-    <div class="vehicle-form">
+    <div class="post-form">
         <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
             <!-- 设备信息 -->
             <el-card shadow="hover">
                 <div slot="header" class="clearfix">
                     <span>终端信息 </span>
                 </div>
-                <el-form-item label="设备厂商id" prop="company_id">
-                    <el-input v-model="formData.company_id"></el-input>
-                </el-form-item>
                 <el-form-item label="设备厂商名称" prop="company_name">
                     <el-input v-model="formData.company_name"></el-input>
                 </el-form-item>
@@ -21,7 +18,7 @@
             </el-card>
 
             <el-form-item style="text-align:center;">
-                <el-button type="primary" @click="formSubmit" size="large">修改</el-button>
+                <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
             </el-form-item>
 
             <!-- <button @click="$router.go(-1)">a</button> -->
@@ -69,8 +66,8 @@
         computed: {
         },
         created() {
-            getDeviceCompany({ company_id: this.formData.company_id }).then((res) => {
-                console.log(res)
+            // 获取信息
+            getDeviceCompany({ id: this.formData.company_id }).then((res) => {
                 if (res.data.code == 0 && res.data.data.length) {
                     var mixinData = Object.assign({}, this.formData, res.data.data[0]);
                     this.$set(this.$data, "formData", mixinData);
@@ -79,25 +76,15 @@
 
         },
         methods: {
-
+            // 修改信息
             formSubmit() {
-                console.log(this.$data)
                 this.$refs.baseForm.validate((isVaildate, errorItem) => {
                     if (isVaildate) {
                         var areaObj = this.$utils.formatArea(this.formData.area);
                         var postData = Object.assign({}, this.formData, areaObj);
                         updateCompany(postData)
                             .then(res => {
-                                if (res.data.code == 0) {
-                                    this.$message.success(res.data.msg);
-                                    if (this.$props.user_type == 1) {
-                                        this.$router.push({ "name": "user_person" })
-                                    } else {
-                                        this.$router.push({ "name": "user_company" })
-                                    }
-                                } else {
-                                    this.$message.error(res.data.msg);
-                                }
+                                console.log(res)
                             })
                             .catch(() => { });
                     } else {
