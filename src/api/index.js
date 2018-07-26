@@ -171,14 +171,30 @@ export const delSim = query => {
 };
 
 // 终端厂商管理
-export const getDeviceCompany = query => {
+export const getDeviceCompanyAll = query => {
   return ajax.get("/device_company/GetAll", {
+    params: query
+  });
+};
+export const getDeviceCompanyList = query => {
+  return ajax.get("/device_company/GetListByPage", {
+    params: query
+  });
+};
+export const getDeviceCompany = query => {
+  return ajax.get("/device_company/GetByID", {
     params: query
   });
 };
 export const addDeviceCompany = query => {
   query = qs.stringify(query);
   return ajax.post("/device_company/Add", query);
+};
+export const updateCompany = query => {
+  query = qs.stringify(query);
+  return ajax.post("/device_company/Update", {
+    params: query
+  });
 };
 
 //用户管理

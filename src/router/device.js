@@ -78,6 +78,12 @@ export default {
       name: "company-add",
       meta: { name: "终端厂商管理-添加", hidden: true },
       component: () => import("@/views/manage/device/company/add.vue")
+    },
+    {
+      path: "company-device-update",
+      name: "company-update",
+      meta: { name: "终端厂商管理-编辑", hidden: true },
+      component: () => import("@/views/manage/device/company/update.vue")
     }
   ]
 };
