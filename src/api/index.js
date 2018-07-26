@@ -72,6 +72,7 @@ export const getArea = query => {
     params: query
   });
 };
+
 //设备管理
 export const DeviceList = query => {
   return ajax.get("/device/GetAll", {
@@ -88,8 +89,8 @@ export const addDevice = query => {
   return ajax.post("/device/Add", query);
 };
 export const updateDevice = query => {
-  query = qs.stringify(query);
-  return ajax.post("/device/Update", {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device/Update", queryQS, {
     params: query
   });
 };
@@ -97,12 +98,14 @@ export const delDevice = query => {
   query = qs.stringify(query);
   return ajax.post("/device/Delete", query);
 };
+
 // 维修设备管理
 export const getDeviceRepairList = query => {
   return ajax.get("/device_repair/GetAll", {
     params: query
   });
 };
+
 // SIM卡管理
 export const getSimAll = query => {
   return ajax.get("/sim/GetAll", {
@@ -114,22 +117,24 @@ export const getSimList = query => {
     params: query
   });
 };
+export const getSim = query => {
+  return ajax.get("/user/GetByID", {
+    params: query
+  });
+};
 export const addSim = query => {
   query = qs.stringify(query);
   return ajax.post("/sim/Add", query);
 };
 export const updateSim = query => {
-  query = qs.stringify(query);
-  return ajax.post("/sim/Update", query);
+  var queryQS = qs.stringify(query);
+  return ajax.post("/sim/Update", queryQS, {
+    params: query
+  });
 };
 export const delSim = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("sim/Delete", queryQS, {
-    params: query
-  });
-};
-export const getSim = query => {
-  return ajax.get("/user/GetByID", {
     params: query
   });
 };
@@ -167,8 +172,10 @@ export const addUser = query => {
   return ajax.post("user/AddUser", query);
 };
 export const updateUser = query => {
-  query = qs.stringify(query);
-  return ajax.post("user/UpdateUser", query);
+  var queryQS = qs.stringify(query);
+  return ajax.post("user/UpdateUser", queryQS, {
+    params: query
+  });
 };
 export const delUser = query => {
   var queryQS = qs.stringify(query);
@@ -176,6 +183,7 @@ export const delUser = query => {
     params: query
   });
 };
+
 //司机信息管理
 export const getDriverAll = query => {
   return ajax.get("/user/GetDriverAll", {
@@ -192,8 +200,10 @@ export const addDriver = query => {
   return ajax.post("user/AddDriver", query);
 };
 export const updateDriver = query => {
-  query = qs.stringify(query);
-  return ajax.post("user/UpdateDriver", query);
+  var queryQS = qs.stringify(query);
+  return ajax.post("user/UpdateDriver", queryQS, {
+    params: query
+  });
 };
 export const delDriver = query => {
   var queryQS = qs.stringify(query);

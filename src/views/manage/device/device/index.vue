@@ -65,7 +65,7 @@
         <el-table-column fixed="right" label="操作" width="100">
           <template slot-scope="scope">
             <el-button type="text" size="small">
-              <router-link :to="{name:'device-update'}" style="display: block;">编辑
+              <router-link :to="{name:'device-update',params:{device_id:scope.row.device_id}}" style="display: block;">编辑
               </router-link>
             </el-button>
             <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
