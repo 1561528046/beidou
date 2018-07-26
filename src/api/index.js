@@ -104,14 +104,34 @@ export const getDeviceRepairList = query => {
   });
 };
 // SIM卡管理
-export const getDeviceSimList = query => {
+export const getSimAll = query => {
   return ajax.get("/sim/GetAll", {
+    params: query
+  });
+};
+export const getSimList = query => {
+  return ajax.get("/sim/GetListByPage", {
     params: query
   });
 };
 export const addSim = query => {
   query = qs.stringify(query);
-  return ajax.post("sim/Add", query);
+  return ajax.post("/sim/Add", query);
+};
+export const updateSim = query => {
+  query = qs.stringify(query);
+  return ajax.post("/sim/Update", query);
+};
+export const delSim = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("sim/Delete", queryQS, {
+    params: query
+  });
+};
+export const getSim = query => {
+  return ajax.get("/user/GetByID", {
+    params: query
+  });
 };
 
 // 终端厂商管理

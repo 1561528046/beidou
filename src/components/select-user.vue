@@ -17,7 +17,7 @@
             }
         },
         watch: {
-            device_type: function () {
+            user_id: function () {
                 this.$emit("input", this.user_id);
             }
         },
@@ -28,6 +28,7 @@
             getUserAll().then(res => {
                 if (res.data.code == 0 && res.data.data.length) {
                     this.$set(this.$data, "users", res.data.data);
+                    this.user_id = this.value;
                 }
             })
         },

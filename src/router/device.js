@@ -45,7 +45,7 @@ export default {
     },
     {
       path: "sim",
-      name: "device-sim",
+      name: "sim",
       meta: {
         name: "SIM卡管理",
         icon: "iconfont icon-boxplot-fill"
@@ -53,13 +53,13 @@ export default {
       component: () => import("@/views/manage/device/sim/index.vue")
     },
     {
-      path: "sim-device-add",
+      path: "sim-add",
       name: "sim-add",
       meta: { name: "SIM卡管理-添加", hidden: true },
       component: () => import("@/views/manage/device/sim/add.vue")
     },
     {
-      path: "sim-device-update",
+      path: "sim-update/:sim_no",
       name: "sim-update",
       meta: { name: "SIM卡管理-添加", hidden: true },
       component: () => import("@/views/manage/device/sim/update.vue")

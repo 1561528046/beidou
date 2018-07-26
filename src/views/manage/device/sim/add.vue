@@ -27,8 +27,6 @@
             <el-form-item style="text-align:center;">
                 <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
             </el-form-item>
-
-            <!-- <button @click="$router.go(-1)">a</button> -->
         </el-form>
     </div>
 </template>
@@ -59,12 +57,14 @@
             formSubmit() {
                 this.$refs.baseForm.validate((isVaildate, errorItem) => {
                     if (isVaildate) {
-                        addSim(this.formData)
+                        var postData = Object.assign({}, this.formData);
+                        addSim(postData)
                             .then(res => {
-                                if (res.data.data.code == 0) {
-                                    alert(1);
+                                if (res.data.code == 0) {
+                                    this.$message.success(res.data.msg);
+                                    this.$router.push({ "name": "sim" })
                                 } else {
-                                    alert(2);
+                                    this.$message.error(res.data.msg);
                                 }
                             })
                             .catch(() => { });

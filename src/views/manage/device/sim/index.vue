@@ -57,15 +57,15 @@
                 </el-table-column>
                 <el-table-column prop="icc_id" label="ICCID">
                 </el-table-column>
-                <el-table-column prop="belong" label="所属运营商"> </el-table-column>
-                <el-table-column prop="user_id" label="分配客户"></el-table-column>
-                <el-table-column prop="state" label="当前状态"></el-table-column>
-                <el-table-column prop="note" label="备注"></el-table-column>
+                <el-table-column prop="belong" label="所属运营商" :formatter="baseFormatter"> </el-table-column>
+                <el-table-column prop="user_id" label="分配客户" :formatter="baseFormatter"></el-table-column>
+                <el-table-column prop="state" label="当前状态" :formatter="()=>{console.log(this)}"></el-table-column>
+                <el-table-column prop="note" label="备注" :formatter="baseFormatter"></el-table-column>
 
                 <el-table-column fixed="right" label="操作" width="100">
                     <template slot-scope="scope">
                         <el-button type="text" size="small">
-                            <router-link :to="{name:'sim-update'}" style="display: block;">编辑
+                            <router-link :to="{name:'sim-update',params:{sim_no:scope.row.sim_no}}" style="display: block;">编辑
                             </router-link>
                         </el-button>
                     </template>
@@ -81,7 +81,7 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getDeviceSimList } from "@/api/index.js";
+    import { getSimList } from "@/api/index.js";
     export default {
         created() {
             this.getTable();
@@ -103,15 +103,8 @@
             };
         },
         methods: {
-            formatter(row, column) {
-                return row.address;
-            },
-            filterTag(value, row) {
-                return row.tag === value;
-            },
-            filterHandler(value, row, column) {
-                const property = column["property"];
-                return row[property] === value;
+            baseFormatter(row, column, cellValue, index) {
+                return cellValue || "--";
             },
             handleSizeChange(val) {
                 this.tableQuery.page = 1;
@@ -124,7 +117,7 @@
             },
             getTable() {
                 this.tableLoading = true;
-                getDeviceSimList(this.tableQuery)
+                getSimList(this.tableQuery)
                     .then(res => {
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;

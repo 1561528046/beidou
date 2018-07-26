@@ -66,7 +66,7 @@
               .then(res => {
                 if (res.data.code == 0) {
                   this.$message.success(res.data.msg);
-                  this.$router.push({ "name": "driver" })
+                  this.$router.push({ "name": "device-sim" })
                 } else {
                   this.$message.error(res.data.msg);
                 }
