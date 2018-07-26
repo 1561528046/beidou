@@ -142,10 +142,15 @@
             postData.device_total = postData.device_total || 0;
             addUser(postData)
               .then(res => {
-                if (res.data.data.code == 0) {
-                  alert(1);
+                if (res.data.code == 0) {
+                  this.$message.success(res.data.msg);
+                  if (this.$props.user_type == 1) {
+                    this.$router.push({ "name": "user_person" })
+                  } else {
+                    this.$router.push({ "name": "user_company" })
+                  }
                 } else {
-                  alert(2);
+                  this.$message.error(res.data.msg);
                 }
               })
               .catch(() => { });

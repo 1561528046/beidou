@@ -3,7 +3,7 @@
     <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
       <el-card shadow="hover">
         <div slot="header" class="clearfix">
-          <span>添加用户 </span>
+          <span>添加司机 </span>
         </div>
         <el-form-item label="司机卡id" prop="driver_card_id">
           <el-input v-model="formData.driver_card_id" maxlength="10"></el-input>
@@ -35,7 +35,7 @@
 </template>
 <script>
   import { rules } from "@/utils/rules.js";
-  import { addUser } from "@/api/index.js";
+  import { addDriver } from "@/api/index.js";
   export default {
     data() {
       return {
@@ -54,38 +54,22 @@
       };
     },
     computed: {},
-    props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
     created() {
 
     },
     methods: {
-      validatePassword(rule, value, callback) {
-        if (this.formData.pass_word) {
-          if (this.formData.re_pass_word != "") {
-            this.$refs.baseForm.validateField('re_pass_word')
-          }
-          callback();
-        } else {
-          callback(new Error('请输入密码'));
-        }
-
-
-      },
-      validatePassword2(rule, value, callback) {
-        if (this.formData.pass_word === this.formData.re_pass_word) {
-          callback();
-        } else {
-          callback(new Error("两次密码不一样"));
-        }
-
-      },
       formSubmit() {
         this.$refs.baseForm.validate((isVaildate, errorItem) => {
           if (isVaildate) {
             var postData = Object.assign({}, this.formData);
-            addUser(postData)
+            addDriver(postData)
               .then(res => {
-                console.log(res);
+                if (res.data.code == 0) {
+                  this.$message.success(res.data.msg);
+                  this.$router.push({ "name": "device-sim" })
+                } else {
+                  this.$message.error(res.data.msg);
+                }
               })
               .catch(() => { });
           } else {

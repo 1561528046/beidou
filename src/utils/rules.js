@@ -9,7 +9,6 @@ export const rules = {
   user_name: [
     { required: true, message: "请输入用户名", trigger: "change" },
     {
-      required: true,
       min: 3,
       max: 20,
       message: "长度在 3 到 20 个字符",
@@ -33,6 +32,14 @@ export const rules = {
     { required: true, message: "请输入sim id", trigger: "change" },
     {
       required: true,
+      min: 11,
+      max: 14,
+      message: "长度在 11 到 14 个字符",
+      trigger: "change"
+    }
+  ],
+  sim_no: [
+    {
       min: 11,
       max: 14,
       message: "长度在 11 到 14 个字符",

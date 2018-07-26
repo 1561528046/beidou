@@ -63,7 +63,7 @@ export default {
       component: () => import("@/views/manage/user/driver/add.vue")
     },
     {
-      path: "driver_update/:user_id",
+      path: "driver_update/:driver_card_id",
       name: "driver_update",
       meta: { name: "编辑个人用户", hidden: true },
       component: () => import("@/views/manage/user/driver/update.vue")

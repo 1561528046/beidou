@@ -70,7 +70,7 @@
 </template>
 <script>
 
-    import { getUserList } from "@/api/index.js";
+    import { getDriverList } from "@/api/index.js";
     import citySelect from "@/components/city-select.vue";
     export default {
         created() {
@@ -107,7 +107,7 @@
                 this.tableLoading = true;
                 var areaObj = this.$utils.formatArea(this.tableQuery.area);
                 var query = Object.assign({}, this.tableQuery, areaObj);
-                getUserList(query)
+                getDriverList(query)
                     .then(res => {
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
@@ -118,11 +118,3 @@
         components: { citySelect }
     };
 </script>
-<style scoped lang="less">
-    .vehicle-form {
-        padding: 20px;
-        .el-card {
-            margin-bottom: 20px;
-        }
-    }
-</style>
