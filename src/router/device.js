@@ -17,7 +17,7 @@ export default {
       component: () => import("@/views/manage/device/device/add.vue")
     },
     {
-      path: "update",
+      path: "update/:device_id",
       name: "device-update",
       meta: { name: "设备管理-编辑", hidden: true },
       component: () => import("@/views/manage/device/device/update.vue")

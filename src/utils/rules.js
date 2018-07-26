@@ -18,16 +18,6 @@ export const rules = {
   device_type: [
     { required: true, message: "请选择设备类型", trigger: "change" }
   ],
-  device_id: [
-    { required: true, message: "请输入设备Id", trigger: "change" },
-    {
-      required: true,
-      min: 3,
-      max: 10,
-      message: "长度在 3 到 10 个字符",
-      trigger: "change"
-    }
-  ],
   sim_id: [
     { required: true, message: "请输入sim id", trigger: "change" },
     {

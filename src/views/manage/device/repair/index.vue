@@ -9,32 +9,9 @@
                             <select-devicetype v-model="tableQuery.state"></select-devicetype>
                         </el-form-item>
                     </el-col>
-                    <!-- <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
-                        </el-form-item>
-                    </el-col> -->
-                    <!-- <el-col :span="6" v-show="isCollapse">
-                        <el-form-item label="活动区域">
-                            <el-select v-model="tableQuery.region" placeholder="活动区域" style="width:100%;">
-                                <el-option label="区域一" value="shanghai"></el-option>
-                                <el-option label="区域二" value="beijing"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6" v-show="isCollapse">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
-                        </el-form-item>
-                    </el-col>-->
                     <el-col :span="isCollapse?24:6" style="text-align: right;">
                         <el-form-item>
-                            <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
+                            <!-- <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button> -->
                             <el-button type="primary" @click="getTable">查询</el-button>
                         </el-form-item>
                     </el-col>
@@ -43,7 +20,7 @@
         </el-card>
         <el-card shadow="always">
             <div class="admin-table-actions">
-                <router-link :to="{name:'repair-add'}" style="display: block;">
+                <router-link :to="{name:'repair-add'}">
                     <el-button type="primary" size="small">
                         <i class="el-icon-upload el-icon--right"></i> 添加
                     </el-button>
@@ -63,9 +40,8 @@
                 </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" size="small">已修复</el-button>
-                        <el-button @click="handleClick(scope.row)" type="text" size="small">报废</el-button>
-                        <el-button @click="handleClick(scope.row)" type="text" size="small">更换</el-button>
+                        <el-button type="text" size="small" @click="repaired(scope,2)">已修复</el-button>
+                        <el-button type="text" size="small" @click="repaired(scope,3)">报废</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -80,7 +56,7 @@
 <script>
     /* eslint-disable */
     import selectDevicetype from "@/components/select-devicetype.vue";
-    import { getDeviceRepairList } from "@/api/index.js";
+    import { getDeviceRepairList, updateDeviceRepair } from "@/api/index.js";
     export default {
         created() {
             this.getTable();
@@ -102,15 +78,17 @@
             };
         },
         methods: {
-            formatter(row) {
-                return row.address;
-            },
-            filterTag(value, row) {
-                return row.tag === value;
-            },
-            filterHandler(value, row, column) {
-                const property = column["property"];
-                return row[property] === value;
+            repaired(scope, state) {
+                updateDeviceRepair(scope.row).then(res => {
+                    if (res.data.code == 0) {
+                        this.$message.success(res.data.msg);
+                        scope.row.state = state;
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+
+                })
+
             },
             handleSizeChange(val) {
                 this.tableQuery.page = 1;
