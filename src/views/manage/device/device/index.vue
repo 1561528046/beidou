@@ -24,11 +24,11 @@
               <el-input placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>-->
-          <el-col :span="6">
+          <!-- <el-col :span="6">
             <el-form-item label="协议类型">
-              <!-- <select-protocoltype v-model="tableQuery.protocol_type"></select-protocoltype> -->
+              <select-protocoltype v-model="tableQuery.protocol_type"></select-protocoltype>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>

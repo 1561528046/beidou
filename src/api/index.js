@@ -77,6 +77,11 @@ export const getDeviceList = query => {
     params: query
   });
 };
+export const getDeviceOneList = query => {
+  return ajax.get("/device/GetByID", {
+    params: query
+  });
+};
 export const getDeviceAdd = query => {
   query = qs.stringify(query);
   return ajax.post("/device/Add", query);
@@ -109,6 +114,7 @@ export const getDeviceCompany = query => {
     params: query
   });
 };
+// 用户管理
 export const getUserList = query => {
   return ajax.get("/user/GetUserByPage", {
     params: query

@@ -1,32 +1,48 @@
 <template>
     <div class="vehicle-form">
-        <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small">
+        <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
             <!-- 设备信息 -->
             <el-card shadow="hover">
                 <div slot="header" class="clearfix">
                     <span>设备信息 </span>
                 </div>
                 <el-row :gutter="20">
+                    <!-- 不能为NULL -->
                     <el-col :span="20">
-                        <el-form-item label="设备类型">
+                        <el-form-item label="设备Id" prop="device_id">
+                            <el-input v-model="formData.device_id"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <!-- 不能为NULL -->
+                    <el-col :span="20">
+                        <el-form-item label="设备类型" prop="device_type">
                             <el-select v-model="formData.device_type" placeholder="选择设备类型" style="width:100%;">
                                 <el-option label="定位终端" value="1"></el-option>
                                 <el-option label="视频终端" value="2"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
+                    <!-- 不能为NULL -->
                     <el-col :span="20">
-                        <el-form-item label="设备Id">
-                            <el-input v-model="formData.device_id"></el-input>
+                        <el-form-item label="设备序列号" prop="device_no">
+                            <el-input v-model="formData.device_no"></el-input>
                         </el-form-item>
                     </el-col>
+                    <!-- 不能为NULL -->
                     <el-col :span="20">
-                        <el-form-item label="Sim Id">
+                        <el-form-item label="设备厂家Id" prop="company_id">
+                            <el-input v-model="formData.company_id"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <!-- 不能为NULL -->
+                    <el-col :span="20">
+                        <el-form-item label="Sim Id" prop="sim_id">
                             <el-input v-model="formData.sim_id"></el-input>
                         </el-form-item>
                     </el-col>
+                    <!-- 不能为NULL -->
                     <el-col :span="20">
-                        <el-form-item label="协议类型">
+                        <el-form-item label="协议类型" prop="protocol_type">
                             <el-select v-model="formData.protocol_type" placeholder="选择协议类型" style="width:100%;">
                                 <el-option label="808部标协议" value="1"></el-option>
                                 <el-option label="1078部标协议" value="2"></el-option>
@@ -34,38 +50,47 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="20">
-                        <el-form-item label="设备厂商">
-                            <el-input v-model="formData.company_name"></el-input>
+                        <el-form-item label="安装日期" prop="install_date">
+                            <el-input v-model="formData.install_date"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="20">
-                        <el-form-item label="设备序列号">
-                            <el-input v-model="formData.device_no"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-form-item label="摄像头数量">
+                        <el-form-item label="摄像头数量" prop="camera_num">
                             <el-input v-model="formData.camera_num"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="20">
-                        <el-form-item label="存储介质">
-                            <el-input v-model="formData.save_media"></el-input>
+                        <el-form-item label="存储介质" prop="save_media">
+                            <el-select v-model="formData.save_media" placeholder="选择" style="width:100%;">
+                                <el-option label="硬盘" value="1"></el-option>
+                                <el-option label="SD卡" value="2"></el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="20">
-                        <el-form-item label="状态">
-                            <el-select v-model="formData.state" placeholder="选择状态" style="width:100%;">
+                        <el-form-item label="状态" prop="state">
+                            <el-select v-model="formData.state" placeholder="选择" style="width:100%;">
                                 <el-option label="正常" value="1"></el-option>
                                 <el-option label="删除" value="2"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="20">
+                        <el-form-item label="添加时间" prop="time">
+                            <el-input v-model="formData.time"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="20">
+                        <el-form-item label="设备厂商" prop="company_name">
+                            <el-input v-model="formData.company_name"></el-input>
+                        </el-form-item>
+                    </el-col>
+
                 </el-row>
             </el-card>
 
             <el-form-item style="text-align:center;">
-                <el-button type="primary" size="large">添加</el-button>
+                <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
             </el-form-item>
 
             <!-- <button @click="$router.go(-1)">a</button> -->
@@ -87,58 +112,54 @@
     //   "添加时间"
     // ];
     import { rules } from "@/utils/rules.js";
-    import moment from "moment";
-    // import { getDeviceAdd } from "@/api/index.js";
     // 城市
     import citySelect from "@/components/city-select.vue";
+    // import { getDeviceAdd } from "@/api/index.js";
     export default {
         data() {
             return {
                 formData: {
-                    "device_type": "",
+                    area: [],
                     "device_id": "",
+                    "device_type": "",
+                    "device_no": "",
+                    "company_id": "",
                     "sim_id": "",
                     "protocol_type": "",
-                    "company_name": "",
-                    "device_no": "",
+                    "install_date": "",
                     "camera_num": "",
                     "save_media": "",
-                    "state": ""
-                },
-                // 时间
-                pickerOptions: {
-                    shortcuts: [
-                        {
-                            text: "今天",
-                            onClick(picker) {
-                                picker.$emit("pick", new Date());
-                            }
-                        },
-                        {
-                            text: "一年后",
-                            onClick(picker) {
-                                const date = moment(new Date()).add(1, "year");
-                                picker.$emit("pick", date);
-                            }
-                        },
-                        {
-                            text: "两年后",
-                            onClick(picker) {
-                                const date = moment(new Date()).add(2, "year");
-                                picker.$emit("pick", date);
-                            }
-                        }
-                    ]
+                    "state": "",
+                    "time": "",
+                    "company_name": "",
                 },
                 rules: {
                     ...rules,
+                    protocol_type: [
+                        {
+                            required: true,
+                            message: "请选择协议类型",
+                            trigger: "change"
+                        }
+                    ],
+                    device_no: [
+                        {
+                            required: true,
+                            message: "请输入设备序列号",
+                            trigger: "change"
+                        },
+                        {}
+                    ]
                 }
             };
         },
-        computed: {
-        },
+        computed: {},
         created() { },
-        methods: {},
+        methods: {
+            formSubmit() {
+
+            }
+        },
         components: { citySelect }
     };
 </script>
