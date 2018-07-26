@@ -35,7 +35,7 @@
                     <el-input v-model="formData.device_no"></el-input>
                 </el-form-item>
                 <el-form-item label="Sim Id" prop="sim_id">
-                    <el-input v-model="formData.sim_id"></el-input>
+                    <el-input v-model="formData.sim_id" maxlength="14"></el-input>
                 </el-form-item>
                 <el-form-item label="安装日期" prop="install_date">
                     <el-input v-model="formData.install_date"></el-input>
