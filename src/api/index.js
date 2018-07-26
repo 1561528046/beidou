@@ -6,7 +6,8 @@ const ajax = axios.create({
   headers: {
     "Content-Type": "application/x-www-form-urlencoded" //请求头
   },
-  baseURL: "http://192.168.88.6:5000/mock/11/",
+  //baseURL: "http://192.168.88.6:5000/mock/11/",
+  baseURL: "http://192.168.88.100:725/api/",
   timeout: 5000 // request timeout
 });
 // 添加请求拦截器
