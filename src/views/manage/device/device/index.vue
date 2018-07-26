@@ -84,7 +84,7 @@
 <script>
   import selectDevicetype from "@/components/select-devicetype.vue";
   // import selectProtocoltype from "@/components/select-protocoltype.vue";
-  import { getDeviceList } from "@/api/index.js";
+  import { DeviceList } from "@/api/index.js";
   export default {
     created() {
       this.getTable();
@@ -127,7 +127,7 @@
       },
       getTable() {
         this.tableLoading = true;
-        getDeviceList(this.tableQuery)
+        DeviceList(this.tableQuery)
           .then(res => {
             this.$set(this.$data, "tableData", res.data);
             this.tableLoading = false;
