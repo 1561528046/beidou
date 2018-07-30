@@ -61,7 +61,7 @@ export default {
     {
       path: "sim-update/:sim_no",
       name: "sim-update",
-      meta: { name: "SIM卡管理-添加", hidden: true },
+      meta: { name: "SIM卡管理-编辑", hidden: true },
       component: () => import("@/views/manage/device/sim/update.vue")
     },
     {

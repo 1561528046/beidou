@@ -59,7 +59,7 @@
                 </el-table-column>
                 <el-table-column prop="belong" label="所属运营商" :formatter="baseFormatter"> </el-table-column>
                 <el-table-column prop="user_id" label="分配客户" :formatter="baseFormatter"></el-table-column>
-                <el-table-column prop="state" label="当前状态" :formatter="()=>{console.log(this)}"></el-table-column>
+                <el-table-column prop="state" label="当前状态" :formatter="(row)=>{return this.$dict.get_sim_state(row.state)}"></el-table-column>
                 <el-table-column prop="note" label="备注" :formatter="baseFormatter"></el-table-column>
 
                 <el-table-column fixed="right" label="操作" width="100">

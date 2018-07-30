@@ -46,9 +46,7 @@
                 },
                 rules: {
                     ...rules,
-                    sim_no: [{ required: true, message: "请输入SIM卡号", trigger: "change" }].concat(rules.sim_no),
-                    user_id: [{ required: true, message: "请选择用户", trigger: "change" }]
-
+                    sim_no: [{ required: true, message: "请输入SIM卡号", trigger: "change" }].concat(rules.sim_no)
                 }
             };
         },

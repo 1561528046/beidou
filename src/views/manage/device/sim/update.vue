@@ -32,13 +32,13 @@
 </template>
 <script>
     import { rules } from "@/utils/rules.js";
-    import { addSim, getSim } from "@/api/index.js";
+    import { updateSim, getSim } from "@/api/index.js";
     import userSelect from "@/components/select-user.vue";
     export default {
         data() {
             return {
                 formData: {
-                    sim_no: "",
+                    sim_no: this.$route.params.sim_no,
                     icc_id: "",
                     belong: "",
                     user_id: "",
@@ -53,7 +53,7 @@
         },
         computed: {},
         created() {
-            getSim({ sim_no: this.formData.sim_no }).then((res) => {
+            getSim({ id: this.formData.sim_no }).then((res) => {
                 if (res.data.code == 0 && res.data.data.length) {
                     var mixinData = Object.assign({}, this.formData, res.data.data[0]);
                     this.$set(this.$data, "formData", mixinData);
@@ -65,7 +65,8 @@
                 this.$refs.baseForm.validate((isVaildate, errorItem) => {
                     if (isVaildate) {
                         var postData = Object.assign({}, this.formData);
-                        addSim(postData)
+                        postData.id = postData.sim_no
+                        updateSim(postData)
                             .then(res => {
                                 if (res.data.code == 0) {
                                     this.$message.success(res.data.msg);
