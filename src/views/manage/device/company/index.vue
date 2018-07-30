@@ -5,21 +5,16 @@
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
+                        <el-form-item label="厂商名称">
+                            <el-input v-model="tableQuery.name" placeholder="请选择"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
+                        <el-form-item label="厂商类型">
+                            <select-companytype v-model="tableQuery.type"></select-companytype>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6" v-show="isCollapse">
+                    <!-- <el-col :span="6" v-show="isCollapse">
                         <el-form-item label="活动区域">
                             <el-select v-model="tableQuery.region" placeholder="活动区域" style="width:100%;">
                                 <el-option label="区域一" value="shanghai"></el-option>
@@ -31,7 +26,7 @@
                         <el-form-item label="审批人">
                             <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="isCollapse?24:6" style="text-align: right;">
                         <el-form-item>
                             <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
@@ -75,6 +70,7 @@
 <script>
     /* eslint-disable */
     import { getDeviceCompanyAll } from "@/api/index.js";
+    import selectCompanytype from "@/components/select-companytype.vue";
     export default {
         created() {
             this.getTable();
@@ -124,6 +120,7 @@
                     })
                     .catch(() => { });
             }
-        }
+        },
+        components: { selectCompanytype }
     };
 </script>

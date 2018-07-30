@@ -4,14 +4,14 @@
 
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
-                    <el-col :span="6">
+                    <el-col :span="8">
                         <el-form-item label="维修状态">
                             <select-repairstate v-model="tableQuery.state"></select-repairstate>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="isCollapse?24:6" style="text-align: right;">
+                    <el-col :span="isCollapse?24:8" style="text-align: right;">
                         <el-form-item>
-                            <!-- <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button> -->
+                            <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
                             <el-button type="primary" @click="getTable">查询</el-button>
                         </el-form-item>
                     </el-col>
@@ -78,17 +78,12 @@
             };
         },
         methods: {
+            //查询
             getTable() {
-                if (this.tableQuery.state == undefined) {
-                    alert(1);
-                }
                 console.log(this.tableQuery)
-                // getDeviceRepairList(this.tableQuery.state)
-                //     .then(res => {
-                //         console.log(res)
-                //         // this.$set(this.$data, "tableData", res.data);
-                //         // this.tableLoading = false;
-                //     })
+                getDeviceRepairList(this.tableQuery)
+                    .then(res => {
+                    })
             },
             repaired(scope, state) {
                 updateDeviceRepair(scope.row).then(res => {
@@ -113,10 +108,9 @@
             },
             getListTable() {
                 this.tableLoading = true;
-                console.log(this.tableQuery)
                 getDeviceRepairList(this.tableQuery)
                     .then(res => {
-                        // console.log(res)
+                        console.log(res)
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
                     })
