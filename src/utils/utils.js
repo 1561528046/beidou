@@ -10,5 +10,13 @@ export default {
       county_id: area[2]
     };
     return result;
-  }
+  },
+  baseFormatter(row, column, cellValue) {
+    return cellValue || "--";
+  },
+  /**
+   *
+   * @param {String} dateStr 20170808 20170808010101
+   */
+  formatDate(dateStr) {}
 };
