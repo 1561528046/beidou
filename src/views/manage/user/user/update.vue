@@ -1,52 +1,74 @@
 <template>
   <div class="post-form">
-    <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
-      <el-card shadow="hover">
-        <div slot="header" class="clearfix">
-          <span>添加用户 </span>
-        </div>
-        <el-form-item label="用户帐号" prop="user_name">
-          <el-input v-model="formData.user_name"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="pass_word">
-          <el-input v-model="formData.pass_word" type="password"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="re_pass_word">
-          <el-input v-model="formData.re_pass_word" type="password"></el-input>
-        </el-form-item>
-        <el-form-item label="所属角色" prop="role_id">
-          <el-select v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;">
-            <el-option label="代理" value="1"></el-option>
-            <el-option label="监控员" value="2"></el-option>
-          </el-select>
-        </el-form-item>
+    <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+      <el-row :gutter="30">
+        <el-col :span="12">
+          <el-form-item label="用户帐号" prop="user_name">
+            <el-input v-model="formData.user_name"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="密码" prop="pass_word">
+            <el-input v-model="formData.pass_word" type="password"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="密码" prop="re_pass_word">
+            <el-input v-model="formData.re_pass_word" type="password"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="所属角色" prop="role_id">
+            <el-select v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;">
+              <el-option label="代理" value="1"></el-option>
+              <el-option label="监控员" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
         <template v-if="user_type==2">
-          <el-form-item label="公司名称" prop="company">
-            <el-input v-model="formData.company" maxlength="255"></el-input>
-          </el-form-item>
-          <el-form-item label="所属行业" prop="industry">
-            <el-input v-model="formData.industry" maxlength="255"></el-input>
-          </el-form-item>
-          <el-form-item label="所属地区">
-            <city-select v-model="formData.area" style="width:100%;"></city-select>
-          </el-form-item>
+
+
+
+
+          <el-col :span="12">
+            <el-form-item label="公司名称" prop="company">
+              <el-input v-model="formData.company" maxlength="255"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="所属行业" prop="industry">
+              <el-input v-model="formData.industry" maxlength="255"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="所属地区">
+              <city-select v-model="formData.area" style="width:100%;"></city-select>
+            </el-form-item>
+          </el-col>
         </template>
-        <el-form-item label="联系人" prop="linkman">
-          <el-input v-model="formData.linkman" maxlength="20"></el-input>
-        </el-form-item>
+        <el-col :span="12">
+          <el-form-item label="联系人" prop="linkman">
+            <el-input v-model="formData.linkman" maxlength="20"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="联系电话" prop="tel">
+            <el-input v-model="formData.tel" maxlength="20"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="地址" prop="address">
+            <el-input v-model="formData.address"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="授权总量" prop="device_total">
+            <el-switch v-model="device_total_turn"> </el-switch>
+            <el-input v-model="formData.device_total" v-if="device_total_turn"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-        <el-form-item label="联系电话" prop="tel">
-          <el-input v-model="formData.tel" maxlength="20"></el-input>
-        </el-form-item>
-
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="formData.address"></el-input>
-        </el-form-item>
-        <el-form-item label="授权总量" prop="device_total">
-          <el-switch v-model="device_total_turn"> </el-switch>
-          <el-input v-model="formData.device_total" v-if="device_total_turn"></el-input>
-        </el-form-item>
-      </el-card>
 
       <el-form-item style="text-align:center; padding-top:20px;">
         <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
@@ -63,7 +85,7 @@
       return {
         device_total_turn: true,
         formData: {
-          user_id: this.$route.params.user_id,
+          user_id: "",
           area: [],
           "user_name": "",
           pass_word: "",
@@ -109,8 +131,9 @@
         this.formData.device_total = "";
       }
     },
-    props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
+    props: ["user_type", "user_id"],//来自router的user_type 根据user_type 区分公司和个人
     created() {
+      this.formData.user_id = this.user_id;
       getUser({ user_id: this.formData.user_id }).then((res) => {
         if (res.data.code == 0 && res.data.data.length) {
           var mixinData = Object.assign({}, this.formData, res.data.data[0]);
@@ -153,17 +176,17 @@
             updateUser(postData)
               .then(res => {
                 if (res.data.code == 0) {
+                  this.$emit("success");
                   this.$message.success(res.data.msg);
-                  if (this.$props.user_type == 1) {
-                    this.$router.push({ "name": "user_person" })
-                  } else {
-                    this.$router.push({ "name": "user_company" })
-                  }
                 } else {
+                  this.$emit("error");
                   this.$message.error(res.data.msg);
                 }
               })
-              .catch(() => { });
+              .catch(() => {
+                this.$message.error("接口错误");
+                this.$emit("error");
+              });
           } else {
             var errormsg = "";
             for (var key in errorItem) {

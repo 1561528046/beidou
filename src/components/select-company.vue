@@ -1,13 +1,12 @@
 <template>
-    <div>
-        <el-select v-model="company_id" placeholder="请选择" filterable>
-            <el-option v-for="item in list" :key="item.company_id" :label="item.company_name" :value="item.company_id">
-            </el-option>
-        </el-select>
-    </div>
+    <el-select v-model="company_id" placeholder="请选择" filterable>
+        <el-option v-for="item in list" :key="item.company_id" :label="item.company_name" :value="item.company_id">
+        </el-option>
+    </el-select>
+
 </template>
 <script>
-    import { getDeviceCompany } from "@/api/index.js";
+    import { getDeviceCompanyAll } from "@/api/index.js";
     export default {
         name: "select-user",
         data() {
@@ -25,10 +24,12 @@
             value: String
         },
         created() {
-            getDeviceCompany().then(res => {
+            getDeviceCompanyAll().then(res => {
                 if (res.data.code == 0 && res.data.data.length) {
                     this.$set(this.$data, "list", res.data.data);
-                    this.company_id = this.value;
+                    if (this.value.length) {
+                        this.company_id = this.value;
+                    }
                 }
             })
         },

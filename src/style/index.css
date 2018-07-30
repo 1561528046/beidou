@@ -81,3 +81,16 @@ a {
 .admin-message-form {
   width: auto;
 }
+.msg-form {
+  width: 800px;
+}
+.admin-message-form {
+  height: 80%;
+}
+.admin-message-form .el-message-box__content {
+  height: 100%;
+  overflow: auto;
+}
+.admin-message-form .el-message-box__content .el-message-box__message {
+  padding-bottom: 25px;
+}
