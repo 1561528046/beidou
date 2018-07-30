@@ -4,33 +4,27 @@
 
       <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
-          <el-form-item label="设备类型">
-            <select-devicetype v-model="tableQuery.device_type"></select-devicetype>
-          </el-form-item>
-          <el-form-item label="协议类型">
-            <select-protocoltype v-model="tableQuery.protocol_type"></select-protocoltype>
-          </el-form-item>
-          <!-- <el-col :span="6">
-            <el-form-item label="设备序列号">
+          <el-col :span="7">
+            <el-form-item label="设备类型">
+              <select-devicetype style="width: 100%;" v-model="tableQuery.device_type"></select-devicetype>
+            </el-form-item>
+          </el-col>
+          <el-col :span="7">
+            <el-form-item label-width="84px" label="设备序列号">
               <el-input placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="7">
             <el-form-item label="设备厂商">
               <el-input placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="7">
             <el-form-item label="simid">
               <el-input placeholder="请输入内容"></el-input>
             </el-form-item>
-          </el-col>-->
-          <!-- <el-col :span="6">
-            <el-form-item label="协议类型">
-              <select-protocoltype v-model="tableQuery.protocol_type"></select-protocoltype>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="6">
+          </el-col>
+          <el-col :span="isCollapse?24:7" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
               <el-button type="primary" @click="getTable">查询</el-button>

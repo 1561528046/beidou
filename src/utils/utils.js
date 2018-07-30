@@ -13,10 +13,10 @@ export default {
   },
   baseFormatter(row, column, cellValue) {
     return cellValue || "--";
-  },
+  }
   /**
    *
    * @param {String} dateStr 20170808 20170808010101
    */
-  formatDate(dateStr) {}
+  // formatDate(dateStr) {}
 };

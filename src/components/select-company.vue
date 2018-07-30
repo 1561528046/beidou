@@ -7,7 +7,7 @@
     </div>
 </template>
 <script>
-    import { getDeviceCompany } from "@/api/index.js";
+    import { getDeviceCompanyAll } from "@/api/index.js";
     export default {
         name: "select-user",
         data() {
@@ -25,7 +25,7 @@
             value: String
         },
         created() {
-            getDeviceCompany().then(res => {
+            getDeviceCompanyAll().then(res => {
                 if (res.data.code == 0 && res.data.data.length) {
                     this.$set(this.$data, "list", res.data.data);
                     this.company_id = this.value;

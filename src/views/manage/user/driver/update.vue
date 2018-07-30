@@ -80,6 +80,7 @@
         this.$refs.baseForm.validate((isVaildate, errorItem) => {
           if (isVaildate) {
             var postData = Object.assign({}, this.formData);
+            console.log(postData)
             updateDriver(postData)
               .then(res => {
                 if (res.data.code == 0) {
