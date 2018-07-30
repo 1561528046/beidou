@@ -69,7 +69,7 @@
               <router-link :to="{name:'device-update',params:{device_id:scope.row.device_id}}" style="display: block;">编辑
               </router-link>
             </el-button>
-            <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
+            <el-button @click="handleClick(scope)" type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -85,7 +85,7 @@
 <script>
   import selectDevicetype from "@/components/select-devicetype.vue";
   import selectProtocoltype from "@/components/select-protocoltype.vue";
-  import { DeviceList } from "@/api/index.js";
+  import { DeviceList, delDevice } from "@/api/index.js";
   export default {
     created() {
       this.getTable();
@@ -126,12 +126,27 @@
         this.tableQuery.page = val;
         this.getTable();
       },
+      //列表信息
       getTable() {
         this.tableLoading = true;
         DeviceList(this.tableQuery)
           .then(res => {
             this.$set(this.$data, "tableData", res.data);
             this.tableLoading = false;
+          })
+          .catch(() => { });
+      },
+      handleClick(scope) {
+        this.$confirm('确认删除？')
+          .then(() => {
+            delDevice({ id: scope.row.device_id }).then((res) => {
+              if (res.data.code == 0) {
+                this.$message.success(res.data.msg);
+                this.getTable();
+              } else {
+                this.$message.error(res.data.msg);
+              }
+            })
           })
           .catch(() => { });
       }

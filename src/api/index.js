@@ -91,7 +91,9 @@ export const getDevice = query => {
 };
 export const addDevice = query => {
   query = qs.stringify(query);
-  return ajax.post("/device/Add", query);
+  return ajax.post("/device/Add", query, {
+    params: query
+  });
 };
 export const updateDevice = query => {
   var queryQS = qs.stringify(query);
@@ -100,8 +102,10 @@ export const updateDevice = query => {
   });
 };
 export const delDevice = query => {
-  query = qs.stringify(query);
-  return ajax.post("/device/Delete", query);
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device/Delete", queryQS, {
+    params: query
+  });
 };
 
 // 维修设备管理
