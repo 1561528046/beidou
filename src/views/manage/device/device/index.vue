@@ -139,8 +139,3 @@
     components: { selectDevicetype, selectProtocoltype },
   };
 </script>
-<style>
-  .el-form-item {
-    float: left;
-  }
-</style>

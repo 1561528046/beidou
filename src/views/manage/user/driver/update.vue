@@ -1,37 +1,45 @@
 <template>
-  <div class="post-form">
-    <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
-      <el-card shadow="hover">
-        <div slot="header" class="clearfix">
-          <span>编辑司机信息 </span>
-        </div>
+  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" style="width:800px;">
+    <el-row :gutter="30">
+      <el-col :span="12">
         <el-form-item label="司机卡id" prop="driver_card_id">
           <el-input v-model="formData.driver_card_id" maxlength="10"></el-input>
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="姓名" prop="driver_name">
           <el-input v-model="formData.driver_name" maxlength="20"></el-input>
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="联系电话" prop="tel">
           <el-input v-model="formData.tel" maxlength="20"></el-input>
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="驾驶证有效期" prop="license_validity">
           <el-date-picker v-model="formData.license_validity" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd"
             style="width:100%;">
           </el-date-picker>
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="身份证 " prop="identity_id">
           <el-input v-model="formData.identity_id" maxlength="20"></el-input>
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="选择车辆" prop="vehicle_id">
           <el-input v-model="formData.vehicle_id"></el-input>
         </el-form-item>
-      </el-card>
+      </el-col>
+    </el-row>
 
-      <el-form-item style="text-align:center; padding-top:20px;">
-        <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
-      </el-form-item>
-    </el-form>
-  </div>
+
+    <el-form-item style="text-align:center; padding-top:20px;">
+      <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
+    </el-form-item>
+  </el-form>
 </template>
 <script>
   import { rules } from "@/utils/rules.js";
@@ -40,7 +48,7 @@
     data() {
       return {
         formData: {
-          driver_card_id: this.$route.params.driver_card_id,
+          driver_card_id: this.$props.driver_card_id,
           "driver_name": "",
           "tel": "",
           "license_validity": "",
@@ -53,8 +61,13 @@
         }
       };
     },
+    props: {
+      driver_card_id: String,
+    },
     computed: {},
     created() {
+      //this.formData.driver_card_id = this.driver_card_id;
+      console.log(this.driver_card_id)
       getDriver({ driver_card_id: this.formData.driver_card_id }).then((res) => {
         if (res.data.code == 0 && res.data.data.length) {
           var mixinData = Object.assign({}, this.formData, res.data.data[0]);
@@ -70,13 +83,17 @@
             updateDriver(postData)
               .then(res => {
                 if (res.data.code == 0) {
+                  this.$emit("success");
                   this.$message.success(res.data.msg);
-                  this.$router.push({ "name": "driver" })
                 } else {
+                  this.$emit("error");
                   this.$message.error(res.data.msg);
                 }
               })
-              .catch(() => { });
+              .catch(() => {
+                this.$message.error("接口错误");
+                this.$emit("error");
+              });
           } else {
             var errormsg = "";
             for (var key in errorItem) {

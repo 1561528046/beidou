@@ -92,7 +92,8 @@
                 isCollapse: false,
                 tableQuery: {
                     area: [],
-                    user: "",
+                    user_name: "",
+                    linkman: "",
                     region: "",
                     size: 10,
                     page: 1,

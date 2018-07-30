@@ -4,49 +4,33 @@
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6">
-                        <el-form-item label="所属区域">
-                            <city-select v-model="tableQuery.area" style="width:100%;"></city-select>
+                        <el-form-item label="司机姓名">
+                            <el-input v-model="tableQuery.driver_name" placeholder="司机姓名"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
+                        <el-form-item label="司机卡id">
+                            <el-input v-model="tableQuery.driver_card_id" maxlength="10"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="用户账号">
-                            <el-input v-model="tableQuery.user_name" placeholder="用户账号"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6" v-show="isCollapse">
-                        <el-form-item label="活动区域">
-                            <el-select v-model="tableQuery.region" placeholder="活动区域" style="width:100%;">
-                                <el-option label="区域一" value="shanghai"></el-option>
-                                <el-option label="区域二" value="beijing"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6" v-show="isCollapse">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="isCollapse?24:6" style="text-align: right;">
+                    <el-col :offset="6" :span="isCollapse?24:6" style="text-align: right;">
                         <el-form-item>
-                            <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
+                            <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button> -->
                             <el-button type="primary" @click="getTable">查询</el-button>
                         </el-form-item>
                     </el-col>
+
                 </el-row>
+
             </el-form>
         </el-card>
         <el-card shadow="always">
             <div class="admin-table-actions">
-                <router-link :to="{name:'driver_add'}">
-                    <el-button type="primary" size="small">
-                        <i class="el-icon-upload el-icon--right"></i> 添加
-                    </el-button>
-                </router-link>
+                <el-button type="primary" size="small" @click="addFrom">
+                    <i class="el-icon-upload el-icon--right"></i> 添加
+                </el-button>
+
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
                 <el-table-column prop="driver_card_id" label="司机卡id"></el-table-column>
@@ -56,7 +40,8 @@
                 <el-table-column prop="identity_id" label="身份证 "> </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <router-link :to="{name: 'driver_update',params:{driver_card_id:scope.row.driver_card_id}}">编辑</router-link>
+                        <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
+                        <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -70,8 +55,9 @@
 </template>
 <script>
 
-    import { getDriverList } from "@/api/index.js";
-    import citySelect from "@/components/city-select.vue";
+    import { getDriverList, delDriver } from "@/api/index.js";
+    import driver_add from "./add.vue";
+    import driver_update from "./update.vue";
     export default {
         created() {
             this.getTable();
@@ -80,9 +66,7 @@
             return {
                 isCollapse: false,
                 tableQuery: {
-                    area: [],
-                    user: "",
-                    region: "",
+                    driver_name: "",
                     size: 10,
                     page: 1
                 },
@@ -90,31 +74,101 @@
                     total: 0,
                     data: []
                 },
-                tableLoading: true
+                tableLoading: true,
+                addKey: 0,
             };
         },
         methods: {
-            handleSizeChange(val) {
+            delRow(scope) {//删除
+                this.$confirm('确认删除？')
+                    .then(() => {
+                        delDriver(scope.row).then((res) => {
+                            if (res.data.code == 0) {
+                                this.$message.success(res.data.msg);
+                                this.getTable();
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+                    })
+                    .catch(() => { });
+            },
+            addFrom() {//添加
+                var vNode = this.$createElement(driver_add, {
+                    key: this.addKey++,
+                    on: {
+                        success: () => {
+                            this.getTable();
+                            this.$msgbox.close();
+                        },
+                        error: function () {
+                        }
+                    }
+                });
+                this.$msgbox({
+                    showConfirmButton: false,//是否显示确定按钮	
+                    customClass: "admin-message-form",
+                    title: "添加司机",
+                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
+                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
+                    message: vNode
+                })
+            },
+            updateForm(scope) {//编辑
+                var vNode = this.$createElement(driver_update, {
+                    key: this.addKey++,
+                    props: {
+                        driver_card_id: scope.row.driver_card_id
+                    },
+                    on: {
+                        success: () => {
+                            this.getTable();
+                            this.$msgbox.close();
+                        },
+                        error: function () {
+                        }
+                    }
+                });
+                this.$msgbox({
+                    showConfirmButton: false,//是否显示确定按钮	
+                    customClass: "admin-message-form",
+                    title: "编辑司机",
+                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
+                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
+                    message: vNode
+                })
+            },
+            getTable() {//获取列表
+                this.tableLoading = true;
+                var query = Object.assign({}, this.tableQuery);
+                getDriverList(query)
+                    .then(res => {
+                        if (res.data.code == 0) {
+                            this.$set(this.$data, "tableData", res.data);
+                        } else {
+                            this.$set(this.$data, "tableData", []);
+                            this.$message.error(res.data.msg);
+                        }
+                        this.tableLoading = false;
+                    })
+                    .catch(() => { });
+            },
+            handleSizeChange(val) {//每页数量切换
                 this.tableQuery.page = 1;
                 this.tableQuery.limit = val;
                 this.getTable();
             },
-            handleCurrentChange(val) {
+            handleCurrentChange(val) {//翻页
                 this.tableQuery.page = val;
                 this.getTable();
             },
-            getTable() {
-                this.tableLoading = true;
-                var areaObj = this.$utils.formatArea(this.tableQuery.area);
-                var query = Object.assign({}, this.tableQuery, areaObj);
-                getDriverList(query)
-                    .then(res => {
-                        this.$set(this.$data, "tableData", res.data);
-                        this.tableLoading = false;
-                    })
-                    .catch(() => { });
-            }
+
         },
-        components: { citySelect }
+        components: { driver_add, driver_update }
     };
 </script>
+<style>
+    .flip-list-move {
+        transition: transform 1s;
+    }
+</style>
