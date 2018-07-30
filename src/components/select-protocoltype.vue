@@ -10,7 +10,7 @@
         data() {
             return {
                 protocol_type: "",
-                protocoltypes: this.$dict.protocol_type
+                protocol_types: this.$dict.protocol_type
             }
         },
         watch: {

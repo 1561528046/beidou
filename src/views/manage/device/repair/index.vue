@@ -6,7 +6,7 @@
                 <el-row :gutter="30">
                     <el-col :span="6">
                         <el-form-item label="维修状态">
-                            <select-devicetype v-model="tableQuery.state"></select-devicetype>
+                            <select-repairstate v-model="tableQuery.state"></select-repairstate>
                         </el-form-item>
                     </el-col>
                     <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -55,11 +55,11 @@
 </template>
 <script>
     /* eslint-disable */
-    import selectDevicetype from "@/components/select-devicetype.vue";
+    import selectRepairstate from "@/components/select-repairstate.vue";
     import { getDeviceRepairList, updateDeviceRepair } from "@/api/index.js";
     export default {
         created() {
-            this.getTable();
+            this.getListTable();
         },
         data() {
             return {
@@ -78,6 +78,18 @@
             };
         },
         methods: {
+            getTable() {
+                if (this.tableQuery.state == undefined) {
+                    alert(1);
+                }
+                console.log(this.tableQuery)
+                // getDeviceRepairList(this.tableQuery.state)
+                //     .then(res => {
+                //         console.log(res)
+                //         // this.$set(this.$data, "tableData", res.data);
+                //         // this.tableLoading = false;
+                //     })
+            },
             repaired(scope, state) {
                 updateDeviceRepair(scope.row).then(res => {
                     if (res.data.code == 0) {
@@ -93,22 +105,24 @@
             handleSizeChange(val) {
                 this.tableQuery.page = 1;
                 this.tableQuery.limit = val;
-                this.getTable();
+                this.getListTable();
             },
             handleCurrentChange(val) {
                 this.tableQuery.page = val;
-                this.getTable();
+                this.getListTable();
             },
-            getTable() {
+            getListTable() {
                 this.tableLoading = true;
+                console.log(this.tableQuery)
                 getDeviceRepairList(this.tableQuery)
                     .then(res => {
+                        // console.log(res)
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
                     })
                     .catch(() => { });
             }
         },
-        components: { selectDevicetype }
+        components: { selectRepairstate }
     };
 </script>

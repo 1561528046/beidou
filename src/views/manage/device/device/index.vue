@@ -4,11 +4,12 @@
 
       <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
-          <el-col :span="6">
-            <el-form-item label="设备类型">
-              <select-devicetype v-model="tableQuery.device_type"></select-devicetype>
-            </el-form-item>
-          </el-col>
+          <el-form-item label="设备类型">
+            <select-devicetype v-model="tableQuery.device_type"></select-devicetype>
+          </el-form-item>
+          <el-form-item label="协议类型">
+            <select-protocoltype v-model="tableQuery.protocol_type"></select-protocoltype>
+          </el-form-item>
           <!-- <el-col :span="6">
             <el-form-item label="设备序列号">
               <el-input placeholder="请输入内容"></el-input>
@@ -83,7 +84,7 @@
 </template>
 <script>
   import selectDevicetype from "@/components/select-devicetype.vue";
-  // import selectProtocoltype from "@/components/select-protocoltype.vue";
+  import selectProtocoltype from "@/components/select-protocoltype.vue";
   import { DeviceList } from "@/api/index.js";
   export default {
     created() {
@@ -135,8 +136,11 @@
           .catch(() => { });
       }
     },
-    components: { selectDevicetype },
+    components: { selectDevicetype, selectProtocoltype },
   };
 </script>
 <style>
+  .el-form-item {
+    float: left;
+  }
 </style>
