@@ -195,8 +195,8 @@ export const addDeviceCompany = query => {
   return ajax.post("/device_company/Add", query);
 };
 export const updateCompany = query => {
-  query = qs.stringify(query);
-  return ajax.post("/device_company/Update", {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device_company/Update", queryQS, {
     params: query
   });
 };
