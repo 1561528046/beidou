@@ -33,26 +33,29 @@
                     <span v-if="formData.device_type==2">1078部标协议</span>
                 </el-form-item>
             </el-col>
-            <el-col :span="12">
-                <el-form-item label="存储介质" prop="save_media" v-if="formData.device_type==2">
-                    <el-select v-model="formData.save_media" placeholder="选择" style="width:100%;">
-                        <el-option label="硬盘" value="1"></el-option>
-                        <el-option label="SD卡" value="2"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-col>
-            <el-col :span="12">
-                <el-form-item label="摄像头数量" prop="camera_num" v-if="formData.device_type==2">
-                    <br>
-                    <el-radio v-model="formData.camera_num" label="4">&nbsp; 4路</el-radio>
-                    <el-radio v-model="formData.camera_num" label="6">&nbsp; 6路</el-radio>
-                    <el-radio v-model="formData.camera_num" label="8">&nbsp; 8路</el-radio>
-                    <br>
-                    <el-radio v-model="formData.camera_num" label="10">10路</el-radio>
-                    <el-radio v-model="formData.camera_num" label="12">12路</el-radio>
-                    <el-radio v-model="formData.camera_num" label="14">14路</el-radio>
-                </el-form-item>
-            </el-col>
+            <template v-if="formData.device_type==2">
+                <el-col :span="24">
+                    <el-form-item label="存储介质" prop="save_media">
+                        <el-select v-model="formData.save_media" placeholder="选择" style="width:100%;">
+                            <el-option label="硬盘" value="1"></el-option>
+                            <el-option label="SD卡" value="2"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="摄像头数量" prop="camera_num">
+                        <br>
+                        <el-radio v-model="formData.camera_num" label="4">&nbsp; 4路</el-radio>
+                        <el-radio v-model="formData.camera_num" label="6">&nbsp; 6路</el-radio>
+                        <el-radio v-model="formData.camera_num" label="8">&nbsp; 8路</el-radio>
+                        <br>
+                        <el-radio v-model="formData.camera_num" label="10">10路</el-radio>
+                        <el-radio v-model="formData.camera_num" label="12">12路</el-radio>
+                        <el-radio v-model="formData.camera_num" label="14">14路</el-radio>
+                    </el-form-item>
+                </el-col>
+            </template>
+
         </el-row>
         <el-form-item style="text-align:center;">
             <el-button type="primary" @click="formSubmit" size="large">提交</el-button>

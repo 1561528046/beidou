@@ -7,14 +7,15 @@
       </div>
     </el-col>
     <el-col :span="8+5" style="text-align:center;">
-      <el-menu mode="horizontal" :default-active="defaultActive" :router="true" background-color="#001529" text-color="rgba(255, 255, 255, 0.65)" active-text-color="#1890ff" style="border-bottom:0;">
+      <el-menu mode="horizontal" :default-active="defaultActive" :router="true" background-color="#001529" text-color="rgba(255, 255, 255, 0.65)"
+        active-text-color="#1890ff" style="border-bottom:0;">
         <template v-for="route in routes">
           <!-- 只显示一级栏目 -->
           <!-- <el-submenu :index="route.path" v-if="route.children" :key="route.name">
         <template slot="title">{{route.meta.name}}</template>
         <el-menu-item :index="route.path+'/'+routeChildren.path" v-for="routeChildren in route.children" :key="routeChildren.name">{{routeChildren.meta.name}}</el-menu-item>
       </el-submenu> -->
-          <el-menu-item :index="route.path" :key="route.name">{{route.meta.name||route.name}}</el-menu-item>
+          <el-menu-item :index="route.path" :key="route.name" v-if="!route.meta.hidden">{{route.meta.name||route.name}}</el-menu-item>
         </template>
       </el-menu>
     </el-col>
@@ -26,7 +27,9 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>退出</el-dropdown-item>
+            <el-dropdown-item>
+              <router-link :to="{name:'login'}">退出</router-link>
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -36,18 +39,18 @@
 </template>
 
 <script>
-export default {
-  computed: {
-    defaultActive() {
-      if (this.$route.matched.length) {
-        return this.$route.matched[0].path || "/";
-      } else {
-        return "";
+  export default {
+    computed: {
+      defaultActive() {
+        if (this.$route.matched.length) {
+          return this.$route.matched[0].path || "/";
+        } else {
+          return "";
+        }
+      },
+      routes() {
+        return this.$router.options.routes;
       }
-    },
-    routes() {
-      return this.$router.options.routes;
     }
-  }
-};
+  };
 </script>

@@ -28,6 +28,13 @@ export default new Router({
       ]
     },
     {
+      path: "/login",
+      name: "login",
+      meta: { name: "登陆", hidden: true },
+      component: () => import("@/views/login.vue"),
+      children: []
+    },
+    {
       path: "/manage",
       name: "manage",
       meta: { name: "运营管理" },
