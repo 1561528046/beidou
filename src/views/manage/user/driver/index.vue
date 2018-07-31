@@ -1,7 +1,7 @@
 <template>
     <div class="admin-table-container">
         <el-card shadow="always" class="admin-table-search">
-            <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+            <el-form :model="tableQuery" label-width="150px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6">
                         <el-form-item label="司机姓名">
@@ -9,7 +9,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item label="司机卡id">
+                        <el-form-item label="司机身份识别卡编号">
                             <el-input v-model="tableQuery.driver_card_id" maxlength="10"></el-input>
                         </el-form-item>
                     </el-col>
@@ -41,6 +41,7 @@
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
+                        <el-button size="small" type="primary" icon="el-icon-edit">绑定车辆</el-button>
                         <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
                     </template>
                 </el-table-column>

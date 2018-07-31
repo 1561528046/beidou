@@ -40,7 +40,7 @@
                 </el-button>
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
-                <el-table-column prop="user_name" label="用户帐号 " :formatter="$utils.baseFormatter"></el-table-column>
+                <el-table-column prop="user_name" label="登陆帐号 " :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="province_name" label="所属地区 ">
                     <template slot-scope="scope ">
                         {{scope.row.province_name}} {{scope.row.city_name}} {{scope.row.county_name}}
@@ -51,7 +51,7 @@
                 <el-table-column prop="vehicle_type" label="所属行业 " :formatter="(row)=>{return this.$dict.get_industry(row.vehicle_type)}">
                 </el-table-column>
                 <el-table-column prop="address" label="地址" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="device_total" label="授权总量" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">

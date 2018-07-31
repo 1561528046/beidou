@@ -2,7 +2,7 @@
   <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" style="width:800px;">
     <el-row :gutter="30">
       <el-col :span="12">
-        <el-form-item label="司机卡id" prop="driver_card_id">
+        <el-form-item label="司机身份识别卡编号" prop="driver_card_id">
           <el-input v-model="formData.driver_card_id" maxlength="10"></el-input>
         </el-form-item>
       </el-col>
@@ -28,11 +28,11 @@
           <el-input v-model="formData.identity_id" maxlength="20"></el-input>
         </el-form-item>
       </el-col>
-      <el-col :span="12">
-        <el-form-item label="选择车辆" prop="vehicle_id">
+      <!-- <el-col :span="12">
+        <el-form-item label="选择车辆(多选)" prop="vehicle_id">
           <el-input v-model="formData.vehicle_id"></el-input>
         </el-form-item>
-      </el-col>
+      </el-col> -->
     </el-row>
 
 
