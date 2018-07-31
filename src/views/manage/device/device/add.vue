@@ -1,7 +1,7 @@
 <template>
     <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
         <!-- 设备信息 -->
-        <el-row gutter="30">
+        <el-row :gutter="30">
             <el-col :span="12">
                 <el-form-item label="设备类型" prop="device_type">
                     <el-select v-model="formData.device_type" placeholder="选择设备类型" style="width:100%;">

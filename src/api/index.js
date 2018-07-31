@@ -32,11 +32,16 @@ ajax.interceptors.request.use(
 ajax.interceptors.response.use(
   function(response) {
     if (typeof response.data == "string") {
-      Message({
-        showClose: true,
-        message: "JSON格式错误！",
-        type: "error"
-      });
+      try {
+        response.data = JSON.stringify(response.data);
+      } catch (err) {
+        Message({
+          showClose: true,
+          message: "JSON格式错误！",
+          type: "error"
+        });
+      }
+      return response;
     }
     if (response.status != 200) {
       Message({
@@ -208,6 +213,9 @@ export const delCompany = query => {
 };
 //用户管理
 export const getUserAll = query => {
+  query = query || {
+    user_type: ""
+  };
   return ajax.get("/user/GetAll", {
     params: query
   });
