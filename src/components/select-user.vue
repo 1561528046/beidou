@@ -1,10 +1,8 @@
 <template>
-    <div>
-        <el-select v-model="user_id" placeholder="请选择" filterable>
-            <el-option v-for="item in users" :key="item.user_id" :label="item.user_name" :value="item.user_id">
-            </el-option>
-        </el-select>
-    </div>
+    <el-select v-model="user_id" placeholder="请选择" filterable>
+        <el-option v-for="item in users" :key="item.user_id" :label="item.user_name" :value="item.user_id">
+        </el-option>
+    </el-select>
 </template>
 <script>
     import { getUserAll } from "@/api/index.js";

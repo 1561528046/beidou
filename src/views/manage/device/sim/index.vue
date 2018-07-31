@@ -5,36 +5,23 @@
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
+                        <el-form-item label="Sim卡号">
+                            <el-input v-model="tableQuery.sim_no" placeholder="审批人"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6" v-show="isCollapse">
-                        <el-form-item label="活动区域">
-                            <el-select v-model="tableQuery.region" placeholder="活动区域" style="width:100%;">
-                                <el-option label="区域一" value="shanghai"></el-option>
-                                <el-option label="区域二" value="beijing"></el-option>
+                        <el-form-item label="当前状态">
+                            <el-select v-model="tableQuery.state" placeholder="选择当前状态" style="width:100%;">
+                                <el-option label="已启用" value="1"></el-option>
+                                <el-option label="未启用" value="2"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6" v-show="isCollapse">
-                        <el-form-item label="审批人">
-                            <el-input v-model="tableQuery.user" placeholder="审批人"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="isCollapse?24:6" style="text-align: right;">
+
+                    <el-col :offset="6" :span="isCollapse?24:6" style="text-align: right;">
                         <el-form-item>
-                            <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
+                            <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+                                    <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button> -->
                             <el-button type="primary" @click="getTable">查询</el-button>
                         </el-form-item>
                     </el-col>
@@ -43,31 +30,27 @@
         </el-card>
         <el-card shadow="always">
             <div class="admin-table-actions">
-                <router-link :to="{name:'sim-add'}" style="display: block;">
-                    <el-button type="primary" size="small">
-                        <i class="el-icon-upload el-icon--right"></i> 添加
-                    </el-button>
-                </router-link>
+                <el-button type="primary" size="small" @click="addFrom">
+                    <i class="el-icon-upload el-icon--right"></i> 添加
+                </el-button>
                 <!-- <el-button type="primary" size="small">导出
                     <i class="el-icon-upload el-icon--right"></i>
                 </el-button> -->
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="sim_no" label="Sim卡号">
+                <el-table-column prop="sim_no" label="Sim卡号" :formatter="$utils.baseFormatter">
                 </el-table-column>
-                <el-table-column prop="icc_id" label="ICCID">
+                <el-table-column prop="icc_id" label="ICCID" :formatter="$utils.baseFormatter">
                 </el-table-column>
-                <el-table-column prop="belong" label="所属运营商" :formatter="baseFormatter"> </el-table-column>
-                <el-table-column prop="user_id" label="分配客户" :formatter="baseFormatter"></el-table-column>
+                <el-table-column prop="belong" label="所属运营商" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="user_id" label="分配客户" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="state" label="当前状态" :formatter="(row)=>{return this.$dict.get_sim_state(row.state)}"></el-table-column>
-                <el-table-column prop="note" label="备注" :formatter="baseFormatter"></el-table-column>
+                <el-table-column prop="note" label="备注" :formatter="$utils.baseFormatter"></el-table-column>
 
-                <el-table-column fixed="right" label="操作" width="100">
+                <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" size="small">
-                            <router-link :to="{name:'sim-update',params:{sim_no:scope.row.sim_no}}" style="display: block;">编辑
-                            </router-link>
-                        </el-button>
+                        <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
+                        <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -82,6 +65,8 @@
 <script>
     /* eslint-disable */
     import { getSimList } from "@/api/index.js";
+    import addComponents from "./add.vue";
+    import updateComponents from "./update.vue";
     export default {
         created() {
             this.getTable();
@@ -90,8 +75,8 @@
             return {
                 isCollapse: false,
                 tableQuery: {
-                    user: "",
-                    region: "",
+                    sim_no: "",
+                    state: "",
                     size: 10,
                     page: 1
                 },
@@ -99,12 +84,69 @@
                     total: 0,
                     data: []
                 },
-                tableLoading: true
+                tableLoading: true,
+                addKey: 0
             };
         },
         methods: {
-            baseFormatter(row, column, cellValue, index) {
-                return cellValue || "--";
+            delRow(scope) {//删除
+                this.$confirm('确认删除？')
+                    .then(() => {
+                        delUser(scope.row).then((res) => {
+                            if (res.data.code == 0) {
+                                this.$message.success(res.data.msg);
+                                this.getTable();
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+                    })
+                    .catch(() => { });
+            },
+            addFrom() {//添加
+                var vNode = this.$createElement(addComponents, {
+                    key: this.addKey++,
+                    on: {
+                        success: () => {
+                            this.getTable();
+                            this.$msgbox.close();
+                        },
+                        error: function () {
+                        }
+                    }
+                });
+                this.$msgbox({
+                    showConfirmButton: false,//是否显示确定按钮	
+                    customClass: "admin-message-form",
+                    title: "添加",
+                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
+                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
+                    message: vNode
+                })
+            },
+            updateForm(scope) {//编辑
+                var vNode = this.$createElement(updateComponents, {
+                    key: this.addKey++,
+                    props: {
+                        sim_no: scope.row.sim_no
+                    },
+                    on: {
+                        success: () => {
+                            this.getTable();
+                            this.$msgbox.close();
+                        },
+                        error: function () {
+                        }
+                    }
+                });
+                this.$msgbox({
+                    showConfirmButton: false,//是否显示确定按钮	
+                    customClass: "admin-message-form",
+                    title: "编辑",
+                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
+                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
+                    message: vNode
+                })
             },
             handleSizeChange(val) {
                 this.tableQuery.page = 1;
