@@ -33,7 +33,11 @@
                 <el-button type="primary" size="small" @click="addFrom">
                     <i class="el-icon-upload el-icon--right"></i> 添加
                 </el-button>
-                <el-upload action="http://192.168.88.100:725/api/device/UploadExcel" name="ff" :limit="1" :show-file-list="false" style="display: inline-block;margin-left:10px;">
+                <el-upload action="http://192.168.88.100:725/api/device/UploadExcel" list-type="picture-card" :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove">
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-upload action="http://192.168.88.100:725/api/device/UploadExcel" type="post" style="display: inline-block;margin-left:10px;">
                     <el-button size="small" type="primary">
                         <i class="el-icon-upload el-icon--right"></i> 点击上传</el-button>
                 </el-upload>

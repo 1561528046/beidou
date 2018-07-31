@@ -3,18 +3,8 @@
     <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
       <el-row :gutter="30">
         <el-col :span="12">
-          <el-form-item label="用户帐号" prop="user_name">
+          <el-form-item label="登陆帐号" prop="user_name">
             <el-input v-model="formData.user_name"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="密码" prop="pass_word">
-            <el-input v-model="formData.pass_word" type="password"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="密码" prop="re_pass_word">
-            <el-input v-model="formData.re_pass_word" type="password"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -25,11 +15,18 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col :span="12">
+          <el-form-item label="密码" prop="pass_word">
+            <el-input v-model="formData.pass_word" type="password"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="确认密码" prop="re_pass_word">
+            <el-input v-model="formData.re_pass_word" type="password"></el-input>
+          </el-form-item>
+        </el-col>
+
         <template v-if="user_type==2">
-
-
-
-
           <el-col :span="12">
             <el-form-item label="公司名称" prop="company">
               <el-input v-model="formData.company" maxlength="255"></el-input>
@@ -62,9 +59,23 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="授权总量" prop="device_total">
+          <el-form-item label="授权终端数量">
             <el-switch v-model="device_total_turn"> </el-switch>
-            <el-input v-model="formData.device_total" v-if="device_total_turn"></el-input>
+          </el-form-item>
+          <el-form-item label="" prop="device_total" v-if="device_total_turn" style="width:150px;">
+            <el-input-number :min="1" :precision="0" :step="1" type="number" v-model="formData.device_total" style="width:100%">
+              <template slot="append">台</template>
+            </el-input-number>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="帐号到期时间">
+            <el-switch v-model="expiry_time_turn"> </el-switch>
+          </el-form-item>
+          <el-form-item label="" prop="expiry_time" v-if="expiry_time_turn" style="width:350px;">
+            <el-date-picker v-model="formData.expiry_time" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd"
+              style="width:100%;">
+            </el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -84,6 +95,7 @@
     data() {
       return {
         device_total_turn: false,
+        expiry_time_turn: false,
         formData: {
           area: [],
           "user_name": "",
@@ -100,6 +112,7 @@
           "device_num": "",
           "device_total": "",
           "role_id": "",
+          expiry_time: "",
         },
         rules: {
           ...rules,
@@ -128,7 +141,10 @@
     watch: {
       "device_total_turn": function () {
         this.formData.device_total = "";
-      }
+      },
+      "expiry_time_turn": function () {
+        this.formData.expiry_time = "";
+      },
     },
     props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
     created() {
@@ -161,6 +177,7 @@
             var areaObj = this.$utils.formatArea(this.formData.area);
             var postData = Object.assign({}, this.formData, areaObj);
             postData.device_total = postData.device_total || 0;
+            postData.expiry_time = postData.expiry_time || 0;
             postData.user_type = this.user_type;
             addUser(postData)
               .then(res => {
