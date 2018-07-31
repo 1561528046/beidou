@@ -1,21 +1,23 @@
 <template>
-    <div class="vehicle-form">
-        <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
-            <!-- 设备信息 -->
-            <el-card shadow="hover">
-                <div slot="header" class="clearfix">
-                    <span>终端信息 </span>
-                </div>
-                <el-form-item label="设备厂商名称" prop="company_name">
-                    <el-input v-model="formData.company_name"></el-input>
-                </el-form-item>
-                <el-form-item label="设备厂商类型" prop="company_type">
-                    <el-select v-model="formData.company_type" placeholder="选择设备厂商类型" style="width:100%;">
-                        <el-option label="前装厂商" value="1"></el-option>
-                        <el-option label="后装厂商" value="2"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-card>
+    <div>
+        <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+            <el-row :gutter="30">
+                <el-col :span="24">
+                    <el-form-item label="设备厂商名称" prop="company_name">
+                        <el-input v-model="formData.company_name"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="设备厂商类型" prop="company_type">
+                        <el-select v-model="formData.company_type" placeholder="选择设备厂商类型" style="width:100%;">
+                            <el-option label="前装厂商" value="1"></el-option>
+                            <el-option label="后装厂商" value="2"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+
+            </el-row>
+
 
             <el-form-item style="text-align:center;">
                 <el-button type="primary" @click="formSubmit" size="large">添加</el-button>
@@ -70,15 +72,18 @@
                         postData.device_total = postData.device_total || 0;
                         addDeviceCompany(postData)
                             .then(res => {
-                                console.log(res)
                                 if (res.data.code == 0) {
-                                    alert("添加成功");
-                                    location.reload();
+                                    this.$emit("success");
+                                    this.$message.success(res.data.msg);
                                 } else {
-                                    alert("添加失败");
+                                    this.$emit("error");
+                                    this.$message.error(res.data.msg);
                                 }
                             })
-                            .catch(() => { });
+                            .catch(() => {
+                                this.$message.error("接口错误");
+                                this.$emit("error");
+                            });
                     } else {
                         var errormsg = "";
                         for (var key in errorItem) {
