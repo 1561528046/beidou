@@ -94,7 +94,8 @@
                     total: 0,
                     data: []
                 },
-                tableLoading: true
+                tableLoading: true,
+                addKey: 0
             };
         },
         props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人

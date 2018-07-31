@@ -1,28 +1,35 @@
 <template>
     <div class="post-form">
-        <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
-            <!-- 设备信息 -->
-            <el-card shadow="hover">
-                <div slot="header" class="clearfix">
-                    <span>SIM卡信息 </span>
-                </div>
-                <el-form-item prop="sim_no" label="SIM卡号">
-                    <el-input v-model="formData.sim_no"></el-input>
-                </el-form-item>
-                <el-form-item prop="icc_id" label="ICCID">
-                    <el-input v-model="formData.icc_id"></el-input>
-                </el-form-item>
-                <el-form-item prop="belong" label="所属运营商">
-                    <el-input v-model="formData.belong"></el-input>
-                </el-form-item>
-                <el-form-item prop="user_id" label="分配客户">
-                    <user-select v-model="formData.user_id"></user-select>
-                    <!-- <el-input v-model="formData.user_id"></el-input> -->
-                </el-form-item>
-                <el-form-item prop="note" label="备注">
-                    <el-input v-model="formData.note"></el-input>
-                </el-form-item>
-            </el-card>
+        <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+            <el-row :gutter="30">
+                <el-col :span="12">
+                    <el-form-item prop="sim_no" label="SIM卡号">
+                        <el-input v-model="formData.sim_no"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item prop="icc_id" label="ICCID">
+                        <el-input v-model="formData.icc_id"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item prop="belong" label="所属运营商">
+                        <el-input v-model="formData.belong"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item prop="user_id" label="分配客户">
+                        <user-select v-model="formData.user_id" style="width:100%;"></user-select>
+                        <!-- <el-input v-model="formData.user_id"></el-input> -->
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item prop="note" label="备注">
+                        <el-input v-model="formData.note"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
 
             <el-form-item style="text-align:center;">
                 <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
@@ -60,13 +67,17 @@
                         addSim(postData)
                             .then(res => {
                                 if (res.data.code == 0) {
+                                    this.$emit("success");
                                     this.$message.success(res.data.msg);
-                                    this.$router.push({ "name": "sim" })
                                 } else {
+                                    this.$emit("error");
                                     this.$message.error(res.data.msg);
                                 }
                             })
-                            .catch(() => { });
+                            .catch(() => {
+                                this.$message.error("接口错误");
+                                this.$emit("error");
+                            });
                     } else {
                         var errormsg = "";
                         for (var key in errorItem) {
