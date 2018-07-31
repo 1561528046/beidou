@@ -48,7 +48,7 @@ export default {
       name: "sim",
       meta: {
         name: "SIM卡管理",
-        icon: "iconfont icon-boxplot-fill"
+        icon: "iconfont icon-sim"
       },
       component: () => import("@/views/manage/device/sim/index.vue")
     },
@@ -69,7 +69,7 @@ export default {
       name: "device-company",
       meta: {
         name: "终端厂商管理",
-        icon: "iconfont icon-boxplot-fill"
+        icon: "iconfont icon-company"
       },
       component: () => import("@/views/manage/device/company/index.vue")
     },
