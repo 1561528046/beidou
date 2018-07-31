@@ -8,7 +8,7 @@
 <script>
     import { getDeviceCompanyAll } from "@/api/index.js";
     export default {
-        name: "select-user",
+        name: "select-company",
         data() {
             return {
                 company_id: "",
