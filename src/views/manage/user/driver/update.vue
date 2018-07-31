@@ -67,7 +67,6 @@
     computed: {},
     created() {
       //this.formData.driver_card_id = this.driver_card_id;
-      console.log(this.driver_card_id)
       getDriver({ driver_card_id: this.formData.driver_card_id }).then((res) => {
         if (res.data.code == 0 && res.data.data.length) {
           var mixinData = Object.assign({}, this.formData, res.data.data[0]);
@@ -80,7 +79,6 @@
         this.$refs.baseForm.validate((isVaildate, errorItem) => {
           if (isVaildate) {
             var postData = Object.assign({}, this.formData);
-            console.log(postData)
             updateDriver(postData)
               .then(res => {
                 if (res.data.code == 0) {

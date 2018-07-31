@@ -136,7 +136,7 @@
                     closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
                     closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
                     message: vNode
-                })
+                }).catch(() => { })
             },
             updateForm(scope) {//编辑
                 var vNode = this.$createElement(updateComponents, {
@@ -161,7 +161,7 @@
                     closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
                     closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
                     message: vNode
-                })
+                }).catch(() => { })
             },
             handleSizeChange(val) {
                 this.tableQuery.page = 1;

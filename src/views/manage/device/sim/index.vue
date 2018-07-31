@@ -33,9 +33,10 @@
                 <el-button type="primary" size="small" @click="addFrom">
                     <i class="el-icon-upload el-icon--right"></i> 添加
                 </el-button>
-                <!-- <el-button type="primary" size="small">导出
-                    <i class="el-icon-upload el-icon--right"></i>
-                </el-button> -->
+                <el-upload action="http://192.168.88.100:725/api/device/UploadExcel" name="ff" :limit="1" :show-file-list="false" style="display: inline-block;margin-left:10px;">
+                    <el-button size="small" type="primary">
+                        <i class="el-icon-upload el-icon--right"></i> 点击上传</el-button>
+                </el-upload>
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
                 <el-table-column prop="sim_no" label="Sim卡号" :formatter="$utils.baseFormatter">
@@ -89,6 +90,9 @@
             };
         },
         methods: {
+            uploadSuccess() { },
+            uploadError() { },
+            uploadProgress() { },
             delRow(scope) {//删除
                 this.$confirm('确认删除？')
                     .then(() => {
