@@ -110,7 +110,6 @@
         },
         created() {
             getDevice({ id: this.formData.device_id }).then((res) => {
-                console.log(res)
                 if (res.data.code == 0 && res.data.data.length) {
                     var mixinData = Object.assign({}, this.formData, res.data.data[0]);
                     this.$set(this.$data, "formData", mixinData);
