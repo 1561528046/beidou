@@ -30,7 +30,6 @@
                 <el-button type="primary" size="small" @click="addFrom">
                     <i class="el-icon-upload el-icon--right"></i> 添加
                 </el-button>
-
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
                 <el-table-column prop="driver_card_id" label="司机卡id" :formatter="$utils.baseFormatter"></el-table-column>

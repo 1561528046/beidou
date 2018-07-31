@@ -22,7 +22,6 @@
             value: String
         },
         created() {
-            console.log(this.$dict.repair_state)
         },
 
     }

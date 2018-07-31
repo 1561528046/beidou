@@ -6,13 +6,14 @@
                 <el-row :gutter="30">
                     <el-col :span="8">
                         <el-form-item label="维修状态">
-                            <select-repairstate v-model="tableQuery.state"></select-repairstate>
+                            <select-repairstate v-model="tableQuery.state" style="width: 100%;"></select-repairstate>
                         </el-form-item>
                     </el-col>
                     <el-col :span="isCollapse?24:8" style="text-align: right;">
                         <el-form-item>
-                            <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
-                            <el-button type="primary" @click="getTable">查询</el-button>
+                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+                            <el-button type="primary" @click="getListTable">查询</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -20,15 +21,9 @@
         </el-card>
         <el-card shadow="always">
             <div class="admin-table-actions">
-                <router-link :to="{name:'repair-add'}">
-                    <el-button type="primary" size="small">
-                        <i class="el-icon-upload el-icon--right"></i> 添加
-                    </el-button>
-                </router-link>
-                <!-- 
-                <el-button type="primary" size="small">导出
-                    <i class="el-icon-upload el-icon--right"></i>
-                </el-button> -->
+                <el-button type="primary" size="small" @click="addFrom">
+                    <i class="el-icon-upload el-icon--right"></i> 添加
+                </el-button>
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
                 <el-table-column prop="back_time" label="返厂时间">
@@ -56,6 +51,7 @@
 <script>
     /* eslint-disable */
     import selectRepairstate from "@/components/select-repairstate.vue";
+    import repair_add from "./add.vue"
     import { getDeviceRepairList, updateDeviceRepair } from "@/api/index.js";
     export default {
         created() {
@@ -65,8 +61,6 @@
             return {
                 isCollapse: false,
                 tableQuery: {
-                    user: "",
-                    region: "",
                     size: 10,
                     page: 1
                 },
@@ -74,18 +68,13 @@
                     total: 0,
                     data: []
                 },
-                tableLoading: true
+                tableLoading: true,
+                addKey: 0,
             };
         },
         methods: {
-            //查询
-            getTable() {
-                console.log(this.tableQuery)
-                getDeviceRepairList(this.tableQuery)
-                    .then(res => {
-                    })
-            },
             repaired(scope, state) {
+                scope.row.state = state
                 updateDeviceRepair(scope.row).then(res => {
                     if (res.data.code == 0) {
                         this.$message.success(res.data.msg);
@@ -97,6 +86,43 @@
                 })
 
             },
+            addFrom() {//添加
+                var vNode = this.$createElement(repair_add, {
+                    key: this.addKey++,
+                    on: {
+                        success: () => {
+                            this.getListTable();
+                            this.$msgbox.close();
+                        },
+                        error: function () {
+                        }
+                    }
+                })
+                this.$msgbox({
+                    showConfirmButton: false,//是否显示确定按钮	
+                    customClass: "admin-message-form",
+                    title: "添加维修设备信息",
+                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
+                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
+                    message: vNode
+                })
+            },
+            //列表信息
+            getListTable() {
+                this.tableLoading = true;
+                var query = Object.assign({}, this.tableQuery);
+                getDeviceRepairList(query)
+                    .then(res => {
+                        if (res.data.code == 0) {
+                            this.$set(this.$data, "tableData", res.data);
+                        } else {
+                            this.$set(this.$data, "tableData", []);
+                            this.$message.error(res.data.msg);
+                        }
+                        this.tableLoading = false;
+                    })
+                    .catch(() => { });
+            },
             handleSizeChange(val) {
                 this.tableQuery.page = 1;
                 this.tableQuery.limit = val;
@@ -106,16 +132,6 @@
                 this.tableQuery.page = val;
                 this.getListTable();
             },
-            getListTable() {
-                this.tableLoading = true;
-                getDeviceRepairList(this.tableQuery)
-                    .then(res => {
-                        console.log(res)
-                        this.$set(this.$data, "tableData", res.data);
-                        this.tableLoading = false;
-                    })
-                    .catch(() => { });
-            }
         },
         components: { selectRepairstate }
     };
