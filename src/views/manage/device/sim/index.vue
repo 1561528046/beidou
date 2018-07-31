@@ -12,8 +12,8 @@
                     <el-col :span="6">
                         <el-form-item label="当前状态">
                             <el-select v-model="tableQuery.state" placeholder="选择当前状态" style="width:100%;">
-                                <el-option label="已启用" value="1"></el-option>
-                                <el-option label="未启用" value="2"></el-option>
+                                <el-option label="已使用" value="1"></el-option>
+                                <el-option label="未使用" value="2"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -64,7 +64,7 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getSimList } from "@/api/index.js";
+    import { getSimList, delSim } from "@/api/index.js";
     import addComponents from "./add.vue";
     import updateComponents from "./update.vue";
     export default {
@@ -92,7 +92,7 @@
             delRow(scope) {//删除
                 this.$confirm('确认删除？')
                     .then(() => {
-                        delUser(scope.row).then((res) => {
+                        delSim({ id: scope.row.sim_no }).then((res) => {
                             if (res.data.code == 0) {
                                 this.$message.success(res.data.msg);
                                 this.getTable();

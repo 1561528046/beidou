@@ -6,12 +6,12 @@
                 <el-row :gutter="30">
                     <el-col :span="6">
                         <el-form-item label="厂商名称">
-                            <el-input v-model="tableQuery.name" placeholder="请选择"></el-input>
+                            <select-company v-model="tableQuery.company_name" style="width:100%;"></select-company>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="厂商类型">
-                            <select-companytype v-model="tableQuery.type" style="width:100%;"></select-companytype>
+                            <select-companytype v-model="tableQuery.company_type" style="width:100%;"></select-companytype>
                         </el-form-item>
                     </el-col>
                     <el-col :offset="isCollapse?0:6" :span="isCollapse?24:6" style="text-align: right;">
@@ -59,8 +59,9 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getDeviceCompanyAll } from "@/api/index.js";
+    import { getDeviceCompanyList, delCompany } from "@/api/index.js";
     import selectCompanytype from "@/components/select-companytype.vue";
+    import selectCompany from "@/components/select-company.vue";
     import addComponents from "./add.vue";
     import updateComponents from "./update.vue";
     export default {
@@ -71,8 +72,8 @@
             return {
                 isCollapse: false,
                 tableQuery: {
-                    user: "",
-                    region: "",
+                    company_name: "",
+                    company_type: "",
                     size: 10,
                     page: 1
                 },
@@ -88,7 +89,7 @@
             delRow(scope) {//删除
                 this.$confirm('确认删除？')
                     .then(() => {
-                        delUser(scope.row).then((res) => {
+                        delCompany(scope.row).then((res) => {
                             if (res.data.code == 0) {
                                 this.$message.success(res.data.msg);
                                 this.getTable();
@@ -162,14 +163,20 @@
             },
             getTable() {
                 this.tableLoading = true;
-                getDeviceCompanyAll(this.tableQuery)
+                var query = Object.assign({}, this.tableQuery);
+                getDeviceCompanyList(query)
                     .then(res => {
-                        this.$set(this.$data, "tableData", res.data);
+                        if (res.data.code == 0) {
+                            this.$set(this.$data, "tableData", res.data);
+                        } else {
+                            this.$set(this.$data, "tableData", []);
+                            this.$message.error(res.data.msg);
+                        }
                         this.tableLoading = false;
                     })
                     .catch(() => { });
             }
         },
-        components: { selectCompanytype }
+        components: { selectCompanytype, selectCompany }
     };
 </script>
