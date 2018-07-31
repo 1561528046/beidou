@@ -16,7 +16,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="设备厂商">
-              <select-company v-model="tableQuery.company_name" style="width:100%;"></select-company>
+              <select-company v-model="tableQuery.company_id" style="width:100%;"></select-company>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">

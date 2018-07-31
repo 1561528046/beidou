@@ -1,31 +1,29 @@
 <template>
-    <div class="post-form">
-        <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
-            <!-- 设备信息 -->
-            <el-row :gutter="30">
-                <el-col :span="24">
-                    <el-form-item label="设备厂商名称" prop="company_name">
-                        <el-input v-model="formData.company_name"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item label="设备厂商类型" prop="company_type">
-                        <el-select v-model="formData.company_type" placeholder="选择设备厂商类型" style="width:100%;">
-                            <el-option label="前装厂商" value="1"></el-option>
-                            <el-option label="后装厂商" value="2"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
+    <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+        <!-- 设备信息 -->
+        <el-row :gutter="30">
+            <el-col :span="24">
+                <el-form-item label="设备厂商名称" prop="company_name">
+                    <el-input v-model="formData.company_name"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24">
+                <el-form-item label="设备厂商类型" prop="company_type">
+                    <el-select v-model="formData.company_type" placeholder="选择设备厂商类型" style="width:100%;">
+                        <el-option label="前装厂商" value="1"></el-option>
+                        <el-option label="后装厂商" value="2"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
 
-            </el-row>
+        </el-row>
 
-            <el-form-item style="text-align:center;">
-                <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
-            </el-form-item>
+        <el-form-item style="text-align:center;">
+            <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
+        </el-form-item>
 
-            <!-- <button @click="$router.go(-1)">a</button> -->
-        </el-form>
-    </div>
+        <!-- <button @click="$router.go(-1)">a</button> -->
+    </el-form>
 </template>
 <script>
     import { rules } from "@/utils/rules.js";
