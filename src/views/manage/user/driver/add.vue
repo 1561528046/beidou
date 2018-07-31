@@ -1,9 +1,14 @@
 <template>
-  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" style="width:800px;">
+  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
     <el-row :gutter="30">
       <el-col :span="12">
         <el-form-item label="司机卡id" prop="driver_card_id">
           <el-input v-model="formData.driver_card_id" maxlength="10"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="配识终端" prop="company_id">
+          <select-company v-model="formData.company_id" style="width:100%;"></select-company>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -42,6 +47,7 @@
 <script>
   import { rules } from "@/utils/rules.js";
   import { addDriver } from "@/api/index.js";
+  import selectCompany from "@/components/select-company.vue";
   export default {
     data() {
       return {
@@ -56,6 +62,7 @@
         rules: {
           ...rules,
           driver_card_id: [{ required: true, message: "必须填写司机卡ID", trigger: "change" }],
+          company_id: [{ required: true, message: "必须选择配识终端", trigger: "change" }]
         }
       };
     },
@@ -97,5 +104,6 @@
         })
       }
     },
+    components: { selectCompany }
   };
 </script>

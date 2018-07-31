@@ -36,7 +36,8 @@
                 <el-table-column prop="driver_card_id" label="司机卡id" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="driver_name" label="姓名" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="tel" label="联系电话" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="license_validity" label="驾驶证有效期" :formatter="$utils.formatDate"> </el-table-column>
+                <el-table-column prop="license_validity" label="驾驶证有效期" :formatter="(row)=>{return $utils.formatDate(row.license_validity)}">
+                </el-table-column>
                 <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
