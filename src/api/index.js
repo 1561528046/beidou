@@ -208,6 +208,9 @@ export const delCompany = query => {
 };
 //用户管理
 export const getUserAll = query => {
+  query = query || {
+    user_type: ""
+  };
   return ajax.get("/user/GetAll", {
     params: query
   });

@@ -1,7 +1,6 @@
 <template>
     <div class="admin-table-container">
         <el-card shadow="always" class="admin-table-search">
-
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6">
@@ -33,11 +32,11 @@
                 <el-button type="primary" size="small" @click="addFrom">
                     <i class="el-icon-upload el-icon--right"></i> 添加
                 </el-button>
-                <el-upload action="http://192.168.88.100:725/api/device/UploadExcel" list-type="picture-card" :on-preview="handlePictureCardPreview"
-                    :on-remove="handleRemove">
-                    <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-upload action="http://192.168.88.100:725/api/device/UploadExcel" type="post" style="display: inline-block;margin-left:10px;">
+                <el-button type="primary" size="small" @click="addFrom">
+                    <i class="el-icon-upload el-icon--right"></i> SIM卡绑定管理
+                </el-button>
+                <el-upload action="" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    :show-file-list="false" :http-request="uploadFunc" style="display: inline-block;margin-left:10px;">
                     <el-button size="small" type="primary">
                         <i class="el-icon-upload el-icon--right"></i> 点击上传</el-button>
                 </el-upload>
@@ -94,8 +93,15 @@
             };
         },
         methods: {
+            uploadFunc(uploadObj) {
+                var formData = new FormData();
+                formData.append("ff", uploadObj.file);
+                this.$ajax.post("http://192.168.88.1", formData).catch(() => { })
+            },
             uploadSuccess() { },
-            uploadError() { },
+            uploadError() {
+                alert(1);
+            },
             uploadProgress() { },
             delRow(scope) {//删除
                 this.$confirm('确认删除？')
