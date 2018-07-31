@@ -16,7 +16,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="设备厂商">
-              <el-input v-model="tableQuery.company_name"></el-input>
+              <select-company v-model="tableQuery.company_name" style="width:100%;"></select-company>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
@@ -75,6 +75,7 @@
 <script>
   import selectDevicetype from "@/components/select-devicetype.vue";
   import selectProtocoltype from "@/components/select-protocoltype.vue";
+  import selectCompany from "@/components/select-company.vue"
   import device_add from "./add.vue";
   import device_update from "./update.vue";
   import { getDeviceList, delDevice } from "@/api/index.js";
@@ -184,6 +185,7 @@
         this.tableLoading = true;
         var query = Object.assign({}, this.tableQuery);
         getDeviceList(query)
+
           .then(res => {
             if (res.data.code == 0) {
               this.$set(this.$data, "tableData", res.data);
@@ -196,6 +198,6 @@
           .catch(() => { });
       },
     },
-    components: { selectDevicetype, selectProtocoltype, device_add, device_update },
+    components: { selectDevicetype, selectProtocoltype, device_add, device_update, selectCompany },
   };
 </script>

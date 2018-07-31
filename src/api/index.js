@@ -200,7 +200,12 @@ export const updateCompany = query => {
     params: query
   });
 };
-
+export const delCompany = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device_company/Delete", queryQS, {
+    params: query
+  });
+};
 //用户管理
 export const getUserAll = query => {
   return ajax.get("/user/GetAll", {

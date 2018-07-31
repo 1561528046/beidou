@@ -22,7 +22,7 @@
             value: String
         },
         created() {
-            console.log(this.$dict.company_type)
+            // console.log(this.$dict.company_type)
         },
 
     }

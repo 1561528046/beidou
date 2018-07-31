@@ -69,7 +69,7 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getSimList } from "@/api/index.js";
+    import { getSimList, delSim } from "@/api/index.js";
     import addComponents from "./add.vue";
     import updateComponents from "./update.vue";
     export default {
@@ -100,7 +100,7 @@
             delRow(scope) {//删除
                 this.$confirm('确认删除？')
                     .then(() => {
-                        delUser(scope.row).then((res) => {
+                        delSim({ id: scope.row.sim_no }).then((res) => {
                             if (res.data.code == 0) {
                                 this.$message.success(res.data.msg);
                                 this.getTable();

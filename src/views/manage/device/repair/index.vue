@@ -61,6 +61,7 @@
             return {
                 isCollapse: false,
                 tableQuery: {
+                    state: "",
                     size: 10,
                     page: 1
                 },

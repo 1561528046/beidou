@@ -22,7 +22,7 @@
             value: String
         },
         created() {
-            console.log(this.$dict.device_type)
+
         },
 
     }
