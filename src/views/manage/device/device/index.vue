@@ -4,29 +4,30 @@
 
       <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
-          <el-col :span="7">
+          <el-col :span="6">
             <el-form-item label="设备类型">
               <select-devicetype style="width: 100%;" v-model="tableQuery.device_type"></select-devicetype>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="6">
             <el-form-item label-width="84px" label="设备序列号">
               <el-input placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="6">
             <el-form-item label="设备厂商">
               <el-input placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="6" v-if="isCollapse">
             <el-form-item label="simid">
               <el-input placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="isCollapse?24:7" style="text-align: right;">
+          <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
-              <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
@@ -79,7 +80,7 @@
 <script>
   import selectDevicetype from "@/components/select-devicetype.vue";
   import selectProtocoltype from "@/components/select-protocoltype.vue";
-  import { DeviceList, delDevice } from "@/api/index.js";
+  import { getDeviceList, delDevice } from "@/api/index.js";
   export default {
     created() {
       this.getTable();
@@ -123,13 +124,20 @@
       //列表信息
       getTable() {
         this.tableLoading = true;
-        DeviceList(this.tableQuery)
+        var query = Object.assign({}, this.tableQuery)
+        getDeviceList(query)
           .then(res => {
-            this.$set(this.$data, "tableData", res.data);
+            if (res.data.code == 0) {
+              this.$set(this.$data, "tableData", res.data);
+            } else {
+              this.$set(this.$data, "tableData", []);
+              this.$message.error(res.data.msg)
+            }
             this.tableLoading = false;
           })
           .catch(() => { });
       },
+      //删除
       handleClick(scope) {
         this.$confirm('确认删除？')
           .then(() => {

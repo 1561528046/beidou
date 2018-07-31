@@ -79,7 +79,7 @@ export const getDeviceAll = query => {
     params: query
   });
 };
-export const DeviceList = query => {
+export const getDeviceList = query => {
   return ajax.get("/device/GetListByPage", {
     params: query
   });

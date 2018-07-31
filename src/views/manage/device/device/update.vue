@@ -115,9 +115,9 @@
                         updateDevice(postData)
                             .then(res => {
                                 if (res.data.code == 0) {
-                                    alert("修改成功")
-                                    // this.$message.success(res.data.msg);
-                                    // this.$router.push({ "name": "device-device" })
+                                    // alert("修改成功")
+                                    this.$message.success(res.data.msg);
+                                    this.$router.push({ "name": "device-device" })
                                 } else {
                                     this.$message.error(res.data.msg);
                                 }
