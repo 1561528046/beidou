@@ -9,7 +9,7 @@ import axios from "axios";
 import { dict, utils } from "./utils/base";
 //创建axios实例，注入mock拦截
 var axios1 = axios.create({
-  baseURL: "http://192.168.88.6:8888/app/mock/17/",
+  baseURL: "http://192.168.88.100:725/api/",
   timeout: 2000
 });
 Vue.prototype.$ajax = axios1;

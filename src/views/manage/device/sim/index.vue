@@ -96,7 +96,13 @@
             uploadFunc(uploadObj) {
                 var formData = new FormData();
                 formData.append("ff", uploadObj.file);
-                this.$ajax.post("http://192.168.88.1", formData).catch(() => { })
+                this.$ajax.post("/public/UploadExcel", formData, {
+                    params: { table: 1 }
+                }).then(() => {
+
+                }).catch((err, a) => {
+                    this.$message.error("接口错误，错误码：" + err.response.status)
+                })
             },
             uploadSuccess() { },
             uploadError() {
