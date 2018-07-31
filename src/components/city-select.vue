@@ -20,37 +20,51 @@
     watch: {
       area: function () {
         this.$emit("input", this.area);
+      },
+      value: function () {
+        this.$set(this.$data, "area", this.value);
+        this.init();
       }
     },
     props: {
-      value: Array
+      value: {
+        type: [String, Array],
+        requred: true
+      }
     },
     created() {
-      //初始化省
-      getArea({ parent_id: 0 }).then(res => {
-        let data = res.data.data;
-        data = data.map(item => {
-          if (item.level == 3) {
-            return item;
-          }
-          item.children = [];
-          return item;
-        });
-        this.$set(this.$data, "areaList", data);
-        //初始化值后，根据props传来的value进行层级渲染
-        this.initData();
-      });
-      this.$set(this.$data, "area", this.$props.value);
+      this.init();
     },
     methods: {
+      init() {
+        if (this.areaList.length > 0) {
+          this.initData();
+          return false;
+        }
+        //初始化省
+        getArea({ parent_id: 0 }).then(res => {
+          let data = res.data.data;
+          data = data.map(item => {
+            if (item.area_level == 3) {
+              return item;
+            }
+            item.children = [];
+            return item;
+          });
+          this.$set(this.$data, "areaList", data);
+          //初始化值后，根据props传来的value进行层级渲染
+          this.initData();
+        });
+        this.$set(this.$data, "area", this.$props.value);
+      },
       initData: function () {
-        if (typeof this.$props.value || !this.$props.value.length) {
+        if (typeof this.$props.value != "object" || !this.$props.value.length) {
           return false;
         }
         var cloneValue = Object.assign([], this.$props.value);
         var arrPromise = [];
         cloneValue.map((area_id, index) => {
-          if (index == 2) {
+          if (index == 2) {//不获取最后一级的子元素
             return false;
           }
           arrPromise.push(getArea({ parent_id: area_id }));
@@ -58,13 +72,20 @@
         Promise.all(arrPromise).then(arrRes => {
           var currentArea = this.areaList[
             _.findIndex(this.areaList, { area_id: cloneValue[0] })
-          ]; //获取level 1 对象
-          if (currentArea.level == 3) {
+          ]; //获取area_level 1 对象
+          if (currentArea.area_level == 3) {
             this.$set(this.$data, "area", this.area.slice(0, 1));
             return false;
           }
           arrRes.map((item, index) => {
-            //currentArea
+            item.data.data = item.data.data.map((x) => {
+              if (x.area_level == 3) {
+                return x
+              } else {
+                x.children = [];
+                return x;
+              }
+            });
             currentArea.children = item.data.data;
             if (cloneValue[index + 1] && currentArea) {
               var currentIndex = _.findIndex(currentArea.children, {
@@ -96,12 +117,16 @@
         getArea({ parent_id: currentObj.area_id }).then(res => {
           let data = res.data.data;
           data = data.map(item => {
-            if (item.level == 3) {
+            if (item.area_level == 3) {
               return item;
             }
-            item.children = [];
+            item.children = item.children || [];
             return item;
           });
+          data = [{
+            area_id: "0",
+            area_name: "全部",
+          }].concat(data);
           this.$set(currentObj, "children", data);
         });
       }

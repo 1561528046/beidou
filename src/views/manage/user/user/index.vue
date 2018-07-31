@@ -142,7 +142,8 @@
                 var vNode = this.$createElement(updateComponents, {
                     key: this.addKey++,
                     props: {
-                        user_id: scope.row.user_id
+                        user_id: scope.row.user_id,
+                        user_type: this.user_type
                     },
                     on: {
                         success: () => {

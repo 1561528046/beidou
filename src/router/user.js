@@ -28,7 +28,7 @@ export default {
     {
       path: "user_person",
       name: "user_person",
-      meta: { name: "个人用户管理", icon: "iconfont icon-team" },
+      meta: { name: "个人用户管理", icon: "iconfont icon-user" },
       props: { user_type: 1 }, //根据user_type区分公司还是个人 1个人 2公司
       component: () => import("@/views/manage/user/user/index.vue")
     },
@@ -53,7 +53,7 @@ export default {
     {
       path: "driver",
       name: "driver",
-      meta: { name: "司机信息管理", icon: "iconfont icon-team" },
+      meta: { name: "司机信息管理", icon: "iconfont icon-driver" },
       component: () => import("@/views/manage/user/driver/index.vue")
     },
     {
