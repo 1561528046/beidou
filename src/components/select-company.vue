@@ -35,7 +35,6 @@
             init() {
                 getDeviceCompanyAll().then(res => {
                     if (res.data.code == 0 && res.data.data.length) {
-                        console.log(this.list)
                         this.$set(this.$data, "list", res.data.data);
                         if (this.value && this.value.length) {
                             this.company_id = this.value;
