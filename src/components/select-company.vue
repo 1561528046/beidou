@@ -27,7 +27,7 @@
             getDeviceCompanyAll().then(res => {
                 if (res.data.code == 0 && res.data.data.length) {
                     this.$set(this.$data, "list", res.data.data);
-                    if (this.value.length) {
+                    if (this.value && this.value.length) {
                         this.company_id = this.value;
                     }
                 }
