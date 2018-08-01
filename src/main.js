@@ -6,6 +6,7 @@ import "element-ui/lib/theme-chalk/index.css";
 import "@/style/index.less";
 import router from "./router";
 import axios from "axios";
+import "@/utils/md5.js";
 import { dict, utils } from "./utils/base";
 //创建axios实例，注入mock拦截
 var axios1 = axios.create({

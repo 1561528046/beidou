@@ -179,6 +179,8 @@
             postData.device_total = postData.device_total || 0;
             postData.expiry_time = postData.expiry_time || 0;
             postData.user_type = this.user_type;
+            postData.pass_word = postData.pass_word.MD5(16);
+            delete postData.re_pass_word;
             addUser(postData)
               .then(res => {
                 if (res.data.code == 0) {

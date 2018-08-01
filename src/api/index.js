@@ -283,8 +283,7 @@ export const getDriver = query => {
 
 //登陆
 export const loginIn = query => {
-  var queryQS = qs.stringify(query);
-  return ajax.post("/login/", queryQS, {
+  return ajax.get("/user/Login/", {
     params: query
   });
 };
