@@ -32,9 +32,12 @@
                 <el-button type="primary" size="small" @click="addFrom">
                     <i class="el-icon-upload el-icon--right"></i> 添加
                 </el-button>
-                <el-button type="primary" size="small" @click="addFrom">
-                    <i class="el-icon-upload el-icon--right"></i> SIM卡绑定管理
-                </el-button>
+
+                <router-link :to="{name:'sim-b'}" style="margin-left: 15px;">
+                    <el-button type="primary" size="small">
+                        <i class="el-icon-upload el-icon--right"></i> SIM卡绑定管理
+                    </el-button>
+                </router-link>
                 <el-upload action="" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                     :show-file-list="false" :http-request="uploadFunc" style="display: inline-block;margin-left:10px;">
                     <el-button size="small" type="primary">

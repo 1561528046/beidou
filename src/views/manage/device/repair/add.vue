@@ -25,12 +25,7 @@
             </el-col>
             <el-col :span="12">
                 <el-form-item label="维修状态">
-                    <el-select v-model="formData.state" placeholder="选择维修状态" style="width:100%;">
-                        <el-option label="修复" value="1"></el-option>
-                        <el-option label="已修复" value="2"></el-option>
-                        <el-option label="报废" value="3"></el-option>
-                        <el-option label="更换" value="4"></el-option>
-                    </el-select>
+                    <el-input value="维修" :disabled="true"></el-input>
                 </el-form-item>
             </el-col>
         </el-row>
@@ -50,7 +45,7 @@
                     "back_time": "",
                     "reason": "",
                     "logistics": "",
-                    "state": ""
+                    "state": "1"
                 },
                 rules: {
                     ...rules,
@@ -65,6 +60,7 @@
                 this.$refs.baseForm.validate((isVaildate, errorItem) => {
                     if (isVaildate) {
                         var postData = Object.assign({}, this.formData);
+                        console.log(postData)
                         addDeviceRepair(postData)
                             .then(res => {
                                 if (res.data.code == 0) {

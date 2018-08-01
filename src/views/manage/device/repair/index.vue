@@ -4,12 +4,12 @@
 
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
-                    <el-col :span="8">
+                    <el-col :span="6">
                         <el-form-item label="维修状态">
                             <select-repairstate v-model="tableQuery.state" style="width: 100%;"></select-repairstate>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="isCollapse?24:8" style="text-align: right;">
+                    <el-col :span="isCollapse?24:16" style="text-align: right;">
                         <el-form-item>
                             <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
                             <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
@@ -35,8 +35,8 @@
                 </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" size="small" @click="repaired(scope,2)">已修复</el-button>
-                        <el-button type="text" size="small" @click="repaired(scope,3)">报废</el-button>
+                        <el-button type="primary" size="small" @click="repaired(scope,2)">已修复</el-button>
+                        <el-button type="primary" size="small" @click="repaired(scope,3)">报废</el-button>
                     </template>
                 </el-table-column>
             </el-table>
