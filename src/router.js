@@ -57,6 +57,18 @@ export default new Router({
           meta: { name: "订单管理", icon: "iconfont icon-cluster" }
         }
       ]
-    }
+    },
+    {
+      path: "/login",
+      name: "login",
+      meta: { name: "登陆", hidden: true, fullscreen: true },
+      component: () => import("@/views/login.vue")
+    },
+    {
+      path: "/404",
+      meta: { hidden: true },
+      component: () => import("./views/404.vue")
+    },
+    { path: "*", redirect: "/404", meta: { hidden: true, fullscreen: true } }
   ]
 });

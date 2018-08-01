@@ -42,7 +42,7 @@ export default {
         date.substring(4, 6) +
         separator +
         date.substring(6, 8) +
-        +" " +
+        " " +
         date.substring(8, 10) +
         ":" +
         date.substring(10, 12) +

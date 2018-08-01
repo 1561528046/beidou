@@ -31,7 +31,7 @@
                 <el-table-column prop="reason" label="维修原因" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="logistics" label="物流信息" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="state" label="维修状态" :formatter="(row)=>{return this.$dict.get_repair_state(row.state)}"></el-table-column>
-                <el-table-column prop="time" label="添加时间" :formatter="$utils.baseFormatter">
+                <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}">
                 </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">

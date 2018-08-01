@@ -85,7 +85,7 @@ a {
   width: 800px;
 }
 .admin-message-form {
-  height: 80%;
+  max-height: 80%;
 }
 .admin-message-form .el-message-box__content {
   height: 100%;

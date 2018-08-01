@@ -164,7 +164,6 @@
             getTable() {
                 this.tableLoading = true;
                 var query = Object.assign({}, this.tableQuery);
-                console.log(query)
                 getDeviceCompanyList(query)
                     .then(res => {
                         if (res.data.code == 0) {
