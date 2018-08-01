@@ -6,7 +6,7 @@
                 <el-row :gutter="30">
                     <el-col :span="6">
                         <el-form-item label="厂商名称">
-                            <select-company v-model="tableQuery.company_name" style="width:100%;"></select-company>
+                            <el-input v-model="tableQuery.company_name"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
