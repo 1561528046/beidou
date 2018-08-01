@@ -1,6 +1,6 @@
 <template>
     <div class="post-form">
-        <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+        <el-form label-position="top" status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
             <el-row :gutter="30">
                 <el-col :span="12">
                     <el-form-item prop="sim_no" label="SIM卡号">
@@ -12,15 +12,26 @@
                         <el-input v-model="formData.icc_id"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="12">
-                    <el-form-item prop="belong" label="所属运营商">
-                        <el-input v-model="formData.belong"></el-input>
-                    </el-form-item>
-                </el-col>
+
                 <el-col :span="12">
                     <el-form-item prop="user_id" label="分配客户">
                         <user-select v-model="formData.user_id" style="width:100%;"></user-select>
                         <!-- <el-input v-model="formData.user_id"></el-input> -->
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item prop="belong" label="所属运营商">
+                        <el-row style="width:100%;" :gutter="20">
+                            <el-col :span="12">
+                                <el-select v-model="belong" style="width:100%;">
+                                    <el-option v-for="belongItem in belongSelect" :key="belongItem" :label="belongItem" :value="belongItem"></el-option>
+                                </el-select>
+
+                            </el-col>
+                            <el-col :span="12" style="margin-right:-20px;">
+                                <el-input v-model="formData.belong" v-if="belong == '其他'" placeholder="填写运营商"></el-input>
+                            </el-col>
+                        </el-row>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -44,6 +55,13 @@
     export default {
         data() {
             return {
+                belongSelect: [
+                    "中国移动",
+                    "中国联通",
+                    "中国电信",
+                    "其他",
+                ],
+                belong: "",
                 formData: {
                     sim_no: "",
                     icc_id: "",
@@ -57,7 +75,15 @@
                 }
             };
         },
-        computed: {},
+        watch: {
+            belong: function () {
+                if (this.belong == "其他") {
+                    this.formData.belong = "";
+                } else {
+                    this.formData.belong = this.belong;
+                }
+            }
+        },
         created() { },
         methods: {
             formSubmit() {

@@ -55,19 +55,18 @@
         this.$refs.baseForm.validate((isVaildate, errorItem) => {
           if (isVaildate) {
             var postData = Object.assign({}, this.formData);
+            postData.pass_word = postData.pass_word.MD5(16);
             loginIn(postData)
               .then(res => {
                 if (res.data.code == 0) {
-                  this.$emit("success");
                   this.$message.success(res.data.msg);
+                  localStorage.ACCOUTNtoken = res.data.token;
                 } else {
-                  this.$emit("error");
                   this.$message.error(res.data.msg);
                 }
               })
               .catch(() => {
                 this.$message.error("接口错误");
-                this.$emit("error");
               });
           } else {
             var errormsg = "";

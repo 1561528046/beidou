@@ -85,7 +85,6 @@
                     area: [],
                     user_name: "",
                     linkman: "",
-                    region: "",
                     size: 10,
                     page: 1,
                     user_type: this.$props.user_type
