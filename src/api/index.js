@@ -33,7 +33,7 @@ ajax.interceptors.response.use(
   function(response) {
     if (typeof response.data == "string") {
       try {
-        response.data = JSON.stringify(response.data);
+        response.data = JSON.parse(response.data);
       } catch (err) {
         Message({
           showClose: true,

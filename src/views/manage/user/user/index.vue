@@ -9,8 +9,11 @@
                     </el-form-item>
                     </el-col> -->
                     <el-col :span="6">
-                        <el-form-item label="联系人">
+                        <el-form-item v-if="user_type==1" label="联系人">
                             <el-input v-model=" tableQuery.linkman " placeholder="联系人 "></el-input>
+                        </el-form-item>
+                        <el-form-item v-if="user_type==2" label="公司名称">
+                            <el-input v-model=" tableQuery.company " placeholder="公司名称 "></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6 ">
@@ -18,10 +21,20 @@
                             <el-input v-model="tableQuery.user_name " placeholder="用户账号 "></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :offset="6" :span="isCollapse?24:6" style="text-align: right;">
+                    <!-- <el-col :span="6 ">
+                        <el-form-item label="所属地区 ">
+                            <el-input v-model="tableQuery.area " placeholder="所属地区 "></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-if="isCollapse" :span="6 ">
+                        <el-form-item label="所属行业 ">
+                            <el-input v-model="tableQuery.industry " placeholder="所属行业 "></el-input>
+                        </el-form-item>
+                    </el-col> -->
+                    <el-col :span="isCollapse?24:6" style="text-align: right;">
                         <el-form-item>
-                            <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-                                <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button> -->
+                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
                             <el-button type="primary" @click="getTable">查询</el-button>
                         </el-form-item>
                     </el-col>
@@ -46,7 +59,8 @@
                         {{scope.row.province_name}} {{scope.row.city_name}} {{scope.row.county_name}}
                     </template>
                 </el-table-column>
-                <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"></el-table-column>
+                <el-table-column prop="linkman" v-if="user_type==1" label="联系人" :formatter="$utils.baseFormatter"></el-table-column>
+                <el-table-column prop="company" v-if="user_type==2" label="公司名称" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="vehicle_type" label="所属行业 " :formatter="(row)=>{return this.$dict.get_industry(row.vehicle_type)}">
                 </el-table-column>
@@ -85,6 +99,8 @@
                     area: [],
                     user_name: "",
                     linkman: "",
+                    company: "",
+                    industry: "",
                     size: 10,
                     page: 1,
                     user_type: this.$props.user_type
@@ -177,6 +193,11 @@
                 var query = Object.assign({}, this.tableQuery, areaObj);
                 getUserList(query)
                     .then(res => {
+                        for (var i = 0; i < res.data.data.length; i++) {
+                            if (res.data.data[i].device_total == 0) {
+                                res.data.data[i].device_total = "";
+                            }
+                        }
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
                     })
