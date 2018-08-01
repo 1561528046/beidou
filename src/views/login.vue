@@ -60,6 +60,7 @@
               .then(res => {
                 if (res.data.code == 0) {
                   this.$message.success(res.data.msg);
+                  localStorage.ACCOUTNtoken = res.data.token;
                 } else {
                   this.$message.error(res.data.msg);
                 }

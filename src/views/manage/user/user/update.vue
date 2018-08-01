@@ -15,7 +15,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <!-- <el-col :span="12">
           <el-form-item label="密码" prop="pass_word">
             <el-input v-model="formData.pass_word" type="password"></el-input>
           </el-form-item>
@@ -24,7 +24,7 @@
           <el-form-item label="确认密码" prop="re_pass_word">
             <el-input v-model="formData.re_pass_word" type="password"></el-input>
           </el-form-item>
-        </el-col>
+        </el-col> -->
 
         <template v-if="user_type==2">
 
@@ -200,8 +200,9 @@
             postData.device_total = postData.device_total || 0;
             postData.expiry_time = postData.expiry_time || 0;
             postData.user_type = this.user_type;
-            postData.pass_word = postData.pass_word.MD5(16);
+            //postData.pass_word = postData.pass_word.MD5(16);
             delete postData.re_pass_word;
+            delete postData.pass_word;
             updateUser(postData)
               .then(res => {
                 if (res.data.code == 0) {

@@ -1,6 +1,6 @@
 <template>
   <div class="post-form">
-    <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+    <el-form label-position="top" status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
       <el-row :gutter="30">
         <el-col :span="12">
           <el-form-item label="登陆帐号" prop="user_name">
@@ -26,23 +26,24 @@
           </el-form-item>
         </el-col>
 
-        <template v-if="user_type==2">
-          <el-col :span="12">
-            <el-form-item label="公司名称" prop="company">
-              <el-input v-model="formData.company" maxlength="255"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="所属行业" prop="industry">
-              <el-input v-model="formData.industry" maxlength="255"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="所属地区">
-              <city-select v-model="formData.area" style="width:100%;"></city-select>
-            </el-form-item>
-          </el-col>
-        </template>
+        <el-col :span="12" v-if="user_type==2">
+          <el-form-item label="公司名称" prop="company">
+            <el-input v-model="formData.company" maxlength="255"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="所属地区">
+            <city-select v-model="formData.area" style="width:100%;"></city-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" v-if="user_type==2">
+          <el-form-item label="所属行业" prop="industry">
+            <!-- <el-input v-model="formData.industry" maxlength="255"></el-input> -->
+            <industry-select v-model="formData.industry" style="width:100%;"></industry-select>
+          </el-form-item>
+        </el-col>
+
+
         <el-col :span="12">
           <el-form-item label="联系人" prop="linkman">
             <el-input v-model="formData.linkman" maxlength="20"></el-input>
@@ -53,7 +54,7 @@
             <el-input v-model="formData.tel" maxlength="20"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="12">
           <el-form-item label="地址" prop="address">
             <el-input v-model="formData.address"></el-input>
           </el-form-item>
@@ -91,6 +92,7 @@
   import { rules } from "@/utils/rules.js";
   import citySelect from "@/components/city-select.vue";
   import { addUser } from "@/api/index.js";
+  import industrySelect from "@/components/select-industry.vue";
   export default {
     data() {
       return {
@@ -210,6 +212,6 @@
         })
       }
     },
-    components: { citySelect }
+    components: { citySelect, industrySelect }
   };
 </script>
