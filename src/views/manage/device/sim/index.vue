@@ -51,22 +51,45 @@
                         <i class="el-icon-upload el-icon--right"></i> SIM卡绑定管理
                     </el-button>
                 </router-link>
-
-                <el-select v-model="value" placeholder="批量上传" style="width: 150px; margin-left: 20px;">
-                    <el-option size="">
-                        <el-upload action=" " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                <el-dropdown>
+                    <el-button size="small" style="margin-left: 15px;" type="primary">
+                        批量上传
+                        <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item>
+                            <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                                    application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " style="display: inline-block; ">
+                                <el-button style="padding: 0 15px;" type="primary ">
+                                    <i class="el-icon-upload el-icon--right "></i> 点击上传
+                                </el-button>
+                            </el-upload>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                            <el-button style="padding: 0 15px;" type="primary ">
+                                <i class="el-icon-upload el-icon--right "></i> 模版下载
+                            </el-button>
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <!-- <el-select size="small" placeholder="批量上传" style="width: 150px; margin-left: 20px;">
+                    <el-option style="margin-bottom: 10px; height: 38px;">
+                        <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
                     application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " style="display: inline-block; ">
-                            <el-button size="small " type="primary " style="  background-color: #409EFF;">
+                            <el-button style="padding: 0 15px;" type="primary ">
                                 <i class="el-icon-upload el-icon--right "></i> 点击上传
                             </el-button>
                         </el-upload>
                     </el-option>
-                    <el-option>
-                        <el-button size="small " type="primary ">
-                            <i class="el-icon-upload el-icon--right "></i> 模版下载
-                        </el-button>
+                    <el-option style="height: 38px;">
+                        <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                            application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " style="display: inline-block; ">
+                            <el-button style="padding: 0 15px;" type="primary ">
+                                <i class="el-icon-upload el-icon--right "></i> 模版下载
+                            </el-button>
+                        </el-upload>
                     </el-option>
-                </el-select>
+                </el-select> -->
 
             </div>
             <el-table :data="tableData.data " v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
@@ -162,7 +185,13 @@
                 formData.append("ff", uploadObj.file);
                 this.$ajax.post("/public/UploadExcel", formData, {
                     params: { table: 1 }
-                }).then(() => {
+                }).then((res) => {
+                    if (res.data.code == 0) {
+                        this.$message.success("成功！");
+                        this.getTable();
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
 
                 }).catch((err, a) => {
                     this.$message.error("接口错误，错误码：" + err.response.status)
@@ -261,6 +290,9 @@
                         this.tableLoading = false;
                     })
                     .catch(() => { });
+            },
+            handleClick() {
+                alert('button click');
             }
         },
         components: { selectUser }
