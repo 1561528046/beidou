@@ -66,9 +66,9 @@
                             </el-upload>
                         </el-dropdown-item>
                         <el-dropdown-item>
-                            <el-button style="padding: 0 15px;" type="primary ">
+                            <a href="/assets/SIM卡模板.xls" target="_blank" download style="padding: 0 15px;" type="primary ">
                                 <i class="el-icon-upload el-icon--right "></i> 模版下载
-                            </el-button>
+                            </a>
                         </el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
