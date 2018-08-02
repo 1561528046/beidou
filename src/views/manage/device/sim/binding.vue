@@ -6,18 +6,18 @@
                     <div class="user-filter" :class="{active:userFilterOpen}">
                         <el-form :model="userTableQuery" size="small">
                             <el-form-item>
-                                <el-input placeholder="输入用户名" size="small" v-mode="userTableQuery.user_name">
+                                <el-input placeholder="输入用户名" size="small" v-model="userTableQuery.user_name">
                                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                                 </el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-select v-mode="userTableQuery.user_type" style="width:100%;">
+                                <el-select v-model="userTableQuery.user_type" style="width:100%;">
                                     <el-option value="1">个人用户</el-option>
                                     <el-option value="2">企业用户</el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item>
-                                <el-input placeholder="公司/个人名称" size="small" v-mode="userTableQuery.real_name">
+                                <el-input placeholder="公司/个人名称" size="small" v-model="userTableQuery.real_name">
                                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                                 </el-input>
                             </el-form-item>
@@ -31,9 +31,9 @@
                         <li v-for="user in userList" :key="user.user_id" @click="changeUser(user)" :class="{active:user==currentUser}"> {{user.user_name}}</li>
                     </ul>
                     <div class="user-pager">
-                        <el-input placeholder="页码" size="small">
-                            <el-button slot="prepend" icon="el-icon-caret-left"></el-button>
-                            <el-button slot="append" icon="el-icon-caret-right"></el-button>
+                        <el-input placeholder="页码" size="small" v-model="userTableQuery.page">
+                            <el-button slot="prepend" icon="el-icon-caret-left" @click="userPagerPrev()"></el-button>
+                            <el-button slot="append" icon="el-icon-caret-right" @click="userPagerNext()"></el-button>
                         </el-input>
                     </div>
                 </div>
@@ -153,16 +153,11 @@
 </style>
 <script>
     /* eslint-disable */
-    import { getUserAll, getUserSim, getSimAllUnbind, addUserSim, delUserSim } from "@/api/index.js";
+    import { getUserList, getUserSim, getSimAllUnbind, addUserSim, delUserSim } from "@/api/index.js";
     import adminTransfer from "@/components/transfer.vue"
     export default {
         created() {
-            getUserAll().then((res) => {
-                if (res.data.code == 0) {
-                    this.$set(this.$data, "userList", res.data.data);
-                }
-            })
-
+            this.renderUser();
         },
         computed: {
             list: function () {
@@ -190,6 +185,32 @@
         },
         props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
         methods: {
+            renderUser() {
+                getUserList(this.userTableQuery).then((res) => {
+                    if (res.data.code == 0) {
+                        this.$set(this.$data, "userList", res.data.data);
+                    }
+                })
+            },
+            userPagerPrev() {
+                if (isNaN(Number(parseInt(this.userTableQuery.page)))) {
+                    this.userTableQuery.page = 1;
+                } else {
+                    if (this.userTableQuery.page - 1 <= 0) {
+                        this.userTableQuery.page = 1;
+                    } else {
+                        this.userTableQuery.page = parseInt(this.userTableQuery.page) - 1;
+                    }
+                }
+
+            },
+            userPagerNext() {
+                if (isNaN(Number(parseInt(this.userTableQuery.page)))) {
+                    this.userTableQuery.page = 1;
+                } else {
+                    this.userTableQuery.page = parseInt(this.userTableQuery.page) + 1;
+                }
+            },
             onleft(items, next) {//右到左
                 if (!this.currentUser.user_id) {
                     this.$message.warning("请选择一个用户！");
