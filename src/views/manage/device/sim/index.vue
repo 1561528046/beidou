@@ -46,7 +46,7 @@
                     <i class="el-icon-upload el-icon--right"></i> 添加
                 </el-button>
 
-                <router-link :to="{name:'sim-b'}" style="margin-left: 15px;">
+                <router-link :to="{name:'sim-binding'}" style="margin-left: 15px;">
                     <el-button type="primary" size="small">
                         <i class="el-icon-upload el-icon--right"></i> SIM卡绑定管理
                     </el-button>
