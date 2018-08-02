@@ -242,6 +242,22 @@ export const getUserAll = query => {
 };
 
 export const getUserList = query => {
+  query = Object.assign(
+    {
+      province_id: "",
+      city_id: "",
+      county_id: "",
+      real_name: "",
+      user_name: "",
+      linkman: "",
+      company: "",
+      industry: "",
+      size: 10,
+      page: 1,
+      user_type: ""
+    },
+    query
+  );
   return ajax.get("/user/GetListByPage", {
     params: query
   });
