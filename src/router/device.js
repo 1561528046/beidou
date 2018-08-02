@@ -65,6 +65,12 @@ export default {
       component: () => import("@/views/manage/device/sim/update.vue")
     },
     {
+      path: "sim-binding",
+      name: "sim-b",
+      meta: { name: "SIM卡绑定管理", hidden: true },
+      component: () => import("@/views/manage/device/sim/sim-binding.vue")
+    },
+    {
       path: "company",
       name: "device-company",
       meta: {

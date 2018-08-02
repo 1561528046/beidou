@@ -33,7 +33,7 @@ ajax.interceptors.response.use(
   function(response) {
     if (typeof response.data == "string") {
       try {
-        response.data = JSON.stringify(response.data);
+        response.data = JSON.parse(response.data);
       } catch (err) {
         Message({
           showClose: true,
@@ -162,6 +162,11 @@ export const getSim = query => {
     params: query
   });
 };
+export const getUserSim = query => {
+  return ajax.get("/user/GetUserSim", {
+    params: query
+  });
+};
 export const addSim = query => {
   query = qs.stringify(query);
   return ajax.post("/sim/Add", query);
@@ -178,7 +183,6 @@ export const delSim = query => {
     params: query
   });
 };
-
 // 终端厂商管理
 export const getDeviceCompanyAll = query => {
   return ajax.get("/device_company/GetAll", {
