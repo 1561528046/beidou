@@ -1,5 +1,5 @@
 <template>
-    <el-select v-model="user_id" placeholder="请选择" filterable>
+    <el-select v-model="user_id" placeholder="请选择" filterable style="width: 100%;">
         <el-option v-for="item in users" :key="item.user_id" :label="item.user_name" :value="item.user_id">
         </el-option>
     </el-select>

@@ -70,6 +70,12 @@
                     var mixinData = Object.assign({}, this.formData, res.data.data[0]);
                     if (this.belongSelect.indexOf(mixinData.belong) == -1) {
                         this.belong = "其他";
+                        var tempBelong = mixinData.belong;
+                        this.$nextTick(() => {
+                            this.$set(this.formData, "belong", tempBelong)
+                            //this.formData.belong = mixinData.belong;
+                        })
+
                     } else {
                         this.belong = mixinData.belong;
                     }

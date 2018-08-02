@@ -26,8 +26,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="6" v-if="isCollapse">
-                        <el-form-item label="分配用户" label-width="82px">
-                            <el-input v-model="tableQuery.user_id" placeholder="分配用户"></el-input>
+                        <el-form-item label="分配用户">
+                            <el-input v-model="tableQuery.user_name"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="isCollapse?18:6" style="text-align: right;">
@@ -51,20 +51,32 @@
                         <i class="el-icon-upload el-icon--right"></i> SIM卡绑定管理
                     </el-button>
                 </router-link>
-                <el-upload action="" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    :show-file-list="false" :http-request="uploadFunc" style="display: inline-block;margin-left:10px;">
-                    <el-button size="small" type="primary">
-                        <i class="el-icon-upload el-icon--right"></i> 点击上传</el-button>
-                </el-upload>
+
+                <el-select v-model="value" placeholder="批量上传" style="width: 150px; margin-left: 20px;">
+                    <el-option size="">
+                        <el-upload action=" " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                    application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " style="display: inline-block; ">
+                            <el-button size="small " type="primary " style="  background-color: #409EFF;">
+                                <i class="el-icon-upload el-icon--right "></i> 点击上传
+                            </el-button>
+                        </el-upload>
+                    </el-option>
+                    <el-option>
+                        <el-button size="small " type="primary ">
+                            <i class="el-icon-upload el-icon--right "></i> 模版下载
+                        </el-button>
+                    </el-option>
+                </el-select>
+
             </div>
-            <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
+            <el-table :data="tableData.data " v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
+                <el-table-column prop="time " label="添加时间 " :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
                 <el-table-column prop="icc_id" label="ICCID" :formatter="$utils.baseFormatter">
                 </el-table-column>
                 <el-table-column prop="sim_no" label="Sim卡号" :formatter="$utils.baseFormatter">
                 </el-table-column>
                 <el-table-column prop="belong" label="所属运营商" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="user_id" label="分配用户" :formatter="$utils.baseFormatter"></el-table-column>
+                <el-table-column prop="user_name" label="分配用户" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="state" label="当前状态" :formatter="(row)=>{return this.$dict.get_sim_state(row.state)}"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
@@ -84,11 +96,13 @@
 <script>
     /* eslint-disable */
     import { getSimList, delSim } from "@/api/index.js";
+    import selectUser from "@/components/select-user.vue"
     import addComponents from "./add.vue";
     import updateComponents from "./update.vue";
     export default {
         created() {
             this.getTable();
+            this.keyupSubmit();
         },
         data() {
             return {
@@ -138,7 +152,8 @@
                     }]
                 },
                 value6: '',
-                value7: ''
+                value7: '',
+                userdetailShow: false
             };
         },
         methods: {
@@ -226,6 +241,14 @@
                 this.tableQuery.page = val;
                 this.getTable();
             },
+            keyupSubmit() {
+                document.onkeydown = e => {
+                    let _key = window.event.keyCode;
+                    if (_key === 13) {
+                        this.getTable()
+                    }
+                }
+            },
             getTable() {
                 this.tableLoading = true;
                 if (this.value6) {
@@ -234,12 +257,12 @@
                 }
                 getSimList(this.tableQuery)
                     .then(res => {
-                        console.log(res)
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
                     })
                     .catch(() => { });
             }
-        }
+        },
+        components: { selectUser }
     };
 </script>
