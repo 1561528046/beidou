@@ -10,13 +10,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label-width="84px" label="设备序列号">
-              <el-input v-model="tableQuery.device_no"></el-input>
+            <el-form-item label="设备厂商">
+              <select-company v-model="tableQuery.company_id" style="width:100%;"></select-company>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="设备厂商">
-              <select-company v-model="tableQuery.company_id" style="width:100%;"></select-company>
+            <el-form-item label="设备id">
+              <el-input v-model="tableQuery.device_id"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
@@ -55,7 +55,7 @@
         <el-table-column prop="camera_num" label="摄像头数量" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="save_media" label="存储介质" :formatter="(row)=>{return this.$dict.get_save_media(row.save_media)}"></el-table-column>
         <el-table-column prop="state" label="状态" :formatter="(row)=>{return this.$dict.get_state(row.state)}"></el-table-column>
-        <el-table-column prop="time" label="添加时间" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
@@ -88,7 +88,7 @@
         isCollapse: false,
         tableQuery: {
           device_type: "",
-          device_no: "",
+          device_id: "",
           company_id: "",
           sim_id: "",
           size: 10,

@@ -1,6 +1,6 @@
 <template>
-    <div class="post-form">
-        <el-form label-position="top" status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+    <div class="post-form" style="width: 500px;">
+        <el-form label-position="top" status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
             <el-row :gutter="30">
                 <el-col :span="12">
                     <el-form-item prop="sim_no" label="SIM卡号">
@@ -14,17 +14,12 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item prop="belong" label="所属运营商">
-                        <el-row :gutter="20" style="width: 100%;">
-                            <el-col>
-                                <el-select v-model="belong">
-                                    <el-option v-for="belongItem in belongSelect" :key="belongItem" :label="belongItem" :value="belongItem"></el-option>
-                                </el-select>
-
-                            </el-col>
-                            <el-col style="margin-right:-20px;">
-                                <el-input v-model="formData.belong" v-if="belong == '其他'" placeholder="填写运营商"></el-input>
-                            </el-col>
-                        </el-row>
+                        <el-select v-model="belong" style="width: 100%;">
+                            <el-option v-for="belongItem in belongSelect" :key="belongItem" :label="belongItem" :value="belongItem"></el-option>
+                        </el-select>
+                        <el-col style="margin-right:-20px;">
+                            <el-input v-model="formData.belong" v-if="belong == '其他'" placeholder="填写运营商"></el-input>
+                        </el-col>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -64,7 +59,14 @@
                 },
                 rules: {
                     ...rules,
-                    sim_no: [{ required: true, message: "请输入SIM卡号", trigger: "change" }].concat(rules.sim_no)
+                    sim_no: [
+                        { required: true, message: "请输入SIM卡号", trigger: "change" },
+                        {
+                            min: 11,
+                            max: 14,
+                            message: "长度在 11 到 14 个字符",
+                            trigger: "change"
+                        }]
                 }
             };
         },

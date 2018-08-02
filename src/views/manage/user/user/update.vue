@@ -27,10 +27,6 @@
         </el-col> -->
 
         <template v-if="user_type==2">
-
-
-
-
           <el-col :span="12">
             <el-form-item label="公司名称" prop="company">
               <el-input v-model="formData.company" maxlength="255"></el-input>
@@ -200,9 +196,9 @@
             postData.device_total = postData.device_total || 0;
             postData.expiry_time = postData.expiry_time || 0;
             postData.user_type = this.user_type;
-            //postData.pass_word = postData.pass_word.MD5(16);
-            delete postData.re_pass_word;
-            delete postData.pass_word;
+            postData.pass_word = postData.pass_word.MD5(16);
+            // delete postData.re_pass_word;
+            // delete postData.pass_word;
             updateUser(postData)
               .then(res => {
                 if (res.data.code == 0) {

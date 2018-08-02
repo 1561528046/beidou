@@ -27,13 +27,5 @@ export const rules = {
       message: "长度在 11 到 14 个字符",
       trigger: "change"
     }
-  ],
-  sim_no: [
-    {
-      min: 11,
-      max: 14,
-      message: "长度在 11 到 14 个字符",
-      trigger: "change"
-    }
   ]
 };

@@ -3,11 +3,11 @@
         <el-card shadow="always" class="admin-table-search">
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
-                    <!-- <el-col :span="6">
-                        <el-form-item label="所属区域">
-                            <city-select v-model="tableQuery.area" style="width:100%;"></city-select>
-                    </el-form-item>
-                    </el-col> -->
+                    <el-col :span="6 ">
+                        <el-form-item label="登录账号 ">
+                            <el-input v-model="tableQuery.user_name " placeholder="登录账号 "></el-input>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="6">
                         <el-form-item v-if="user_type==1" label="联系人">
                             <el-input v-model=" tableQuery.linkman " placeholder="联系人 "></el-input>
@@ -16,21 +16,16 @@
                             <el-input v-model=" tableQuery.company " placeholder="公司名称 "></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6 ">
-                        <el-form-item label="用户账号 ">
-                            <el-input v-model="tableQuery.user_name " placeholder="用户账号 "></el-input>
+                    <el-col :span="6">
+                        <el-form-item label="所属地区">
+                            <city-select v-model="tableQuery.area" style="width:100%;"></city-select>
                         </el-form-item>
                     </el-col>
-                    <!-- <el-col :span="6 ">
-                        <el-form-item label="所属地区 ">
-                            <el-input v-model="tableQuery.area " placeholder="所属地区 "></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col v-if="isCollapse" :span="6 ">
+                    <el-col :span="6" v-if="isCollapse">
                         <el-form-item label="所属行业 ">
                             <el-input v-model="tableQuery.industry " placeholder="所属行业 "></el-input>
                         </el-form-item>
-                    </el-col> -->
+                    </el-col>
                     <el-col :span="isCollapse?24:6" style="text-align: right;">
                         <el-form-item>
                             <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
@@ -64,7 +59,7 @@
                 <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="vehicle_type" label="所属行业 " :formatter="(row)=>{return this.$dict.get_industry(row.vehicle_type)}">
                 </el-table-column>
-                <el-table-column prop="address" label="地址" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="address" v-if="user_type==2" label="地址" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column label="操作">

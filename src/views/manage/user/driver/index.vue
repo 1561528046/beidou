@@ -4,16 +4,21 @@
             <el-form :model="tableQuery" label-width="150px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6">
+                        <el-form-item label="司机身份识别卡编号">
+                            <el-input v-model="tableQuery.driver_card_id" maxlength="10"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
                         <el-form-item label="司机姓名">
                             <el-input v-model="tableQuery.driver_name" placeholder="司机姓名"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item label="司机身份识别卡编号">
-                            <el-input v-model="tableQuery.driver_card_id" maxlength="10"></el-input>
+                        <el-form-item label="身份证号">
+                            <el-input v-model="tableQuery.dentity_id" placeholder="身份证号"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :offset="6" :span="isCollapse?24:6" style="text-align: right;">
+                    <el-col :span="isCollapse?24:6" style="text-align: right;">
                         <el-form-item>
                             <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
                             <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button> -->
@@ -68,6 +73,7 @@
                 isCollapse: false,
                 tableQuery: {
                     driver_name: "",
+                    driver_card_id: "",
                     size: 10,
                     page: 1
                 },
