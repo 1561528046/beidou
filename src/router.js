@@ -68,7 +68,7 @@ export default new Router({
       path: "/404",
       meta: { hidden: true },
       component: () => import("./views/404.vue")
-    },
-    { path: "*", redirect: "/404", meta: { hidden: true, fullscreen: true } }
+    }
+    // { path: "*", redirect: "/404", meta: { hidden: true, fullscreen: true } }
   ]
 });

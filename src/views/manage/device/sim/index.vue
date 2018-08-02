@@ -45,7 +45,6 @@
                 <el-button type="primary" size="small" @click="addFrom">
                     <i class="el-icon-upload el-icon--right"></i> 添加
                 </el-button>
-
                 <router-link :to="{name:'sim-binding'}" style="margin-left: 15px;">
                     <el-button type="primary" size="small">
                         <i class="el-icon-upload el-icon--right"></i> SIM卡绑定管理
@@ -59,16 +58,16 @@
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item>
                             <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
-                                    application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " style="display: inline-block; ">
-                                <el-button style="padding: 0 15px;" type="primary ">
-                                    <i class="el-icon-upload el-icon--right "></i> 点击上传
-                                </el-button>
+                                    application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " class="o-el-upload--text">
+                                <!-- <i class="el-icon-upload el-icon--right "></i> 点击上传 -->
+                                <el-button size="small" icon="el-icon-upload2" type="primary" style="display: block;width:100%;">点击上传</el-button>
                             </el-upload>
                         </el-dropdown-item>
                         <el-dropdown-item>
-                            <a href="/assets/SIM卡模板.xls" target="_blank" download style="padding: 0 15px;" type="primary ">
-                                <i class="el-icon-upload el-icon--right "></i> 模版下载
+                            <a href="/static/SIM卡导入模板.xls" download target="_blank" type="primary " class="el-button el-button--small el-button--primary">
+                                <i class="el-icon-download"></i> 模版下载
                             </a>
+
                         </el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -190,7 +189,11 @@
                         this.$message.success("成功！");
                         this.getTable();
                     } else {
-                        this.$message.error(res.data.msg);
+                        this.$notify.error({
+                            title: '导入失败',
+                            message: res.data.msg
+                        });
+                        // this.$message.error(res.data.msg);
                     }
 
                 }).catch((err, a) => {
@@ -298,3 +301,8 @@
         components: { selectUser }
     };
 </script>
+<style>
+    .o-el-upload--text .el-upload--text {
+        display: block;
+    }
+</style>

@@ -99,7 +99,7 @@ export const dict = {
     "2": "未使用"
   },
   get_sim_state: function(key) {
-    return this.sim_state[key] || "--";
+    return this.sim_state[key] || "未使用";
   }
 };
 import utils from "@/utils/utils";
