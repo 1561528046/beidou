@@ -3,14 +3,16 @@
         <div class="left-transfer transfer-box">
             <div class="_header">
                 <label>
-                    <el-checkbox v-model="leftCheckAll">{{titles[0]||"列表1"}}</el-checkbox>
+                    <el-checkbox v-model="leftCheckAll">{{titles[0]||""}}</el-checkbox>
                 </label>
             </div>
             <div class="_body">
-                <div class="_search"></div>
                 <div class="_list">
+                    <div v-if="leftList.length==0" style="padding:20px 0; text-align: center; color:#999;">
+                        数据为空
+                    </div>
                     <el-checkbox-group v-model="leftChecked">
-                        <el-checkbox v-for="item in list" :key="item.key" :label="item.key" v-if="item.parent == 'left'">{{item.label}}</el-checkbox>
+                        <el-checkbox v-for="item in leftList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
                     </el-checkbox-group>
                 </div>
             </div>
@@ -28,10 +30,12 @@
                 </label>
             </div>
             <div class="_body">
-                <div class="_search"></div>
                 <div class="_list">
+                    <div v-if="rightList.length==0" style="padding:20px 0; text-align: center;color:#999;">
+                        数据为空
+                    </div>
                     <el-checkbox-group v-model="rightChecked">
-                        <el-checkbox v-for="item in list" :key="item.key" :label="item.key" v-if="item.parent == 'right'">{{item.label}}</el-checkbox>
+                        <el-checkbox v-for="item in rightList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
                     </el-checkbox-group>
 
                 </div>
@@ -45,7 +49,7 @@
         display: flex;
         justify-content: space-around;
         width: 800px;
-        height: 400px;
+        height: 100%;
     }
 
     .btns-transfer {
@@ -89,8 +93,15 @@
             }
 
         }
+        ._body {
+            position: absolute;
+            top: 40px;
+            bottom: 0;
+            width: 100%;
+        }
         ._list {
-            height: 300px;
+            height: 100%;
+            width: 100%;
             overflow: auto;
 
             label {
@@ -131,7 +142,22 @@
                 // ]
             }
         },
+        computed: {
+            leftList: function () {
+                return this.list.filter(item => {
+                    return item.parent == "left";
+                })
+            },
+            rightList: function () {
+                return this.list.filter(item => {
+                    return item.parent == "right";
+                })
+            }
+        },
         watch: {
+            lists: function () {
+                this.$set(this.$data, "list", this.lists);
+            },
             leftCheckAll: function (val) {
                 var arr = [];
                 if (val) {
@@ -157,10 +183,10 @@
         },
         props: {
             lists: Array,
-            titles: Array
+            titles: Array,
         },
         created() {
-
+            console.log(this.lists)
         },
         methods: {
             goLeft() {

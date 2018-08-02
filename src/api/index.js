@@ -152,6 +152,22 @@ export const getSimAll = query => {
     params: query
   });
 };
+export const getSimAllUnbind = query => {
+  //获取所有没有绑定的SIM卡
+  return ajax.get("/sim/GetUnboundListByPage", {
+    params: query
+  });
+};
+export const addUserSim = query => {
+  return ajax.post("/user/AddUserSim", "", {
+    params: query
+  });
+};
+export const delUserSim = query => {
+  return ajax.post("/user/DeleteUserSim", "", {
+    params: query
+  });
+};
 export const getSimList = query => {
   return ajax.get("/sim/GetListByPage", {
     params: query
