@@ -60,13 +60,14 @@
                         <el-dropdown-item>
                             <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
                                     application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " style="display: inline-block; ">
-                                <el-button style="padding: 0 15px;" type="primary ">
+                                <el-button style="padding: 1.5px 15px;" type="primary ">
                                     <i class="el-icon-upload el-icon--right "></i> 点击上传
                                 </el-button>
                             </el-upload>
                         </el-dropdown-item>
                         <el-dropdown-item>
-                            <a href="/assets/SIM卡模板.xls" target="_blank" download style="padding: 0 15px;" type="primary ">
+                            <a href="/assets/SIM卡模板.xls" target="_blank" download style="padding: 0 15px; background-color: #409EFF; border-radius: 4px; color: #fff;"
+                                type="primary ">
                                 <i class="el-icon-upload el-icon--right "></i> 模版下载
                             </a>
                         </el-dropdown-item>
