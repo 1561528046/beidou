@@ -30,7 +30,7 @@
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
                 <el-table-column prop="company_name" label="设备厂商名称" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column label="操作">
+                <el-table-column width="300" label="操作">
                     <template slot-scope="scope">
                         <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
                         <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
@@ -131,7 +131,7 @@
                 });
                 this.$msgbox({
                     showConfirmButton: false,//是否显示确定按钮	
-                    customClass: "admin-message-form",
+                    customClass: "admin-message-forms",
                     title: "编辑",
                     closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
                     closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox

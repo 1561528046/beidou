@@ -5,11 +5,22 @@
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6">
+                        <el-form-item label="返厂时间">
+                            <el-date-picker type="datetime" v-model="tableQuery.back_time" align="center" placeholder="选择日期" style="width:100%;" value-format="yyyyMMddHHmmss">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
                         <el-form-item label="维修状态">
                             <select-repairstate v-model="tableQuery.state" style="width: 100%;"></select-repairstate>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="isCollapse?24:16" style="text-align: right;">
+                    <el-col :span="6">
+                        <el-form-item label="物流信息">
+                            <el-input v-model="tableQuery.logistics"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="isCollapse?24:6" style="text-align: right;">
                         <el-form-item>
                             <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
                             <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
@@ -26,7 +37,7 @@
                 </el-button>
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="back_time" label="返厂时间" :formatter="$utils.baseFormatter">
+                <el-table-column prop="back_time" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.back_time)}">
                 </el-table-column>
                 <el-table-column prop="reason" label="维修原因" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="logistics" label="物流信息" :formatter="$utils.baseFormatter"></el-table-column>
@@ -61,6 +72,8 @@
             return {
                 isCollapse: false,
                 tableQuery: {
+                    back_time: "",
+                    logistics: "",
                     state: "",
                     size: 10,
                     page: 1
