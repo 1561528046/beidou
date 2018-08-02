@@ -6,7 +6,7 @@
                     <div class="user-filter" :class="{active:userFilterOpen}">
                         <el-form :model="userTableQuery" size="small">
                             <el-form-item>
-                                <el-input placeholder="输入用户名" size="small" v-model="userTableQuery.user_name">
+                                <el-input placeholder="公司/个人名称" size="small" v-model="userTableQuery.real_name">
                                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                                 </el-input>
                             </el-form-item>
@@ -16,11 +16,7 @@
                                     <el-option value="2">企业用户</el-option>
                                 </el-select>
                             </el-form-item>
-                            <el-form-item>
-                                <el-input placeholder="公司/个人名称" size="small" v-model="userTableQuery.real_name">
-                                    <i slot="prefix" class="el-input__icon el-icon-search"></i>
-                                </el-input>
-                            </el-form-item>
+
                         </el-form>
 
                         <div class="user-load-more" @click="userFilterOpen=!userFilterOpen">

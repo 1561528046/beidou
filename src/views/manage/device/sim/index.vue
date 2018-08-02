@@ -56,15 +56,16 @@
                         <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>
+                        <el-dropdown-item style="padding:2px 15px;">
                             <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
                                     application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " class="o-el-upload--text">
                                 <!-- <i class="el-icon-upload el-icon--right "></i> 点击上传 -->
                                 <el-button size="small" icon="el-icon-upload2" type="primary" style="display: block;width:100%;">点击上传</el-button>
                             </el-upload>
                         </el-dropdown-item>
-                        <el-dropdown-item>
-                            <a href="/static/SIM卡导入模板.xls" download target="_blank" type="primary " class="el-button el-button--small el-button--primary">
+                        <el-dropdown-item style="padding:2px 15px;">
+                            <a href="/static/SIM卡导入模板.xls" download target="_blank" type="primary " class="el-button el-button--small el-button--primary"
+                                style=" display: block;">
                                 <i class="el-icon-download"></i> 模版下载
                             </a>
 
@@ -186,7 +187,11 @@
                     params: { table: 1 }
                 }).then((res) => {
                     if (res.data.code == 0) {
-                        this.$message.success("成功！");
+                        this.$message({
+                            message: res.data.msg,
+                            type: "success",
+                            duration: 5000
+                        });
                         this.getTable();
                     } else {
                         this.$notify.error({
@@ -266,7 +271,7 @@
             },
             handleSizeChange(val) {
                 this.tableQuery.page = 1;
-                this.tableQuery.limit = val;
+                this.tableQuery.size = val;
                 this.getTable();
             },
             handleCurrentChange(val) {

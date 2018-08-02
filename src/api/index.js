@@ -154,6 +154,15 @@ export const getSimAll = query => {
 };
 export const getSimAllUnbind = query => {
   //获取所有没有绑定的SIM卡
+  query = Object.assign(
+    {
+      page: 1,
+      size: 10,
+      start_sim_no: "",
+      end_sim_no: ""
+    },
+    query
+  );
   return ajax.get("/sim/GetUnboundListByPage", {
     params: query
   });
