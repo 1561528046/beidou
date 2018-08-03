@@ -3,6 +3,9 @@
         <el-card shadow="always" class="full-box">
             <div class="bind-box">
                 <div class="user-box">
+                    <div class="user-header">
+                        用户列表
+                    </div>
                     <div class="user-filter" :class="{active:userFilterOpen}">
                         <el-form :model="userTableQuery" size="small">
                             <el-form-item>
@@ -33,8 +36,62 @@
                         </el-input>
                     </div>
                 </div>
-                <div class="transfer-box">
-                    <admin-transfer @onLeft="onleft" :lists="list" :titles="titles" @onRight="onright" style="width:100%;"></admin-transfer>
+                <div class="transfer-container">
+                    <div class="transfer-filter">
+                        <div class="transfer-filter-item">
+                            <el-form :inline="true" :model="userTableQuery" size="mini">
+                                <el-form-item>
+                                    <el-input placeholder="SIM卡号段开始" v-model="bindTableQuery.sim_no_begin">
+                                        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-input placeholder="SIM卡号段结束" v-model="bindTableQuery.sim_no_end">
+                                        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button>搜索</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <div style="width:100px;"></div>
+                        <div class="transfer-filter-item">
+                            <el-form :inline="true" :model="userTableQuery" size="mini">
+                                <el-form-item>
+                                    <el-input placeholder="SIM卡号段开始" v-model="unbindTableQuery.sim_no_begin">
+                                        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-input placeholder="SIM卡号段结束" v-model="unbindTableQuery.sim_no_end">
+                                        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button>搜索</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                    </div>
+                    <div class="transfer-list">
+                        <admin-transfer @onLeft="onleft" :lists="list" :titles="titles" @onRight="onright" style="width:100%;height:100%;"></admin-transfer>
+                    </div>
+                    <div class="transfer-pager">
+                        <div class="transfer-pager-item">
+                            <el-pagination @size-change="bindSizeChange" @current-change="bindcurrentChange" :current-page="bindTableQuery.page" :page-sizes="[10, 20, 50, 100]"
+                                :page-size="bindTableQuery.size" :total="bindTableQuery.total" layout="total, sizes, prev,  next, jumper"
+                                background>
+                            </el-pagination>
+                        </div>
+                        <div style="width:100px;"></div>
+                        <div class="transfer-pager-item">
+                            <el-pagination @size-change="bindSizeChange" @current-change="bindcurrentChange" :current-page="bindTableQuery.page" :page-sizes="[10, 20, 50, 100]"
+                                :page-size="bindTableQuery.size" :total="bindTableQuery.total" layout="total, sizes, prev,  next, jumper"
+                                background>
+                            </el-pagination>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -55,11 +112,52 @@
         margin: -20px;
         font-size: 14px;
         height: 100%;
-
     }
 
-    .transfer-box {
+    .transfer-container {
         width: 100%;
+        position: relative;
+        margin: 20px;
+    }
+
+    .transfer-list {
+        position: absolute;
+        width: 100%;
+        top: 40px;
+        bottom: 40px;
+    }
+
+    .transfer-pager {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        display: flex;
+        justify-content: space-around;
+        height: 40px;
+        .transfer-pager-item {
+            text-align: center;
+            background: #ddd;
+            width: 40%;
+        }
+    }
+
+    .transfer-filter {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-around;
+        height: 40px;
+        box-sizing: border-box;
+        .transfer-filter-item {
+            border: 1px solid #ebeef5;
+            height: 100%;
+            height: 40px;
+            box-sizing: border-box;
+            padding: 5px 0;
+            text-align: center;
+            background: #f5f7fa;
+            width: 40%;
+        }
     }
 
     .transfer-fiter {
@@ -76,8 +174,20 @@
 
     .user-box {
         width: 300px;
-        border-right: 1px solid #ccc;
         position: relative;
+        border-right: 1px solid #ebeef5;
+    }
+
+    .user-header {
+        height: 40px;
+        line-height: 40px;
+        background: #f5f7fa;
+        margin: 0;
+        padding-left: 15px;
+        border-bottom: 1px solid #ebeef5;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        color: #000;
     }
 
     .user-load-more {
@@ -124,7 +234,7 @@
 
     .user-list {
         position: absolute;
-        top: 60px;
+        top: 100px;
         bottom: 32px;
         width: 100%;
         overflow: auto;
@@ -171,6 +281,20 @@
                     size: 10,
                     page: 1,
                 },
+                bindTableQuery: {
+                    sim_no_begin: "",
+                    sim_no_end: "",
+                    size: 10,
+                    page: 1,
+                    total: 0
+                },
+                unbindTableQuery: {
+                    sim_no_begin: "",
+                    sim_no_end: "",
+                    size: 10,
+                    page: 1,
+                    total: 0
+                },
                 currentUser: {},
                 titles: ['', '未绑定SIM卡'],
                 userList: [],
@@ -179,9 +303,24 @@
 
             };
         },
+        watch: {
+            userTableQuery: {
+                handler: function () {
+                    this.renderUser();
+                },
+                deep: true
+            }
+        },
         props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
         methods: {
+            bindSizeChange() {
+
+            },
+            bindcurrentChange() {
+
+            },
             renderUser() {
+                this.$set(this.$data, "userList", []);
                 getUserList(this.userTableQuery).then((res) => {
                     if (res.data.code == 0) {
                         this.$set(this.$data, "userList", res.data.data);
