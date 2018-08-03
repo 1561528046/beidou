@@ -45,7 +45,6 @@
                 <el-button type="primary" size="small" @click="addFrom">
                     <i class="el-icon-upload el-icon--right"></i> 添加
                 </el-button>
-
                 <router-link :to="{name:'sim-binding'}" style="margin-left: 15px;">
                     <el-button type="primary" size="small">
                         <i class="el-icon-upload el-icon--right"></i> SIM卡绑定管理
@@ -57,19 +56,19 @@
                         <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>
+                        <el-dropdown-item style="padding:2px 15px;">
                             <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
-                                    application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " style="display: inline-block; ">
-                                <el-button style="padding: 1.5px 15px;" type="primary ">
-                                    <i class="el-icon-upload el-icon--right "></i> 点击上传
-                                </el-button>
+                                    application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " class="o-el-upload--text">
+                                <!-- <i class="el-icon-upload el-icon--right "></i> 点击上传 -->
+                                <el-button size="small" icon="el-icon-upload2" type="primary" style="display: block;width:100%;">点击上传</el-button>
                             </el-upload>
                         </el-dropdown-item>
-                        <el-dropdown-item>
-                            <a href="/assets/SIM卡模板.xls" target="_blank" download style="padding: 0 15px; background-color: #409EFF; border-radius: 4px; color: #fff;"
-                                type="primary ">
-                                <i class="el-icon-upload el-icon--right "></i> 模版下载
+                        <el-dropdown-item style="padding:2px 15px;">
+                            <a href="/static/SIM卡导入模板.xls" download target="_blank" type="primary " class="el-button el-button--small el-button--primary"
+                                style=" display: block;">
+                                <i class="el-icon-download"></i> 模版下载
                             </a>
+
                         </el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -188,10 +187,18 @@
                     params: { table: 1 }
                 }).then((res) => {
                     if (res.data.code == 0) {
-                        this.$message.success("成功！");
+                        this.$message({
+                            message: res.data.msg,
+                            type: "success",
+                            duration: 5000
+                        });
                         this.getTable();
                     } else {
-                        this.$message.error(res.data.msg);
+                        this.$notify.error({
+                            title: '导入失败',
+                            message: res.data.msg
+                        });
+                        // this.$message.error(res.data.msg);
                     }
 
                 }).catch((err, a) => {
@@ -264,7 +271,7 @@
             },
             handleSizeChange(val) {
                 this.tableQuery.page = 1;
-                this.tableQuery.limit = val;
+                this.tableQuery.size = val;
                 this.getTable();
             },
             handleCurrentChange(val) {
@@ -299,3 +306,8 @@
         components: { selectUser }
     };
 </script>
+<style>
+    .o-el-upload--text .el-upload--text {
+        display: block;
+    }
+</style>
