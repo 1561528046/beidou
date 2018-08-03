@@ -9,11 +9,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item v-if="user_type==1" label="联系人">
-                            <el-input v-model=" tableQuery.linkman " placeholder="联系人 "></el-input>
-                        </el-form-item>
-                        <el-form-item v-if="user_type==2" label="公司名称">
-                            <el-input v-model=" tableQuery.company " placeholder="公司名称 "></el-input>
+                        <el-form-item label="个人/公司名称">
+                            <el-input v-model=" tableQuery.real_name " placeholder="联系人 "></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
@@ -94,7 +91,7 @@
                     area: [],
                     user_name: "",
                     linkman: "",
-                    company: "",
+                    real_name: "",
                     industry: "",
                     size: 10,
                     page: 1,
@@ -186,6 +183,8 @@
                 this.tableLoading = true;
                 var areaObj = this.$utils.formatArea(this.tableQuery.area);
                 var query = Object.assign({}, this.tableQuery, areaObj);
+                delete query.real_name;
+                delete query.province_id;
                 getUserList(query)
                     .then(res => {
                         for (var i = 0; i < res.data.data.length; i++) {
