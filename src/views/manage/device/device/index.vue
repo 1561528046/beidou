@@ -82,6 +82,7 @@
   export default {
     created() {
       this.getTable();
+      this.keyupdown();
     },
     data() {
       return {
@@ -100,6 +101,7 @@
         },
         tableLoading: true,
         addKey: 0,
+        userdetailShow: false
       };
     },
     methods: {
@@ -197,6 +199,17 @@
           })
           .catch(() => { });
       },
+      keyupdown() {
+        document.onkeydown = e => {
+          console.log(e)
+          let _key = window.event.keyCode;
+
+          if (_key === 13) {
+            this.getTable()
+          }
+        }
+      }
+
     },
     components: { selectDevicetype, selectProtocoltype, device_add, device_update, selectCompany },
   };

@@ -60,6 +60,7 @@
     export default {
         created() {
             this.getTable();
+            this.keyupSubmit();
         },
         data() {
             return {
@@ -76,6 +77,7 @@
                 },
                 tableLoading: true,
                 addKey: 0,
+                userdetailShow: false
             };
         },
         methods: {
@@ -168,6 +170,18 @@
                         this.tableLoading = false;
                     })
                     .catch(() => { });
+            },
+            //回车事件
+            keyupSubmit() {
+                document.onkeydown = e => {
+                    let _key = window.event.keyCode;
+                    if (_key === 13) {
+                        this.getTable()
+                    }
+                }
+            },
+            handleClick() {
+                alert('button click');
             }
         },
         components: { selectCompanytype, selectCompany }

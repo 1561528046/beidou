@@ -83,7 +83,6 @@
                     "save_media": "",
                     "state": "",
                     "time": "",
-                    "company_name": "",
                 },
                 rules: {
                     ...rules,

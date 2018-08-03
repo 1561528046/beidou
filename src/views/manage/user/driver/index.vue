@@ -15,7 +15,7 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="身份证号">
-                            <el-input v-model="tableQuery.dentity_id" placeholder="身份证号"></el-input>
+                            <el-input v-model="tableQuery.identity_id" placeholder="身份证号"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -67,6 +67,7 @@
     export default {
         created() {
             this.getTable();
+            this.keyupSubmit();
         },
         data() {
             return {
@@ -74,6 +75,7 @@
                 tableQuery: {
                     driver_name: "",
                     driver_card_id: "",
+                    identity_id: "",
                     size: 10,
                     page: 1
                 },
@@ -144,6 +146,16 @@
                     closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
                     message: vNode
                 }).catch(() => { })
+            },
+            //回车时间
+            keyupSubmit() {
+                document.onkeydown = e => {
+                    console.log(e)
+                    let _key = window.event.keyCode;
+                    if (_key === 13) {
+                        this.getTable()
+                    }
+                }
             },
             getTable() {//获取列表
                 this.tableLoading = true;
