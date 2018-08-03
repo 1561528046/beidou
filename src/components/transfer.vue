@@ -70,7 +70,6 @@
 
     .transfer-box {
         border: 1px solid #ebeef5;
-        border-radius: 4px;
         overflow: hidden;
         background: #fff;
         display: inline-block;
