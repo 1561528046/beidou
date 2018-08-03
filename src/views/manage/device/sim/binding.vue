@@ -99,6 +99,198 @@
         </el-card>
     </div>
 </template>
+
+<script>
+    /* eslint-disable */
+    import { getUserList, getUserSim, getSimAllUnbind, addUserSim, delUserSim } from "@/api/index.js";
+    import adminTransfer from "@/components/transfer.vue"
+    export default {
+        created() {
+            this.renderUser();
+        },
+        computed: {
+            list: function () {
+                return this.leftList.concat(this.rightList);
+
+            }
+        },
+        data() {
+            return {
+                userFilterOpen: false,//用户筛选展开关闭
+                userTableQuery: {
+                    user_name: "",
+                    user_type: "",
+                    real_name: "",
+                    size: 10,
+                    page: 1,
+                },
+                bindTableQuery: {
+                    sim_no_begin: "",
+                    sim_no_end: "",
+                    size: 10,
+                    page: 1,
+                    total: 0
+                },
+                unbindTableQuery: {
+                    sim_no_begin: "",
+                    sim_no_end: "",
+                    size: 10,
+                    page: 1,
+                    total: 0
+                },
+                currentUser: {},
+                titles: ['', '未绑定SIM卡'],
+                userList: [],
+                leftList: [],
+                rightList: [],
+
+            };
+        },
+        watch: {
+            userTableQuery: {
+                handler: function () {
+                    this.renderUser();
+                },
+                deep: true
+            }
+        },
+        props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
+        methods: {
+            bindSizeChange() {
+
+            },
+            bindcurrentChange() {
+
+            },
+            unbindSizeChange() {
+
+            },
+            unbindcurrentChange() {
+
+            },
+            renderBind() {
+                this.$set(this.$data, "leftList", []);
+                if (this.currentUser.user_id) {
+                    var postData = Object.assign({}, this.bindTableQuery);
+                    postData.user_id = this.currentUser.user_id;
+                    getUserSim(postData).then((res) => {
+                        this.rightValues = [];
+                        if (res.data.code == 0) {
+                            var arr = [];
+                            res.data.data.map((item) => {
+                                arr.push({
+                                    parent: "left",
+                                    key: item.sim_no,
+                                    label: item.sim_no
+                                })
+                            })
+                            this.$set(this.$data, "leftList", arr);
+                        }
+                    });
+                }
+            },
+            renderUnbind() {
+                getSimAllUnbind(this.unbindTableQuery).then((res) => {
+                    if (res.data.code == 0) {
+                        var arr = [];
+                        res.data.data.map(item => {
+                            arr.push({
+                                parent: "right",
+                                key: item.sim_no,
+                                label: item.sim_no
+                            })
+                        });
+                        this.$set(this.$data, "rightList", arr);
+                        console.log(this.rightList);
+                    }
+                })
+            },
+            renderUser() {
+                this.$set(this.$data, "userList", []);
+                getUserList(this.userTableQuery).then((res) => {
+                    if (res.data.code == 0) {
+                        this.$set(this.$data, "userList", res.data.data);
+                    }
+                })
+            },
+            userPagerPrev() {
+                if (isNaN(Number(parseInt(this.userTableQuery.page)))) {
+                    this.userTableQuery.page = 1;
+                } else {
+                    if (this.userTableQuery.page - 1 <= 0) {
+                        this.userTableQuery.page = 1;
+                    } else {
+                        this.userTableQuery.page = parseInt(this.userTableQuery.page) - 1;
+                    }
+                }
+
+            },
+            userPagerNext() {
+                if (isNaN(Number(parseInt(this.userTableQuery.page)))) {
+                    this.userTableQuery.page = 1;
+                } else {
+                    this.userTableQuery.page = parseInt(this.userTableQuery.page) + 1;
+                }
+            },
+            onleft(items, next) {//右到左
+                if (!this.currentUser.user_id) {
+                    this.$message.warning("请选择一个用户！");
+                    next(false);
+                    return false;
+                }
+                var postData = {
+                    user_id: this.currentUser.user_id,
+                    sim_nos: []
+                }
+                items.map((item) => {
+                    postData.sim_nos.push(item.key);
+                })
+                postData.sim_nos = postData.sim_nos.join(",");
+                addUserSim(postData).then((res) => {
+                    if (res.data.code == 0) {
+                        next(true);
+                    } else {
+                        this.$message.error(res.data.msg);
+                        next(false);
+                    }
+                }).catch(() => {
+                    next(false);
+                })
+            },
+            onright(items, next) {//左到右
+                var postData = {
+                    user_id: this.currentUser.user_id,
+                    sim_nos: []
+                }
+                items.map((item) => {
+                    postData.sim_nos.push(item.key);
+                })
+                postData.sim_nos = postData.sim_nos.join(",");
+                delUserSim(postData).then((res) => {
+                    if (res.data.code == 0) {
+                        next(true);
+                    } else {
+                        this.$message.error(res.data.msg);
+                        next(false);
+                    }
+                }).catch(() => {
+                    next(false);
+                })
+            },
+            changeUser(user) {
+                this.titles[0] = user.user_name;
+
+                this.currentUser = user;
+                this.renderBind();
+                this.renderUnbind();
+
+            }
+
+        },
+
+        components: { adminTransfer }
+    };
+</script>
 <style lang="less">
     .full-box {
         height: 100%;
@@ -257,177 +449,3 @@
         }
     }
 </style>
-<script>
-    /* eslint-disable */
-    import { getUserList, getUserSim, getSimAllUnbind, addUserSim, delUserSim } from "@/api/index.js";
-    import adminTransfer from "@/components/transfer.vue"
-    export default {
-        created() {
-            this.renderUser();
-        },
-        computed: {
-            list: function () {
-                return this.leftList.concat(this.rightList);
-
-            }
-        },
-        data() {
-            return {
-                userFilterOpen: false,//用户筛选展开关闭
-                userTableQuery: {
-                    user_name: "",
-                    user_type: "",
-                    real_name: "",
-                    size: 10,
-                    page: 1,
-                },
-                bindTableQuery: {
-                    sim_no_begin: "",
-                    sim_no_end: "",
-                    size: 10,
-                    page: 1,
-                    total: 0
-                },
-                unbindTableQuery: {
-                    sim_no_begin: "",
-                    sim_no_end: "",
-                    size: 10,
-                    page: 1,
-                    total: 0
-                },
-                currentUser: {},
-                titles: ['', '未绑定SIM卡'],
-                userList: [],
-                leftList: [],
-                rightList: [],
-
-            };
-        },
-        watch: {
-            userTableQuery: {
-                handler: function () {
-                    this.renderUser();
-                },
-                deep: true
-            }
-        },
-        props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
-        methods: {
-            bindSizeChange() {
-
-            },
-            bindcurrentChange() {
-
-            },
-            renderUser() {
-                this.$set(this.$data, "userList", []);
-                getUserList(this.userTableQuery).then((res) => {
-                    if (res.data.code == 0) {
-                        this.$set(this.$data, "userList", res.data.data);
-                    }
-                })
-            },
-            userPagerPrev() {
-                if (isNaN(Number(parseInt(this.userTableQuery.page)))) {
-                    this.userTableQuery.page = 1;
-                } else {
-                    if (this.userTableQuery.page - 1 <= 0) {
-                        this.userTableQuery.page = 1;
-                    } else {
-                        this.userTableQuery.page = parseInt(this.userTableQuery.page) - 1;
-                    }
-                }
-
-            },
-            userPagerNext() {
-                if (isNaN(Number(parseInt(this.userTableQuery.page)))) {
-                    this.userTableQuery.page = 1;
-                } else {
-                    this.userTableQuery.page = parseInt(this.userTableQuery.page) + 1;
-                }
-            },
-            onleft(items, next) {//右到左
-                if (!this.currentUser.user_id) {
-                    this.$message.warning("请选择一个用户！");
-                    next(false);
-                    return false;
-                }
-                var postData = {
-                    user_id: this.currentUser.user_id,
-                    sim_nos: []
-                }
-                items.map((item) => {
-                    postData.sim_nos.push(item.key);
-                })
-                postData.sim_nos = postData.sim_nos.join(",");
-                addUserSim(postData).then((res) => {
-                    if (res.data.code == 0) {
-                        next(true);
-                    } else {
-                        this.$message.error(res.data.msg);
-                        next(false);
-                    }
-                }).catch(() => {
-                    next(false);
-                })
-            },
-            onright(items, next) {//左到右
-                var postData = {
-                    user_id: this.currentUser.user_id,
-                    sim_nos: []
-                }
-                items.map((item) => {
-                    postData.sim_nos.push(item.key);
-                })
-                postData.sim_nos = postData.sim_nos.join(",");
-                delUserSim(postData).then((res) => {
-                    if (res.data.code == 0) {
-                        next(true);
-                    } else {
-                        this.$message.error(res.data.msg);
-                        next(false);
-                    }
-                }).catch(() => {
-                    next(false);
-                })
-            },
-            changeUser(user) {
-                this.titles[0] = user.user_name;
-                this.$set(this.$data, "leftList", []);
-                this.currentUser = user;
-                getUserSim({ user_id: user.user_id }).then((res) => {
-                    this.rightValues = [];
-                    if (res.data.code == 0) {
-                        var arr = [];
-                        res.data.data.map((item) => {
-                            arr.push({
-                                parent: "left",
-                                key: item.sim_no,
-                                label: item.sim_no
-                            })
-                        })
-                        this.$set(this.$data, "leftList", arr);
-                    }
-                });
-                getSimAllUnbind().then((res) => {
-                    if (res.data.code == 0) {
-                        var arr = [];
-                        res.data.data.map(item => {
-                            arr.push({
-                                parent: "right",
-                                key: item.sim_no,
-                                label: item.sim_no
-                            })
-                        });
-                        this.$set(this.$data, "rightList", arr);
-                        console.log(this.rightList);
-                    }
-                })
-
-            }
-
-        },
-
-        components: { adminTransfer }
-    };
-</script>
