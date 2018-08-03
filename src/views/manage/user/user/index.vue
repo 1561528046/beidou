@@ -183,8 +183,6 @@
                 this.tableLoading = true;
                 var areaObj = this.$utils.formatArea(this.tableQuery.area);
                 var query = Object.assign({}, this.tableQuery, areaObj);
-                delete query.real_name;
-                delete query.province_id;
                 getUserList(query)
                     .then(res => {
                         for (var i = 0; i < res.data.data.length; i++) {
