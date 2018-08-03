@@ -28,7 +28,7 @@
                     <el-col :span="6" v-if="isCollapse">
                         <el-form-item label="分配用户">
                             <el-autocomplete style="width: 100%;" class="inline-input" v-model="state2" :fetch-suggestions="querySearch" placeholder="请输入内容"
-                                :trigger-on-focus="false" @select="handleSelect">
+                                @select="handleSelect">
                             </el-autocomplete>
                         </el-form-item>
                     </el-col>
@@ -120,7 +120,7 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getSimList, delSim } from "@/api/index.js";
+    import { getSimList, delSim, getUserAll } from "@/api/index.js";
     import selectUser from "@/components/select-user.vue"
     import addComponents from "./add.vue";
     import updateComponents from "./update.vue";
@@ -143,6 +143,8 @@
                     size: 10,
                     page: 1
                 },
+                simss: [],
+                simee: {},
                 tableData: {
                     total: 0,
                     data: []
@@ -181,7 +183,7 @@
                 userdetailShow: false,
                 restaurants: [],
                 state1: '',
-                state2: ''
+                state2: '',
             };
         },
         mounted() {
@@ -200,14 +202,20 @@
                 };
             },
             loadAll() {
-                console.log(1)
-                return [
-                    { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
-                    { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" },
-                ];
+                getUserAll().then(res => {
+                    if (res.data.code == 0) {
+                        for (var i = 0; i < res.data.data.length; i++) {
+                            if (res.data.data[i].real_name !== "") {
+                                this.simss.push({ value: res.data.data[i].real_name, address: res.data.data[i].user_id })
+                            }
+                        }
+                    }
+                })
+                return this.simss
             },
             handleSelect(item) {
-                console.log(item);
+                this.simee = { value: item.value, address: item.address }
+                this.getTable()
             },
             uploadFunc(uploadObj) {
                 var formData = new FormData();
@@ -311,6 +319,7 @@
                 document.onkeydown = e => {
                     let _key = window.event.keyCode;
                     if (_key === 13) {
+                        this.tableQuery.user_id = ""
                         this.getTable()
                     }
                 }
@@ -320,6 +329,12 @@
                 if (this.value6) {
                     this.tableQuery.startDate = this.value6[0]
                     this.tableQuery.endDate = this.value6[1]
+                }
+                if (this.simee.address) {
+                    this.tableQuery.user_id = this.simee.address
+                }
+                if (this.state2 == "") {
+                    this.tableQuery.user_id = ""
                 }
                 getSimList(this.tableQuery)
                     .then(res => {

@@ -1,7 +1,7 @@
 <template>
     <div class="admin-table-container">
         <el-card shadow="always" class="admin-table-search">
-            <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+            <el-form :model="tableQuery" label-width="82px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6 ">
                         <el-form-item label="登录账号 ">
@@ -9,8 +9,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item label="个人/公司名称">
-                            <el-input v-model=" tableQuery.real_name " placeholder="联系人 "></el-input>
+                        <el-form-item label-width="110px" label="个人/公司名称">
+                            <el-input v-model=" tableQuery.real_name " placeholder="请输入 "></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
