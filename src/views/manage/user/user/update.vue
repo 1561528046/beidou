@@ -34,7 +34,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="所属行业" prop="industry">
-              <el-input v-model="formData.industry" maxlength="255"></el-input>
+              <industry-select v-model="formData.industry" style="width:100%;"></industry-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -91,6 +91,7 @@
   import { rules } from "@/utils/rules.js";
   import citySelect from "@/components/city-select.vue";
   import { updateUser, getUser } from "@/api/index.js";
+  import industrySelect from "@/components/select-industry.vue";
   export default {
     data() {
       return {
@@ -228,6 +229,6 @@
         })
       }
     },
-    components: { citySelect }
+    components: { citySelect, industrySelect }
   };
 </script>

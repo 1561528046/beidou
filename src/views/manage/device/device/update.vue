@@ -3,25 +3,25 @@
         <!-- 设备信息 -->
         <el-row :gutter="30">
             <el-col :span="12">
-                <el-form-item label="设备类型" prop="device_type">
-                    <el-select v-model="formData.device_type" placeholder="选择设备类型" style="width:100%;">
+                <el-form-item label="终端类型" prop="device_type">
+                    <el-select v-model="formData.device_type" placeholder="选择终端类型" style="width:100%;">
                         <el-option label="定位终端" value="1"></el-option>
                         <el-option label="视频终端" value="2"></el-option>
                     </el-select>
                 </el-form-item>
             </el-col>
             <el-col :span="12">
-                <el-form-item label="设备序列号" prop="device_no">
+                <el-form-item label="终端ID" prop="device_no">
                     <el-input v-model="formData.device_no"></el-input>
                 </el-form-item>
             </el-col>
             <el-col :span="12">
-                <el-form-item label="Sim Id" prop="sim_id">
+                <el-form-item label="SIM ID" prop="sim_id">
                     <el-input v-model="formData.sim_id"></el-input>
                 </el-form-item>
             </el-col>
             <el-col :span="12">
-                <el-form-item label="设备厂商" prop="company_name">
+                <el-form-item label="终端厂商" prop="company_name">
                     <company-select v-model="formData.company_id" style="width: 100%;"></company-select>
                     <!-- <el-input v-model="formData.company_name"></el-input> -->
                 </el-form-item>

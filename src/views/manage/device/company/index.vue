@@ -6,7 +6,11 @@
                 <el-row :gutter="30">
                     <el-col :span="6">
                         <el-form-item label="厂商名称">
-                            <el-input v-model="tableQuery.company_name"></el-input>
+                            <!-- <el-input v-model="tableQuery.company_name"></el-input>
+                             -->
+                            <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.company_name" :fetch-suggestions="querySearch"
+                                placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
+                            </el-autocomplete>
                         </el-form-item>
                     </el-col>
                     <el-col :offset="isCollapse?0:6" :span="isCollapse?24:6" style="text-align: right;">
@@ -29,7 +33,7 @@
                 </el-button> -->
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="company_name" label="设备厂商名称" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="company_name" label="终端厂商名称" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column width="300" label="操作">
                     <template slot-scope="scope">
                         <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
@@ -52,7 +56,7 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getDeviceCompanyList, delCompany } from "@/api/index.js";
+    import { getDeviceCompanyList, delCompany, getDeviceCompanyAll } from "@/api/index.js";
     import selectCompanytype from "@/components/select-companytype.vue";
     import selectCompany from "@/components/select-company.vue";
     import addComponents from "./add.vue";
@@ -71,16 +75,51 @@
                     size: 10,
                     page: 1
                 },
+                simss: [],
+                simee: {},
                 tableData: {
                     total: 0,
                     data: []
                 },
                 tableLoading: true,
                 addKey: 0,
-                userdetailShow: false
+                userdetailShow: false,
+                restaurants: [],
+                state1: '',
+                state2: '',
             };
         },
+        mounted() {
+            this.restaurants = this.loadAll();
+        },
         methods: {
+            querySearch(queryString, cb) {
+                var restaurants = this.restaurants;
+                var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            createFilter(queryString) {
+                return (restaurant) => {
+                    return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                };
+            },
+            loadAll() {
+                getDeviceCompanyAll().then(res => {
+                    if (res.data.code == 0) {
+                        for (var i = 0; i < res.data.data.length; i++) {
+                            if (res.data.data[i].real_name !== "") {
+                                this.simss.push({ value: res.data.data[i].company_name, address: res.data.data[i].company_id })
+                            }
+                        }
+                    }
+                })
+                return this.simss
+            },
+            handleSelect(item) {
+                this.simee = { value: item.value, address: item.address }
+                this.getTable()
+            },
             delRow(scope) {//删除
                 this.$confirm('确认删除？')
                     .then(() => {
@@ -158,6 +197,12 @@
             },
             getTable() {
                 this.tableLoading = true;
+                if (this.simee.address) {
+                    this.tableQuery.company_id = this.simee.address
+                }
+                if (this.tableQuery.company_nameta == "") {
+                    this.tableQuery.company_id = ""
+                }
                 var query = Object.assign({}, this.tableQuery);
                 getDeviceCompanyList(query)
                     .then(res => {

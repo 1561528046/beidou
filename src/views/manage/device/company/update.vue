@@ -3,7 +3,7 @@
         <!-- 设备信息 -->
         <el-row :gutter="30">
             <el-col :span="24">
-                <el-form-item label="设备厂商名称" prop="company_name">
+                <el-form-item label="终端厂商名称" prop="company_name">
                     <el-input v-model="formData.company_name"></el-input>
                 </el-form-item>
             </el-col>

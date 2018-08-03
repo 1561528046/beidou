@@ -27,8 +27,8 @@
                     </el-col>
                     <el-col :span="6" v-if="isCollapse">
                         <el-form-item label="分配用户">
-                            <el-autocomplete style="width: 100%;" class="inline-input" v-model="state2" :fetch-suggestions="querySearch" placeholder="请输入内容"
-                                @select="handleSelect">
+                            <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.real_name" :fetch-suggestions="querySearch"
+                                placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
                             </el-autocomplete>
                         </el-form-item>
                     </el-col>
@@ -141,6 +141,7 @@
                     startDate: "",
                     endDate: "",
                     size: 10,
+                    real_name: "",
                     page: 1
                 },
                 simss: [],
@@ -190,6 +191,7 @@
             this.restaurants = this.loadAll();
         },
         methods: {
+            //输入选择框
             querySearch(queryString, cb) {
                 var restaurants = this.restaurants;
                 var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
@@ -217,6 +219,7 @@
                 this.simee = { value: item.value, address: item.address }
                 this.getTable()
             },
+            //结束
             uploadFunc(uploadObj) {
                 var formData = new FormData();
                 formData.append("ff", uploadObj.file);
@@ -247,7 +250,8 @@
                 alert(1);
             },
             uploadProgress() { },
-            delRow(scope) {//删除
+            //删除
+            delRow(scope) {
                 this.$confirm('确认删除？')
                     .then(() => {
                         delSim({ id: scope.row.sim_no }).then((res) => {
@@ -282,7 +286,8 @@
                     message: vNode
                 })
             },
-            updateForm(scope) {//编辑
+            //编辑
+            updateForm(scope) {
                 var vNode = this.$createElement(updateComponents, {
                     key: this.addKey++,
                     props: {
@@ -315,6 +320,7 @@
                 this.tableQuery.page = val;
                 this.getTable();
             },
+            //回车事件
             keyupSubmit() {
                 document.onkeydown = e => {
                     let _key = window.event.keyCode;
@@ -324,6 +330,7 @@
                     }
                 }
             },
+            //列表查询
             getTable() {
                 this.tableLoading = true;
                 if (this.value6) {
@@ -333,7 +340,7 @@
                 if (this.simee.address) {
                     this.tableQuery.user_id = this.simee.address
                 }
-                if (this.state2 == "") {
+                if (this.tableQuery.real_name == "") {
                     this.tableQuery.user_id = ""
                 }
                 getSimList(this.tableQuery)

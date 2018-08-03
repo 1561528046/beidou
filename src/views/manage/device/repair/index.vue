@@ -5,8 +5,16 @@
             <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
                 <el-row :gutter="30">
                     <el-col :span="6">
+                        <el-form-item label="添加时间">
+                            <el-date-picker value-format="yyyyMMdd" v-model="value6" type="daterange" align="right" unlink-panels range-separator="至"
+                                start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
                         <el-form-item label="返厂时间">
-                            <el-date-picker type="datetime" v-model="tableQuery.back_time" align="center" placeholder="选择日期" style="width:100%;" value-format="yyyyMMddHHmmss">
+                            <el-date-picker type="datetime" v-model="tableQuery.back_time" align="center" placeholder="选择日期" style="width:100%;" format="yyyy-MM-dd"
+                                value-format="yyyyMMdd">
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
@@ -15,7 +23,7 @@
                             <select-repairstate v-model="tableQuery.state" style="width: 100%;"></select-repairstate>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="6" v-if="isCollapse">
                         <el-form-item label="物流信息">
                             <el-input v-model="tableQuery.logistics"></el-input>
                         </el-form-item>
@@ -37,12 +45,12 @@
                 </el-button>
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="back_time" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.back_time)}">
+                <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}">
                 </el-table-column>
                 <el-table-column prop="reason" label="维修原因" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="logistics" label="物流信息" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="state" label="维修状态" :formatter="(row)=>{return this.$dict.get_repair_state(row.state)}"></el-table-column>
-                <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}">
+                <el-table-column prop="back_time" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.back_time)}">
                 </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
@@ -72,6 +80,8 @@
             return {
                 isCollapse: false,
                 tableQuery: {
+                    start_back_time: "",
+                    end_back_time: "",
                     back_time: "",
                     logistics: "",
                     state: "",
@@ -84,6 +94,35 @@
                 },
                 tableLoading: true,
                 addKey: 0,
+                pickerOptions2: {
+                    shortcuts: [{
+                        text: '最近一周',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近一个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近三个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }]
+                },
+                value6: '',
+                value7: '',
             };
         },
         methods: {
@@ -124,6 +163,10 @@
             //列表信息
             getListTable() {
                 this.tableLoading = true;
+                if (this.value6) {
+                    this.tableQuery.start_back_time = this.value6[0]
+                    this.tableQuery.end_back_time = this.value6[1]
+                }
                 var query = Object.assign({}, this.tableQuery);
                 getDeviceRepairList(query)
                     .then(res => {

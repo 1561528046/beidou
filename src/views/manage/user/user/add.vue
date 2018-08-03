@@ -27,8 +27,8 @@
         </el-col>
 
         <el-col :span="12" v-if="user_type==2">
-          <el-form-item label="公司名称" prop="company">
-            <el-input v-model="formData.company" maxlength="255"></el-input>
+          <el-form-item label="公司名称" prop="real_name">
+            <el-input v-model="formData.real_name" maxlength="255"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -106,7 +106,7 @@
           "province_id": "",
           "city_id": "",
           "county_id": "",
-          "company": "",
+          "real_name": "",
           "industry": "",
           "linkman": "",
           "tel": "",

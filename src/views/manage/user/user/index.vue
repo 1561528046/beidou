@@ -20,7 +20,7 @@
                     </el-col>
                     <el-col :span="6" v-if="isCollapse">
                         <el-form-item label="所属行业 ">
-                            <el-input v-model="tableQuery.industry " placeholder="所属行业 "></el-input>
+                            <industry-select v-model="tableQuery.industry" style="width:100%;"></industry-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -51,11 +51,11 @@
                         {{scope.row.province_name}} {{scope.row.city_name}} {{scope.row.county_name}}
                     </template>
                 </el-table-column>
-                <el-table-column prop="linkman" v-if="user_type==1" label="联系人" :formatter="$utils.baseFormatter"></el-table-column>
-                <el-table-column prop="company" v-if="user_type==2" label="公司名称" :formatter="$utils.baseFormatter"></el-table-column>
+                <el-table-column prop="real_name" v-if="user_type==1" label="联系人" :formatter="$utils.baseFormatter"></el-table-column>
+                <el-table-column prop="real_name" v-if="user_type==2" label="公司名称" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="vehicle_type" label="所属行业 " :formatter="(row)=>{return this.$dict.get_industry(row.vehicle_type)}">
-                </el-table-column>
+                <el-table-column prop="industry" label="所属行业 " :formatter="$utils.baseFormatter"></el-table-column>
+                <!-- :formatter="(row)=>{return this.$dict.get_industry(row.vehicle_type)}" -->
                 <el-table-column prop="address" v-if="user_type==2" label="地址" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"> </el-table-column>
                 <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -80,6 +80,7 @@
     import citySelect from "@/components/city-select.vue";
     import addComponents from "./add.vue";
     import updateComponents from "./update.vue";
+    import industrySelect from "@/components/select-industry.vue";
     export default {
         created() {
             this.getTable();
@@ -210,6 +211,6 @@
                     .catch(_ => { });
             }
         },
-        components: { citySelect }
+        components: { citySelect, industrySelect }
     };
 </script>

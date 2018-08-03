@@ -22,7 +22,6 @@
             value: String
         },
         created() {
-
         },
 
     }

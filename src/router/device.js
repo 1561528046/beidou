@@ -23,6 +23,12 @@ export default {
       component: () => import("@/views/manage/device/device/update.vue")
     },
     {
+      path: "device-binding",
+      name: "device-binding",
+      meta: { name: "设备绑定管理", hidden: true },
+      component: () => import("@/views/manage/device/device/binding.vue")
+    },
+    {
       path: "repair",
       name: "device-repair",
       meta: {
