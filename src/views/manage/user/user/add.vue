@@ -26,8 +26,8 @@
           </el-form-item>
         </el-col>
 
-        <el-col :span="12" v-if="user_type==2">
-          <el-form-item label="公司名称" prop="real_name">
+        <el-col :span="12">
+          <el-form-item label="公司/个人名称" prop="real_name">
             <el-input v-model="formData.real_name" maxlength="255"></el-input>
           </el-form-item>
         </el-col>
@@ -42,7 +42,6 @@
             <industry-select v-model="formData.industry" style="width:100%;"></industry-select>
           </el-form-item>
         </el-col>
-
 
         <el-col :span="12">
           <el-form-item label="联系人" prop="linkman">
@@ -74,13 +73,11 @@
             <el-switch v-model="expiry_time_turn"> </el-switch>
           </el-form-item>
           <el-form-item label="" prop="expiry_time" v-if="expiry_time_turn" style="width:350px;">
-            <el-date-picker v-model="formData.expiry_time" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd"
-              style="width:100%;">
+            <el-date-picker v-model="formData.expiry_time" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd" style="width:100%;">
             </el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
-
 
       <el-form-item style="text-align:center; padding-top:20px;">
         <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
@@ -89,129 +86,150 @@
   </div>
 </template>
 <script>
-  import { rules } from "@/utils/rules.js";
-  import citySelect from "@/components/city-select.vue";
-  import { addUser } from "@/api/index.js";
-  import industrySelect from "@/components/select-industry.vue";
-  export default {
-    data() {
-      return {
-        device_total_turn: false,
-        expiry_time_turn: false,
-        formData: {
-          area: [],
-          "user_name": "",
-          pass_word: "",
-          re_pass_word: "",
-          "province_id": "",
-          "city_id": "",
-          "county_id": "",
-          "real_name": "",
-          "industry": "",
-          "linkman": "",
-          "tel": "",
-          "address": "",
-          "device_num": "",
-          "device_total": "",
-          "role_id": "",
-          expiry_time: "",
-        },
-        rules: {
-          ...rules,
-          role_id: [{ required: true, message: "必须选择角色", trigger: "change" }],
-          re_pass_word: [
-            {
-              trigger: "blur",
-              component: this,
-              validator: this.validatePassword2
-            },
-            { required: true, message: "两次密码不一样", trigger: "blur" }
-          ],
-          pass_word: [
-            {
-              required: true,
-              min: 3,
-              max: 20,
-              message: "长度在 3 到 20 个字符",
-              trigger: "change",
-              validator: this.validatePassword
-            }
-          ]
-        }
-      };
-    },
-    watch: {
-      "device_total_turn": function () {
-        this.formData.device_total = "";
+import { rules } from "@/utils/rules.js";
+import citySelect from "@/components/city-select.vue";
+import { addUser, existUserName } from "@/api/index.js";
+import industrySelect from "@/components/select-industry.vue";
+export default {
+  data() {
+    return {
+      device_total_turn: false,
+      expiry_time_turn: false,
+      formData: {
+        area: [],
+        user_name: "",
+        pass_word: "",
+        re_pass_word: "",
+        province_id: "",
+        city_id: "",
+        county_id: "",
+        real_name: "",
+        industry: "",
+        linkman: "",
+        tel: "",
+        address: "",
+        device_num: "",
+        device_total: "",
+        role_id: "",
+        expiry_time: ""
       },
-      "expiry_time_turn": function () {
-        this.formData.expiry_time = "";
-      },
-    },
-    props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
-    created() {
-    },
-    methods: {
-      validatePassword(rule, value, callback) {
-        if (this.formData.pass_word) {
-          if (this.formData.re_pass_word != "") {
-            this.$refs.baseForm.validateField('re_pass_word')
+      rules: {
+        ...rules,
+        role_id: [
+          { required: true, message: "必须选择角色", trigger: "change" }
+        ],
+        real_name: [
+          {
+            required: true,
+            message: "必须填写公司/个人名称",
+            trigger: "change"
           }
-          callback();
-        } else {
-          callback(new Error('请输入密码'));
-        }
-
-
-      },
-      validatePassword2(rule, value, callback) {
-        if (this.formData.pass_word === this.formData.re_pass_word) {
-          callback();
-        } else {
-          callback(new Error("两次密码不一样"));
-        }
-
-      },
-      formSubmit() {
-        this.$refs.baseForm.validate((isVaildate, errorItem) => {
-          if (isVaildate) {
-
-            var areaObj = this.$utils.formatArea(this.formData.area);
-            var postData = Object.assign({}, this.formData, areaObj);
-            postData.device_total = postData.device_total || 0;
-            postData.expiry_time = postData.expiry_time || 0;
-            postData.user_type = this.user_type;
-            postData.pass_word = postData.pass_word.MD5(16);
-            delete postData.re_pass_word;
-            addUser(postData)
-              .then(res => {
-                if (res.data.code == 0) {
-                  this.$emit("success");
-                  this.$message.success(res.data.msg);
-                } else {
-                  this.$emit("error");
-                  this.$message.error(res.data.msg);
-                }
-              })
-              .catch(() => {
-                this.$message.error("接口错误");
-                this.$emit("error");
-              });
+        ],
+        user_name: [{ trigger: "blur", validator: this.validateUserName }],
+        re_pass_word: [
+          {
+            trigger: "blur",
+            component: this,
+            validator: this.validatePassword2
+          },
+          { required: true, message: "两次密码不一样", trigger: "blur" }
+        ],
+        pass_word: [
+          {
+            required: true,
+            min: 3,
+            max: 20,
+            message: "长度在 3 到 20 个字符",
+            trigger: "change",
+            validator: this.validatePassword
+          }
+        ]
+      }
+    };
+  },
+  watch: {
+    device_total_turn: function() {
+      this.formData.device_total = "";
+    },
+    expiry_time_turn: function() {
+      this.formData.expiry_time = "";
+    }
+  },
+  props: ["user_type"], //来自router的user_type 根据user_type 区分公司和个人
+  created() {},
+  methods: {
+    validateUserName(rule, value, callback) {
+      if (value == "") {
+        callback(new Error("请输入登陆帐号！"));
+        return false;
+      }
+      existUserName({ user_name: value })
+        .then(res => {
+          if (res.data.code == 1) {
+            callback(new Error("登陆帐号重复！"));
           } else {
-            var errormsg = "";
-            for (var key in errorItem) {
-              errormsg += errorItem[key][0].message + "<br>";
-            }
-            this.$notify.error({
-              title: '错误',
-              dangerouslyUseHTMLString: true,
-              message: errormsg
-            });
-
+            callback();
           }
         })
+        .catch(() => {
+          callback(new Error("服务器重复验证失效，请稍候再试"));
+        });
+    },
+    validatePassword(rule, value, callback) {
+      if (this.formData.pass_word) {
+        if (this.formData.re_pass_word != "") {
+          this.$refs.baseForm.validateField("re_pass_word");
+        }
+        callback();
+      } else {
+        callback(new Error("请输入密码"));
       }
     },
-    components: { citySelect, industrySelect }
-  };
+    validatePassword2(rule, value, callback) {
+      if (this.formData.pass_word === this.formData.re_pass_word) {
+        callback();
+      } else {
+        callback(new Error("两次密码不一样"));
+      }
+    },
+    formSubmit() {
+      this.$refs.baseForm.validate((isVaildate, errorItem) => {
+        if (isVaildate) {
+          var areaObj = this.$utils.formatArea(this.formData.area);
+          var postData = Object.assign({}, this.formData, areaObj);
+          postData.device_total = postData.device_total || 0;
+          postData.expiry_time = postData.expiry_time || 0;
+          postData.user_type = this.user_type;
+          postData.pass_word = postData.pass_word.MD5(16);
+          delete postData.re_pass_word;
+          addUser(postData)
+            .then(res => {
+              if (res.data.code == 0) {
+                this.$emit("success");
+                this.$message.success(res.data.msg);
+              } else {
+                this.$emit("error");
+                this.$message.error(res.data.msg);
+              }
+            })
+            .catch(() => {
+              this.$message.error("接口错误");
+              this.$emit("error");
+            });
+        } else {
+          var errormsg = "";
+          for (var key in errorItem) {
+            errormsg += errorItem[key][0].message + "<br>";
+          }
+          this.$notify.error({
+            title: "错误",
+            dangerouslyUseHTMLString: true,
+            message: errormsg
+          });
+        }
+      });
+    }
+  },
+  components: { citySelect, industrySelect }
+};
 </script>

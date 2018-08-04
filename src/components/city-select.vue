@@ -29,7 +29,11 @@
     props: {
       value: {
         type: [String, Array],
-        requred: true
+        required: true
+      },
+      selectAll: {
+        type: [Boolean],
+        default: false
       }
     },
     created() {
@@ -51,6 +55,10 @@
             item.children = [];
             return item;
           });
+          // data = [{
+          //   area_id: "0",
+          //   area_name: "全部",
+          // }].concat(data);
           this.$set(this.$data, "areaList", data);
           //初始化值后，根据props传来的value进行层级渲染
           this.initData();
@@ -123,10 +131,10 @@
             item.children = item.children || [];
             return item;
           });
-          data = [{
-            area_id: "0",
-            area_name: "全部",
-          }].concat(data);
+          // data = [{
+          //   area_id: "0",
+          //   area_name: "全部",
+          // }].concat(data);
           this.$set(currentObj, "children", data);
         });
       }

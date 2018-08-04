@@ -48,12 +48,13 @@ export const dict = {
   get_protocol_type: function(key) {
     return this.protocol_type[key] || "--";
   },
-  state: {
-    "1": "正常",
-    "2": "删除"
+  device_state: {
+    "1": "未安装",
+    "2": "已安装",
+    "3": "维修中"
   },
-  get_state: function(key) {
-    return this.state[key] || "--";
+  get_device_state: function(key) {
+    return this.device_state[key] || "--";
   },
   save_media: {
     "1": "硬盘",

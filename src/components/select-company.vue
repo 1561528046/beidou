@@ -1,5 +1,5 @@
 <template>
-    <el-select v-model="company_id" placeholder="请选择" filterable>
+    <el-select v-model="company_id" placeholder="请选择" filterable :clearable="clearable">
         <el-option v-for="item in list" :key="item.company_id" :label="item.company_name" :value="item.company_id">
         </el-option>
     </el-select>
@@ -26,7 +26,8 @@
             }
         },
         props: {
-            value: String
+            value: String,
+            clearable: Boolean
         },
         created() {
             this.init();

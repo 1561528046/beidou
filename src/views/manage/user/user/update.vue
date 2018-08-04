@@ -4,7 +4,7 @@
       <el-row :gutter="30">
         <el-col :span="12">
           <el-form-item label="登陆帐号" prop="user_name">
-            <el-input v-model="formData.user_name"></el-input>
+            <el-input v-model="formData.user_name" disabled="disabled"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -25,13 +25,12 @@
             <el-input v-model="formData.re_pass_word" type="password"></el-input>
           </el-form-item>
         </el-col> -->
-
+        <el-col :span="12">
+          <el-form-item label="公司/个人名称" prop="real_name">
+            <el-input v-model="formData.real_name" maxlength="255"></el-input>
+          </el-form-item>
+        </el-col>
         <template v-if="user_type==2">
-          <el-col :span="12">
-            <el-form-item label="公司名称" prop="company">
-              <el-input v-model="formData.company" maxlength="255"></el-input>
-            </el-form-item>
-          </el-col>
           <el-col :span="12">
             <el-form-item label="所属行业" prop="industry">
               <industry-select v-model="formData.industry" style="width:100%;"></industry-select>
@@ -119,6 +118,7 @@
         rules: {
           ...rules,
           role_id: [{ required: true, message: "必须选择角色", trigger: "change" }],
+          real_name: [{ required: true, message: "必须填写公司/个人名称", trigger: "change" }],
           re_pass_word: [
             {
               trigger: "blur",

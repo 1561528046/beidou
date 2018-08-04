@@ -15,7 +15,7 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="所属地区">
-                            <city-select v-model="tableQuery.area" style="width:100%;"></city-select>
+                            <city-select v-model="tableQuery.area" :select-all="true" style="width:100%;"></city-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6" v-if="isCollapse">
@@ -46,11 +46,7 @@
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
                 <el-table-column prop="user_name" label="登陆帐号 " :formatter="$utils.baseFormatter"></el-table-column>
-                <el-table-column prop="province_name" label="所属地区 ">
-                    <template slot-scope="scope ">
-                        {{scope.row.province_name}} {{scope.row.city_name}} {{scope.row.county_name}}
-                    </template>
-                </el-table-column>
+                <el-table-column prop="province_name" label="所属地区 " :formatter="$utils.areaFormatter"></el-table-column>
                 <el-table-column prop="real_name" v-if="user_type==1" label="联系人" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="real_name" v-if="user_type==2" label="公司名称" :formatter="$utils.baseFormatter"></el-table-column>
                 <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
@@ -186,12 +182,17 @@
                 var query = Object.assign({}, this.tableQuery, areaObj);
                 getUserList(query)
                     .then(res => {
-                        for (var i = 0; i < res.data.data.length; i++) {
-                            if (res.data.data[i].device_total == 0) {
-                                res.data.data[i].device_total = "";
+                        if (res.data.code == 0) {
+                            for (var i = 0; i < res.data.data.length; i++) {
+                                if (res.data.data[i].device_total == 0) {
+                                    res.data.data[i].device_total = "";
+                                }
                             }
+                            this.$set(this.$data, "tableData", res.data);
+
+                        } else {
+                            this.$set(this.$data, "tableData", []);
                         }
-                        this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;
                     })
                     .catch(() => { });
