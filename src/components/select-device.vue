@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-select style="width: 100%; " v-model="device_id" placeholder="请选择" filterable>
+        <el-select style="width: 100%; " v-model="device_no" placeholder="请选择" filterable>
             <el-option v-for="item in list" :key="item.device_id" :label="item.device_no" :value="item.device_id">
             </el-option>
         </el-select>
@@ -23,7 +23,8 @@
         },
         props: {
             value: String,
-            query: Object
+            query: Object,
+            num: "1"
         },
         created() {
             getDeviceAll(this.$props.query).then(res => {

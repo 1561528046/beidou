@@ -6,15 +6,13 @@
                 <el-row :gutter="30">
                     <el-col :span="6">
                         <el-form-item label="添加时间">
-                            <el-date-picker value-format="yyyyMMdd" v-model="value6" type="daterange" align="right" unlink-panels range-separator="至"
-                                start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+                            <el-date-picker value-format="yyyyMMdd" v-model="value6" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="返厂时间">
-                            <el-date-picker type="datetime" v-model="tableQuery.back_time" align="center" placeholder="选择日期" style="width:100%;" format="yyyy-MM-dd"
-                                value-format="yyyyMMdd">
+                            <el-date-picker type="datetime" v-model="tableQuery.back_time" align="center" placeholder="选择日期" style="width:100%;" format="yyyy-MM-dd" value-format="yyyyMMdd">
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
@@ -39,11 +37,6 @@
             </el-form>
         </el-card>
         <el-card shadow="always">
-            <div class="admin-table-actions">
-                <el-button type="primary" size="small" @click="addFrom">
-                    <i class="el-icon-upload el-icon--right"></i> 添加
-                </el-button>
-            </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
                 <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}">
                 </el-table-column>
@@ -60,136 +53,152 @@
                 </el-table-column>
             </el-table>
             <div class="admin-table-pager">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
-                    :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
                 </el-pagination>
             </div>
         </el-card>
     </div>
 </template>
 <script>
-    /* eslint-disable */
-    import selectRepairstate from "@/components/select-repairstate.vue";
-    import repair_add from "./add.vue"
-    import { getDeviceRepairList, updateDeviceRepair } from "@/api/index.js";
-    export default {
-        created() {
-            this.getListTable();
-        },
-        data() {
-            return {
-                isCollapse: false,
-                tableQuery: {
-                    start_back_time: "",
-                    end_back_time: "",
-                    back_time: "",
-                    logistics: "",
-                    state: "",
-                    size: 10,
-                    page: 1
-                },
-                tableData: {
-                    total: 0,
-                    data: []
-                },
-                tableLoading: true,
-                addKey: 0,
-                pickerOptions2: {
-                    shortcuts: [{
-                        text: '最近一周',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近一个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近三个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }]
-                },
-                value6: '',
-                value7: '',
-            };
-        },
-        methods: {
-            repaired(scope, state) {
-                scope.row.state = state
-                updateDeviceRepair(scope.row).then(res => {
-                    if (res.data.code == 0) {
-                        this.$message.success(res.data.msg);
-                        scope.row.state = state;
-                    } else {
-                        this.$message.error(res.data.msg);
-                    }
-
-                })
-
-            },
-            addFrom() {//添加
-                var vNode = this.$createElement(repair_add, {
-                    key: this.addKey++,
-                    on: {
-                        success: () => {
-                            this.getListTable();
-                            this.$msgbox.close();
-                        },
-                        error: function () {
-                        }
-                    }
-                })
-                this.$msgbox({
-                    showConfirmButton: false,//是否显示确定按钮	
-                    customClass: "admin-message-form",
-                    title: "添加维修设备信息",
-                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
-                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
-                    message: vNode
-                })
-            },
-            //列表信息
-            getListTable() {
-                this.tableLoading = true;
-                if (this.value6) {
-                    this.tableQuery.start_back_time = this.value6[0]
-                    this.tableQuery.end_back_time = this.value6[1]
-                }
-                var query = Object.assign({}, this.tableQuery);
-                getDeviceRepairList(query)
-                    .then(res => {
-                        if (res.data.code == 0) {
-                            this.$set(this.$data, "tableData", res.data);
-                        } else {
-                            this.$set(this.$data, "tableData", []);
-                            this.$message.error(res.data.msg);
-                        }
-                        this.tableLoading = false;
-                    })
-                    .catch(() => { });
-            },
-            handleSizeChange(val) {
-                this.tableQuery.page = 1;
-                this.tableQuery.limit = val;
-                this.getListTable();
-            },
-            handleCurrentChange(val) {
-                this.tableQuery.page = val;
-                this.getListTable();
-            },
-        },
-        components: { selectRepairstate }
+/* eslint-disable */
+import selectRepairstate from "@/components/select-repairstate.vue";
+import repair_add from "./add.vue";
+import { getDeviceRepairList, updateDeviceRepair } from "@/api/index.js";
+export default {
+  created() {
+    this.getListTable();
+  },
+  data() {
+    return {
+      isCollapse: false,
+      tableQuery: {
+        start_back_time: "",
+        end_back_time: "",
+        back_time: "",
+        logistics: "",
+        state: "",
+        size: 10,
+        page: 1
+      },
+      tableData: {
+        total: 0,
+        data: []
+      },
+      tableLoading: true,
+      addKey: 0,
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
+      value6: "",
+      value7: ""
     };
+  },
+  methods: {
+    repaired(scope, state) {
+      if (state == 3) {
+        this.$confirm("确认报废？").then(() => {
+          scope.row.state = state;
+          updateDeviceRepair(scope.row).then(res => {
+            if (res.data.code == 0) {
+              this.$message.success(res.data.msg);
+              scope.row.state = state;
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+        });
+      }
+      if (state == 2) {
+        scope.row.state = state;
+        updateDeviceRepair(scope.row).then(res => {
+          if (res.data.code == 0) {
+            this.$message.success(res.data.msg);
+            scope.row.state = state;
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
+      }
+    },
+    addFrom() {
+      //添加
+      var vNode = this.$createElement(repair_add, {
+        key: this.addKey++,
+        on: {
+          success: () => {
+            this.getListTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-form",
+        title: "添加维修设备信息",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      });
+    },
+    //列表信息
+    getListTable() {
+      this.tableLoading = true;
+      if (this.value6) {
+        this.tableQuery.start_back_time = this.value6[0];
+        this.tableQuery.end_back_time = this.value6[1];
+      }
+      var query = Object.assign({}, this.tableQuery);
+      getDeviceRepairList(query)
+        .then(res => {
+          if (res.data.code == 0) {
+            this.$set(this.$data, "tableData", res.data);
+          } else {
+            this.$set(this.$data, "tableData", []);
+            this.$message.error(res.data.msg);
+          }
+          this.tableLoading = false;
+        })
+        .catch(() => {});
+    },
+    handleSizeChange(val) {
+      this.tableQuery.page = 1;
+      this.tableQuery.limit = val;
+      this.getListTable();
+    },
+    handleCurrentChange(val) {
+      this.tableQuery.page = val;
+      this.getListTable();
+    }
+  },
+  components: { selectRepairstate }
+};
 </script>

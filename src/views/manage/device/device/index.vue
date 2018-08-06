@@ -6,8 +6,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="添加时间">
-              <el-date-picker value-format="yyyyMMdd" v-model="dateRange" type="daterange" align="right" unlink-panels range-separator="至"
-                start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+              <el-date-picker value-format="yyyyMMdd" v-model="dateRange" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -74,8 +73,7 @@
               </el-upload> -->
             </el-dropdown-item>
             <el-dropdown-item style="padding:2px 15px;">
-              <a href="/static/设备导入模板.xls" download target="_blank" type="primary " class="el-button el-button--small el-button--primary"
-                style=" display: block;">
+              <a href="/static/设备导入模板.xls" download target="_blank" type="primary " class="el-button el-button--small el-button--primary" style=" display: block;">
                 <i class="el-icon-download"></i> 模版下载
               </a>
             </el-dropdown-item>
@@ -103,7 +101,7 @@
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" type="primary" @click="repair_addFrom">
+            <el-button size="small" :type="buttontype(scope)" @click="repair_addFrom(scope)">
               <i class="el-icon-upload el-icon--right"></i>设备维修</el-button>
             <el-button size="small" @click="delRow(scope)" icon="el-icon-delete">删除</el-button>
           </template>
@@ -111,153 +109,163 @@
       </el-table>
 
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
-          :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
         </el-pagination>
       </div>
     </el-card>
   </div>
 </template>
 <script>
-  import selectCompany from "@/components/select-company.vue";
-  import selectUser from "@/components/select-user.vue";
-  import selectDevicetype from "@/components/select-devicetype.vue";
-  import device_add from "./add.vue";
-  import repair_add from "./repair_add.vue"
-  import device_update from "./update.vue";
-  import device_upload from "./upload.vue";
-  import { getDeviceList, delDevice } from "@/api/index.js";
-  export default {
-    created() {
-      this.getTable();
-      this.keyupdown();
-    },
-    data() {
-      return {
-        isCollapse: false,
-        dateRange: "",
-        tableQuery: {
-          device_type: "",
-          device_id: "",
-          company_name: "",
-          company_id: "",
-          real_name: "",
-          user_id: "",
-          sim_id: "",
-          start_date: "",
-          end_date: "",
-          size: 10,
-          page: 1
-        },
-        tableData: {
-          total: 0,
-          data: []
-        },
-        tableLoading: true,
-        addKey: 0,
-        pickerOptions2: {
-          shortcuts: [
-            {
-              text: "最近一周",
-              onClick(picker) {
-                const end = new Date();
-                const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                picker.$emit("pick", [start, end]);
-              }
-            },
-            {
-              text: "最近一个月",
-              onClick(picker) {
-                const end = new Date();
-                const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                picker.$emit("pick", [start, end]);
-              }
-            },
-            {
-              text: "最近三个月",
-              onClick(picker) {
-                const end = new Date();
-                const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                picker.$emit("pick", [start, end]);
-              }
+import selectCompany from "@/components/select-company.vue";
+import selectUser from "@/components/select-user.vue";
+import selectDevicetype from "@/components/select-devicetype.vue";
+import selectDevice from "@/components/select-device.vue";
+import device_add from "./add.vue";
+import repair_add from "./repair_add.vue";
+import device_update from "./update.vue";
+import device_upload from "./upload.vue";
+import { getDeviceList, delDevice } from "@/api/index.js";
+export default {
+  created() {
+    this.getTable();
+    this.keyupdown();
+  },
+  data() {
+    return {
+      isCollapse: false,
+      dateRange: "",
+      tableQuery: {
+        device_type: "",
+        device_id: "",
+        company_name: "",
+        company_id: "",
+        real_name: "",
+        user_id: "",
+        sim_id: "",
+        start_date: "",
+        end_date: "",
+        state: "",
+        size: 10,
+        page: 1
+      },
+      tableData: {
+        total: 0,
+        data: []
+      },
+      tableLoading: true,
+      addKey: 0,
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
             }
-          ]
-        }
-      };
-    },
-    watch: {
-      // 拆分时间段
-      dateRange: function (arr) {
-        arr = arr || ["", ""];
-        this.tableQuery.start_date = arr[0];
-        this.tableQuery.end_date = arr[1];
-      },
-      "tableQuery.real_name": function () {
-        this.tableQuery.user_id = "";
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
       }
+    };
+  },
+  watch: {
+    // 拆分时间段
+    dateRange: function(arr) {
+      arr = arr || ["", ""];
+      this.tableQuery.start_date = arr[0];
+      this.tableQuery.end_date = arr[1];
     },
-    methods: {
-      openUpload() {
-        //上传
-        var vNode = this.$createElement(device_upload, {
-          key: this.addKey++,
-          on: {
-            success: () => {
+    "tableQuery.real_name": function() {
+      this.tableQuery.user_id = "";
+    }
+  },
+  methods: {
+    buttontype(scope) {
+      if (scope.row.state == 1) {
+        return "primary";
+      }
+      return "info";
+    },
+    openUpload() {
+      //上传
+      var vNode = this.$createElement(device_upload, {
+        key: this.addKey++,
+        on: {
+          success: () => {
+            this.getTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-form",
+        title: "上传",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      });
+    },
+    delRow(scope) {
+      //删除
+      this.$confirm("确认删除？")
+        .then(() => {
+          delDevice({ device_id: scope.row.device_id }).then(res => {
+            if (res.data.code == 0) {
+              this.$message.success(res.data.msg);
               this.getTable();
-              this.$msgbox.close();
-            },
-            error: function () { }
-          }
-        });
-        this.$msgbox({
-          showConfirmButton: false, //是否显示确定按钮
-          customClass: "admin-message-form",
-          title: "上传",
-          closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-          closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-          message: vNode
-        });
-      },
-      delRow(scope) {
-        //删除
-        this.$confirm("确认删除？")
-          .then(() => {
-            delDevice({ device_id: scope.row.device_id }).then(res => {
-              if (res.data.code == 0) {
-                this.$message.success(res.data.msg);
-                this.getTable();
-              } else {
-                this.$message.error(res.data.msg);
-              }
-            });
-          })
-          .catch(() => { });
-      },
-      addFrom() {
-        //添加
-        var vNode = this.$createElement(device_add, {
-          key: this.addKey++,
-          on: {
-            success: () => {
-              this.getTable();
-              this.$msgbox.close();
-            },
-            error: function () { }
-          }
-        });
-        this.$msgbox({
-          showConfirmButton: false, //是否显示确定按钮
-          customClass: "admin-message-form",
-          title: "添加设备",
-          closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-          closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-          message: vNode
-        });
-      },
-      repair_addFrom() {//维修设备添加
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+        })
+        .catch(() => {});
+    },
+    addFrom() {
+      //添加
+      var vNode = this.$createElement(device_add, {
+        key: this.addKey++,
+        on: {
+          success: () => {
+            this.getTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-form",
+        title: "添加设备",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      });
+    },
+    repair_addFrom(scope) {
+      //维修设备添加
+      if (scope.row.state == 1) {
+        selectDevice.props.num = scope.row.device_id;
         var vNode = this.$createElement(repair_add, {
           key: this.addKey++,
           on: {
@@ -265,117 +273,118 @@
               this.getTable();
               this.$msgbox.close();
             },
-            error: function () {
-            }
-          }
-        })
-        this.$msgbox({
-          showConfirmButton: false,//是否显示确定按钮	
-          customClass: "admin-message-form",
-          title: "添加维修设备信息",
-          closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
-          closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
-          message: vNode
-        })
-      },
-      updateForm(scope) {
-        //编辑
-        var vNode = this.$createElement(device_update, {
-          key: this.addKey++,
-          props: {
-            device_id: scope.row.device_id
-          },
-          on: {
-            success: () => {
-              this.getTable();
-              this.$msgbox.close();
-            },
-            error: function () { }
+            error: function() {}
           }
         });
         this.$msgbox({
           showConfirmButton: false, //是否显示确定按钮
           customClass: "admin-message-form",
-          title: "编辑设备",
+          title: "添加维修设备信息",
           closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
           closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
           message: vNode
         });
-      },
-      getTable() {
-        //获取列表
-        this.tableLoading = true;
-        if (this.tableQuery.real_name == "") {
-          this.tableQuery.user_id = "";
-        }
-        var query = Object.assign({}, this.tableQuery);
-        getDeviceList(query)
-          .then(res => {
-            if (res.data.code == 0) {
-              this.$set(this.$data, "tableData", res.data);
-            } else {
-              this.$set(this.$data, "tableData", []);
-              this.$message.error(res.data.msg);
-            }
-            this.tableLoading = false;
-          })
-          .catch(() => { });
-      },
-      //上传
-      // uploadFunc(uploadObj) {
-      //   var formData = new FormData();
-      //   formData.append("ff", uploadObj.file);
-      //   this.$ajax
-      //     .post("/public/UploadExcel", formData, {
-      //       params: { table: 2 }
-      //     })
-      //     .then(res => {
-      //       if (res.data.code == 0) {
-      //         this.$alert(res.data.msg, "提示", {
-      //           type: "success"
-      //         });
-      //         this.getTable();
-      //       } else {
-      //         this.$alert(res.data.msg, "导入失败", {
-      //           type: "error"
-      //         });
-      //       }
-      //     })
-      //     .catch(err => {
-      //       this.$message.error("接口错误，错误码：" + err.response.status);
-      //     });
-      // },
-      uploadSuccess() { },
-      uploadError() {
-        alert(1);
-      },
-      uploadProgress() { },
-      //回车事件
-      keyupdown() {
-        document.onkeydown = () => {
-          let _key = window.event.keyCode;
-          if (_key === 13) {
-            this.getTable();
-          }
-        };
-      },
-      handleSizeChange(val) {
-        this.tableQuery.page = 1;
-        this.tableQuery.limit = val;
-        this.getTable();
-      },
-      handleCurrentChange(val) {
-        this.tableQuery.page = val;
-        this.getTable();
-      },
+      }
     },
-    components: {
-      device_upload,
-      device_add,
-      device_update,
-      selectCompany,
-      selectUser,
-      selectDevicetype
+    updateForm(scope) {
+      //编辑
+      var vNode = this.$createElement(device_update, {
+        key: this.addKey++,
+        props: {
+          device_id: scope.row.device_id
+        },
+        on: {
+          success: () => {
+            this.getTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-form",
+        title: "编辑设备",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      });
+    },
+    getTable() {
+      //获取列表
+      this.tableLoading = true;
+      if (this.tableQuery.real_name == "") {
+        this.tableQuery.user_id = "";
+      }
+      var query = Object.assign({}, this.tableQuery);
+      getDeviceList(query)
+        .then(res => {
+          if (res.data.code == 0) {
+            this.$set(this.$data, "tableData", res.data);
+          } else {
+            this.$set(this.$data, "tableData", []);
+            this.$message.error(res.data.msg);
+          }
+          this.tableLoading = false;
+        })
+        .catch(() => {});
+    },
+    //上传
+    // uploadFunc(uploadObj) {
+    //   var formData = new FormData();
+    //   formData.append("ff", uploadObj.file);
+    //   this.$ajax
+    //     .post("/public/UploadExcel", formData, {
+    //       params: { table: 2 }
+    //     })
+    //     .then(res => {
+    //       if (res.data.code == 0) {
+    //         this.$alert(res.data.msg, "提示", {
+    //           type: "success"
+    //         });
+    //         this.getTable();
+    //       } else {
+    //         this.$alert(res.data.msg, "导入失败", {
+    //           type: "error"
+    //         });
+    //       }
+    //     })
+    //     .catch(err => {
+    //       this.$message.error("接口错误，错误码：" + err.response.status);
+    //     });
+    // },
+    uploadSuccess() {},
+    uploadError() {
+      alert(1);
+    },
+    uploadProgress() {},
+    //回车事件
+    keyupdown() {
+      document.onkeydown = () => {
+        let _key = window.event.keyCode;
+        if (_key === 13) {
+          this.getTable();
+        }
+      };
+    },
+    handleSizeChange(val) {
+      this.tableQuery.page = 1;
+      this.tableQuery.limit = val;
+      this.getTable();
+    },
+    handleCurrentChange(val) {
+      this.tableQuery.page = val;
+      this.getTable();
     }
-  };
+  },
+  components: {
+    device_upload,
+    device_add,
+    device_update,
+    selectCompany,
+    selectUser,
+    selectDevicetype,
+    selectDevice
+  }
+};
 </script>
