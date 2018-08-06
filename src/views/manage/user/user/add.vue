@@ -215,14 +215,23 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 this.$emit("success");
-                this.$message.success(res.data.msg);
+                this.$notify.success({
+                  title: "成功",
+                  message: res.data.msg
+                });
               } else {
                 this.$emit("error");
-                this.$message.error(res.data.msg);
+                this.$notify.error({
+                  title: "失败",
+                  message: res.data.msg
+                });
               }
             })
             .catch(() => {
-              this.$message.error("接口错误");
+              this.$notify.error({
+                title: "失败",
+                message: "接口错误"
+              });
               this.$emit("error");
             });
         } else {
