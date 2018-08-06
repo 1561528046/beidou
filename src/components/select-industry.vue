@@ -1,5 +1,5 @@
 <template>
-    <el-select v-model="industry" placeholder="请选择">
+    <el-select clearable v-model="industry" placeholder="请选择">
         <el-option v-for="(item,index) in industrys" :key="item" :label="item" :value="index">
         </el-option>
     </el-select>
