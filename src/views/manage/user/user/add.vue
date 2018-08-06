@@ -39,7 +39,7 @@
         <el-col :span="12" v-if="user_type==2">
           <el-form-item label="所属行业" prop="industry">
             <!-- <el-input v-model="formData.industry" maxlength="255"></el-input> -->
-            <industry-select v-model="formData.industry" style="width:100%;"></industry-select>
+            <select-industry v-model="formData.industry" style="width:100%;"></select-industry>
           </el-form-item>
         </el-col>
 

@@ -20,7 +20,7 @@
                     </el-col>
                     <el-col :span="6" v-if="isCollapse">
                         <el-form-item label="所属行业 ">
-                            <industry-select v-model="tableQuery.industry" style="width:100%;"></industry-select>
+                            <select-industry v-model="tableQuery.industry" style="width:100%;"></select-industry>
                         </el-form-item>
                     </el-col>
                     <el-col :span="isCollapse?24:6" style="text-align: right;">
