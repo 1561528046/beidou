@@ -14,7 +14,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item>
-                <el-select v-model="userTableQuery.user_type" style="width:100%;">
+                <el-select v-model="userTableQuery.user_type" style="width:100%;" clearable>
                   <el-option value="1" label="个人用户"></el-option>
                   <el-option value="2" label="企业用户"></el-option>
                 </el-select>
@@ -29,7 +29,7 @@
             </div>
           </div>
           <ul class="user-list">
-            <li v-for="user in userList" :key="user.user_id" @click="changeUser(user)" :class="{active:user==currentUser}"> {{user.real_name}}</li>
+            <li v-for="user in userList" :key="user.user_id" @click="changeUser(user)" :class="{active:user.user_id==currentUser.user_id}"> {{user.real_name}}</li>
           </ul>
           <div class="user-pager">
             <el-input placeholder="页码" size="small" v-model="userTableQuery.page">
@@ -67,7 +67,7 @@
             </div>
           </div>
           <div class="transfer-list">
-            <admin-transfer @onLeft="onleft" :lists="list" :titles="titles" @onRight="onright" style="width:100%;height:100%;"></admin-transfer>
+            <admin-transfer @onLeft="onleft" :lists="list" :titles="titles" @onRight="onright" :leftCol="leftCol" :rightCol="rightCol" style="width:100%;height:100%;"></admin-transfer>
           </div>
           <div class="transfer-pager">
             <div class="transfer-pager-item">
@@ -140,10 +140,32 @@ export default {
         total: 0
       },
       currentUser: {},
-      titles: ["", "未绑定设备"],
+      titles: ["请选择用户", "未绑定设备"],
       userList: [],
       leftList: [],
-      rightList: []
+      rightList: [],
+      leftCol: [
+        { prop: "device_id", label: "终端ID" },
+        { prop: "company_name", label: "设备厂商" },
+        {
+          prop: "device_type",
+          label: "终端类型",
+          formatter: row => {
+            return this.$dict.get_device_type(row.device_type);
+          }
+        }
+      ],
+      rightCol: [
+        { prop: "device_id", label: "终端ID" },
+        { prop: "company_name", label: "设备厂商" },
+        {
+          prop: "device_type",
+          label: "终端类型",
+          formatter: row => {
+            return this.$dict.get_device_type(row.device_type);
+          }
+        }
+      ]
     };
   },
   watch: {
@@ -177,20 +199,15 @@ export default {
     renderBind() {
       this.$set(this.$data, "leftList", []);
       this.bindTableQuery.total = 0;
-      this.bindTableQuery.total = 0;
       if (this.currentUser.user_id) {
         var postData = Object.assign({}, this.bindTableQuery);
         postData.user_id = this.currentUser.user_id;
         getUserDevice(postData).then(res => {
           this.rightValues = [];
           if (res.data.code == 0) {
-            var arr = [];
-            res.data.data.map(item => {
-              arr.push({
-                parent: "left",
-                key: item.device_id,
-                label: item.device_id + " / " + item.company_name
-              });
+            var arr = res.data.data.map(item => {
+              item.parent = "left";
+              return item;
             });
             this.$set(this.$data, "leftList", arr);
             this.bindTableQuery.total = res.data.total;
@@ -199,15 +216,12 @@ export default {
       }
     },
     renderUnbind() {
+      this.$set(this.$data, "rightList", []);
       getDeviceAllUnbind(this.unbindTableQuery).then(res => {
         if (res.data.code == 0) {
-          var arr = [];
-          res.data.data.map(item => {
-            arr.push({
-              parent: "right",
-              key: item.device_id,
-              label: item.device_id + " / " + item.company_name
-            });
+          var arr = res.data.data.map(item => {
+            item.parent = "right";
+            return item;
           });
           this.$set(this.$data, "rightList", arr);
           this.unbindTableQuery.total = res.data.total;
@@ -253,7 +267,7 @@ export default {
         device_ids: []
       };
       items.map(item => {
-        postData.device_ids.push(item.key);
+        postData.device_ids.push(item.device_id);
       });
       postData.device_ids = postData.device_ids.join(",");
       addUserDevice(postData)
@@ -280,7 +294,7 @@ export default {
         device_ids: []
       };
       items.map(item => {
-        postData.device_ids.push(item.key);
+        postData.device_ids.push(item.device_id);
       });
       postData.device_ids = postData.device_ids.join(",");
       delUserDevice(postData)

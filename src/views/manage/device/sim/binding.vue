@@ -29,7 +29,7 @@
             </div>
           </div>
           <ul class="user-list">
-            <li v-for="user in userList" :key="user.user_id" @click="changeUser(user)" :class="{active:user==currentUser}"> {{user.real_name}}</li>
+            <li v-for="user in userList" :key="user.user_id" @click="changeUser(user)" :class="{active:user.user_id==currentUser.user_id}"> {{user.real_name}}</li>
           </ul>
           <div class="user-pager">
             <el-input placeholder="页码" size="small" v-model="userTableQuery.page">
@@ -77,7 +77,7 @@
             </div>
           </div>
           <div class="transfer-list">
-            <admin-transfer @onLeft="onleft" :lists="list" :titles="titles" @onRight="onright" style="width:100%;height:100%;"></admin-transfer>
+            <admin-transfer @onLeft="onleft" :lists="list" :titles="titles" @onRight="onright" :leftCol="leftCol" :rightCol="rightCol" style="width:100%;height:100%;"></admin-transfer>
           </div>
           <div class="transfer-pager">
             <div class="transfer-pager-item">
@@ -150,10 +150,20 @@ export default {
         total: 0
       },
       currentUser: {},
-      titles: ["", "未绑定SIM卡"],
+      titles: ["请选择用户", "未绑定SIM卡"],
       userList: [],
       leftList: [],
-      rightList: []
+      rightList: [],
+      leftCol: [
+        { prop: "sim_no", label: "SIM卡号" },
+        { prop: "icc_id", label: "ICCID" },
+        { prop: "belong", label: "所属运营商" }
+      ],
+      rightCol: [
+        { prop: "sim_no", label: "SIM卡号" },
+        { prop: "icc_id", label: "ICCID" },
+        { prop: "belong", label: "所属运营商" }
+      ]
     };
   },
   watch: {
@@ -192,13 +202,9 @@ export default {
         getUserSim(postData).then(res => {
           this.rightValues = [];
           if (res.data.code == 0) {
-            var arr = [];
-            res.data.data.map(item => {
-              arr.push({
-                parent: "left",
-                key: item.sim_no,
-                label: item.sim_no
-              });
+            var arr = res.data.data.map(item => {
+              item.parent = "left";
+              return item;
             });
             this.$set(this.$data, "leftList", arr);
             this.bindTableQuery.total = res.data.total;
@@ -211,13 +217,9 @@ export default {
     renderUnbind() {
       getSimAllUnbind(this.unbindTableQuery).then(res => {
         if (res.data.code == 0) {
-          var arr = [];
-          res.data.data.map(item => {
-            arr.push({
-              parent: "right",
-              key: item.sim_no,
-              label: item.sim_no
-            });
+          var arr = res.data.data.map(item => {
+            item.parent = "right";
+            return item;
           });
           this.$set(this.$data, "rightList", arr);
           this.unbindTableQuery.total = res.data.total;
@@ -263,7 +265,7 @@ export default {
         sim_nos: []
       };
       items.map(item => {
-        postData.sim_nos.push(item.key);
+        postData.sim_nos.push(item.sim_no);
       });
       postData.sim_nos = postData.sim_nos.join(",");
       addUserSim(postData)
@@ -290,7 +292,7 @@ export default {
         sim_nos: []
       };
       items.map(item => {
-        postData.sim_nos.push(item.key);
+        postData.sim_nos.push(item.sim_no);
       });
       postData.sim_nos = postData.sim_nos.join(",");
       delUserSim(postData)
