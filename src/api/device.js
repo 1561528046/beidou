@@ -72,27 +72,27 @@ export const delDevice = query => {
 
 // 维修设备管理
 export const getDeviceRepairAll = query => {
-  return ajax.get("/device_repair/GetAll", {
+  return ajax.get("/device_operate_log/GetAll", {
     params: query
   });
 };
 export const getDeviceRepairList = query => {
-  return ajax.get("/device_repair/GetListByPage", {
+  return ajax.get("/device_operate_log/GetListByPage", {
     params: query
   });
 };
 export const getDeviceRepair = query => {
-  return ajax.get("/device_repair/GetByID", {
+  return ajax.get("/device_operate_log/GetByID", {
     params: query
   });
 };
 export const addDeviceRepair = query => {
   query = qs.stringify(query);
-  return ajax.post("/device_repair/Add", query);
+  return ajax.post("/device_operate_log/Add", query);
 };
 export const updateDeviceRepair = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("/device_repair/Update", queryQS, {
+  return ajax.post("//device_operate_log/Update", queryQS, {
     params: query
   });
 };
