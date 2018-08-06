@@ -52,142 +52,143 @@
                 </el-table-column>
             </el-table>
             <div class="admin-table-pager">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
-                    :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
                 </el-pagination>
             </div>
         </el-card>
     </div>
 </template>
 <script>
-
-    import { getDriverList, delDriver } from "@/api/index.js";
-    import driver_add from "./add.vue";
-    import driver_update from "./update.vue";
-    export default {
-        created() {
-            this.getTable();
-            this.keyupSubmit();
-        },
-        data() {
-            return {
-                isCollapse: false,
-                tableQuery: {
-                    driver_name: "",
-                    driver_card_id: "",
-                    identity_id: "",
-                    size: 10,
-                    page: 1
-                },
-                tableData: {
-                    total: 0,
-                    data: []
-                },
-                tableLoading: true,
-                addKey: 0,
-            };
-        },
-        methods: {
-            delRow(scope) {//删除
-                this.$confirm('确认删除？')
-                    .then(() => {
-                        delDriver(scope.row).then((res) => {
-                            if (res.data.code == 0) {
-                                this.$message.success(res.data.msg);
-                                this.getTable();
-                            } else {
-                                this.$message.error(res.data.msg);
-                            }
-                        })
-                    })
-                    .catch(() => { });
-            },
-            addFrom() {//添加
-                var vNode = this.$createElement(driver_add, {
-                    key: this.addKey++,
-                    on: {
-                        success: () => {
-                            this.getTable();
-                            this.$msgbox.close();
-                        },
-                        error: function () {
-                        }
-                    }
-                });
-                this.$msgbox({
-                    showConfirmButton: false,//是否显示确定按钮	
-                    customClass: "admin-message-form",
-                    title: "添加司机",
-                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
-                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
-                    message: vNode
-                }).catch(() => { })
-            },
-            updateForm(scope) {//编辑
-                var vNode = this.$createElement(driver_update, {
-                    key: this.addKey++,
-                    props: {
-                        driver_card_id: scope.row.driver_card_id
-                    },
-                    on: {
-                        success: () => {
-                            this.getTable();
-                            this.$msgbox.close();
-                        },
-                        error: function () {
-                        }
-                    }
-                });
-                this.$msgbox({
-                    showConfirmButton: false,//是否显示确定按钮	
-                    customClass: "admin-message-form",
-                    title: "编辑司机",
-                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
-                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
-                    message: vNode
-                }).catch(() => { })
-            },
-            //回车时间
-            keyupSubmit() {
-                document.onkeydown = e => {
-                    console.log(e)
-                    let _key = window.event.keyCode;
-                    if (_key === 13) {
-                        this.getTable()
-                    }
-                }
-            },
-            getTable() {//获取列表
-                this.tableLoading = true;
-                var query = Object.assign({}, this.tableQuery);
-                getDriverList(query)
-                    .then(res => {
-                        if (res.data.code == 0) {
-                            this.$set(this.$data, "tableData", res.data);
-                        } else {
-                            this.$set(this.$data, "tableData", []);
-                            this.$message.error(res.data.msg);
-                        }
-                        this.tableLoading = false;
-                    })
-                    .catch(() => { });
-            },
-            handleSizeChange(val) {//每页数量切换
-                this.tableQuery.page = 1;
-                this.tableQuery.limit = val;
-                this.getTable();
-            },
-            handleCurrentChange(val) {//翻页
-                this.tableQuery.page = val;
-                this.getTable();
-            },
-
-        },
-        components: { driver_add, driver_update }
+import { getDriverList, delDriver } from "@/api/index.js";
+import driver_add from "./add.vue";
+import driver_update from "./update.vue";
+export default {
+  created() {
+    this.getTable();
+    this.keyupSubmit();
+  },
+  data() {
+    return {
+      isCollapse: false,
+      tableQuery: {
+        driver_name: "",
+        driver_card_id: "",
+        identity_id: "",
+        size: 10,
+        page: 1
+      },
+      tableData: {
+        total: 0,
+        data: []
+      },
+      tableLoading: true,
+      addKey: 0
     };
+  },
+  methods: {
+    delRow(scope) {
+      //删除
+      this.$confirm("确认删除？")
+        .then(() => {
+          delDriver(scope.row).then(res => {
+            if (res.data.code == 0) {
+              this.$message.success(res.data.msg);
+              this.getTable();
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+        })
+        .catch(() => {});
+    },
+    addFrom() {
+      //添加
+      var vNode = this.$createElement(driver_add, {
+        key: this.addKey++,
+        on: {
+          success: () => {
+            this.getTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-form",
+        title: "添加司机",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      }).catch(() => {});
+    },
+    updateForm(scope) {
+      //编辑
+      var vNode = this.$createElement(driver_update, {
+        key: this.addKey++,
+        props: {
+          driver_card_id: scope.row.driver_card_id
+        },
+        on: {
+          success: () => {
+            this.getTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-form",
+        title: "编辑司机",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      }).catch(() => {});
+    },
+    //回车时间
+    keyupSubmit() {
+      document.onkeydown = e => {
+        console.log(e);
+        let _key = window.event.keyCode;
+        if (_key === 13) {
+          this.getTable();
+        }
+      };
+    },
+    getTable() {
+      //获取列表
+      this.tableLoading = true;
+      var query = Object.assign({}, this.tableQuery);
+      getDriverList(query)
+        .then(res => {
+          if (res.data.code == 0) {
+            this.$set(this.$data, "tableData", res.data);
+          } else {
+            this.$set(this.$data, "tableData", []);
+            this.$message.error(res.data.msg);
+          }
+          this.tableLoading = false;
+        })
+        .catch(() => {});
+    },
+    handleSizeChange(val) {
+      //每页数量切换
+      this.tableQuery.page = 1;
+      this.tableQuery.limit = val;
+      this.getTable();
+    },
+    handleCurrentChange(val) {
+      //翻页
+      this.tableQuery.page = val;
+      this.getTable();
+    }
+  },
+  components: { driver_add, driver_update }
+};
 </script>
 <style>
-    .flip-list-move {
-        transition: transform 1s;
-    }
+.flip-list-move {
+  transition: transform 1s;
+}
 </style>
