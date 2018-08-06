@@ -109,7 +109,31 @@ export const getDriver = query => {
     params: query
   });
 };
-
+//角色管理
+export const getRoleAll = query => {
+  return ajax.get("/role/GetAll", {
+    params: query
+  });
+};
+export const getRole = query => {
+  return ajax.get("/role/GetByID", {
+    params: query
+  });
+};
+export const addRole = query => {
+  query = qs.stringify(query);
+  return ajax.post("/role/Add", query);
+};
+export const updateRole = query => {
+  query = qs.stringify(query);
+  return ajax.post("/role/Update", query);
+};
+export const delRole = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/role/Delete", queryQS, {
+    params: query
+  });
+};
 //登陆
 export const loginIn = query => {
   return ajax.get("/user/Login/", {

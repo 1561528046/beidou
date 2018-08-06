@@ -100,9 +100,11 @@
         <!-- <el-table-column prop="camera_num" label="摄像头数量" :formatter="$utils.baseFormatter"></el-table-column> -->
         <!-- <el-table-column prop="save_media" label="存储介质" :formatter="(row)=>{return this.$dict.get_save_media(row.save_media)}"></el-table-column> -->
         <el-table-column prop="state" label="状态" :formatter="(row)=>{return this.$dict.get_device_state(row.state)}"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="400">
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
+            <el-button size="small" type="primary" @click="repair_addFrom">
+              <i class="el-icon-upload el-icon--right"></i>设备维修</el-button>
             <el-button size="small" @click="delRow(scope)" icon="el-icon-delete">删除</el-button>
           </template>
         </el-table-column>
@@ -121,6 +123,7 @@
   import selectUser from "@/components/select-user.vue";
   import selectDevicetype from "@/components/select-devicetype.vue";
   import device_add from "./add.vue";
+  import repair_add from "./repair_add.vue"
   import device_update from "./update.vue";
   import device_upload from "./upload.vue";
   import { getDeviceList, delDevice } from "@/api/index.js";
@@ -253,6 +256,27 @@
           closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
           message: vNode
         });
+      },
+      repair_addFrom() {//维修设备添加
+        var vNode = this.$createElement(repair_add, {
+          key: this.addKey++,
+          on: {
+            success: () => {
+              this.getTable();
+              this.$msgbox.close();
+            },
+            error: function () {
+            }
+          }
+        })
+        this.$msgbox({
+          showConfirmButton: false,//是否显示确定按钮	
+          customClass: "admin-message-form",
+          title: "添加维修设备信息",
+          closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
+          closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
+          message: vNode
+        })
       },
       updateForm(scope) {
         //编辑

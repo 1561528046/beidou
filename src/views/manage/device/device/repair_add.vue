@@ -5,7 +5,7 @@
             <el-col :span="12">
                 <el-form-item prop="device_id" label="选择设备">
                     <!-- <select-device v-model="formData.device_id"></select-device> -->
-                    <el-autocomplete style="width: 100%;" class="inline-input" v-model="formData.device_no" :fetch-suggestions="querySearch"
+                    <el-autocomplete style="width: 100%;" class="inline-input" v-model="formData.device_id" :fetch-suggestions="querySearch"
                         placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
                     </el-autocomplete>
                 </el-form-item>
@@ -17,7 +17,7 @@
             </el-col>
             <el-col :span="12">
                 <el-form-item label="返厂时间">
-                    <el-date-picker type="datetime" v-model="formData.back_time" align="center" placeholder="选择日期" style="width:100%;" format="yyyyMMdd"
+                    <el-date-picker type="datetime" v-model="formData.back_time" align="center" placeholder="选择日期" style="width:100%;" format="yyyy-MM-dd"
                         value-format="yyyyMMdd">
                     </el-date-picker>
                 </el-form-item>
@@ -49,7 +49,6 @@
                     "back_time": "",
                     "reason": "",
                     "logistics": "",
-                    "device_no": "",
                     "device_id": "",
                     "state": "1"
                 },
@@ -86,7 +85,7 @@
                     if (res.data.code == 0) {
                         for (var i = 0; i < res.data.data.length; i++) {
                             if (res.data.data[i].real_name !== "") {
-                                this.simss.push({ value: res.data.data[i].device_no, address: res.data.data[i].device_id })
+                                this.simss.push({ value: res.data.data[i].device_id })
                             }
                         }
                     }
@@ -94,11 +93,14 @@
                 return this.simss
             },
             handleSelect(item) {
-                this.simee = { value: item.value, address: item.address }
+                this.simee = { value: item.value }
             },
             formSubmit() {
                 this.$refs.baseForm.validate((isVaildate, errorItem) => {
                     if (isVaildate) {
+                        if (this.formData.device_id != "") {
+                            this.formData.device_id = this.formData.device_id
+                        }
                         var postData = Object.assign({}, this.formData);
                         addDeviceRepair(postData)
                             .then(res => {

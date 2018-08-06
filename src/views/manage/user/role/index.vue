@@ -48,21 +48,22 @@
                         <i class="el-icon-upload el-icon--right"></i> 添加
                     </router-link>
                 </el-button>
-
+                <!-- 
                 <el-button type="primary" size="small">导出
                     <i class="el-icon-upload el-icon--right"></i>
-                </el-button>
+                </el-button> -->
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="sim_no" label="Sim卡号">
+                <el-table-column prop="sim_no" label="角色id">
                 </el-table-column>
-                <el-table-column prop="icc_id" label="ICCID">
+                <el-table-column prop="icc_id" label="角色名称">
                 </el-table-column>
-                <el-table-column prop="belong" label="所属运营商"> </el-table-column>
-                <el-table-column prop="user_id" label="分配客户"></el-table-column>
-                <el-table-column prop="state" label="当前状态"></el-table-column>
-                <el-table-column prop="note" label="备注"></el-table-column>
-                <el-table-column prop="time" label="添加时间"></el-table-column>
+                <el-table-column label="操作" width="300">
+                    <template slot-scope="scope" style="width: 100px;">
+                        <el-button size="small" type="primary" icon="el-icon-edit">编辑</el-button>
+                        <el-button size="small" icon="el-icon-delete">删除</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <div class="admin-table-pager">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
@@ -74,7 +75,7 @@
 </template>
 <script>
     /* eslint-disable */
-    import { getDeviceList } from "@/api/index.js";
+    import { getRoleAll } from "@/api/index.js";
     export default {
         created() {
             this.getTable();
@@ -83,8 +84,7 @@
             return {
                 isCollapse: false,
                 tableQuery: {
-                    user: "",
-                    region: "",
+                    role_id: "",
                     size: 10,
                     page: 1
                 },
@@ -115,9 +115,10 @@
                 this.tableQuery.page = val;
                 this.getTable();
             },
+            //角色列表
             getTable() {
                 this.tableLoading = true;
-                getDeviceList(this.tableQuery)
+                getRoleAll(this.tableQuery)
                     .then(res => {
                         this.$set(this.$data, "tableData", res.data);
                         this.tableLoading = false;

@@ -67,6 +67,15 @@ export default {
       name: "driver_update",
       meta: { name: "编辑个人用户", hidden: true },
       component: () => import("@/views/manage/user/driver/update.vue")
+    },
+    /**
+     * 角色管理
+     */
+    {
+      path: "role",
+      name: "role",
+      meta: { name: "角色管理", icon: "iconfont icon-driver" },
+      component: () => import("@/views/manage/user/role/index.vue")
     }
   ]
 };
