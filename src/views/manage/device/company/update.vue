@@ -17,91 +17,90 @@
     </el-form>
 </template>
 <script>
-    import { rules } from "@/utils/rules.js";
-    import citySelect from "@/components/city-select.vue";
-    import { updateCompany, getDeviceCompany } from "@/api/index.js";
-    export default {
-        data() {
-            return {
-                device_total_turn: true,
-                formData: {
-                    company_id: this.company_id,//设备厂商id
-                    area: [],
-                    "company_name": "",//设备厂商名称
-                    "company_type": ""//设备厂商类型：1前装厂商，2后装厂商
-                },
-                rules: {
-                    ...rules,
-                    company_name: [
-                        {
-                            required: true,
-                            message: "请输入厂商名称",
-                            trigger: "change"
-                        }
-                    ],
-                    company_type: [
-                        {
-                            required: true,
-                            message: "请选择厂商类型",
-                            trigger: "change"
-                        }
-                    ],
-                }
-            };
-        },
-        watch: {
-            "device_total_turn": function () {
-                this.formData.device_total = "";
-            }
-        },
-        props: ["company_id"],
-        created() {
-            // 获取信息
-            getDeviceCompany({ id: this.formData.company_id }).then((res) => {
-                if (res.data.code == 0 && res.data.data.length) {
-                    var mixinData = Object.assign({}, this.formData, res.data.data[0]);
-                    this.$set(this.$data, "formData", mixinData);
-                }
-            })
-
-        },
-        methods: {
-            // 修改信息
-            formSubmit() {
-                this.$refs.baseForm.validate((isVaildate, errorItem) => {
-                    if (isVaildate) {
-                        var areaObj = this.$utils.formatArea(this.formData.area);
-                        var postData = Object.assign({}, this.formData, areaObj);
-                        updateCompany(postData)
-                            .then(res => {
-                                if (res.data.code == 0) {
-                                    this.$emit("success");
-                                    this.$message.success(res.data.msg);
-                                } else {
-                                    this.$emit("error");
-                                    this.$message.error(res.data.msg);
-                                }
-                            })
-                            .catch(() => {
-                                this.$message.error("接口错误");
-                                this.$emit("error");
-                            });
-                    } else {
-                        var errormsg = "";
-                        for (var key in errorItem) {
-                            errormsg += errorItem[key][0].message + "<br>";
-                        }
-                        this.$notify.error({
-                            title: '错误',
-                            dangerouslyUseHTMLString: true,
-                            message: errormsg
-                        });
-                    }
-                })
-            }
-        },
-        components: { citySelect }
+import { rules } from "@/utils/rules.js";
+import citySelect from "@/components/select-city.vue";
+import { updateCompany, getDeviceCompany } from "@/api/index.js";
+export default {
+  data() {
+    return {
+      device_total_turn: true,
+      formData: {
+        company_id: this.company_id, //设备厂商id
+        area: [],
+        company_name: "", //设备厂商名称
+        company_type: "" //设备厂商类型：1前装厂商，2后装厂商
+      },
+      rules: {
+        ...rules,
+        company_name: [
+          {
+            required: true,
+            message: "请输入厂商名称",
+            trigger: "change"
+          }
+        ],
+        company_type: [
+          {
+            required: true,
+            message: "请选择厂商类型",
+            trigger: "change"
+          }
+        ]
+      }
     };
+  },
+  watch: {
+    device_total_turn: function() {
+      this.formData.device_total = "";
+    }
+  },
+  props: ["company_id"],
+  created() {
+    // 获取信息
+    getDeviceCompany({ id: this.formData.company_id }).then(res => {
+      if (res.data.code == 0 && res.data.data.length) {
+        var mixinData = Object.assign({}, this.formData, res.data.data[0]);
+        this.$set(this.$data, "formData", mixinData);
+      }
+    });
+  },
+  methods: {
+    // 修改信息
+    formSubmit() {
+      this.$refs.baseForm.validate((isVaildate, errorItem) => {
+        if (isVaildate) {
+          var areaObj = this.$utils.formatArea(this.formData.area);
+          var postData = Object.assign({}, this.formData, areaObj);
+          updateCompany(postData)
+            .then(res => {
+              if (res.data.code == 0) {
+                this.$emit("success");
+                this.$message.success(res.data.msg);
+              } else {
+                this.$emit("error");
+                this.$message.error(res.data.msg);
+              }
+            })
+            .catch(() => {
+              this.$message.error("接口错误");
+              this.$emit("error");
+            });
+        } else {
+          var errormsg = "";
+          for (var key in errorItem) {
+            errormsg += errorItem[key][0].message + "<br>";
+          }
+          this.$notify.error({
+            title: "错误",
+            dangerouslyUseHTMLString: true,
+            message: errormsg
+          });
+        }
+      });
+    }
+  },
+  components: { citySelect }
+};
 </script>
 <style>
 </style>

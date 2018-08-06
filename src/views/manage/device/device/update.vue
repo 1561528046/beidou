@@ -4,7 +4,7 @@
     <el-row :gutter="30">
       <el-col :span="12">
         <el-form-item label="终端类型" prop="device_type">
-          <el-select v-model="formData.device_type" placeholder="选择终端类型" style="width:100%;">
+          <el-select v-model="formData.device_type" placeholder="选择终端类型" style="width:100%;" disabled>
             <el-option label="定位终端" value="1"></el-option>
             <el-option label="视频终端" value="2"></el-option>
           </el-select>
