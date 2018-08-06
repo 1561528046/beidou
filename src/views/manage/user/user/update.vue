@@ -204,20 +204,27 @@ export default {
           postData.expiry_time = postData.expiry_time || 0;
           postData.user_type = this.user_type;
           postData.pass_word = postData.pass_word.MD5(16);
-          // delete postData.re_pass_word;
-          // delete postData.pass_word;
           updateUser(postData)
             .then(res => {
               if (res.data.code == 0) {
                 this.$emit("success");
-                this.$message.success(res.data.msg);
+                this.$notify.success({
+                  title: "成功",
+                  message: res.data.msg
+                });
               } else {
                 this.$emit("error");
-                this.$message.error(res.data.msg);
+                this.$notify.error({
+                  title: "失败",
+                  message: res.data.msg
+                });
               }
             })
             .catch(() => {
-              this.$message.error("接口错误");
+              this.$notify.error({
+                title: "失败",
+                message: "接口错误"
+              });
               this.$emit("error");
             });
         } else {
