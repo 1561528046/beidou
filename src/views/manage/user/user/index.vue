@@ -15,12 +15,12 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="所属地区">
-                            <city-select v-model="tableQuery.area" :select-all="true" style="width:100%;"></city-select>
+                            <select-city v-model="tableQuery.area" :select-all="true" style="width:100%;"></select-city>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6" v-if="isCollapse">
                         <el-form-item label="所属行业 ">
-                            <industry-select v-model="tableQuery.industry" style="width:100%;"></industry-select>
+                            <select-industry v-model="tableQuery.industry" style="width:100%;"></select-industry>
                         </el-form-item>
                     </el-col>
                     <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -63,155 +63,154 @@
                 </el-table-column>
             </el-table>
             <div class="admin-table-pager">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
-                    :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
                 </el-pagination>
             </div>
         </el-card>
     </div>
 </template>
 <script>
-    /* eslint-disable */
-    import { getUserList, delUser } from "@/api/index.js";
-    import citySelect from "@/components/city-select.vue";
-    import addComponents from "./add.vue";
-    import updateComponents from "./update.vue";
-    import industrySelect from "@/components/select-industry.vue";
-    export default {
-        created() {
-            this.getTable();
-        },
-        data() {
-            return {
-                isCollapse: false,
-                tableQuery: {
-                    area: [],
-                    user_name: "",
-                    linkman: "",
-                    real_name: "",
-                    industry: "",
-                    size: 10,
-                    page: 1,
-                    user_type: this.$props.user_type
-                },
-                tableData: {
-                    total: 0,
-                    data: []
-                },
-                tableLoading: true,
-                addKey: 0
-            };
-        },
-        props: ["user_type"],//来自router的user_type 根据user_type 区分公司和个人
-        methods: {
-            delRow(scope) {//删除
-                this.$confirm('确认删除？')
-                    .then(() => {
-                        delUser(scope.row).then((res) => {
-                            if (res.data.code == 0) {
-                                this.$message.success(res.data.msg);
-                                this.getTable();
-                            } else {
-                                this.$message.error(res.data.msg);
-                            }
-                        })
-                    })
-                    .catch(() => { });
-            },
-            addFrom() {//添加
-                var vNode = this.$createElement(addComponents, {
-                    key: this.addKey++,
-                    props: {
-                        user_type: this.$props.user_type
-                    },
-                    on: {
-                        success: () => {
-                            this.getTable();
-                            this.$msgbox.close();
-                        },
-                        error: function () {
-                        }
-                    }
-                });
-                this.$msgbox({
-                    showConfirmButton: false,//是否显示确定按钮	
-                    customClass: "admin-message-form",
-                    title: "添加",
-                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
-                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
-                    message: vNode
-                }).catch(() => { })
-            },
-            updateForm(scope) {//编辑
-                var vNode = this.$createElement(updateComponents, {
-                    key: this.addKey++,
-                    props: {
-                        user_id: scope.row.user_id,
-                        user_type: this.user_type
-                    },
-                    on: {
-                        success: () => {
-                            this.getTable();
-                            this.$msgbox.close();
-                        },
-                        error: function () {
-                        }
-                    }
-                });
-                this.$msgbox({
-                    showConfirmButton: false,//是否显示确定按钮	
-                    customClass: "admin-message-form",
-                    title: "编辑",
-                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
-                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
-                    message: vNode
-                }).catch(() => { })
-            },
-            handleSizeChange(val) {
-                this.tableQuery.page = 1;
-                this.tableQuery.limit = val;
-                this.getTable();
-            },
-            handleCurrentChange(val) {
-                this.tableQuery.page = val;
-                this.getTable();
-            },
-            getTable() {
-                this.tableLoading = true;
-                var areaObj = this.$utils.formatArea(this.tableQuery.area);
-                var query = Object.assign({}, this.tableQuery, areaObj);
-                getUserList(query)
-                    .then(res => {
-                        if (res.data.code == 0) {
-                            for (var i = 0; i < res.data.data.length; i++) {
-                                if (res.data.data[i].device_total == 0) {
-                                    res.data.data[i].device_total = "";
-                                }
-                            }
-                            this.$set(this.$data, "tableData", res.data);
-
-                        } else {
-                            this.$set(this.$data, "tableData", []);
-                        }
-                        this.tableLoading = false;
-                    })
-                    .catch(() => { });
-            },
-            delRow(scope) {
-                this.$confirm('确认删除？')
-                    .then(_ => {
-                        delUser(scope.row).then((res) => {
-                            if (res.data.code == 0) {
-                                this.$message.success(res.data.msg);
-                                this.getTable();
-                            } else {
-                                this.$message.error(res.data.msg);
-                            }
-                        })
-                    })
-                    .catch(_ => { });
-            }
-        },
-        components: { citySelect, industrySelect }
+/* eslint-disable */
+import { getUserList, delUser } from "@/api/index.js";
+import selectCity from "@/components/select-city.vue";
+import addComponents from "./add.vue";
+import updateComponents from "./update.vue";
+import selectIndustry from "@/components/select-industry.vue";
+export default {
+  created() {
+    this.getTable();
+  },
+  data() {
+    return {
+      isCollapse: false,
+      tableQuery: {
+        area: [],
+        user_name: "",
+        linkman: "",
+        real_name: "",
+        industry: "",
+        size: 10,
+        page: 1,
+        user_type: this.$props.user_type
+      },
+      tableData: {
+        total: 0,
+        data: []
+      },
+      tableLoading: true,
+      addKey: 0
     };
+  },
+  props: ["user_type"], //来自router的user_type 根据user_type 区分公司和个人
+  methods: {
+    delRow(scope) {
+      //删除
+      this.$confirm("确认删除？")
+        .then(() => {
+          delUser(scope.row).then(res => {
+            if (res.data.code == 0) {
+              this.$message.success(res.data.msg);
+              this.getTable();
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+        })
+        .catch(() => {});
+    },
+    addFrom() {
+      //添加
+      var vNode = this.$createElement(addComponents, {
+        key: this.addKey++,
+        props: {
+          user_type: this.$props.user_type
+        },
+        on: {
+          success: () => {
+            this.getTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-form",
+        title: "添加",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      }).catch(() => {});
+    },
+    updateForm(scope) {
+      //编辑
+      var vNode = this.$createElement(updateComponents, {
+        key: this.addKey++,
+        props: {
+          user_id: scope.row.user_id,
+          user_type: this.user_type
+        },
+        on: {
+          success: () => {
+            this.getTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-form",
+        title: "编辑",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      }).catch(() => {});
+    },
+    handleSizeChange(val) {
+      this.tableQuery.page = 1;
+      this.tableQuery.limit = val;
+      this.getTable();
+    },
+    handleCurrentChange(val) {
+      this.tableQuery.page = val;
+      this.getTable();
+    },
+    getTable() {
+      this.tableLoading = true;
+      var areaObj = this.$utils.formatArea(this.tableQuery.area);
+      var query = Object.assign({}, this.tableQuery, areaObj);
+      getUserList(query)
+        .then(res => {
+          if (res.data.code == 0) {
+            for (var i = 0; i < res.data.data.length; i++) {
+              if (res.data.data[i].device_total == 0) {
+                res.data.data[i].device_total = "";
+              }
+            }
+            this.$set(this.$data, "tableData", res.data);
+          } else {
+            this.$set(this.$data, "tableData", []);
+          }
+          this.tableLoading = false;
+        })
+        .catch(() => {});
+    },
+    delRow(scope) {
+      this.$confirm("确认删除？")
+        .then(_ => {
+          delUser(scope.row).then(res => {
+            if (res.data.code == 0) {
+              this.$message.success(res.data.msg);
+              this.getTable();
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+        })
+        .catch(_ => {});
+    }
+  },
+  components: { selectCity, selectIndustry }
+};
 </script>

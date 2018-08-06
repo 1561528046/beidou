@@ -5,24 +5,22 @@
     </el-select>
 </template>
 <script>
-    export default {
-        name: "select-industry",
-        data() {
-            return {
-                industry: "",
-                industrys: this.$dict.industry
-            }
-        },
-        watch: {
-            industry: function () {
-                this.$emit("input", this.industry);
-            }
-        },
-        props: {
-            value: String
-        },
-        created() {
-        },
-
+export default {
+  name: "select-industry",
+  data() {
+    return {
+      industry: "",
+      industrys: this.$dict.industry
+    };
+  },
+  watch: {
+    industry: function() {
+      this.$emit("input", this.industry);
     }
+  },
+  props: {
+    value: [String, Number]
+  },
+  created() {}
+};
 </script>

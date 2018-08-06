@@ -33,13 +33,13 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="所属地区">
-            <city-select v-model="formData.area" style="width:100%;"></city-select>
+            <select-city v-model="formData.area" style="width:100%;"></select-city>
           </el-form-item>
         </el-col>
         <el-col :span="12" v-if="user_type==2">
           <el-form-item label="所属行业" prop="industry">
             <!-- <el-input v-model="formData.industry" maxlength="255"></el-input> -->
-            <industry-select v-model="formData.industry" style="width:100%;"></industry-select>
+            <select-industry v-model="formData.industry" style="width:100%;"></select-industry>
           </el-form-item>
         </el-col>
 
@@ -87,9 +87,9 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
-import citySelect from "@/components/city-select.vue";
+import selectCity from "@/components/select-city.vue";
 import { addUser, existUserName } from "@/api/index.js";
-import industrySelect from "@/components/select-industry.vue";
+import selectIndustry from "@/components/select-industry.vue";
 export default {
   data() {
     return {
@@ -125,7 +125,16 @@ export default {
             trigger: "change"
           }
         ],
-        user_name: [{ trigger: "blur", validator: this.validateUserName }],
+        user_name: [
+          { trigger: "blur", validator: this.validateUserName },
+          { required: true, message: "请输入用户名", trigger: "change" },
+          {
+            min: 3,
+            max: 20,
+            message: "长度在 3 到 20 个字符",
+            trigger: "change"
+          }
+        ],
         re_pass_word: [
           {
             trigger: "blur",
@@ -230,6 +239,6 @@ export default {
       });
     }
   },
-  components: { citySelect, industrySelect }
+  components: { selectCity, selectIndustry }
 };
 </script>
