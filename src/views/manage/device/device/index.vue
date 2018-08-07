@@ -96,7 +96,7 @@
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" type="primary" @click="repair_addFrom">
+            <el-button size="small" :type="buttontype(scope)" @click="repair_addFrom(scope)">
               <i class="el-icon-upload el-icon--right"></i>设备维修</el-button>
             <el-button size="small" @click="delRow(scope)" icon="el-icon-delete">删除</el-button>
           </template>
@@ -114,6 +114,7 @@
 import selectCompany from "@/components/select-company.vue";
 import selectUser from "@/components/select-user.vue";
 import selectDevicetype from "@/components/select-devicetype.vue";
+import selectDevice from "@/components/select-device.vue";
 import device_add from "./add.vue";
 import repair_add from "./repair_add.vue";
 import device_update from "./update.vue";
@@ -138,6 +139,7 @@ export default {
         sim_id: "",
         start_date: "",
         end_date: "",
+        state: "",
         size: 10,
         page: 1
       },
@@ -192,6 +194,12 @@ export default {
     }
   },
   methods: {
+    buttontype(scope) {
+      if (scope.row.state == 1) {
+        return "primary";
+      }
+      return "info";
+    },
     openUpload() {
       //上传
       var vNode = this.$createElement(device_upload, {
@@ -249,26 +257,29 @@ export default {
         message: vNode
       });
     },
-    repair_addFrom() {
+    repair_addFrom(scope) {
       //维修设备添加
-      var vNode = this.$createElement(repair_add, {
-        key: this.addKey++,
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "添加维修设备信息",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
+      if (scope.row.state == 1) {
+        selectDevice.props.num = scope.row.device_id;
+        var vNode = this.$createElement(repair_add, {
+          key: this.addKey++,
+          on: {
+            success: () => {
+              this.getTable();
+              this.$msgbox.close();
+            },
+            error: function() {}
+          }
+        });
+        this.$msgbox({
+          showConfirmButton: false, //是否显示确定按钮
+          customClass: "admin-message-form",
+          title: "添加维修设备信息",
+          closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+          closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+          message: vNode
+        });
+      }
     },
     updateForm(scope) {
       //编辑
@@ -367,7 +378,8 @@ export default {
     device_update,
     selectCompany,
     selectUser,
-    selectDevicetype
+    selectDevicetype,
+    selectDevice
   }
 };
 </script>
