@@ -92,13 +92,13 @@ export const addDeviceRepair = query => {
 };
 export const updateDeviceRepair = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("//device_operate_log/Update", queryQS, {
+  return ajax.post("/device_operate_log/Update", queryQS, {
     params: query
   });
 };
 export const delDeviceRepair = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("device_repair/Delete", queryQS, {
+  return ajax.post("/device_repair/Delete", queryQS, {
     params: query
   });
 };

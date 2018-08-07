@@ -1,48 +1,48 @@
 <template>
-    <div class="admin-transfer">
-        <div class="left-transfer transfer-box">
-            <div class="_header">
-                <label>
-                    <el-checkbox v-model="leftCheckAll">{{titles[0]||""}}</el-checkbox>
-                </label>
-            </div>
-            <div class="_body">
-                <div class="_list">
-                    <div v-if="leftList.length==0" style="padding:20px 0; text-align: center; color:#999;">
-                        数据为空
-                    </div>
-                    <el-checkbox-group v-model="leftChecked">
-                        <el-checkbox v-for="item in leftList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
-                    </el-checkbox-group>
-                </div>
-            </div>
+  <div class="admin-transfer">
+    <div class="left-transfer transfer-box">
+      <div class="_header">
+        <label>
+          <el-checkbox v-model="leftCheckAll">{{titles[0]||""}}</el-checkbox>
+        </label>
+      </div>
+      <div class="_body">
+        <div class="_list">
+          <div v-if="leftList.length==0" style="padding:20px 0; text-align: center; color:#999;">
+            数据为空
+          </div>
+          <el-checkbox-group v-model="leftChecked">
+            <el-checkbox v-for="item in leftList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
+          </el-checkbox-group>
         </div>
-        <div class="btns-transfer">
-            <div class="_position">
-                <el-button type="primary" icon="el-icon-arrow-right" @click="goRight" :disabled="!leftChecked.length"></el-button>
-                <el-button type="primary" icon="el-icon-arrow-left" @click="goLeft" :disabled="!rightChecked.length"></el-button>
-            </div>
-        </div>
-        <div class="right-transfer transfer-box">
-            <div class="_header">
-                <label>
-                    <el-checkbox v-model="rightCheckAll">{{titles[1]||"列表2"}}</el-checkbox>
-                </label>
-            </div>
-            <div class="_body">
-                <div class="_list">
-                    <div v-if="rightList.length==0" style="padding:20px 0; text-align: center;color:#999;">
-                        数据为空
-                    </div>
-                    <el-checkbox-group v-model="rightChecked">
-                        <el-checkbox v-for="item in rightList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
-                    </el-checkbox-group>
-
-                </div>
-
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="btns-transfer">
+      <div class="_position">
+        <el-button type="primary" icon="el-icon-arrow-right" @click="goRight" :disabled="!leftChecked.length"></el-button>
+        <el-button type="primary" icon="el-icon-arrow-left" @click="goLeft" :disabled="!rightChecked.length"></el-button>
+      </div>
+    </div>
+    <div class="right-transfer transfer-box">
+      <div class="_header">
+        <label>
+          <el-checkbox v-model="rightCheckAll">{{titles[1]||"列表2"}}</el-checkbox>
+        </label>
+      </div>
+      <div class="_body">
+        <div class="_list">
+          <div v-if="rightList.length==0" style="padding:20px 0; text-align: center;color:#999;">
+            数据为空
+          </div>
+          <el-checkbox-group v-model="rightChecked">
+            <el-checkbox v-for="item in rightList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
+          </el-checkbox-group>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
 </template>
 <style lang="less">
 .admin-transfer {

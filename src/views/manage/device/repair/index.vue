@@ -1,63 +1,63 @@
 <template>
-    <div class="admin-table-container">
-        <el-card shadow="always" class="admin-table-search">
+  <div class="admin-table-container">
+    <el-card shadow="always" class="admin-table-search">
 
-            <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
-                <el-row :gutter="30">
-                    <el-col :span="6">
-                        <el-form-item label="添加时间">
-                            <el-date-picker value-format="yyyyMMdd" v-model="value6" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
-                            </el-date-picker>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="返厂时间">
-                            <el-date-picker type="datetime" v-model="tableQuery.back_time" align="center" placeholder="选择日期" style="width:100%;" format="yyyy-MM-dd" value-format="yyyyMMdd">
-                            </el-date-picker>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="维修状态">
-                            <select-repairstate v-model="tableQuery.state" style="width: 100%;"></select-repairstate>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6" v-if="isCollapse">
-                        <el-form-item label="物流信息">
-                            <el-input v-model="tableQuery.logistics"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="isCollapse?24:6" style="text-align: right;">
-                        <el-form-item>
-                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
-                            <el-button type="primary" @click="getListTable">查询</el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
-        </el-card>
-        <el-card shadow="always">
-            <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}">
-                </el-table-column>
-                <el-table-column prop="reason" label="维修原因" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="logistics" label="物流信息" :formatter="$utils.baseFormatter"></el-table-column>
-                <el-table-column prop="state" label="维修状态" :formatter="(row)=>{return this.$dict.get_repair_state(row.state)}"></el-table-column>
-                <el-table-column prop="back_time" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.back_time)}">
-                </el-table-column>
-                <el-table-column label="操作">
-                    <template slot-scope="scope">
-                        <el-button type="primary" size="small" @click="repaired(scope,2)">已修复</el-button>
-                        <el-button type="primary" size="small" @click="repaired(scope,3)">报废</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div class="admin-table-pager">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-                </el-pagination>
-            </div>
-        </el-card>
-    </div>
+      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+        <el-row :gutter="30">
+          <el-col :span="6">
+            <el-form-item label="添加时间">
+              <el-date-picker value-format="yyyyMMdd" v-model="value6" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="返厂时间">
+              <el-date-picker type="date" v-model="tableQuery.back_time" align="center" placeholder="选择日期" style="width:100%;" format="yyyy-MM-dd" value-format="yyyyMMdd">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="维修状态">
+              <select-repairstate v-model="tableQuery.state" style="width: 100%;"></select-repairstate>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item label="物流信息">
+              <el-input v-model="tableQuery.logistics"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="isCollapse?24:6" style="text-align: right;">
+            <el-form-item>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+              <el-button type="primary" @click="getListTable">查询</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-card>
+    <el-card shadow="always">
+      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+        <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}">
+        </el-table-column>
+        <el-table-column prop="reason" label="维修原因" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="logistics" label="物流信息" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="state" label="维修状态" :formatter="(row)=>{return this.$dict.get_repair_state(row.state)}"></el-table-column>
+        <el-table-column prop="back_time" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.back_time)}">
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button :type="buttontype(scope)" size="small" @click="repaired(scope,2)">已修复</el-button>
+            <el-button :type="buttontype(scope)" size="small" @click="repaired(scope,3)">报废</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="admin-table-pager">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+        </el-pagination>
+      </div>
+    </el-card>
+  </div>
 </template>
 <script>
 /* eslint-disable */
@@ -123,8 +123,24 @@ export default {
   },
   methods: {
     repaired(scope, state) {
-      if (state == 3) {
-        this.$confirm("确认报废？").then(() => {
+      if (scope.row.state != 3) {
+        if (state == 3) {
+          this.$confirm("确认报废？").then(() => {
+            scope.row.state = state;
+            updateDeviceRepair(scope.row).then(res => {
+              if (res.data.code == 0) {
+                this.$message.success(res.data.msg);
+                scope.row.state = state;
+              } else {
+                this.$message.error(res.data.msg);
+              }
+            });
+          });
+        }
+      }
+
+      if (scope.row.state != 3) {
+        if (state == 2) {
           scope.row.state = state;
           updateDeviceRepair(scope.row).then(res => {
             if (res.data.code == 0) {
@@ -134,19 +150,14 @@ export default {
               this.$message.error(res.data.msg);
             }
           });
-        });
+        }
       }
-      if (state == 2) {
-        scope.row.state = state;
-        updateDeviceRepair(scope.row).then(res => {
-          if (res.data.code == 0) {
-            this.$message.success(res.data.msg);
-            scope.row.state = state;
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        });
+    },
+    buttontype(scope) {
+      if (scope.row.state == 3) {
+        return "info";
       }
+      return "primary";
     },
     addFrom() {
       //添加
