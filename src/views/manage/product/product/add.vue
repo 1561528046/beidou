@@ -1,98 +1,13 @@
 <template>
-  <div style="text-align: center; width:1000px;">
+  <div style="text-align: center; width:1000px; margin:0 auto; background-color:#fff;">
     <el-form status-icon :rules=" rules " :model="formData " ref="baseForm ">
       <!-- <el-row :gutter="30 ">
             </el-row> -->
-      <el-form-item label="定位终端-授权车辆">
-        <el-table size="mini" :data="device" border style="width: 100%; margin-top: 20px">
-          <el-table-column prop="device_name" label="名称" width="120">
-          </el-table-column>
-          <el-table-column prop="type" label="类型">
-          </el-table-column>
-          <el-table-column prop="amount1" label="单价">
-            <template slot-scope="scope">
-              <el-input placeholder="0" size="mini"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="amount2" label="优惠金额(元)">
-            <template slot-scope="scope">
-              <el-input placeholder="0" size="mini"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="amount3" label="收费方式" width="160">
-            <template slot-scope="scope">
-              <el-radio-group v-model="device.address">
-                <el-radio label="计费"></el-radio>
-                <el-radio label="充值"></el-radio>
-              </el-radio-group>
-            </template>
-          </el-table-column>
-        </el-table>
+      <el-form-item label="产品名称">
+        <el-input placeholder="请输入" v-model="formData.title"></el-input>
       </el-form-item>
-      <el-form-item label="厂商">
-        <el-table size="mini" :data="company" :span-method="objectSpanMethod" border style="width: 100%; margin-top: 20px">
-          <el-table-column prop="id" label="名称" width="250">
-            <template slot-scope="scope">
-              <select-company style="width:100%;" :clearable="true"></select-company>
-            </template>
-          </el-table-column>
-          <el-table-column prop="name" label="类型">
-          </el-table-column>
-          <el-table-column prop="amount1" label="单价">
-            <template slot-scope="scope">
-              <el-input placeholder="0" size="mini"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="amount2" label="优惠金额(元)">
-            <template slot-scope="scope">
-              <el-input placeholder="0" size="mini"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="amount3" label="收费方式" width="160">
-            <template slot-scope="scope">
-              <el-radio-group v-model="company.address">
-                <el-radio label="计费"></el-radio>
-                <el-radio label="充值"></el-radio>
-              </el-radio-group>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="90">
-            <template slot-scope="scope">
-              <el-button size="small" icon="el-icon-delete" @click.native.prevent="deleteRow(scope.$index, company)">删除</el-button>
-              <el-button style="margin-left:0;" size="small" icon="el-icon-delete" @click.native.prevent="addRow(scope.$index, company)">添加</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-form-item>
-      <el-form-item label="短信">
-        <el-table size="mini" :data="sms" border style="width: 100%; margin-top: 20px">
-          <el-table-column prop="name" label="名称">
-          </el-table-column>
-          <el-table-column prop="amount1" label="单价">
-            <template slot-scope="scope">
-              <el-input placeholder="0" size="mini"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="amount1" label="数量">
-            <template slot-scope="scope">
-              <el-input placeholder="0" size="mini"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="amount2" label="优惠金额(元)">
-            <template slot-scope="scope">
-              <el-input placeholder="0" size="mini"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="amount3" label="收费方式" width="160">
-            <template slot-scope="scope">
-              <el-radio-group v-model="sms.address">
-                <el-radio label="计费"></el-radio>
-                <el-radio label="充值"></el-radio>
-              </el-radio-group>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-form-item>
+      <!--车辆类型组件 -->
+      <add-product></add-product>
       <el-form-item style="text-align:center; ">
         <el-button type="primary " @click="formSubmit " size="large ">提交</el-button>
       </el-form-item>
@@ -103,76 +18,16 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
-import citySelect from "@/components/select-city.vue";
 import selectCompany from "@/components/select-company.vue";
 import { addDeviceCompany } from "@/api/index.js";
+import addProduct from "@/components/add-product";
 export default {
   data() {
     return {
       formData: {
-        area: [],
-        address: "计费"
+        title: ""
       },
-      device: [
-        {
-          device_name: "定位终端",
-          type: "新增",
-          address: "计费"
-        },
-        {
-          device_name: "定位终端",
-          type: "续费",
-          address: "计费"
-        },
-        {
-          device_name: "定位终端",
-          type: "转网",
-          address: "计费"
-        },
-        {
-          device_name: "视频终端",
-          type: "新增",
-          address: "计费"
-        },
-        {
-          device_name: "视频终端",
-          type: "续费",
-          address: "计费"
-        },
-        {
-          device_name: "视频终端",
-          type: "转网",
-          address: "计费"
-        }
-      ],
-      company: [
-        {
-          id: "12987122",
-          name: "开通",
-          amount1: "0",
-          amount2: "0",
-          amount3: 10,
-          address: "计费"
-        },
-        {
-          id: "12987123",
-          name: "续费",
-          amount1: "0",
-          amount2: "0",
-          amount3: 12,
-          address: "计费"
-        }
-      ],
-      sms: [
-        {
-          id: "12987122",
-          name: "短信",
-          amount1: "0",
-          amount2: "0",
-          amount3: 10,
-          address: "计费"
-        }
-      ],
+      activeName: "1",
       rules: {
         ...rules
       }
@@ -182,6 +37,7 @@ export default {
   created() {},
   methods: {
     formSubmit() {
+      console.log(this.$refs);
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var areaObj = this.$utils.formatArea(this.formData.area);
@@ -191,14 +47,24 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 this.$emit("success");
-                this.$message.success(res.data.msg);
+                this.$notify({
+                  message: res.data.msg,
+                  title: "提示",
+                  type: "success"
+                });
               } else {
                 this.$emit("error");
-                this.$message.error(res.data.msg);
+                this.$notify({
+                  message: res.data.msg,
+                  title: "提示",
+                  type: "error"
+                });
               }
             })
             .catch(() => {
-              this.$message.error("接口错误");
+              this.$alert("接口错误", "提示", {
+                type: "error"
+              });
               this.$emit("error");
             });
         } else {
@@ -219,9 +85,10 @@ export default {
       rows.splice(index, 2);
     },
     //添加厂商
-    // addRow(index, rows) {
-    //   rows.splice(index + 2, 0,{},{});
-    // },
+    addRow(index, rows) {
+      rows.splice(index + 2, 0, {}, {});
+    },
+    // 合并单元格
     objectSpanMethod({ rowIndex, columnIndex }) {
       if (columnIndex === 0) {
         if (rowIndex === 0) {
@@ -252,7 +119,7 @@ export default {
       }
     }
   },
-  components: { citySelect, selectCompany }
+  components: { selectCompany, addProduct }
 };
 </script>
 <style>

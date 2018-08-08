@@ -21,7 +21,7 @@
           </el-table-column>
           <el-table-column prop="amount3" label="收费方式" width="160">
             <template slot-scope="scope">
-              <el-radio-group v-model="formData.address">
+              <el-radio-group>
                 <el-radio label="计费"></el-radio>
                 <el-radio label="充值"></el-radio>
               </el-radio-group>
@@ -29,7 +29,7 @@
           </el-table-column>
         </el-table>
       </el-form-item>
-      <el-form-item label="厂商">
+      <el-form-item label="终端厂商">
         <el-table size="mini" :data="company" :span-method="objectSpanMethod" border style="width: 100%; margin-top: 20px">
           <el-table-column prop="id" label="名称" width="250">
             <template slot-scope="scope">
@@ -50,7 +50,7 @@
           </el-table-column>
           <el-table-column prop="amount3" label="收费方式" width="160">
             <template slot-scope="scope">
-              <el-radio-group v-model="formData.address">
+              <el-radio-group>
                 <el-radio label="计费"></el-radio>
                 <el-radio label="充值"></el-radio>
               </el-radio-group>
@@ -59,6 +59,7 @@
           <el-table-column label="操作" width="90">
             <template slot-scope="scope">
               <el-button size="small" icon="el-icon-delete" @click.native.prevent="deleteRow(scope.$index, company)">删除</el-button>
+              <el-button style="margin-left:0;" size="small" icon="el-icon-delete" @click.native.prevent="addRow(scope.$index, company)">添加</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -84,7 +85,7 @@
           </el-table-column>
           <el-table-column prop="amount3" label="收费方式" width="160">
             <template slot-scope="scope">
-              <el-radio-group v-model="formData.address">
+              <el-radio-group>
                 <el-radio label="计费"></el-radio>
                 <el-radio label="充值"></el-radio>
               </el-radio-group>
@@ -102,15 +103,13 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
-import citySelect from "@/components/select-city.vue";
 import selectCompany from "@/components/select-company.vue";
 import { addDeviceCompany } from "@/api/index.js";
 export default {
   data() {
     return {
       formData: {
-        area: [],
-        address: "计费"
+        area: []
       },
       device: [
         {
@@ -144,14 +143,16 @@ export default {
           name: "开通",
           amount1: "0",
           amount2: "0",
-          amount3: 10
+          amount3: 10,
+          address: "计费"
         },
         {
           id: "12987123",
           name: "续费",
           amount1: "0",
           amount2: "0",
-          amount3: 12
+          amount3: 12,
+          address: "计费"
         }
       ],
       sms: [
@@ -160,7 +161,8 @@ export default {
           name: "短信",
           amount1: "0",
           amount2: "0",
-          amount3: 10
+          amount3: 10,
+          address: "计费"
         }
       ],
       rules: {
@@ -204,9 +206,14 @@ export default {
         }
       });
     },
+    // 厂商删除
     deleteRow(index, rows) {
       rows.splice(index, 2);
     },
+    //添加厂商
+    // addRow(index, rows) {
+    //   rows.splice(index + 2, 0,{},{});
+    // },
     objectSpanMethod({ rowIndex, columnIndex }) {
       if (columnIndex === 0) {
         if (rowIndex === 0) {
@@ -237,7 +244,7 @@ export default {
       }
     }
   },
-  components: { citySelect, selectCompany }
+  components: { selectCompany }
 };
 </script>
 <style>

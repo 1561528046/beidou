@@ -32,8 +32,8 @@
                 </el-button> -->
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="company_name" label="余额" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="company_name" label="用户名" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="余额" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="用户名" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column width="400" label="操作 ">
           <template slot-scope="scope ">
             <el-button size="small " type="primary " icon="el-icon-edit ">充值</el-button>

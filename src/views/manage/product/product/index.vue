@@ -6,8 +6,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="产品名称">
-              <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.company_name" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
-              </el-autocomplete>
+              <select-product v-model="tableQuery.package_id" style="width:100%;"></select-product>
             </el-form-item>
           </el-col>
           <el-col :offset="isCollapse?0:6" :span="isCollapse?24:6" style="text-align: right;">
@@ -22,19 +21,24 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <el-button type="primary" size="small" @click="addFrom">
+        <!-- <el-button type="primary" size="small" @click="addFrom">
           <i class="el-icon-upload el-icon--right"></i> 添加
-        </el-button>
+        </el-button> -->
+        <router-link :to="{name:'product-add'}">
+          <el-button type="primary" size="small">
+            <i class="el-icon-upload el-icon--right"></i> 添加
+          </el-button>
+        </router-link>
         <!-- <el-button type="primary" size="small">导出
                     <i class="el-icon-upload el-icon--right"></i>
                 </el-button> -->
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="company_name" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="title" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column width="300" label="操作">
           <template slot-scope="scope">
             <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
+            <el-button size="small" icon="el-icon-delete">删除</el-button>
           </template>
           <!-- <template slot-scope="scope">
                         <el-button type="primary" size="small" @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}})">
@@ -58,7 +62,7 @@ import {
   getDeviceCompanyAll
 } from "@/api/index.js";
 import selectCompanytype from "@/components/select-companytype.vue";
-import selectCompany from "@/components/select-company.vue";
+import selectProduct from "@/components/select-product.vue";
 import addProduct from "./add.vue";
 import updateComponents from "./update.vue";
 export default {
@@ -70,8 +74,8 @@ export default {
     return {
       isCollapse: false,
       tableQuery: {
-        company_name: "",
-        company_type: "",
+        package_id: "", //收费套餐id
+        title: "", //收费套餐名称
         size: 10,
         page: 1
       },
@@ -156,12 +160,12 @@ export default {
     //查询产品列表
     getTable() {
       this.tableLoading = true;
-      if (this.simee.address) {
-        this.tableQuery.company_id = this.simee.address;
-      }
-      if (this.tableQuery.company_nameta == "") {
-        this.tableQuery.company_id = "";
-      }
+      // if (this.simee.address) {
+      //   this.tableQuery.company_id = this.simee.address;
+      // }
+      // if (this.tableQuery.company_nameta == "") {
+      //   this.tableQuery.company_id = "";
+      // }
       var query = Object.assign({}, this.tableQuery);
       getDeviceCompanyList(query)
         .then(res => {
@@ -239,6 +243,6 @@ export default {
       this.getTable();
     }
   },
-  components: { selectCompanytype, selectCompany }
+  components: { selectCompanytype, selectProduct }
 };
 </script>

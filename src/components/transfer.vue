@@ -2,30 +2,18 @@
   <div class="admin-transfer">
     <div class="left-transfer transfer-box">
       <div class="_header">
-<<<<<<< HEAD
-        <label>
-          <el-checkbox v-model="leftCheckAll">{{titles[0]||""}}</el-checkbox>
-        </label>
-=======
         {{titles[0]||"列表1"}}
->>>>>>> 20bc04012bcc5b6d0d960b17a69d7a2724ff68ed
       </div>
       <div class="_body">
         <div class="_list">
           <div v-if="leftList.length==0" style="padding:20px 0; text-align: center; color:#999;">
             数据为空
           </div>
-<<<<<<< HEAD
-          <el-checkbox-group v-model="leftChecked">
-            <el-checkbox v-for="item in leftList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
-          </el-checkbox-group>
-=======
           <el-table :data="leftList" style="width: 100%" v-if="leftList.length!=0" size="mini" @selection-change="leftSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column v-for="(col,index) in leftCol" :prop="col.prop" :label="col.label" :formatter="col.formatter" :key="index">
             </el-table-column>
           </el-table>
->>>>>>> 20bc04012bcc5b6d0d960b17a69d7a2724ff68ed
         </div>
       </div>
     </div>
@@ -37,24 +25,13 @@
     </div>
     <div class="right-transfer transfer-box">
       <div class="_header">
-<<<<<<< HEAD
-        <label>
-          <el-checkbox v-model="rightCheckAll">{{titles[1]||"列表2"}}</el-checkbox>
-        </label>
-=======
         {{titles[1]||"列表2"}}
->>>>>>> 20bc04012bcc5b6d0d960b17a69d7a2724ff68ed
       </div>
       <div class="_body">
         <div class="_list">
           <div v-if="rightList.length==0" style="padding:20px 0; text-align: center;color:#999;">
             数据为空
           </div>
-<<<<<<< HEAD
-          <el-checkbox-group v-model="rightChecked">
-            <el-checkbox v-for="item in rightList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
-          </el-checkbox-group>
-=======
           <!-- <el-checkbox-group v-model="rightChecked">
             <el-checkbox v-for="item in rightList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
           </el-checkbox-group> -->
@@ -63,7 +40,6 @@
             <el-table-column v-for="(col,index) in rightCol" :prop="col.prop" :label="col.label" :formatter="col.formatter" :key="index">
             </el-table-column>
           </el-table>
->>>>>>> 20bc04012bcc5b6d0d960b17a69d7a2724ff68ed
 
         </div>
 
