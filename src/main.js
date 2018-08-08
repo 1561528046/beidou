@@ -4,9 +4,10 @@ import ElementUI from "element-ui";
 import "normalize.css";
 import "element-ui/lib/theme-chalk/index.css";
 import "@/style/index.less";
-import router from "./router";
+import router from "./router/index.js";
 import axios from "axios";
 import "@/utils/md5.js";
+import store from "./store";
 import { dict, utils } from "./utils/base";
 //创建axios实例，注入mock拦截
 var axios1 = axios.create({
@@ -31,5 +32,6 @@ Vue.config.productionTip = false;
 Vue.use(ElementUI);
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount("#app");
