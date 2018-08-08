@@ -85,18 +85,13 @@
         <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
         <el-table-column prop="device_type" label="终端类型" :formatter="(row)=>{return this.$dict.get_device_type(row.device_type)}">
         </el-table-column>
-        <el-table-column prop="company_name" label="终端厂商" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="company_name" label="终端厂商" :formatter="$utils.baseFormatter" show-overflow-tooltip></el-table-column>
         <el-table-column prop="device_id" label="终端ID"></el-table-column>
-        <!-- <el-table-column prop="device_no" label="设备序列号" :formatter="$utils.baseFormatter"> </el-table-column> -->
-        <!-- <el-table-column prop="company_id" label="设备厂家Id"></el-table-column> -->
         <el-table-column prop="sim_id" label="SIM ID" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="protocol_type" label="协议类型" :formatter="(row)=>{return this.$dict.get_protocol_type(row.protocol_type)}">
         </el-table-column>
         <el-table-column prop="real_name" label="分配用户" :formatter="$utils.baseFormatter">
         </el-table-column>
-        <!-- <el-table-column prop="install_date" label="安装日期"></el-table-column> -->
-        <!-- <el-table-column prop="camera_num" label="摄像头数量" :formatter="$utils.baseFormatter"></el-table-column> -->
-        <!-- <el-table-column prop="save_media" label="存储介质" :formatter="(row)=>{return this.$dict.get_save_media(row.save_media)}"></el-table-column> -->
         <el-table-column prop="state" label="状态" :formatter="(row)=>{return this.$dict.get_device_state(row.state)}"></el-table-column>
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
