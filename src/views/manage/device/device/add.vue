@@ -65,133 +65,133 @@
   </el-form>
 </template>
 <script>
-  import { rules } from "@/utils/rules.js";
-  import { addDevice, existDeviceId, existDeviceSimId } from "@/api/index.js";
-  import companySelect from "@/components/select-company.vue";
-  export default {
-    data() {
-      return {
-        formData: {
-          area: [],
-          device_type: "",
-          device_id: "",
-          company_id: "",
-          sim_id: "",
-          protocol_type: "",
-          install_date: "",
-          camera_num: "",
-          save_media: "",
-          state: "",
-          time: ""
-        },
-        rules: {
-          ...rules,
-          device_type: [
-            { required: true, trigger: "change", message: "必须选择终端类型" }
-          ],
-          company_id: [
-            { required: true, trigger: "change", message: "必须选择终端厂商" }
-          ],
-          device_id: [
-            {
-              required: true,
-              trigger: "blur",
-              validator: this.validateDeviceId
-            },
-            {
-              pattern: /^[0-9a-zA_Z]+$/,
-              message: "只能输入字母和数字！"
-            }
-          ],
-          sim_id: [{ trigger: "blur", validator: this.validateDeviceSimId }]
-        }
-      };
-    },
-    watch: {
-      "formData.device_type": function () {
-        this.formData.protocol_type = this.formData.device_type;
+import { rules } from "@/utils/rules.js";
+import { addDevice, existDeviceId, existDeviceSimId } from "@/api/index.js";
+import companySelect from "@/components/select-company.vue";
+export default {
+  data() {
+    return {
+      formData: {
+        area: [],
+        device_type: "",
+        device_id: "",
+        company_id: "",
+        sim_id: "",
+        protocol_type: "",
+        install_date: "",
+        camera_num: "",
+        save_media: "",
+        state: "",
+        time: ""
+      },
+      rules: {
+        ...rules,
+        device_type: [
+          { required: true, trigger: "change", message: "必须选择终端类型" }
+        ],
+        company_id: [
+          { required: true, trigger: "change", message: "必须选择终端厂商" }
+        ],
+        device_id: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateDeviceId
+          },
+          {
+            pattern: /^[0-9a-zA_Z]+$/,
+            message: "只能输入字母和数字！"
+          }
+        ],
+        sim_id: [{ trigger: "blur", validator: this.validateDeviceSimId }]
       }
+    };
+  },
+  watch: {
+    "formData.device_type": function() {
+      this.formData.protocol_type = this.formData.device_type;
+    }
+  },
+  created() {},
+  methods: {
+    validateDeviceId(rule, value, callback) {
+      if (value == "") {
+        callback(new Error("请输入设备ID！"));
+        return false;
+      }
+      existDeviceId({ device_id: value })
+        .then(res => {
+          if (res.data.code == 1) {
+            callback(new Error("设备ID重复！"));
+          } else {
+            callback();
+          }
+        })
+        .catch(() => {
+          callback(new Error("服务器重复验证失效，请稍候再试"));
+        });
     },
-    created() { },
-    methods: {
-      validateDeviceId(rule, value, callback) {
-        if (value == "") {
-          callback(new Error("请输入设备ID！"));
-          return false;
-        }
-        existDeviceId({ device_id: value })
-          .then(res => {
-            if (res.data.code == 1) {
-              callback(new Error("设备ID重复！"));
-            } else {
-              callback();
-            }
-          })
-          .catch(() => {
-            callback(new Error("服务器重复验证失效，请稍候再试"));
-          });
-      },
-      validateDeviceSimId(rule, value, callback) {
-        if (value == "") {
-          callback();
-          return false;
-        }
-        existDeviceSimId({ sim_id: value })
-          .then(res => {
-            if (res.data.code == 1) {
-              callback(new Error("SIMID重复！"));
-            } else {
-              callback();
-            }
-          })
-          .catch(() => {
-            callback(new Error("服务器重复验证失效，请稍候再试"));
-          });
-      },
-      formSubmit() {
-        this.$refs.baseForm.validate((isVaildate, errorItem) => {
-          if (isVaildate) {
-            var postData = Object.assign({}, this.formData);
-            addDevice(postData)
-              .then(res => {
-                if (res.data.code == 0) {
-                  this.$emit("success");
-                  this.$notify({
-                    message: res.data.msg,
-                    title: "提示",
-                    type: "success"
-                  });
-                } else {
-                  this.$emit("error");
-                  this.$notify({
-                    message: res.data.msg,
-                    title: "提示",
-                    type: "error"
-                  });
-                }
-              })
-              .catch(() => {
-                this.$alert("接口错误", "提示", {
+    validateDeviceSimId(rule, value, callback) {
+      if (value == "") {
+        callback();
+        return false;
+      }
+      existDeviceSimId({ sim_id: value })
+        .then(res => {
+          if (res.data.code == 1) {
+            callback(new Error("SIMID重复！"));
+          } else {
+            callback();
+          }
+        })
+        .catch(() => {
+          callback(new Error("服务器重复验证失效，请稍候再试"));
+        });
+    },
+    formSubmit() {
+      this.$refs.baseForm.validate((isVaildate, errorItem) => {
+        if (isVaildate) {
+          var postData = Object.assign({}, this.formData);
+          addDevice(postData)
+            .then(res => {
+              if (res.data.code == 0) {
+                this.$emit("success");
+                this.$notify({
+                  message: res.data.msg,
+                  title: "提示",
+                  type: "success"
+                });
+              } else {
+                this.$emit("error");
+                this.$notify({
+                  message: res.data.msg,
+                  title: "提示",
                   type: "error"
                 });
-                this.$emit("error");
+              }
+            })
+            .catch(() => {
+              this.$alert("接口错误", "提示", {
+                type: "error"
               });
-          } else {
-            var errormsg = "";
-            for (var key in errorItem) {
-              errormsg += errorItem[key][0].message + "<br>";
-            }
-            this.$notify.error({
-              title: "错误",
-              dangerouslyUseHTMLString: true,
-              message: errormsg
+              this.$emit("error");
             });
+        } else {
+          var errormsg = "";
+          for (var key in errorItem) {
+            errormsg += errorItem[key][0].message + "<br>";
           }
-        });
-      }
-    },
-    components: { companySelect }
-  };
+          this.$notify.error({
+            title: "错误",
+            dangerouslyUseHTMLString: true,
+            message: errormsg
+          });
+        }
+      });
+    }
+  },
+  components: { companySelect }
+};
 </script>
 <style>
 </style>

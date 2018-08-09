@@ -12,7 +12,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="返厂时间">
-              <el-date-picker type="datetime" v-model="tableQuery.back_time" align="center" placeholder="选择日期" style="width:100%;" format="yyyy-MM-dd" value-format="yyyyMMdd">
+              <el-date-picker type="date" v-model="tableQuery.back_time" align="center" placeholder="选择日期" style="width:100%;" format="yyyy-MM-dd" value-format="yyyyMMdd">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -47,8 +47,8 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" size="small" @click="repaired(scope,2)">已修复</el-button>
-            <el-button type="primary" size="small" @click="repaired(scope,3)">报废</el-button>
+            <el-button :type="buttontype(scope)" size="small" @click="repaired(scope,2)">已修复</el-button>
+            <el-button :type="buttontype(scope)" size="small" @click="repaired(scope,3)">报废</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -123,8 +123,24 @@ export default {
   },
   methods: {
     repaired(scope, state) {
-      if (state == 3) {
-        this.$confirm("确认报废？").then(() => {
+      if (scope.row.state != 3) {
+        if (state == 3) {
+          this.$confirm("确认报废？").then(() => {
+            scope.row.state = state;
+            updateDeviceRepair(scope.row).then(res => {
+              if (res.data.code == 0) {
+                this.$message.success(res.data.msg);
+                scope.row.state = state;
+              } else {
+                this.$message.error(res.data.msg);
+              }
+            });
+          });
+        }
+      }
+
+      if (scope.row.state != 3) {
+        if (state == 2) {
           scope.row.state = state;
           updateDeviceRepair(scope.row).then(res => {
             if (res.data.code == 0) {
@@ -134,19 +150,14 @@ export default {
               this.$message.error(res.data.msg);
             }
           });
-        });
+        }
       }
-      if (state == 2) {
-        scope.row.state = state;
-        updateDeviceRepair(scope.row).then(res => {
-          if (res.data.code == 0) {
-            this.$message.success(res.data.msg);
-            scope.row.state = state;
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        });
+    },
+    buttontype(scope) {
+      if (scope.row.state == 3) {
+        return "info";
       }
+      return "primary";
     },
     addFrom() {
       //添加

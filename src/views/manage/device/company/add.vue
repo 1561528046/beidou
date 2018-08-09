@@ -1,21 +1,21 @@
 <template>
-    <div style="text-align: center;">
-        <el-form status-icon :rules="rules" :model="formData" ref="baseForm">
-            <el-row :gutter="30">
-                <el-col :span="24">
-                    <el-form-item label="终端厂商名称" prop="company_name">
-                        <el-input v-model="formData.company_name"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
+  <div style="text-align: center;">
+    <el-form status-icon :rules="rules" :model="formData" ref="baseForm">
+      <el-row :gutter="30">
+        <el-col :span="24">
+          <el-form-item label="终端厂商名称" prop="company_name">
+            <el-input v-model="formData.company_name"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-            <el-form-item style="text-align:center;">
-                <el-button type="primary" @click="formSubmit" size="large">添加</el-button>
-            </el-form-item>
+      <el-form-item style="text-align:center;">
+        <el-button type="primary" @click="formSubmit" size="large">添加</el-button>
+      </el-form-item>
 
-            <!-- <button @click="$router.go(-1)">a</button> -->
-        </el-form>
-    </div>
+      <!-- <button @click="$router.go(-1)">a</button> -->
+    </el-form>
+  </div>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";

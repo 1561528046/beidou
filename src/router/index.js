@@ -3,6 +3,7 @@ import Router from "vue-router";
 import user from "@/router/user.js";
 import vehicle from "@/router/vehicle.js";
 import device from "@/router/device.js";
+import product from "@/router/product.js";
 Vue.use(Router);
 
 export default new Router({
@@ -36,6 +37,7 @@ export default new Router({
         vehicle,
         user,
         device,
+        product,
         {
           path: "vehicle-setting",
           name: "vehicle-setting",
@@ -50,11 +52,6 @@ export default new Router({
           path: "server-state",
           name: "server-state",
           meta: { name: "服务器状态", icon: "iconfont icon-sever-fill" }
-        },
-        {
-          path: "product",
-          name: "product",
-          meta: { name: "订单管理", icon: "iconfont icon-cluster" }
         }
       ]
     },

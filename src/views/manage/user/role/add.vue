@@ -1,89 +1,89 @@
 <template>
-    <div class="post-form">
-        <el-form label-position="top" status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
-            <el-row :gutter="30">
-                <el-col :span="12">
-                    <el-form-item label="登陆帐号" prop="user_name">
-                        <el-input v-model="formData.user_name"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="所属角色" prop="role_id">
-                        <el-select v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;">
-                            <el-option label="代理" value="1"></el-option>
-                            <el-option label="监控员" value="2"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="密码" prop="pass_word">
-                        <el-input v-model="formData.pass_word" type="password"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="确认密码" prop="re_pass_word">
-                        <el-input v-model="formData.re_pass_word" type="password"></el-input>
-                    </el-form-item>
-                </el-col>
+  <div class="post-form">
+    <el-form label-position="top" status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+      <el-row :gutter="30">
+        <el-col :span="12">
+          <el-form-item label="登陆帐号" prop="user_name">
+            <el-input v-model="formData.user_name"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="所属角色" prop="role_id">
+            <el-select v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;">
+              <el-option label="代理" value="1"></el-option>
+              <el-option label="监控员" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="密码" prop="pass_word">
+            <el-input v-model="formData.pass_word" type="password"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="确认密码" prop="re_pass_word">
+            <el-input v-model="formData.re_pass_word" type="password"></el-input>
+          </el-form-item>
+        </el-col>
 
-                <el-col :span="12">
-                    <el-form-item label="公司/个人名称" prop="real_name">
-                        <el-input v-model="formData.real_name" maxlength="255"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="所属地区">
-                        <select-city v-model="formData.area" style="width:100%;"></select-city>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12" v-if="user_type==2">
-                    <el-form-item label="所属行业" prop="industry">
-                        <!-- <el-input v-model="formData.industry" maxlength="255"></el-input> -->
-                        <select-industry v-model="formData.industry" style="width:100%;"></select-industry>
-                    </el-form-item>
-                </el-col>
+        <el-col :span="12">
+          <el-form-item label="公司/个人名称" prop="real_name">
+            <el-input v-model="formData.real_name" maxlength="255"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="所属地区">
+            <select-city v-model="formData.area" style="width:100%;"></select-city>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" v-if="user_type==2">
+          <el-form-item label="所属行业" prop="industry">
+            <!-- <el-input v-model="formData.industry" maxlength="255"></el-input> -->
+            <select-industry v-model="formData.industry" style="width:100%;"></select-industry>
+          </el-form-item>
+        </el-col>
 
-                <el-col :span="12">
-                    <el-form-item label="联系人" prop="linkman">
-                        <el-input v-model="formData.linkman" maxlength="20"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="联系电话" prop="tel">
-                        <el-input v-model="formData.tel" maxlength="20"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="地址" prop="address">
-                        <el-input v-model="formData.address"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item label="授权终端数量">
-                        <el-switch v-model="device_total_turn"> </el-switch>
-                    </el-form-item>
-                    <el-form-item label="" prop="device_total" v-if="device_total_turn" style="width:150px;">
-                        <el-input-number :min="1" :precision="0" :step="1" type="number" v-model="formData.device_total" style="width:100%">
-                            <template slot="append">台</template>
-                        </el-input-number>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item label="帐号到期时间">
-                        <el-switch v-model="expiry_time_turn"> </el-switch>
-                    </el-form-item>
-                    <el-form-item label="" prop="expiry_time" v-if="expiry_time_turn" style="width:350px;">
-                        <el-date-picker v-model="formData.expiry_time" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd" style="width:100%;">
-                        </el-date-picker>
-                    </el-form-item>
-                </el-col>
-            </el-row>
+        <el-col :span="12">
+          <el-form-item label="联系人" prop="linkman">
+            <el-input v-model="formData.linkman" maxlength="20"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="联系电话" prop="tel">
+            <el-input v-model="formData.tel" maxlength="20"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="地址" prop="address">
+            <el-input v-model="formData.address"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="授权终端数量">
+            <el-switch v-model="device_total_turn"> </el-switch>
+          </el-form-item>
+          <el-form-item label="" prop="device_total" v-if="device_total_turn" style="width:150px;">
+            <el-input-number :min="1" :precision="0" :step="1" type="number" v-model="formData.device_total" style="width:100%">
+              <template slot="append">台</template>
+            </el-input-number>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="帐号到期时间">
+            <el-switch v-model="expiry_time_turn"> </el-switch>
+          </el-form-item>
+          <el-form-item label="" prop="expiry_time" v-if="expiry_time_turn" style="width:350px;">
+            <el-date-picker v-model="formData.expiry_time" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd" style="width:100%;">
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-            <el-form-item style="text-align:center; padding-top:20px;">
-                <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
-            </el-form-item>
-        </el-form>
-    </div>
+      <el-form-item style="text-align:center; padding-top:20px;">
+        <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
