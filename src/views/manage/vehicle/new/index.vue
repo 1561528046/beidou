@@ -54,8 +54,7 @@
         </el-button>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="end_date" label="到期日期" sortable width="180" :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
-          :filter-method="filterHandler">
+        <el-table-column prop="end_date" label="到期日期" sortable width="180" :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]" :filter-method="filterHandler">
         </el-table-column>
         <el-table-column prop="vehicle_no" label="车牌号">
         </el-table-column>
@@ -68,65 +67,64 @@
         <el-table-column prop="vehicle_owner_phone" label="联系电话"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
-          :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
         </el-pagination>
       </div>
     </el-card>
   </div>
 </template>
 <script>
-  /* eslint-disable */
-  import { getVehicleList } from "@/api/index.js";
-  export default {
-    created() {
+/* eslint-disable */
+import { getVehicleList } from "@/api/index.js";
+export default {
+  created() {
+    this.getTable();
+  },
+  data() {
+    return {
+      isCollapse: false,
+      tableQuery: {
+        user: "",
+        region: "",
+        size: 10,
+        page: 1
+      },
+      tableData: {
+        total: 0,
+        data: []
+      },
+      tableLoading: true
+    };
+  },
+  methods: {
+    formatter(row, column) {
+      return row.address;
+    },
+    filterTag(value, row) {
+      return row.tag === value;
+    },
+    filterHandler(value, row, column) {
+      const property = column["property"];
+      return row[property] === value;
+    },
+    handleSizeChange(val) {
+      this.tableQuery.page = 1;
+      this.tableQuery.size = val;
       this.getTable();
     },
-    data() {
-      return {
-        isCollapse: false,
-        tableQuery: {
-          user: "",
-          region: "",
-          size: 10,
-          page: 1
-        },
-        tableData: {
-          total: 0,
-          data: []
-        },
-        tableLoading: true
-      };
+    handleCurrentChange(val) {
+      this.tableQuery.page = val;
+      this.getTable();
     },
-    methods: {
-      formatter(row, column) {
-        return row.address;
-      },
-      filterTag(value, row) {
-        return row.tag === value;
-      },
-      filterHandler(value, row, column) {
-        const property = column["property"];
-        return row[property] === value;
-      },
-      handleSizeChange(val) {
-        this.tableQuery.page = 1;
-        this.tableQuery.limit = val;
-        this.getTable();
-      },
-      handleCurrentChange(val) {
-        this.tableQuery.page = val;
-        this.getTable();
-      },
-      getTable() {
-        this.tableLoading = true;
-        getVehicleList(this.tableQuery)
-          .then(res => {
-            this.$set(this.$data, "tableData", res.data);
-            this.tableLoading = false;
-          })
-          .catch(() => { });
-      }
+    getTable() {
+      this.tableLoading = true;
+      getVehicleList(this.tableQuery)
+        .then(res => {
+          this.$set(this.$data, "tableData", res.data);
+          this.tableLoading = false;
+        })
+        .catch(() => {});
     }
-  };
+  }
+};
 </script>

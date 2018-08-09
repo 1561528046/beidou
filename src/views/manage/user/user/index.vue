@@ -215,7 +215,7 @@ export default {
     },
     handleSizeChange(val) {
       this.tableQuery.page = 1;
-      this.tableQuery.limit = val;
+      this.tableQuery.size = val;
       this.getTable();
     },
     handleCurrentChange(val) {
@@ -250,8 +250,8 @@ export default {
         users.map(user => {
           user.level = level;
           arr.push(user);
-          if (user.child) {
-            format(user.child, level + 1);
+          if (user.children) {
+            format(user.children, level + 1);
           }
         });
       }

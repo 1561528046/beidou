@@ -95,7 +95,7 @@ import { rules } from "@/utils/rules.js";
 import selectCity from "@/components/select-city.vue";
 import { addUser, existUserName } from "@/api/index.js";
 import selectIndustry from "@/components/select-industry.vue";
-import selectGroup from "@/components/select-group.vue";
+import selectGroup from "@/components/select-group/select-group.vue";
 export default {
   components: { selectCity, selectIndustry, selectGroup },
   data() {
