@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Message } from "element-ui";
 //import qs from "qs";
+//获取用户token，如果没有，跳转到登录页面
 // 创建axios实例
 const ajax = axios.create({
   headers: {

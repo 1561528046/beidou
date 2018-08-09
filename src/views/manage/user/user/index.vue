@@ -44,10 +44,40 @@
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
       </div>
-      <el-table :data="tableDatax" v-loading="tableLoading " style="width: 100% " class="admin-table-list " size="mini" border>
-        <el-table-column width="48">
-          <template slot-scope="scope">
-            <el-button>a</el-button>
+      <el-table :data="tableData.data" v-loading="tableLoading " style="width: 100% " class="admin-table-list " size="mini" @expand-change="expandChange">
+        <el-table-column width="48" type="expand">
+          <template slot-scope="props">
+            <div class="user-table-children" v-if="childrenList[props.row.user_id] && childrenList[props.row.user_id].length">
+              <el-table :data="childrenList[props.row.user_id]" v-loading="tableLoading " style="width: 100% " class="admin-table-list " size="mini">
+                <el-table-column width="48">
+                </el-table-column>
+                <el-table-column prop="user_name" width="600" label="登陆帐号 ">
+                  <template slot-scope="scope">
+                    {{"&#x3000;&#x3000;".repeat(scope.row.level)}} {{scope.row.user_name}}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="province_name" label="所属地区 " :formatter="$utils.areaFormatter"></el-table-column>
+                <el-table-column prop="real_name" v-if="user_type==1" label="联系人" :formatter="$utils.baseFormatter"></el-table-column>
+                <el-table-column prop="real_name" v-if="user_type==2" label="公司名称" :formatter="$utils.baseFormatter"></el-table-column>
+                <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column label="操作" width="300">
+                  <template slot-scope="scope">
+                    <el-button type="primary" size="mini" @click="addFrom(scope)" icon="el-icon-circle-plus-outline">增加子用户</el-button>
+                    <el-button type="primary" size="mini" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
+                    <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div v-if="loadCurrent ==props.row.user_id &&childLoading">
+              <i class="el-icon-loading"></i> 数据加载中...
+            </div>
+            <div v-if="(!childrenList[props.row.user_id] || childrenList[props.row.user_id].length==0) && !childLoading">
+              数据为空，你可以
+              <el-button type="primary" size="mini" @click="addFrom(props)" icon="el-icon-circle-plus-outline">增加子用户</el-button>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="user_name" width="600" label="登陆帐号 " :formatter="$utils.baseFormatter"></el-table-column>
@@ -57,10 +87,11 @@
         <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="300">
           <template slot-scope="scope">
-            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
+            <el-button type="primary" size="mini" @click="addFrom(scope)" icon="el-icon-circle-plus-outline">增加子用户</el-button>
+            <el-button type="primary" size="mini" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
+            <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,9 +102,16 @@
     </el-card>
   </div>
 </template>
+<style lang="less">
+.user-table-children {
+  margin: -20px -50px;
+  .has-gutter {
+    display: none;
+  }
+}
+</style>
 <script>
-/* eslint-disable */
-import { getUserList, delUser } from "@/api/index.js";
+import { getUserList, delUser, getUserChildren } from "@/api/index.js";
 import selectCity from "@/components/select-city.vue";
 import addComponents from "./add.vue";
 import updateComponents from "./update.vue";
@@ -99,89 +137,16 @@ export default {
         total: 0,
         data: []
       },
-      childrenData: [
-        {
-          parent_id: "63",
-          list: [
-            {
-              user_id: "631",
-              parent_id: 63,
-              parent_id: "0",
-              user_type: "2",
-              user_name: "xxxxxxx",
-              pass_word: "ac59075b964b0715",
-              province_id: "",
-              city_id: "",
-              county_id: "",
-              real_name: "xxxxxxxxxx",
-              industry: "",
-              linkman: "",
-              tel: "",
-              address: "",
-              device_total: "0",
-              device_num: "",
-              role_id: "1",
-              state: "1",
-              expiry_time: "0",
-              province_name: "",
-              city_name: "",
-              county_name: "",
-              role_name: "角色A"
-            },
-            {
-              user_id: "632",
-              parent_id: 63,
-              parent_id: "0",
-              user_type: "2",
-              user_name: "bbbbbbbbbbb",
-              pass_word: "ac59075b964b0715",
-              province_id: "",
-              city_id: "",
-              county_id: "",
-              real_name: "bbbbbbbb",
-              industry: "",
-              linkman: "",
-              tel: "",
-              address: "",
-              device_total: "0",
-              device_num: "",
-              role_id: "1",
-              state: "1",
-              expiry_time: "0",
-              province_name: "",
-              city_name: "",
-              county_name: "",
-              role_name: "角色A"
-            }
-          ]
-        }
-      ],
+      childrenList: {
+        // "63":[]
+      },
       tableLoading: true,
-      addKey: 0
+      addKey: 0,
+      childLoading: false, //是否正在加载子用户
+      loadCurrent: "" //正在加载的子用户的id
     };
   },
-  computed: {
-    tableDatax: function() {
-      var arr = Object.assign([], this.tableData.data);
-      this.childrenData.map((children, index) => {
-        arr.map(item => {
-          if (children.parent_id == item.parent_id) {
-            console.log(index);
-          }
-        });
-      });
-      console.log(arr[0].user_name, arr[1].user_name);
-      this.childrenData.map(children => {
-        arr.map((parent, parent_index) => {
-          if (children.parent_id == parent.user_id) {
-            arr.splice(parent_index, 0, ...children.list);
-          }
-        });
-      });
-
-      return arr;
-    }
-  },
+  computed: {},
   props: ["user_type"], //来自router的user_type 根据user_type 区分公司和个人
   methods: {
     delRow(scope) {
@@ -277,19 +242,56 @@ export default {
         })
         .catch(() => {});
     },
-    delRow(scope) {
-      this.$confirm("确认删除？")
-        .then(_ => {
-          delUser(scope.row).then(res => {
-            if (res.data.code == 0) {
-              this.$message.success(res.data.msg);
-              this.getTable();
-            } else {
-              this.$message.error(res.data.msg);
-            }
-          });
+    formatChildren(childrens) {
+      //格式化子用户 树结构转数组
+      var arr = [];
+      format(childrens, 1);
+      function format(users, level) {
+        users.map(user => {
+          user.level = level;
+          arr.push(user);
+          if (user.child) {
+            format(user.child, level + 1);
+          }
+        });
+      }
+      return arr;
+    },
+    expandChange(row) {
+      this.childLoading = true;
+      this.loadCurrent = row.user_id;
+      if (!this.$data.childrenList[row.user_id]) {
+        this.getChildren(row);
+      } else {
+        this.childLoading = false;
+        this.loadCurrent = "";
+      }
+    },
+    getChildren(row) {
+      this.childLoading = true;
+      this.loadCurrent = row.user_id;
+      getUserChildren({ user_id: row.user_id })
+        .then(res => {
+          this.childLoading = false;
+          this.loadCurrent = "";
+          if (res.data.code == 0) {
+            var formatChildrens = this.formatChildren(res.data.data);
+            console.log(formatChildrens);
+            this.$set(this.$data.childrenList, row.user_id, formatChildrens);
+          } else {
+            this.$alert(res.data.msg, {
+              type: "error"
+            });
+          }
         })
-        .catch(_ => {});
+        .catch(() => {
+          console.log(arguments);
+          // this.childLoading = false;
+          // this.loadCurrent = "";
+          // this.$alert("接口错误", {
+          //   type: "error"
+          // });
+        });
     }
   },
   components: { selectCity, selectIndustry }

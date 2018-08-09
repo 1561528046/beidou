@@ -44,6 +44,11 @@ export const getUserList = query => {
     params: query
   });
 };
+export const getUserChildren = query => {
+  return ajax.get("/user/GetUserChildren", {
+    params: query
+  });
+};
 export const getUser = query => {
   return ajax.get("/user/GetById", {
     params: query

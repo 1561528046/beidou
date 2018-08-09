@@ -11,20 +11,20 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      component: () => import("./views/home.vue"),
+      component: () => import("@/views/home.vue"),
       meta: { name: "首页" }
     },
     {
       path: "/monitor",
       name: "monitor",
-      component: () => import("./views/monitor/index.vue"),
+      component: () => import("@/views/monitor/index.vue"),
       meta: { name: "地图监控" },
       children: [
         {
           path: "map",
           name: "map",
           meta: { name: "地图" }
-          //component:()=>import('./views/Map.vue')
+          //component:()=>import('@/views/Map.vue')
         }
       ]
     },
@@ -32,7 +32,7 @@ export default new Router({
       path: "/manage",
       name: "manage",
       meta: { name: "运营管理" },
-      component: () => import("./views/manage/index.vue"),
+      component: () => import("@/views/manage/index.vue"),
       children: [
         vehicle,
         user,
@@ -64,7 +64,7 @@ export default new Router({
     {
       path: "/404",
       meta: { hidden: true },
-      component: () => import("./views/404.vue")
+      component: () => import("@/views/404.vue")
     }
     // { path: "*", redirect: "/404", meta: { hidden: true, fullscreen: true } }
   ]
