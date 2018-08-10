@@ -54,7 +54,13 @@ export default {
         children: "children"
       }
     },
-    useing: [Array], //开启功能['add','remove','edit']
+    useing: {
+      //开启功能['add','remove','edit']
+      type: [Array],
+      default: function() {
+        return [];
+      }
+    },
     placeholder: [String],
     value: {
       default: function() {
@@ -68,9 +74,6 @@ export default {
     }
   },
   methods: {
-    aa(e) {
-      console.log(e);
-    },
     append() {
       this.$emit("append", {
         node: this.treeNode,
@@ -97,6 +100,8 @@ export default {
           if (state) {
             this.nodeData.status = 1;
             this.nodeData.isAdd = false;
+            this.nodeDatagroup_name = this.$props.value.group_name;
+            this.nodeData.group_id = this.$props.value.group_id;
           }
         }
       );

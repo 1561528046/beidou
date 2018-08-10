@@ -36,7 +36,8 @@ export const getUserList = query => {
       industry: "",
       size: 10,
       page: 1,
-      user_type: ""
+      user_type: "",
+      user_id: ""
     },
     query
   );

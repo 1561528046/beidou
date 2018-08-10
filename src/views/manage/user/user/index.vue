@@ -100,6 +100,12 @@
         </el-pagination>
       </div>
     </el-card>
+    <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true">
+      <add-components :user_type="$props.user_type" :parent_id="parent_id" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
+    </el-dialog>
+    <el-dialog title="编辑" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true">
+      <update-components :user_id="updateId" :user_type="$props.user_type" @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-components>
+    </el-dialog>
   </div>
 </template>
 <style lang="less">
@@ -117,11 +123,16 @@ import addComponents from "./add.vue";
 import updateComponents from "./update.vue";
 import selectIndustry from "@/components/select-industry.vue";
 export default {
+  components: { selectCity, selectIndustry, addComponents, updateComponents },
   created() {
     this.getTable();
   },
   data() {
     return {
+      addDialog: false,
+      parent_id: "",
+      updateDialog: false,
+      updateId: "",
       isCollapse: false,
       tableQuery: {
         area: [],
@@ -131,7 +142,8 @@ export default {
         industry: "",
         size: 10,
         page: 1,
-        user_type: this.$props.user_type
+        user_type: this.$props.user_type,
+        user_id: 1
       },
       tableData: {
         total: 0,
@@ -164,54 +176,17 @@ export default {
         })
         .catch(() => {});
     },
-    addFrom() {
+    addFrom(scope) {
       //添加
-      var vNode = this.$createElement(addComponents, {
-        key: this.addKey++,
-        props: {
-          user_type: this.$props.user_type
-        },
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "添加",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      }).catch(() => {});
+      this.addKey++;
+      this.addDialog = true;
+      this.parent_id = scope.row ? scope.row.user_id : 1;
     },
     updateForm(scope) {
       //编辑
-      var vNode = this.$createElement(updateComponents, {
-        key: this.addKey++,
-        props: {
-          user_id: scope.row.user_id,
-          user_type: this.user_type
-        },
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "编辑",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      }).catch(() => {});
+      this.updateDialog = true;
+      this.updateId = scope.row.user_id;
+      this.addKey++;
     },
     handleSizeChange(val) {
       this.tableQuery.page = 1;
@@ -258,6 +233,7 @@ export default {
       return arr;
     },
     expandChange(row) {
+      console.log(row);
       this.childLoading = true;
       this.loadCurrent = row.user_id;
       if (!this.$data.childrenList[row.user_id]) {
@@ -293,7 +269,6 @@ export default {
           // });
         });
     }
-  },
-  components: { selectCity, selectIndustry }
+  }
 };
 </script>

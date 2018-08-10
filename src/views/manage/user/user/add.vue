@@ -1,6 +1,6 @@
 <template>
   <div class="post-form">
-    <el-form label-position="top" status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+    <el-form label-position="top" :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
       <el-row :gutter="30">
         <el-col :span="12">
           <el-form-item label="登陆帐号" prop="user_name">
@@ -9,7 +9,8 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="所属分组" prop="group_id">
-            <select-group add></select-group>
+
+            <select-group v-model="formData.group_id" :useing="['add','edit','remove']"></select-group>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -118,7 +119,9 @@ export default {
         device_num: "",
         device_total: "",
         role_id: "",
-        expiry_time: ""
+        expiry_time: "",
+        group_id: "",
+        parent_id: this.$props.parent_id
       },
       rules: {
         ...rules,
@@ -150,6 +153,9 @@ export default {
           },
           { required: true, message: "两次密码不一样", trigger: "blur" }
         ],
+        group_id: [
+          { required: true, message: "必须选择用户分组", trigger: "change" }
+        ],
         pass_word: [
           {
             required: true,
@@ -171,7 +177,7 @@ export default {
       this.formData.expiry_time = "";
     }
   },
-  props: ["user_type"], //来自router的user_type 根据user_type 区分公司和个人
+  props: ["user_type", "parent_id"], //来自router的user_type 根据user_type 区分公司和个人
   created() {},
   methods: {
     validateUserName(rule, value, callback) {
