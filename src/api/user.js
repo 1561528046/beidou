@@ -145,3 +145,24 @@ export const loginIn = query => {
     params: query
   });
 };
+
+//组
+export const getUserGroup = query => {
+  return ajax.get("/group/GetGroupChildrenByUserId", {
+    params: query
+  });
+};
+export const addGroup = query => {
+  query = qs.stringify(query);
+  return ajax.post("/group/Add", query);
+};
+export const updateGroup = query => {
+  query = qs.stringify(query);
+  return ajax.post("/group/Update", query);
+};
+export const delGroup = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/group/Delete", queryQS, {
+    params: query
+  });
+};

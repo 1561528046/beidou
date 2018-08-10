@@ -8,8 +8,7 @@
                         <el-form-item label="厂商名称">
                             <!-- <el-input v-model="tableQuery.company_name"></el-input>
                              -->
-                            <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.company_name" :fetch-suggestions="querySearch"
-                                placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
+                            <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.company_name" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
                             </el-autocomplete>
                         </el-form-item>
                     </el-col>
@@ -47,188 +46,200 @@
                 </el-table-column>
             </el-table>
             <div class="admin-table-pager">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]"
-                    :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
                 </el-pagination>
             </div>
         </el-card>
     </div>
 </template>
 <script>
-    /* eslint-disable */
-    import { getDeviceCompanyList, delCompany, getDeviceCompanyAll } from "@/api/index.js";
-    import selectCompanytype from "@/components/select-companytype.vue";
-    import selectCompany from "@/components/select-company.vue";
-    import addComponents from "./add.vue";
-    import updateComponents from "./update.vue";
-    export default {
-        created() {
-            this.getTable();
-            this.keyupSubmit();
-        },
-        data() {
-            return {
-                isCollapse: false,
-                tableQuery: {
-                    company_name: "",
-                    company_type: "",
-                    size: 10,
-                    page: 1
-                },
-                simss: [],
-                simee: {},
-                tableData: {
-                    total: 0,
-                    data: []
-                },
-                tableLoading: true,
-                addKey: 0,
-                userdetailShow: false,
-                restaurants: [],
-                state1: '',
-                state2: '',
-            };
-        },
-        mounted() {
-            this.restaurants = this.loadAll();
-        },
-        methods: {
-            querySearch(queryString, cb) {
-                var restaurants = this.restaurants;
-                var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-                // 调用 callback 返回建议列表的数据
-                cb(results);
-            },
-            createFilter(queryString) {
-                return (restaurant) => {
-                    return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-                };
-            },
-            loadAll() {
-                getDeviceCompanyAll().then(res => {
-                    if (res.data.code == 0) {
-                        for (var i = 0; i < res.data.data.length; i++) {
-                            if (res.data.data[i].real_name !== "") {
-                                this.simss.push({ value: res.data.data[i].company_name, address: res.data.data[i].company_id })
-                            }
-                        }
-                    }
-                })
-                return this.simss
-            },
-            handleSelect(item) {
-                this.simee = { value: item.value, address: item.address }
-                this.getTable()
-            },
-            delRow(scope) {//删除
-                this.$confirm('确认删除？')
-                    .then(() => {
-                        delCompany(scope.row).then((res) => {
-                            if (res.data.code == 0) {
-                                this.$message.success(res.data.msg);
-                                this.getTable();
-                            } else {
-                                this.$message.error(res.data.msg);
-                            }
-                        })
-                    })
-                    .catch(() => { });
-            },
-            addFrom() {//添加
-                var vNode = this.$createElement(addComponents, {
-                    key: this.addKey++,
-                    on: {
-                        success: () => {
-                            this.getTable();
-                            this.$msgbox.close();
-                        },
-                        error: function () {
-                        }
-                    }
-                });
-                this.$msgbox({
-                    showConfirmButton: false,//是否显示确定按钮	
-                    customClass: "admin-message-forms",
-                    title: "添加",
-                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
-                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
-                    message: vNode
-                })
-            },
-            updateForm(scope) {//编辑
-                var vNode = this.$createElement(updateComponents, {
-                    key: this.addKey++,
-                    props: {
-                        company_id: scope.row.company_id
-                    },
-                    on: {
-                        success: () => {
-                            this.getTable();
-                            this.$msgbox.close();
-                        },
-                        error: function () {
-                        }
-                    }
-                });
-                this.$msgbox({
-                    showConfirmButton: false,//是否显示确定按钮	
-                    customClass: "admin-message-forms",
-                    title: "编辑",
-                    closeOnClickModal: false,//是否可通过点击遮罩关闭 MessageBox	
-                    closeOnPressEscape: false,//是否可通过按下 ESC 键关闭 MessageBox
-                    message: vNode
-                })
-            },
-            filterTag(value, row) {
-                return row.tag === value;
-            },
-            filterHandler(value, row, column) {
-                const property = column["property"];
-                return row[property] === value;
-            },
-            handleSizeChange(val) {
-                this.tableQuery.page = 1;
-                this.tableQuery.limit = val;
-                this.getTable();
-            },
-            handleCurrentChange(val) {
-                this.tableQuery.page = val;
-                this.getTable();
-            },
-            getTable() {
-                this.tableLoading = true;
-                if (this.simee.address) {
-                    this.tableQuery.company_id = this.simee.address
-                }
-                if (this.tableQuery.company_nameta == "") {
-                    this.tableQuery.company_id = ""
-                }
-                var query = Object.assign({}, this.tableQuery);
-                getDeviceCompanyList(query)
-                    .then(res => {
-                        if (res.data.code == 0) {
-                            this.$set(this.$data, "tableData", res.data);
-                        } else {
-                            this.$set(this.$data, "tableData", []);
-                            this.$message.error(res.data.msg);
-                        }
-                        this.tableLoading = false;
-                    })
-                    .catch(() => { });
-            },
-            //回车事件
-            keyupSubmit() {
-                document.onkeydown = e => {
-                    let _key = window.event.keyCode;
-                    if (_key === 13) {
-                        this.getTable()
-                    }
-                }
-            },
-            handleClick() {
-                alert('button click');
-            }
-        },
-        components: { selectCompanytype, selectCompany }
+/* eslint-disable */
+import {
+  getDeviceCompanyList,
+  delCompany,
+  getDeviceCompanyAll
+} from "@/api/index.js";
+import selectCompanytype from "@/components/select-companytype.vue";
+import selectCompany from "@/components/select-company.vue";
+import addComponents from "./add.vue";
+import updateComponents from "./update.vue";
+export default {
+  created() {
+    this.getTable();
+    this.keyupSubmit();
+  },
+  data() {
+    return {
+      isCollapse: false,
+      tableQuery: {
+        company_name: "",
+        company_type: "",
+        size: 10,
+        page: 1
+      },
+      simss: [],
+      simee: {},
+      tableData: {
+        total: 0,
+        data: []
+      },
+      tableLoading: true,
+      addKey: 0,
+      userdetailShow: false,
+      restaurants: [],
+      state1: "",
+      state2: ""
     };
+  },
+  mounted() {
+    this.restaurants = this.loadAll();
+  },
+  methods: {
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createFilter(queryString))
+        : restaurants;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return restaurant => {
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        );
+      };
+    },
+    loadAll() {
+      getDeviceCompanyAll().then(res => {
+        if (res.data.code == 0) {
+          for (var i = 0; i < res.data.data.length; i++) {
+            if (res.data.data[i].real_name !== "") {
+              this.simss.push({
+                value: res.data.data[i].company_name,
+                address: res.data.data[i].company_id
+              });
+            }
+          }
+        }
+      });
+      return this.simss;
+    },
+    handleSelect(item) {
+      this.simee = { value: item.value, address: item.address };
+      this.getTable();
+    },
+    delRow(scope) {
+      //删除
+      this.$confirm("确认删除？")
+        .then(() => {
+          delCompany(scope.row).then(res => {
+            if (res.data.code == 0) {
+              this.$message.success(res.data.msg);
+              this.getTable();
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+        })
+        .catch(() => {});
+    },
+    addFrom() {
+      //添加
+      var vNode = this.$createElement(addComponents, {
+        key: this.addKey++,
+        on: {
+          success: () => {
+            this.getTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-forms",
+        title: "添加",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      });
+    },
+    updateForm(scope) {
+      //编辑
+      var vNode = this.$createElement(updateComponents, {
+        key: this.addKey++,
+        props: {
+          company_id: scope.row.company_id
+        },
+        on: {
+          success: () => {
+            this.getTable();
+            this.$msgbox.close();
+          },
+          error: function() {}
+        }
+      });
+      this.$msgbox({
+        showConfirmButton: false, //是否显示确定按钮
+        customClass: "admin-message-forms",
+        title: "编辑",
+        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
+        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
+        message: vNode
+      });
+    },
+    filterTag(value, row) {
+      return row.tag === value;
+    },
+    filterHandler(value, row, column) {
+      const property = column["property"];
+      return row[property] === value;
+    },
+    handleSizeChange(val) {
+      this.tableQuery.page = 1;
+      this.tableQuery.size = val;
+      this.getTable();
+    },
+    handleCurrentChange(val) {
+      this.tableQuery.page = val;
+      this.getTable();
+    },
+    getTable() {
+      this.tableLoading = true;
+      if (this.simee.address) {
+        this.tableQuery.company_id = this.simee.address;
+      }
+      if (this.tableQuery.company_nameta == "") {
+        this.tableQuery.company_id = "";
+      }
+      var query = Object.assign({}, this.tableQuery);
+      getDeviceCompanyList(query)
+        .then(res => {
+          if (res.data.code == 0) {
+            this.$set(this.$data, "tableData", res.data);
+          } else {
+            this.$set(this.$data, "tableData", []);
+            this.$message.error(res.data.msg);
+          }
+          this.tableLoading = false;
+        })
+        .catch(() => {});
+    },
+    //回车事件
+    keyupSubmit() {
+      document.onkeydown = e => {
+        let _key = window.event.keyCode;
+        if (_key === 13) {
+          this.getTable();
+        }
+      };
+    },
+    handleClick() {
+      alert("button click");
+    }
+  },
+  components: { selectCompanytype, selectCompany }
+};
 </script>

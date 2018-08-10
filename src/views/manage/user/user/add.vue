@@ -8,6 +8,11 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
+          <el-form-item label="所属分组" prop="group_id">
+            <select-group add></select-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
           <el-form-item label="所属角色" prop="role_id">
             <el-select v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;">
               <el-option label="代理" value="1"></el-option>
@@ -90,7 +95,9 @@ import { rules } from "@/utils/rules.js";
 import selectCity from "@/components/select-city.vue";
 import { addUser, existUserName } from "@/api/index.js";
 import selectIndustry from "@/components/select-industry.vue";
+import selectGroup from "@/components/select-group/select-group.vue";
 export default {
+  components: { selectCity, selectIndustry, selectGroup },
   data() {
     return {
       device_total_turn: false,
@@ -247,7 +254,6 @@ export default {
         }
       });
     }
-  },
-  components: { selectCity, selectIndustry }
+  }
 };
 </script>

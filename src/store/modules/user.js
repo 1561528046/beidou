@@ -6,8 +6,8 @@ const storeData = {
 localStorage.BEIDOU = JSON.stringify(storeData);
 function getToken() {
   if (localStorage.BEIDOU) {
-    var userData = JSON.stringify(localStorage.BEIDOU);
-    console.log(JSON.parse(userData));
+    // var userData = JSON.stringify(localStorage.BEIDOU);
+    // console.log(JSON.parse(userData));
   }
 }
 const user = {
