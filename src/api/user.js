@@ -121,6 +121,11 @@ export const getRoleAll = query => {
     params: query
   });
 };
+export const getRightsAll = query => {
+  return ajax.get("/role/GetAllRights", {
+    params: query
+  });
+};
 export const getRole = query => {
   return ajax.get("/role/GetByID", {
     params: query
@@ -140,6 +145,7 @@ export const delRole = query => {
     params: query
   });
 };
+
 //登陆
 export const loginIn = query => {
   return ajax.get("/user/Login/", {

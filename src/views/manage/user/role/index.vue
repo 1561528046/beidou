@@ -2,11 +2,6 @@
   <div class="admin-table-container">
     <el-card shadow="always ">
       <div class="admin-table-actions ">
-        <!-- <router-link :to="user_type==1?{name: 'user_person_add'}:{name: 'user_company_add'} ">
-                    <el-button type="primary " size="small ">
-                        <i class="el-icon-upload el-icon--right "></i> 添加
-                    </el-button>
-                </router-link> -->
         <el-button type="primary" size="small" @click="addFrom">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -62,6 +57,7 @@ export default {
     },
     addFrom() {
       //添加
+
       var vNode = this.$createElement(addComponents, {
         key: this.addKey++,
         props: {
@@ -75,6 +71,8 @@ export default {
           error: function() {}
         }
       });
+      console.log(addComponents);
+      console.log(vNode);
       this.$msgbox({
         showConfirmButton: false, //是否显示确定按钮
         customClass: "admin-message-form",

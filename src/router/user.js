@@ -76,6 +76,18 @@ export default {
       name: "role",
       meta: { name: "角色管理", icon: "iconfont icon-driver" },
       component: () => import("@/views/manage/user/role/index.vue")
+    },
+    {
+      path: "role_add",
+      name: "role_add",
+      meta: { name: "添加角色", hidden: true },
+      component: () => import("@/views/manage/user/role/add.vue")
+    },
+    {
+      path: "role_update/:role_id",
+      name: "role_update",
+      meta: { name: "编辑角色", hidden: true },
+      component: () => import("@/views/manage/user/role/update.vue")
     }
   ]
 };
