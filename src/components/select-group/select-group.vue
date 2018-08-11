@@ -1,40 +1,44 @@
 <template>
-  <div style=" display:inline-block;width:100%; " class="select-group-cotainer">
-    <el-input placeholder="点击选择" style="width:100%;" disabled>
-      <el-button slot="append" icon="el-icon-more" @click.stop="()=>{visible = !visible}"></el-button>
-    </el-input>
-    <div class="_body" v-show="visible" @click.stop>
-      <div class="_filter">
-        <el-input placeholder="输入关键字进行过滤" v-model="filterText">
-        </el-input>
-      </div>
-      <div class="_tree" v-if="list.length">
-        <div v-if="filterEmpty" style="padding:10px; text-align:center; color:#999;">
-          没有相关数据！
-        </div>
-        <el-tree default-expand-all :expand-on-click-node="false" @node-click="nodeClick" :data="list" node-key="group_id" :props="defaultProps" :filter-node-method="filterNode" ref="tree2">
-          <span class="custom-tree-node" slot-scope="{ node, data }">
-            <tree-item :props="defaultProps" v-model="data" :treeNode="node" @append="append" @remove="remove" @edit="edit" @add="add" placeholder="请输入分组名称" :useing="['add','remove','edit']"></tree-item>
-          </span>
-        </el-tree>
 
+  <el-popover placement="bottom" width="400" trigger="click" v-model="visible">
+
+    <div slot="reference">
+      <el-input placeholder="点击选择" style="width:100%;" disabled :value="currentNodeData.group_name">
+        <el-button slot="append" icon="el-icon-more" @click="visible = !visible"></el-button>
+      </el-input>
+    </div>
+    <div class="select-group-cotainer">
+
+      <div class="_body" @click.stop>
+        <div class="_filter">
+          <input placeholder="输入关键字进行过滤" v-model="filterText" class="el-input__inner" style="height:30px; line-height:30px;" />
+        </div>
+        <div class="_tree" v-if="list.length">
+          <div v-if="filterEmpty" style="padding:10px; text-align:center; color:#999;">
+            没有相关数据！
+          </div>
+          <el-tree default-expand-all :expand-on-click-node="false" @node-click="nodeClick" :data="list" node-key="group_id" :props="defaultProps" :filter-node-method="filterNode" ref="tree2">
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <tree-item :props="defaultProps" v-model="data" :treeNode="node" @append="append" @remove="remove" @edit="edit" @add="add" placeholder="请输入分组名称" :useing="$props.useing"></tree-item>
+            </span>
+          </el-tree>
+
+        </div>
       </div>
     </div>
-  </div>
+  </el-popover>
+
 </template>
 <style lang="less">
 .select-group-cotainer {
-  position: relative;
-  z-index: 2;
+  margin: -12px;
   ._body {
-    background: #fff;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    border: 1px solid #dcdfe6;
-    position: absolute;
-    top: 100%;
-    height: 300px;
-    width: 100%;
-    margin-top: 5px;
+    .el-input__inner,
+    .el-input__inner:focus,
+    .el-textarea__inner,
+    .el-textarea__inner:focus {
+      border: 1px solid #dcdfe6;
+    }
   }
   ._filter {
     padding: 5px;
@@ -42,11 +46,14 @@
     height: 40px;
   }
   ._tree {
-    position: absolute;
     width: 100%;
+    height: 300px;
     overflow: auto;
     top: 40px;
     bottom: 0;
+    .is-current > .el-tree-node__content {
+      background-color: #f5f7fa;
+    }
   }
 }
 </style>
@@ -56,6 +63,10 @@ import { getUserGroup, addGroup, delGroup, updateGroup } from "@/api/index.js";
 import treeItem from "./tree-item.vue";
 export default {
   components: { treeItem },
+  beforeMount() {
+    this.visible = false;
+  },
+  props: ["useing"],
   data() {
     return {
       visible: false,
@@ -64,6 +75,10 @@ export default {
       defaultProps: {
         label: "group_name"
       },
+      props: {
+        useing: [Array] //开启功能['add','remove','edit']
+      },
+      currentNodeData: {},
       addId: 999,
       list: [
         // {
@@ -113,13 +128,16 @@ export default {
     });
   },
   methods: {
-    nodeClick() {
-      console.log(11);
+    // eslint-disable-next-line
+    nodeClick(data, node) {
+      this.$set(this.$data, "currentNodeData", data);
+      this.visible = false;
+      this.$emit("input", this.currentNodeData.group_id);
+      this.$emit("update:parentid", node.parent.data.group_id || 0);
     },
     checkEmpty() {
       if (this.$refs.tree2) {
         var { childNodes } = this.$refs.tree2.root;
-        console.log(childNodes);
         this.filterEmpty =
           !childNodes ||
           childNodes.length === 0 ||
@@ -146,10 +164,11 @@ export default {
     edit({ node, nodeData, newNodeData }, next) {
       updateGroup({
         group_id: newNodeData.group_id,
-        group_name: newNodeData.group_name
+        group_name: newNodeData.group_name,
+        parent_id: node.parent.data.group_id || 0
       }).then(res => {
         if (res.data.code == 0) {
-          nodeData.group_name = newNodeData.label;
+          nodeData.group_name = newNodeData.group_name;
           next(true);
         } else {
           this.$notify({
@@ -167,7 +186,10 @@ export default {
         group_name: newNodeData.group_name
       }).then(res => {
         if (res.data.code == 0) {
-          newNodeData.group_id = res.data.data[0].group_id;
+          nodeData.group_name = newNodeData.group_name;
+          nodeData.group_id = res.data.data[0].group_id;
+          delete nodeData.isAdd;
+          delete nodeData.status;
           next(true);
         } else {
           this.$notify({
@@ -188,8 +210,12 @@ export default {
         return false;
       }
       delGroup({
-        group_id: nodeData.group_id
+        group_id: nodeData.group_id,
+        parent_id: node.parent.data.group_id || 0
       }).then(res => {
+        if (this.currentNodeData == nodeData) {
+          this.currentNodeData = null;
+        }
         if (res.data.code == 0) {
           children.splice(index, 1);
         } else {
