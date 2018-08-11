@@ -37,8 +37,12 @@
         <el-table-column prop="title" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column width="300" label="操作">
           <template slot-scope="scope">
-            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" icon="el-icon-delete">删除</el-button>
+            <router-link :to="{name:'product-update',params:{id:scope.row.package_id}}">
+              <el-button type="primary" size="small">
+                <i class="el-icon-upload el-icon--right"></i> 编辑
+              </el-button>
+            </router-link>
+            <el-button style="margin-left:15px;" size="small" icon="el-icon-delete">删除</el-button>
           </template>
           <!-- <template slot-scope="scope">
                         <el-button type="primary" size="small" @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}})">
@@ -74,7 +78,7 @@ export default {
     return {
       isCollapse: false,
       tableQuery: {
-        package_id: "", //收费套餐id
+        package_id: "12", //收费套餐id
         title: "", //收费套餐名称
         size: 10,
         page: 1

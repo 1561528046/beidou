@@ -2,7 +2,7 @@
   <el-collapse v-model="industry" accordion>
     <el-collapse-item v-for="(i,index) in industrys" :key="i" :name="index">
       <template slot="title">
-        {{i}}
+        <div style="float:left">{{i}}</div>
       </template>
       <product-item :id="index" @update="(data)=>{updateFormData(index,data)}"></product-item>
     </el-collapse-item>
@@ -723,7 +723,7 @@ export default {
     //监听formDatas向第一层发送数据
     formDatas: {
       handler: function() {
-        this.$emit("update", JSON.parse(JSON.stringify(this.formDatas)));
+        this.$emit("update", this.formDatas);
       },
       deep: true
     },

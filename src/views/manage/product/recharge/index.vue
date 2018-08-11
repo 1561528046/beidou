@@ -37,8 +37,8 @@
         <el-table-column width="400" label="操作 ">
           <template slot-scope="scope ">
             <el-button size="small " type="primary " icon="el-icon-edit ">充值</el-button>
-            <el-button size="small " type="primary " icon="el-icon-edit ">充值明细</el-button>
-            <el-button size="small " type="primary " icon="el-icon-edit ">二维码生成</el-button>
+            <el-button size="small " type="primary " icon="el-icon-tickets">充值明细</el-button>
+            <el-button size="small " type="primary " icon="el-icon-menu ">二维码生成</el-button>
           </template>
           <!-- <template slot-scope="scope ">
                         <el-button type="primary " size="small " @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}}) ">
