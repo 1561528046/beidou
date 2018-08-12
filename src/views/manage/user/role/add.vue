@@ -26,11 +26,15 @@
               <div class="_level_1-body">
                 <div v-for="(level_2) in level_1.children" :key="level_2.name" class="_level_2">
                   <div class="_level_2-title">
-                    <el-checkbox :indeterminate="level_2.indeterminate" v-model="level_2.checked" @change="(val)=>{ rightsCheckAll(val,'2',level_2)}">{{level_2.name}}</el-checkbox>
+                    <el-checkbox :indeterminate="level_2.indeterminate" v-model="level_2.checked" @change="(val)=>{ rightsCheckAll(val,'2',level_2)}" style="font-weight:bold;">{{level_2.name}}</el-checkbox>
                   </div>
                   <div class="_level_3">
                     <el-checkbox :disabled="right.disabled" @change="(val)=>{rightChange(val,right,level_2)}" v-for="right in level_2.children" :label="right.name" v-model="right.checked" :key="right.rights_id">
-                      {{right.name}},{{right.relation}}
+                      {{right.name}}
+                      <el-tooltip effect="dark" :content="right.relation+'个权限依赖此项，不能操作！'" placement="right" v-if="right.relation>0">
+                        <i class="el-icon-info"></i>
+                      </el-tooltip>
+
                     </el-checkbox>
                   </div>
                 </div>
@@ -46,10 +50,10 @@
     </el-form>
   </div>
 </template>
-<style scoped lang="less">
+<style lang="less">
 .rights-container {
   ._level_1-body {
-    padding: 15px;
+    padding: 15px 15px 0 15px;
   }
   ._level_1-header {
     padding-left: 20px;
@@ -63,7 +67,10 @@
   ._level_2-title {
   }
   ._level_3 {
-    padding: 3px 15px;
+    padding: 3px 25px;
+    .el-checkbox__label {
+      color: #888;
+    }
   }
 }
 </style>
