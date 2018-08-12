@@ -71,18 +71,12 @@ a {
   padding-top: 20px;
   text-align: right;
 }
-.post-form {
-  padding: 20px;
-}
 .post-form .el-card {
   margin-bottom: 20px;
 }
 /*添加、编辑弹窗尺寸*/
 .admin-message-form {
   width: auto;
-}
-.msg-form {
-  width: 800px;
 }
 .admin-message-form .el-message-box__content {
   height: 100%;

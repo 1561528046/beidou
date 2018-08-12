@@ -16,6 +16,12 @@
         </el-table-column>
       </el-table>
     </el-card>
+    <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <add-components @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
+    </el-dialog>
+    <el-dialog title="编辑" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <update-components :role_id="updateId" @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-components>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -24,11 +30,15 @@ import { getRoleAll, delRole } from "@/api/index.js";
 import addComponents from "./add.vue";
 import updateComponents from "./update.vue";
 export default {
+  components: { addComponents, updateComponents },
   created() {
     this.getTable();
   },
   data() {
     return {
+      addDialog: false,
+      updateDialog: false,
+      updateId: "",
       isCollapse: false,
       tableQuery: {},
       tableData: {
@@ -38,13 +48,12 @@ export default {
       addKey: 0
     };
   },
-  props: ["user_type"], //来自router的user_type 根据user_type 区分公司和个人
   methods: {
     delRow(scope) {
       //删除
       this.$confirm("确认删除？")
         .then(() => {
-          delUser(scope.row).then(res => {
+          delRole(scope.row).then(res => {
             if (res.data.code == 0) {
               this.$message.success(res.data.msg);
               this.getTable();
@@ -55,57 +64,16 @@ export default {
         })
         .catch(() => {});
     },
-    addFrom() {
+    addFrom(scope) {
       //添加
-
-      var vNode = this.$createElement(addComponents, {
-        key: this.addKey++,
-        props: {
-          user_type: this.$props.user_type
-        },
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      console.log(addComponents);
-      console.log(vNode);
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "添加",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      }).catch(() => {});
+      this.addKey++;
+      this.addDialog = true;
     },
     updateForm(scope) {
       //编辑
-      var vNode = this.$createElement(updateComponents, {
-        key: this.addKey++,
-        props: {
-          user_id: scope.row.user_id,
-          user_type: this.user_type
-        },
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "编辑",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      }).catch(() => {});
+      this.addKey++;
+      this.updateDialog = true;
+      this.updateId = scope.row.role_id;
     },
     getTable() {
       this.tableLoading = true;
