@@ -116,6 +116,7 @@ export default {
     }
   },
   created() {
+    // 根据id向后台请求数据
     getDevice({ device_id: this.formData.device_id }).then(res => {
       if (res.data.code == 0 && res.data.data.length) {
         var mixinData = Object.assign({}, this.formData, res.data.data[0]);

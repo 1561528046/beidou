@@ -6,74 +6,100 @@
       <el-form-item label="产品名称" prop="title">
         <el-input placeholder="请输入" v-model="formData.title"></el-input>
       </el-form-item>
-      <el-form-item label="" prop="sms">
-        <el-table size="mini" :data="formData.sms" border style="width: 100%; margin-top: 20px">
-          <el-table-column prop="detail_type_name" label="类型" width="240">
-          </el-table-column>
-          <el-table-column prop="original_price" label="单价">
-            <template slot-scope="scope">
-              <el-form-item :class="{error:scope.row.error}">
-                <el-input v-on:input="inputFunc(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.sms[scope.$index].original_price" placeholder="0" size="mini" style="border-color: #f56c6c;"></el-input>
-              </el-form-item>
-            </template>
-          </el-table-column>
-          <el-table-column prop="discount_price" label="优惠金额(元)">
-            <template slot-scope="scope">
-              <el-form-item :class="{error:scope.row.error}">
-                <el-input v-on:input="inputFuncs(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.sms[scope.$index].discount_price" placeholder="0" size="mini"></el-input>
-              </el-form-item>
-            </template>
-          </el-table-column>
-          <el-table-column prop="count" label="数量">
-            <template slot-scope="scope">
-              <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.sms[scope.$index].count" placeholder="0" size="mini"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="pay_type" label="收费方式" width="160">
-            <template slot-scope="scope">
-              <el-radio label="1" v-model="formData.sms[scope.$index].pay_type">计费</el-radio>
-              <el-radio label="2" v-model="formData.sms[scope.$index].pay_type">充值</el-radio>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-form-item>
-      <el-form-item label="">
-        <el-table size="mini" :data="formData.company" border :span-method="objectSpanMethod" style="width: 100%; margin-top: 20px">
-          <el-table-column prop="company_id" label="类型" width="240">
-            <template slot-scope="scope">
-              <select-company v-if="!scope.row.isAdd" v-model="company_id" style="width:100%;" :clearable="true"></select-company>
-              <el-button v-if="scope.row.isAdd" size="mini" @click="addRow(scope.$index, formData.company)" type="primary" icon="el-icon-plus"></el-button>
-            </template>
-          </el-table-column>
-          <el-table-column prop="detail_name" label="类型">
-          </el-table-column>
-          <el-table-column prop="original_price" label="单价">
-            <template slot-scope="scope">
-              <el-form-item :class="{error:scope.row.error}">
-                <el-input v-on:input="inputFunc(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.company[scope.$index].original_price" placeholder="0" size="mini"></el-input>
-              </el-form-item>
-            </template>
-          </el-table-column>
-          <el-table-column prop="discount_price" label="优惠金额(元)">
-            <template slot-scope="scope">
-              <el-form-item :class="{error:scope.row.error}">
-                <el-input v-on:input="inputFuncs(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.company[scope.$index].discount_price" placeholder="0" size="mini"></el-input>
-              </el-form-item>
-            </template>
-          </el-table-column>
-          <el-table-column prop="pay_type" label="收费方式" width="160">
-            <template slot-scope="scope">
-              <el-radio v-model="formData.company[scope.$index].pay_type" label="1">计费</el-radio>
-              <el-radio v-model="formData.company[scope.$index].pay_type" label="2">充值</el-radio>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="90">
-            <template slot-scope="scope">
-              <el-button size="small" icon="el-icon-delete" @click.native.prevent="deleteRow(scope.$index, formData.company)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-form-item>
+      <!-- 短信 -->
+      <el-collapse accordion style="overflow:hidden;">
+        <el-collapse-item name="1">
+          <template slot="title">
+            <div style="float:left;">
+              短信
+              <i class="header-icon el-icon-mobile-phone"></i>
+            </div>
+          </template>
+          <el-form-item prop="sms">
+            <el-table size="mini" :data="formData.sms" border style="width: 100%; margin-top: 20px">
+              <el-table-column prop="detail_type_name" label="类型" width="240">
+              </el-table-column>
+              <el-table-column prop="original_price" label="单价">
+                <template slot-scope="scope">
+                  <el-form-item :class="{error:scope.row.error}">
+                    <el-input v-on:input="inputFunc(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.sms[scope.$index].original_price" placeholder="0" size="mini" style="border-color: #f56c6c;"></el-input>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column prop="discount_price" label="优惠金额(元)">
+                <template slot-scope="scope">
+                  <el-form-item :class="{error:scope.row.error}">
+                    <el-input v-on:input="inputFuncs(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.sms[scope.$index].discount_price" placeholder="0" size="mini"></el-input>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column prop="count" label="数量">
+                <template slot-scope="scope">
+                  <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.sms[scope.$index].count" placeholder="0" size="mini"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="pay_type" label="收费方式" width="200">
+                <template slot-scope="scope">
+                  <el-radio label="1" v-model="formData.sms[scope.$index].pay_type">计费</el-radio>
+                  <el-radio label="2" v-model="formData.sms[scope.$index].pay_type">充值</el-radio>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-form-item>
+        </el-collapse-item>
+      </el-collapse>
+      <!-- 设备厂商 -->
+      <el-collapse accordion style="overflow:hidden;">
+        <el-collapse-item name="1">
+          <template slot="title">
+            <div style="float:left;">
+              设备厂商
+              <i class="header-icon el-icon-info"></i>
+            </div>
+          </template>
+          <el-form-item>
+            <el-table size="mini" :data="formData.company" border :span-method="objectSpanMethod" style="width: 100%; margin-top: 20px">
+              <el-table-column prop="company_id" label="类型" width="240">
+                <template slot-scope="scope">
+                  <!-- <select-company disabled v-if="!scope.row.isAdd" v-model="formData.company[scope.$index].company_id" style="width:100%;" :clearable="true"></select-company> -->
+                  <el-select v-if="!scope.row.isAdd" v-model="company_id" placeholder="请选择" filterable no-match-text=" " :clearable="true">
+                    <el-option v-for="item in lists" :key="item.company_id" :label="item.company_name" :value="item.company_id">
+                    </el-option>
+                  </el-select>
+                  <el-button v-if="scope.row.isAdd" size="mini" @click="addRow(scope.$index, formData.company)" type="primary" icon="el-icon-plus"></el-button>
+                </template>
+              </el-table-column>
+              <el-table-column prop="detail_name" label="类型">
+              </el-table-column>
+              <el-table-column prop="original_price" label="单价">
+                <template slot-scope="scope">
+                  <el-form-item :class="{error:scope.row.error}">
+                    <el-input v-on:input="inputFunc(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.company[scope.$index].original_price" placeholder="0" size="mini"></el-input>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column prop="discount_price" label="优惠金额(元)">
+                <template slot-scope="scope">
+                  <el-form-item :class="{error:scope.row.error}">
+                    <el-input v-on:input="inputFuncs(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.company[scope.$index].discount_price" placeholder="0" size="mini"></el-input>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column prop="pay_type" label="收费方式" width="200">
+                <template slot-scope="scope">
+                  <el-radio v-model="formData.company[scope.$index].pay_type" label="1">计费</el-radio>
+                  <el-radio v-model="formData.company[scope.$index].pay_type" label="2">充值</el-radio>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="90">
+                <template slot-scope="scope">
+                  <el-button size="small" icon="el-icon-delete" @click.native.prevent="deleteRow(scope.$index, formData.company)">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-form-item>
+        </el-collapse-item>
+      </el-collapse>
       <!--车辆类型组件 -->
       <add-product ref="child" @update="(data)=>{updateFormDatas(data)}"></add-product>
       <!-- <button @click="$router.go(-1) ">a</button> -->
@@ -100,13 +126,15 @@ input[type="number"] {
 <script>
 import { rules } from "@/utils/rules.js";
 import selectCompany from "@/components/select-company.vue";
-import { addProducts } from "@/api/index.js";
+import { updateProducts } from "@/api/index.js";
 import addProduct from "@/components/product/product-manage.vue";
+import { getDeviceCompanyAll } from "@/api/index.js";
 export default {
   data() {
     return {
-      button_type: true,
       company_id: "",
+      list: [],
+      button_type: true,
       formData: {
         title: "",
         company: [
@@ -157,24 +185,755 @@ export default {
         title: [
           { required: true, trigger: "change", message: "必须添加产品名称" }
         ]
-      }
+      },
+      arr: 1,
+      arr2: 3
     };
   },
   watch: {
-    // 监听选择厂商
-    company_id: {
-      handler: function() {},
-      deep: true
-    },
-    $route: "getParams"
+    company_id: function() {
+      this.$emit("input", this.company_id);
+      console.log(this.company_id);
+    }
   },
-  computed: {},
   created() {
-    this.getParams();
+    this.init();
+    var resData = {
+      code: 0,
+      data: [
+        {
+          title: "俺大大的",
+          location_device_list: [
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "1",
+              detail_type_name: "定位终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "新增",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "转网",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            },
+            {
+              detail_name: "续费",
+              detail_type: "2",
+              detail_type_name: "视频终端",
+              pay_type: "1",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "0",
+              car_type: ""
+            }
+          ],
+          device_company_list: [
+            {
+              detail_type: "3",
+              detail_type_name: "设备厂家",
+              company_id: "15",
+              detail_name: "开通",
+              original_price: 111,
+              discount_price: 2,
+              present_price: "",
+              pay_type: "1",
+              add_id: "1",
+              count: "0",
+              error: false
+            },
+            {
+              detail_type: "3",
+              detail_type_name: "设备厂家",
+              company_id: "",
+              detail_name: "续费",
+              original_price: 311,
+              discount_price: 4,
+              present_price: "",
+              pay_type: "1",
+              add_id: "1",
+              count: "0",
+              error: false
+            },
+            { isAdd: true }
+          ],
+          sms_list: [
+            {
+              detail_type: "4",
+              detail_type_name: "短信",
+              original_price: "",
+              discount_price: "",
+              present_price: "",
+              count: "",
+              pay_type: "1"
+            }
+          ]
+        }
+      ]
+    };
+    this.formData.title = resData.data[0].title;
+    this.formData.company = resData.data[0].device_company_list;
+    this.formData.detail = resData.data[0].location_device_list;
+    this.formData.sms = resData.data[0].sms_list;
+  },
+  computed: {
+    lists: function() {
+      var metas = [];
+      for (var i = 0; i < this.list.length; i++) {
+        if (this.list[i].company_id == this.company_id) {
+          console.log(1);
+        } else {
+          metas.push(this.list[i]);
+        }
+      }
+      console.log(metas);
+      return metas;
+    }
   },
   methods: {
-    getParams() {
-      console.log(this.$route.params.id);
+    init() {
+      getDeviceCompanyAll().then(res => {
+        if (res.data.code == 0 && res.data.data.length) {
+          this.$set(this.$data, "list", res.data.data);
+        }
+      });
     },
     //单价验证
     inputFunc(scope) {
@@ -210,14 +969,14 @@ export default {
         return "info";
       }
     },
-    //添加产品
+    //编辑产品
     formSubmit() {
       if (this.button_type) {
         this.$refs.baseForm.validate((isVaildate, errorItem) => {
           this.$nextTick(() => {
             if (isVaildate) {
               var postData = JSON.parse(JSON.stringify(this.formData));
-              addProducts(postData)
+              updateProducts(postData)
                 .then(res => {
                   if (res.data.code == 0) {
                     this.$emit("success");

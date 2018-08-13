@@ -6,9 +6,16 @@
       <el-form-item label="产品名称" prop="title">
         <el-input placeholder="请输入" v-model="formData.title"></el-input>
       </el-form-item>
-      <el-collapse v-model="activeName" accordion>
-        <el-collapse-item title="短信" name="1">
-          <el-form-item label="" prop="sms">
+      <!-- 短信 -->
+      <el-collapse accordion style="overflow:hidden;">
+        <el-collapse-item name="1">
+          <template slot="title">
+            <div style="float:left;">
+              短信
+              <i class="header-icon el-icon-mobile-phone"></i>
+            </div>
+          </template>
+          <el-form-item prop="sms">
             <el-table size="mini" :data="formData.sms" border style="width: 100%; margin-top: 20px">
               <el-table-column prop="detail_type_name" label="类型" width="240">
               </el-table-column>
@@ -41,9 +48,16 @@
           </el-form-item>
         </el-collapse-item>
       </el-collapse>
-      <el-collapse v-model="activeName" accordion>
-        <el-collapse-item title="设备厂商" name="1">
-          <el-form-item label="设备厂商">
+      <!-- 设备厂商 -->
+      <el-collapse accordion style="overflow:hidden;">
+        <el-collapse-item name="1">
+          <template slot="title">
+            <div style="float:left;">
+              设备厂商
+              <i class="header-icon el-icon-info"></i>
+            </div>
+          </template>
+          <el-form-item>
             <el-table size="mini" :data="formData.company" border :span-method="objectSpanMethod" style="width: 100%; margin-top: 20px">
               <el-table-column prop="company_id" label="类型" width="240">
                 <template slot-scope="scope">
@@ -82,7 +96,6 @@
           </el-form-item>
         </el-collapse-item>
       </el-collapse>
-
       <!--车辆类型组件 -->
       <add-product ref="child" @update="(data)=>{updateFormDatas(data)}"></add-product>
       <!-- <button @click="$router.go(-1) ">a</button> -->

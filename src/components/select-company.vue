@@ -1,8 +1,10 @@
 <template slot-scope="scope">
-    <el-select v-model="company_id" placeholder="请选择" filterable :clearable="clearable">
-        <el-option v-for="item in list" :key="item.company_id" :label="item.company_name" :value="item.company_id">
-        </el-option>
-    </el-select>
+  <el-select v-model="company_id" placeholder="请选择" filterable no-match-text=" " :clearable="clearable">
+    <template slot-scope="scope">
+      <el-option v-for="item in lists" :key="item.company_id" :label="item.company_name" :value="item.company_id">
+      </el-option>
+    </template>
+  </el-select>
 </template>
 <script>
 import { getDeviceCompanyAll } from "@/api/index.js";
@@ -23,6 +25,20 @@ export default {
       if (this.list.length == 0) {
         this.init();
       }
+    }
+  },
+  computed: {
+    lists: function() {
+      var metas = [];
+      for (var i = 0; i < this.list.length; i++) {
+        if (this.list[i].company_id == this.company_id) {
+          console.log(1);
+        } else {
+          metas.push(this.list[i]);
+        }
+      }
+      console.log(metas);
+      return metas;
     }
   },
   props: {

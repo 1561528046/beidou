@@ -20,7 +20,7 @@
             </el-form-item>
           </template>
         </el-table-column>
-        <el-table-column prop="pay_type" label="收费方式" width="160">
+        <el-table-column prop="pay_type" label="收费方式" width="200">
           <template slot-scope="scope">
             <el-radio v-model="formData.detail[scope.$index].pay_type" label="1">计费</el-radio>
             <el-radio v-model="formData.detail[scope.$index].pay_type" label="2">充值</el-radio>
