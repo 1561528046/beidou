@@ -2,7 +2,10 @@
   <el-collapse v-model="industry" accordion>
     <el-collapse-item v-for="(i,index) in industrys" :key="i" :name="index">
       <template slot="title">
-        <div style="float:left">{{i}}</div>
+        <div style="float:left">
+          <el-checkbox></el-checkbox>
+          {{i}}
+        </div>
       </template>
       <product-item :id="index" @update="(data)=>{updateFormData(index,data)}"></product-item>
     </el-collapse-item>

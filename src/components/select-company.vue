@@ -37,7 +37,6 @@ export default {
           metas.push(this.list[i]);
         }
       }
-      console.log(metas);
       return metas;
     }
   },

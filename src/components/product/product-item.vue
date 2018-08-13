@@ -128,6 +128,8 @@ export default {
       } else {
         this.$set(scope.row, "error", false);
         this.button_type = true;
+        scope.row.present_price =
+          scope.row.original_price - scope.row.discount_price;
       }
     },
     // 优惠金额验证
@@ -140,6 +142,8 @@ export default {
       } else {
         this.$set(scope.row, "error", false);
         this.button_type = true;
+        scope.row.present_price =
+          scope.row.original_price - scope.row.discount_price;
       }
     }
   },

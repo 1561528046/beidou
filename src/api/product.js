@@ -2,8 +2,8 @@ import ajax from "./index.js";
 // eslint-disable-next-line
 import qs from "qs";
 //产品管理
-export const getProductAll = query => {
-  return ajax.get("/product/GetAll", {
+export const getProductList = query => {
+  return ajax.get("/ordermanage/GetFees_packageListByPage", {
     params: query
   });
 };

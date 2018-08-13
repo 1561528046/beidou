@@ -21,14 +21,14 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <!-- <el-button type="primary" size="small" @click="addFrom">
+        <el-button type="primary" size="small" @click="addFrom">
           <i class="el-icon-upload el-icon--right"></i> 添加
-        </el-button> -->
-        <router-link :to="{name:'product-add'}">
+        </el-button>
+        <!-- <router-link :to="{name:'product-add'}">
           <el-button type="primary" size="small">
             <i class="el-icon-upload el-icon--right"></i> 添加
           </el-button>
-        </router-link>
+        </router-link> -->
         <!-- <el-button type="primary" size="small">导出
                     <i class="el-icon-upload el-icon--right"></i>
                 </el-button> -->
@@ -39,7 +39,7 @@
           <template slot-scope="scope">
             <router-link :to="{name:'product-update',params:{id:scope.row.package_id}}">
               <el-button type="primary" size="small">
-                <i class="el-icon-upload el-icon--right"></i> 编辑
+                <i class="el-icon-upload el-icon--right"></i> 授权详情
               </el-button>
             </router-link>
             <el-button style="margin-left:15px;" size="small" icon="el-icon-delete">删除</el-button>
@@ -63,7 +63,8 @@
 import {
   getDeviceCompanyList,
   delCompany,
-  getDeviceCompanyAll
+  getDeviceCompanyAll,
+  getProductList
 } from "@/api/index.js";
 import selectCompanytype from "@/components/select-companytype.vue";
 import selectProduct from "@/components/select-product.vue";
@@ -78,7 +79,7 @@ export default {
     return {
       isCollapse: false,
       tableQuery: {
-        package_id: "12", //收费套餐id
+        package_id: "", //收费套餐id
         title: "", //收费套餐名称
         size: 10,
         page: 1
@@ -130,7 +131,7 @@ export default {
       });
       this.$msgbox({
         showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
+        customClass: "admin-message-forms",
         title: "添加",
         closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
         closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
@@ -164,14 +165,8 @@ export default {
     //查询产品列表
     getTable() {
       this.tableLoading = true;
-      // if (this.simee.address) {
-      //   this.tableQuery.company_id = this.simee.address;
-      // }
-      // if (this.tableQuery.company_nameta == "") {
-      //   this.tableQuery.company_id = "";
-      // }
       var query = Object.assign({}, this.tableQuery);
-      getDeviceCompanyList(query)
+      getProductList(query)
         .then(res => {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);

@@ -1,13 +1,90 @@
 <template>
-  <div style="text-align: center;  background-color:#fff;">
-    <el-form status-icon :rules="rules" :model="formData " ref="baseForm">
-      <!-- <el-row :gutter="30 ">
+    <div style="text-align: center; width: 600px ; height:600px; background-color:#fff;">
+        <el-form status-icon :rules="rules" :model="formData " ref="baseForm">
+            <!-- <el-row :gutter="30 ">
             </el-row> -->
-      <el-form-item label="产品名称" prop="title">
-        <el-input placeholder="请输入" v-model="formData.title"></el-input>
-      </el-form-item>
-      <!-- 短信 -->
-      <!-- <el-collapse accordion style="overflow:hidden;">
+            <el-form-item label="选择服务项" prop="detail_type">
+                <el-select v-model="detail_type" style="width:100%; float:left;">
+                    <el-option value="授权车辆">授权车辆</el-option>
+                    <el-option value="授权厂商">授权厂商</el-option>
+                    <el-option value="SIM卡">SIM卡</el-option>
+                    <el-option value="短信">短信</el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="this.detail_type=='授权车辆'">
+                <template slot-scope="scope">
+                    <label style="float:left;">车辆类型</label>
+                    <select-industry style="width:100%;"></select-industry>
+                    <label style="float:left;">终端类型</label>
+                    <select-device-type style="width:100%;"></select-device-type>
+                    <label style="float:left;">收费单项</label>
+                    <el-select style="width:100%;">
+                        <el-option value="1">新增</el-option>
+                        <el-option value="2">续费</el-option>
+                        <el-option value="3">转网</el-option>
+                    </el-select>
+                    <label style="float:left;">计费方式</label>
+                    <el-select style="width:100%;">
+                        <el-option>计费</el-option>
+                        <el-option>充值</el-option>
+                    </el-select>
+                    <label style="float:left;">单价</label>
+                    <el-input v-on:input="inputFunc(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+                </template>
+            </el-form-item>
+            <el-form-item v-if="this.detail_type=='授权厂商'">
+                <template slot-scope="scope">
+                    <label style="float:left;">终端厂商</label>
+                    <select-company style="width:100%;" :clearable="true"></select-company>
+                    <label style="float:left;">收费单项</label>
+                    <el-select style="width:100%;">
+                        <el-option value="1">开通</el-option>
+                        <el-option value="2">续费</el-option>
+                    </el-select>
+                    <label style="float:left;">计费方式</label>
+                    <el-select style="width:100%;">
+                        <el-option>计费</el-option>
+                        <el-option>充值</el-option>
+                    </el-select>
+                    <label style="float:left;">单价</label>
+                    <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+                </template>
+            </el-form-item>
+            <el-form-item v-if="this.detail_type=='短信'">
+                <template slot-scope="scope">
+                    <label style="float:left;">单价</label>
+                    <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+                    <label style="float:left;">数量</label>
+                    <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+                    <label style="float:left;">计费方式</label>
+                    <el-select style="width:100%;">
+                        <el-option>计费</el-option>
+                        <el-option>充值</el-option>
+                    </el-select>
+                </template>
+            </el-form-item>
+            <el-form-item v-if="this.detail_type=='SIM卡'">
+                <template slot-scope="scope">
+                    <label style="float:left;">运营商</label>
+                    <el-select style="width: 100%;">
+                        <el-option v-for="belongItem in belongSelect" :key="belongItem" :label="belongItem" :value="belongItem"></el-option>
+                    </el-select>
+                    <el-input v-model="formData.belong" v-if="belong == '其他'" placeholder="填写运营商"></el-input>
+                    <label style="float:left;">计费方式</label>
+                    <el-select style="width:100%;">
+                        <el-option>计费</el-option>
+                        <el-option>充值</el-option>
+                    </el-select>
+                    <label style="float:left;">使用流量</label>
+                    <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+                    <label style="float:left;">使用周期</label>
+                    <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+                    <label style="float:left;">单价</label>
+                    <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+                </template>
+            </el-form-item>
+            <!-- 短信 -->
+            <!-- <el-collapse accordion style="overflow:hidden;">
         <el-collapse-item name="1">
           <template slot="title">
             <div style="float:left;">
@@ -49,8 +126,8 @@
           </el-form-item>
         </el-collapse-item>
       </el-collapse> -->
-      <!-- 设备厂商 -->
-      <!-- <el-collapse accordion style="overflow:hidden;">
+            <!-- 设备厂商 -->
+            <!-- <el-collapse accordion style="overflow:hidden;">
         <el-collapse-item name="1">
           <template slot="title">
             <div style="float:left;">
@@ -98,15 +175,15 @@
           </el-form-item>
         </el-collapse-item>
       </el-collapse> -->
-      <!--车辆类型组件 -->
-      <!-- <add-product ref="child" @update="(data)=>{updateFormDatas(data)}"></add-product> -->
-      <el-form-item style="text-align:center; ">
-        <template slot-scope="scope">
-          <el-button :type="buttontype(scope)" @click="formSubmit" size="large">提交</el-button>
-        </template>
-      </el-form-item>
-    </el-form>
-  </div>
+            <!--车辆类型组件 -->
+            <!-- <add-product ref="child" @update="(data)=>{updateFormDatas(data)}"></add-product> -->
+            <el-form-item style="text-align:center; ">
+                <template slot-scope="scope">
+                    <el-button :type="buttontype(scope)" @click="formSubmit" size="large">提交</el-button>
+                </template>
+            </el-form-item>
+        </el-form>
+    </div>
 </template>
 <style>
 input::-webkit-outer-spin-button,
@@ -123,58 +200,19 @@ input[type="number"] {
 <script>
 import { rules } from "@/utils/rules.js";
 import selectCompany from "@/components/select-company.vue";
+import selectIndustry from "@/components/select-industry.vue";
+import selectDeviceType from "@/components/select-devicetype.vue";
 import { addProducts, getDeviceCompany } from "@/api/index.js";
 import addProduct from "@/components/product/product-manage.vue";
 export default {
   data() {
     return {
+      belongSelect: ["中国移动", "中国联通", "中国电信", "其他"],
+      industrys: this.$dict.industry,
+      detail_type: "",
       button_type: true,
       formData: {
         title: ""
-        // company: [
-        //   {
-        //     detail_type: "3",
-        //     detail_type_name: "设备厂家",
-        //     company_id: "",
-        //     company_name: "",
-        //     detail_name: "开通",
-        //     original_price: "", //单价
-        //     discount_price: "", //优惠金额
-        //     present_price: "", //现价
-        //     pay_type: "1",
-        //     add_id: "1",
-        //     count: "0"
-        //   },
-        //   {
-        //     detail_type: "3",
-        //     detail_type_name: "设备厂家",
-        //     company_id: "",
-        //     company_name: "",
-        //     detail_name: "续费",
-        //     original_price: "", //单价
-        //     discount_price: "", //优惠金额
-        //     present_price: "", //现价
-        //     pay_type: "1",
-        //     add_id: "1",
-        //     count: "0"
-        //   },
-        //   {
-        //     isAdd: true
-        //   }
-        // ],
-        // sms: [
-        //   {
-        //     detail_type: "4",
-        //     detail_type_name: "短信",
-        //     detail_name: "短信",
-        //     original_price: "", //单价
-        //     discount_price: "", //优惠金额
-        //     present_price: "", //现价
-        //     count: "",
-        //     pay_type: "1"
-        //   }
-        // ],
-        // detail: []
       },
       msg: "",
       rules: {
@@ -347,7 +385,7 @@ export default {
     //   this.$refs.child.parentMsg(this.msg);
     // }
   },
-  components: { selectCompany, addProduct }
+  components: { selectCompany, addProduct, selectDeviceType, selectIndustry }
 };
 </script>
 <style>
