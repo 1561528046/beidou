@@ -31,6 +31,14 @@ a {
     background: #fff;
     padding: 16px 32px;
     border-bottom: 1px solid #e8e8e8;
+    position: relative;
+}
+
+.admin-back {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translate3d(0, -50%, 0);
 }
 
 .table-search {
@@ -92,7 +100,6 @@ a {
 }
 
 .post-form {
-    padding: 20px;
     .el-card {
         margin-bottom: 20px;
     }
@@ -104,9 +111,7 @@ a {
     width: auto;
 }
 
-.msg-form {
-    width: 800px;
-}
+.msg-form {}
 
 .admin-message-form {
     .el-message-box__content {
@@ -115,5 +120,14 @@ a {
         .el-message-box__message {
             padding-bottom: 25px;
         }
+    }
+}
+
+.admin-dialog {
+    .el-dialog--center {
+        margin-top: 10vh !important; // margin: 8vh auto !important;
+    }
+    .el-dialog__body {
+        // max-height: 70vh; // overflow: auto;
     }
 }

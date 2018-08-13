@@ -6,6 +6,7 @@
         <el-breadcrumb-item v-for="route in $route.matched" :to="route" :key="route.path">
           <i v-if="route.meta.icon" :class="route.meta.icon"></i>
           {{route.meta.name}}</el-breadcrumb-item>
+        <el-button size="mini" class="admin-back" @click="$router.back()" icon="el-icon-arrow-left">返回</el-button>
       </el-breadcrumb>
     </div>
 

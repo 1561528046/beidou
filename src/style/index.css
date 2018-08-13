@@ -24,6 +24,13 @@ a {
   background: #fff;
   padding: 16px 32px;
   border-bottom: 1px solid #e8e8e8;
+  position: relative;
+}
+.admin-back {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translate3d(0, -50%, 0);
 }
 .table-search {
   padding-top: 18px;
@@ -71,9 +78,6 @@ a {
   padding-top: 20px;
   text-align: right;
 }
-.post-form {
-  padding: 20px;
-}
 .post-form .el-card {
   margin-bottom: 20px;
 }
@@ -81,13 +85,13 @@ a {
 .admin-message-form {
   width: auto;
 }
-.msg-form {
-  width: 800px;
-}
 .admin-message-form .el-message-box__content {
   height: 100%;
   overflow: auto;
 }
 .admin-message-form .el-message-box__content .el-message-box__message {
   padding-bottom: 25px;
+}
+.admin-dialog .el-dialog--center {
+  margin-top: 10vh !important;
 }

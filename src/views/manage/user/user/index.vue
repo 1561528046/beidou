@@ -100,10 +100,10 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true">
+    <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <add-components :user_type="$props.user_type" :parent_id="parent_id" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
     </el-dialog>
-    <el-dialog title="编辑" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true">
+    <el-dialog title="编辑" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <update-components :user_id="updateId" :user_type="$props.user_type" @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-components>
     </el-dialog>
   </div>
@@ -198,6 +198,7 @@ export default {
       this.getTable();
     },
     getTable() {
+      this.childrenList = [];
       this.tableLoading = true;
       var areaObj = this.$utils.formatArea(this.tableQuery.area);
       var query = Object.assign({}, this.tableQuery, areaObj);

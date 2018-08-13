@@ -15,13 +15,12 @@ const user = {
     ...storeData,
     token: getToken()
   },
-
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token;
-    }
+    },
+    loginOut() {}
   },
-
   actions: {
     // 登出
     LogOut() {}

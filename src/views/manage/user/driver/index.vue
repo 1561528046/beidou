@@ -56,19 +56,29 @@
         </el-pagination>
       </div>
     </el-card>
+    <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <add-components @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
+    </el-dialog>
+    <el-dialog title="编辑" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <update-components :driver_card_id="updateId" @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-components>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { getDriverList, delDriver } from "@/api/index.js";
-import driver_add from "./add.vue";
-import driver_update from "./update.vue";
+import addComponents from "./add.vue";
+import updateComponents from "./update.vue";
 export default {
+  components: { addComponents, updateComponents },
   created() {
     this.getTable();
     this.keyupSubmit();
   },
   data() {
     return {
+      addDialog: false,
+      updateDialog: false,
+      updateId: "",
       isCollapse: false,
       tableQuery: {
         driver_name: "",
@@ -103,48 +113,14 @@ export default {
     },
     addFrom() {
       //添加
-      var vNode = this.$createElement(driver_add, {
-        key: this.addKey++,
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "添加司机",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      }).catch(() => {});
+      this.addKey++;
+      this.addDialog = true;
     },
     updateForm(scope) {
       //编辑
-      var vNode = this.$createElement(driver_update, {
-        key: this.addKey++,
-        props: {
-          driver_card_id: scope.row.driver_card_id
-        },
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "编辑司机",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      }).catch(() => {});
+      this.addKey++;
+      this.updateDialog = true;
+      this.updateId = scope.row.driver_card_id;
     },
     //回车时间
     keyupSubmit() {
@@ -183,8 +159,7 @@ export default {
       this.tableQuery.page = val;
       this.getTable();
     }
-  },
-  components: { driver_add, driver_update }
+  }
 };
 </script>
 <style>
