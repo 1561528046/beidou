@@ -7,12 +7,6 @@ export const getVehicleList = query => {
   });
 };
 
-export const getArea = query => {
-  return ajax.get("/Public/GetAreaByParentID", {
-    params: query
-  });
-};
-
 //用户管理
 export const getUserAll = query => {
   query = query || {

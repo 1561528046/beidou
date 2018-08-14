@@ -1,18 +1,20 @@
 <template>
   <div class="post-form">
-    <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+    <el-form label-position="top" :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
       <el-row :gutter="30">
         <el-col :span="12">
           <el-form-item label="登陆帐号" prop="user_name">
-            <el-input v-model="formData.user_name" disabled="disabled"></el-input>
+            <el-input v-model="formData.user_name" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="所属分组" prop="group_id">
+            <select-group :group_id.sync="formData.group_id" :useing="['add','edit','remove']"></select-group>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="所属角色" prop="role_id">
-            <el-select v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;">
-              <el-option label="代理" value="1"></el-option>
-              <el-option label="监控员" value="2"></el-option>
-            </el-select>
+            <select-role v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;"></select-role>
           </el-form-item>
         </el-col>
         <!-- <el-col :span="12">
@@ -25,23 +27,24 @@
             <el-input v-model="formData.re_pass_word" type="password"></el-input>
           </el-form-item>
         </el-col> -->
+
         <el-col :span="12">
           <el-form-item label="公司/个人名称" prop="real_name">
             <el-input v-model="formData.real_name" maxlength="255"></el-input>
           </el-form-item>
         </el-col>
-        <template v-if="user_type==2">
-          <el-col :span="12">
-            <el-form-item label="所属行业" prop="industry">
-              <select-industry v-model="formData.industry" style="width:100%;"></select-industry>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="所属地区">
-              <select-city v-model="formData.area" style="width:100%;"></select-city>
-            </el-form-item>
-          </el-col>
-        </template>
+        <el-col :span="12">
+          <el-form-item label="所属地区">
+            <select-city v-model="formData.area" style="width:100%;"></select-city>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" v-if="user_type==2">
+          <el-form-item label="所属行业" prop="industry">
+            <!-- <el-input v-model="formData.industry" maxlength="255"></el-input> -->
+            <select-industry v-model="formData.industry" style="width:100%;"></select-industry>
+          </el-form-item>
+        </el-col>
+
         <el-col :span="12">
           <el-form-item label="联系人" prop="linkman">
             <el-input v-model="formData.linkman" maxlength="20"></el-input>
@@ -52,7 +55,7 @@
             <el-input v-model="formData.tel" maxlength="20"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="12">
           <el-form-item label="地址" prop="address">
             <el-input v-model="formData.address"></el-input>
           </el-form-item>
@@ -89,13 +92,15 @@ import { rules } from "@/utils/rules.js";
 import selectCity from "@/components/select-city.vue";
 import { updateUser, getUser } from "@/api/index.js";
 import selectIndustry from "@/components/select-industry.vue";
+import selectGroup from "@/components/select-group/select-group.vue";
+import selectRole from "@/components/select-role.vue";
 export default {
+  components: { selectCity, selectIndustry, selectGroup, selectRole },
   data() {
     return {
-      device_total_turn: true,
-      expiry_time_turn: true,
+      device_total_turn: false,
+      expiry_time_turn: false,
       formData: {
-        user_id: "",
         area: [],
         user_name: "",
         pass_word: "",
@@ -103,7 +108,7 @@ export default {
         province_id: "",
         city_id: "",
         county_id: "",
-        company: "",
+        real_name: "",
         industry: "",
         linkman: "",
         tel: "",
@@ -111,7 +116,9 @@ export default {
         device_num: "",
         device_total: "",
         role_id: "",
-        expiry_time: ""
+        expiry_time: "",
+        group_id: "",
+        parent_id: this.$props.parent_id
       },
       rules: {
         ...rules,
@@ -125,6 +132,16 @@ export default {
             trigger: "change"
           }
         ],
+        user_name: [
+          { trigger: "blur", validator: this.validateUserName },
+          { required: true, message: "请输入用户名", trigger: "change" },
+          {
+            min: 3,
+            max: 20,
+            message: "长度在 3 到 20 个字符",
+            trigger: "change"
+          }
+        ],
         re_pass_word: [
           {
             trigger: "blur",
@@ -132,6 +149,9 @@ export default {
             validator: this.validatePassword2
           },
           { required: true, message: "两次密码不一样", trigger: "blur" }
+        ],
+        group_id: [
+          { required: true, message: "必须选择用户分组", trigger: "change" }
         ],
         pass_word: [
           {
@@ -204,6 +224,7 @@ export default {
           postData.expiry_time = postData.expiry_time || 0;
           postData.user_type = this.user_type;
           postData.pass_word = postData.pass_word.MD5(16);
+          delete postData.re_pass_word;
           updateUser(postData)
             .then(res => {
               if (res.data.code == 0) {
@@ -240,7 +261,6 @@ export default {
         }
       });
     }
-  },
-  components: { selectCity, selectIndustry }
+  }
 };
 </script>
