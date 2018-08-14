@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="所属地区">
-              <select-city v-model="tableQuery.area" :select-all="true" style="width:100%;" clearable></select-city>
+              <select-city-input :area.sync="tableQuery.area" :select-all="true" style="width:100%;" clearable></select-city-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
@@ -53,7 +53,11 @@
                 </el-table-column>
                 <el-table-column prop="user_name" width="600" label="登陆帐号 ">
                   <template slot-scope="scope">
-                    {{"&#x3000;&#x3000;".repeat(scope.row.level)}} {{scope.row.user_name}}
+                    <div class="user-name-cell">
+                      <!-- <span class="level-line" :style="{'left':(scope.row.level-1)*30+'px'}"></span>
+                      <span class="level-line-block" :style="{width:scope.row.level*30+'px'}"></span> -->
+                      {{"&#x3000;&#x3000;".repeat(scope.row.level)}} {{scope.row.user_name}}
+                    </div>
                   </template>
                 </el-table-column>
                 <el-table-column prop="province_name" label="所属地区 " :formatter="$utils.areaFormatter"></el-table-column>
@@ -115,15 +119,40 @@
     display: none;
   }
 }
+// .user-name-cell {
+//   .level-line-block {
+//     display: inline-block;
+//   }
+//   .level-line-container {
+//   }
+//   .level-line {
+//     top: 50%;
+//     position: absolute;
+//     border-bottom: 1px solid red;
+//     width: 30px;
+//     &:before {
+//       content: "";
+//       position: absolute;
+//       height: 70px;
+//       top: -70px;
+//       border-left: 1px solid red;
+//     }
+//   }
+// }
 </style>
 <script>
 import { getUserList, delUser, getUserChildren } from "@/api/index.js";
-import selectCity from "@/components/select-city.vue";
+import selectCityInput from "@/components/select-city-input.vue";
 import addComponents from "./add.vue";
 import updateComponents from "./update.vue";
 import selectIndustry from "@/components/select-industry.vue";
 export default {
-  components: { selectCity, selectIndustry, addComponents, updateComponents },
+  components: {
+    selectCityInput,
+    selectIndustry,
+    addComponents,
+    updateComponents
+  },
   created() {
     this.getTable();
   },
@@ -200,8 +229,8 @@ export default {
     getTable() {
       this.childrenList = [];
       this.tableLoading = true;
-      var areaObj = this.$utils.formatArea(this.tableQuery.area);
-      var query = Object.assign({}, this.tableQuery, areaObj);
+      var query = Object.assign({}, this.tableQuery, this.tableQuery.area);
+      delete query.area;
       getUserList(query)
         .then(res => {
           if (res.data.code == 0) {
@@ -234,7 +263,7 @@ export default {
       return arr;
     },
     expandChange(row) {
-      console.log(row);
+      console.log(arguments);
       this.childLoading = true;
       this.loadCurrent = row.user_id;
       if (!this.$data.childrenList[row.user_id]) {
@@ -253,7 +282,7 @@ export default {
           this.loadCurrent = "";
           if (res.data.code == 0) {
             var formatChildrens = this.formatChildren(res.data.data);
-            console.log(formatChildrens);
+
             this.$set(this.$data.childrenList, row.user_id, formatChildrens);
           } else {
             this.$alert(res.data.msg, {
@@ -262,12 +291,11 @@ export default {
           }
         })
         .catch(() => {
-          console.log(arguments);
-          // this.childLoading = false;
-          // this.loadCurrent = "";
-          // this.$alert("接口错误", {
-          //   type: "error"
-          // });
+          this.childLoading = false;
+          this.loadCurrent = "";
+          this.$alert("接口错误", {
+            type: "error"
+          });
         });
     }
   }

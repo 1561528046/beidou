@@ -15,10 +15,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="所属角色" prop="role_id">
-            <el-select v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;">
-              <el-option label="代理" value="1"></el-option>
-              <el-option label="监控员" value="2"></el-option>
-            </el-select>
+            <select-role v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;"></select-role>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -97,8 +94,9 @@ import selectCity from "@/components/select-city.vue";
 import { addUser, existUserName } from "@/api/index.js";
 import selectIndustry from "@/components/select-industry.vue";
 import selectGroup from "@/components/select-group/select-group.vue";
+import selectRole from "@/components/select-role.vue";
 export default {
-  components: { selectCity, selectIndustry, selectGroup },
+  components: { selectCity, selectIndustry, selectGroup, selectRole },
   data() {
     return {
       device_total_turn: false,

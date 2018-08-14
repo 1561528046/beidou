@@ -178,8 +178,10 @@ export default {
         //levelObj.selected = [];
         Object.keys(levelObj.children).map(key => {
           var right = levelObj.children[key];
-          right.checked = isChecked;
-          this.rightChange(isChecked, right, levelObj);
+          if (right.checked != isChecked) {
+            right.checked = isChecked;
+            this.rightChange(isChecked, right, levelObj);
+          }
         });
       }
       if (level == "1") {

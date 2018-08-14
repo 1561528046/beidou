@@ -66,7 +66,7 @@ export default {
   beforeMount() {
     this.visible = false;
   },
-  props: ["useing"],
+  props: ["useing", "group_id"],
   data() {
     return {
       visible: false,
@@ -76,7 +76,8 @@ export default {
         label: "group_name"
       },
       props: {
-        useing: [Array] //开启功能['add','remove','edit']
+        useing: [Array], //开启功能['add','remove','edit']
+        group_id: [String]
       },
       currentNodeData: {},
       addId: 999,
@@ -118,6 +119,13 @@ export default {
     getUserGroup({ user_id: 1 }).then(res => {
       if (res.data.code == 0) {
         this.$set(this.$data, "list", res.data.data);
+        // console.log(this.$refs.tree2.getNode({ key: "3" }));
+        this.$nextTick(() => {
+          var currentNode = this.$refs.tree2.getNode(this.$props.group_id);
+          if (currentNode) {
+            this.nodeClick(currentNode.data, currentNode);
+          }
+        });
       } else {
         this.$notify({
           type: "error",
@@ -132,7 +140,7 @@ export default {
     nodeClick(data, node) {
       this.$set(this.$data, "currentNodeData", data);
       this.visible = false;
-      this.$emit("input", this.currentNodeData.group_id);
+      this.$emit("update:group_id", this.currentNodeData.group_id);
       this.$emit("update:parentid", node.parent.data.group_id || 0);
     },
     checkEmpty() {
@@ -183,7 +191,8 @@ export default {
     add({ node, nodeData, newNodeData }, next) {
       addGroup({
         parent_id: node.parent.data.group_id,
-        group_name: newNodeData.group_name
+        group_name: newNodeData.group_name,
+        parent_level: node.parent.data.level
       }).then(res => {
         if (res.data.code == 0) {
           nodeData.group_name = newNodeData.group_name;
@@ -211,7 +220,7 @@ export default {
       }
       delGroup({
         group_id: nodeData.group_id,
-        parent_id: node.parent.data.group_id || 0
+        level: node.parent.data.level || 0
       }).then(res => {
         if (this.currentNodeData == nodeData) {
           this.currentNodeData = null;
