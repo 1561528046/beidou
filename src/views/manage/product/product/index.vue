@@ -9,10 +9,10 @@
               <select-product v-model="tableQuery.package_id" style="width:100%;"></select-product>
             </el-form-item>
           </el-col>
-          <el-col :offset="isCollapse?0:6" :span="isCollapse?24:6" style="text-align: right;">
+          <el-col :offset="isCollapse?0:6" :span="isCollapse?24:10" style="text-align: right;">
             <el-form-item>
-              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+              <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button> -->
+              <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button> -->
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
@@ -35,14 +35,15 @@
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="title" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column width="300" label="操作">
+        <el-table-column width="400" label="操作">
           <template slot-scope="scope">
             <router-link :to="{name:'product-update',params:{id:scope.row.package_id}}">
               <el-button type="primary" size="small">
                 <i class="el-icon-upload el-icon--right"></i> 授权详情
               </el-button>
             </router-link>
-            <el-button style="margin-left:15px;" size="small" icon="el-icon-delete">删除</el-button>
+            <el-button style="margin-left:15px;height:33px; padding-top:6px;" size="small" icon="iconfont icon-team" type="primary">分配用户</el-button>
+            <el-button style="margin-left:15px;" size="small" icon="el-icon-delete" @click="delFrom(scope)">删除</el-button>
           </template>
           <!-- <template slot-scope="scope">
                         <el-button type="primary" size="small" @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}})">
@@ -62,9 +63,9 @@
 /* eslint-disable */
 import {
   getDeviceCompanyList,
-  delCompany,
   getDeviceCompanyAll,
-  getProductList
+  getProductList,
+  delProduct
 } from "@/api/index.js";
 import selectCompanytype from "@/components/select-companytype.vue";
 import selectProduct from "@/components/select-product.vue";
@@ -103,10 +104,10 @@ export default {
   },
   methods: {
     //删除产品
-    delRow(scope) {
+    delFrom(scope) {
       this.$confirm("确认删除？")
         .then(() => {
-          delCompany(scope.row).then(res => {
+          delProduct({ package_id: scope.row.package_id }).then(res => {
             if (res.data.code == 0) {
               this.$message.success(res.data.msg);
               this.getTable();
