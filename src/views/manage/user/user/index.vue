@@ -54,10 +54,9 @@
                 <el-table-column prop="user_name" width="600" label="登陆帐号 ">
                   <template slot-scope="scope">
                     <div class="user-name-cell">
-                      <span class="level-line" :style="{'left':(scope.row.level-1)*30+'px'}"></span>
-                      <span class="level-line-block" :style="{width:scope.row.level*30+'px'}"></span>
-                      <!-- {{"&#x3000;&#x3000;".repeat(scope.row.level)}} -->
-                      {{scope.row.user_name}}
+                      <!-- <span class="level-line" :style="{'left':(scope.row.level-1)*30+'px'}"></span>
+                      <span class="level-line-block" :style="{width:scope.row.level*30+'px'}"></span> -->
+                      {{"&#x3000;&#x3000;".repeat(scope.row.level)}} {{scope.row.user_name}}
                     </div>
                   </template>
                 </el-table-column>
@@ -120,26 +119,26 @@
     display: none;
   }
 }
-.user-name-cell {
-  .level-line-block {
-    display: inline-block;
-  }
-  .level-line-container {
-  }
-  .level-line {
-    top: 50%;
-    position: absolute;
-    border-bottom: 1px solid red;
-    width: 30px;
-    &:before {
-      content: "";
-      position: absolute;
-      height: 70px;
-      top: -70px;
-      border-left: 1px solid red;
-    }
-  }
-}
+// .user-name-cell {
+//   .level-line-block {
+//     display: inline-block;
+//   }
+//   .level-line-container {
+//   }
+//   .level-line {
+//     top: 50%;
+//     position: absolute;
+//     border-bottom: 1px solid red;
+//     width: 30px;
+//     &:before {
+//       content: "";
+//       position: absolute;
+//       height: 70px;
+//       top: -70px;
+//       border-left: 1px solid red;
+//     }
+//   }
+// }
 </style>
 <script>
 import { getUserList, delUser, getUserChildren } from "@/api/index.js";
