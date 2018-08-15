@@ -37,7 +37,15 @@ export const addProducts = query => {
 // 添加收费单项
 export const addProductDetail = query => {
   var queryQS = qs.stringify(query);
+  console.log(queryQS);
   return ajax.post("/ordermanage/AddFees_package_detail", queryQS);
+};
+// 编辑收费单项
+export const updateProductDetail = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/ordermanage/UpdateFees_package_detail", queryQS, {
+    params: query
+  });
 };
 // 删除收费项
 export const delProductDetail = query => {
@@ -46,21 +54,23 @@ export const delProductDetail = query => {
     params: query
   });
 };
-// 修改产品
+// 修改产品名称
 export const updateProducts = query => {
-  var queryQS = {
-    title: query.title,
-    location_device_list: JSON.stringify(query.detail),
-    device_company_list: JSON.stringify(query.company),
-    sms_list: JSON.stringify(query.sms)
-  };
-  queryQS = qs.stringify(queryQS);
-  return ajax.post("/ordermanage/UpdateFees_packageAndDetail", queryQS);
+  var queryQS = qs.stringify(query);
+  return ajax.post("/ordermanage/UpdateFees_package", queryQS, {
+    params: query
+  });
 };
 // 删除产品
 export const delProduct = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/ordermanage/DeleteFees_package", queryQS, {
+    params: query
+  });
+};
+// 查询订单
+export const getOrderList = query => {
+  return ajax.get("/ordermanage/GetOrderListByPage", {
     params: query
   });
 };

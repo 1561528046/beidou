@@ -86,7 +86,7 @@
         <el-table-column prop="device_type" label="终端类型" :formatter="(row)=>{return this.$dict.get_device_type(row.device_type)}">
         </el-table-column>
         <el-table-column prop="company_name" label="终端厂商" :formatter="$utils.baseFormatter" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="device_id" label="终端ID"></el-table-column>
+        <el-table-column prop="device_no" label="终端ID"></el-table-column>
         <el-table-column prop="sim_id" label="SIM ID" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="protocol_type" label="协议类型" :formatter="(row)=>{return this.$dict.get_protocol_type(row.protocol_type)}">
         </el-table-column>

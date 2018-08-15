@@ -122,7 +122,6 @@ export default {
         detail_name: "",
         detail_type: "",
         original_price: "",
-        discount_price: "",
         present_price: "",
         pay_type: "",
         company_id: "",
@@ -197,12 +196,12 @@ export default {
         getDeviceCompany({ id: this.formData.company_id }).then(res => {
           if (res.data.code == 0) {
             this.formData.company_name = res.data.data[0].company_name;
-            this.formData.company_name = this.formData.company_name.trim();
           }
         });
       } else {
-        this.formData.company_id == "";
+        this.formData.company_id = "";
       }
+
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var postData = Object.assign({}, this.formData);

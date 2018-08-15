@@ -11,8 +11,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="终端ID" prop="device_id">
-          <el-input v-model="formData.device_id" placeholder="终端ID"></el-input>
+        <el-form-item label="终端ID" prop="device_no">
+          <el-input v-model="formData.device_no" placeholder="终端ID"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -74,7 +74,7 @@ export default {
       formData: {
         area: [],
         device_type: "",
-        device_id: "",
+        device_no: "",
         company_id: "",
         sim_id: "",
         protocol_type: "",
@@ -92,7 +92,7 @@ export default {
         company_id: [
           { required: true, trigger: "change", message: "必须选择终端厂商" }
         ],
-        device_id: [
+        device_no: [
           {
             required: true,
             trigger: "blur",

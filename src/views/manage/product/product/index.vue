@@ -103,6 +103,15 @@ export default {
     this.restaurants = this.loadAll();
   },
   methods: {
+    handleSizeChange(val) {
+      this.tableQuery.page = 1;
+      this.tableQuery.size = 20;
+      this.getTable();
+    },
+    handleCurrentChange(val) {
+      this.tableQuery.page = val;
+      this.getTable();
+    },
     //删除产品
     delFrom(scope) {
       this.$confirm("确认删除？")
@@ -165,6 +174,7 @@ export default {
     },
     //查询产品列表
     getTable() {
+      console.log(this.tableQuery);
       this.tableLoading = true;
       var query = Object.assign({}, this.tableQuery);
       getProductList(query)

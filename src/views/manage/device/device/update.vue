@@ -11,8 +11,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="终端ID" prop="device_id">
-          <el-input v-model="formData.device_id" disabled></el-input>
+        <el-form-item label="终端ID" prop="device_no">
+          <el-input v-model="formData.device_no" disabled></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -76,6 +76,7 @@ export default {
       formData: {
         device_id: this.$props.device_id,
         device_type: "",
+        device_no: "",
         company_id: "",
         sim_id: "",
         protocol_type: "",
