@@ -20,6 +20,9 @@ export default {
   watch: {
     area: function() {
       this.$emit("input", this.area);
+      this.$emit("update:province_id", this.area[0]);
+      this.$emit("update:city_id", this.area[1]);
+      this.$emit("update:county_id", this.area[2]);
     },
     value: function() {
       this.$set(this.$data, "area", this.value);
