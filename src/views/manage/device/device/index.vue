@@ -54,6 +54,9 @@
         <el-button type="primary" size="small" @click="addFrom">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
+        <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+          <add-device :parent_id="parent_id" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-device>
+        </el-dialog>
         <router-link :to="{name:'device-binding'}" style="margin-left: 15px;">
           <el-button type="primary" size="small">
             <i class="el-icon-upload el-icon--right"></i> 设备绑定管理
@@ -81,7 +84,6 @@
         </el-dropdown>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-
         <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
         <el-table-column prop="device_type" label="终端类型" :formatter="(row)=>{return this.$dict.get_device_type(row.device_type)}">
         </el-table-column>
@@ -96,13 +98,16 @@
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
+
             <el-button size="small" :type="buttontype(scope)" @click="repair_addFrom(scope)">
               <i class="el-icon-upload el-icon--right"></i>设备维修</el-button>
             <el-button size="small" @click="delRow(scope)" icon="el-icon-delete">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-
+      <el-dialog title="编辑 " :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+        <update-device :device_id="updateId " @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-device>
+      </el-dialog>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
         </el-pagination>
@@ -115,18 +120,31 @@ import selectCompany from "@/components/select-company.vue";
 import selectUser from "@/components/select-user.vue";
 import selectDevicetype from "@/components/select-devicetype.vue";
 import selectDevice from "@/components/select-device.vue";
-import device_add from "./add.vue";
+import addDevice from "./add.vue";
 import repair_add from "./repair_add.vue";
-import device_update from "./update.vue";
+import updateDevice from "./update.vue";
 import device_upload from "./upload.vue";
 import { getDeviceList, delDevice } from "@/api/index.js";
 export default {
+  components: {
+    device_upload,
+    addDevice,
+    updateDevice,
+    selectCompany,
+    selectUser,
+    selectDevicetype,
+    selectDevice
+  },
   created() {
     this.getTable();
     this.keyupdown();
   },
   data() {
     return {
+      addDialog: false,
+      parent_id: "",
+      updateDialog: false,
+      updateId: "",
       isCollapse: false,
       dateRange: "",
       tableQuery: {
@@ -194,14 +212,15 @@ export default {
     }
   },
   methods: {
+    // 按钮样式
     buttontype(scope) {
       if (scope.row.state == 1) {
         return "primary";
       }
       return "info";
     },
+    //上传
     openUpload() {
-      //上传
       var vNode = this.$createElement(device_upload, {
         key: this.addKey++,
         on: {
@@ -221,8 +240,8 @@ export default {
         message: vNode
       });
     },
+    //删除设备
     delRow(scope) {
-      //删除
       this.$confirm("确认删除？")
         .then(() => {
           delDevice({ device_id: scope.row.device_id }).then(res => {
@@ -236,29 +255,14 @@ export default {
         })
         .catch(() => {});
     },
-    addFrom() {
-      //添加
-      var vNode = this.$createElement(device_add, {
-        key: this.addKey++,
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "添加设备",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
+    //添加设备
+    addFrom(scope) {
+      this.addKey++;
+      this.addDialog = true;
+      this.parent_id = scope.row ? scope.row.device_id : 1;
     },
+    //维修设备添加
     repair_addFrom(scope) {
-      //维修设备添加
       if (scope.row.state == 1) {
         selectDevice.props.num = scope.row.device_id;
         var vNode = this.$createElement(repair_add, {
@@ -281,32 +285,14 @@ export default {
         });
       }
     },
+    //编辑
     updateForm(scope) {
-      //编辑
-      var vNode = this.$createElement(device_update, {
-        key: this.addKey++,
-        props: {
-          device_id: scope.row.device_id
-        },
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "编辑设备",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
+      this.updateDialog = true;
+      this.updateId = scope.row.device_id;
+      this.addKey++;
     },
+    //获取列表
     getTable() {
-      //获取列表
       this.tableLoading = true;
       if (this.tableQuery.real_name == "") {
         this.tableQuery.user_id = "";
@@ -324,35 +310,6 @@ export default {
         })
         .catch(() => {});
     },
-    //上传
-    // uploadFunc(uploadObj) {
-    //   var formData = new FormData();
-    //   formData.append("ff", uploadObj.file);
-    //   this.$ajax
-    //     .post("/public/UploadExcel", formData, {
-    //       params: { table: 2 }
-    //     })
-    //     .then(res => {
-    //       if (res.data.code == 0) {
-    //         this.$alert(res.data.msg, "提示", {
-    //           type: "success"
-    //         });
-    //         this.getTable();
-    //       } else {
-    //         this.$alert(res.data.msg, "导入失败", {
-    //           type: "error"
-    //         });
-    //       }
-    //     })
-    //     .catch(err => {
-    //       this.$message.error("接口错误，错误码：" + err.response.status);
-    //     });
-    // },
-    uploadSuccess() {},
-    uploadError() {
-      alert(1);
-    },
-    uploadProgress() {},
     //回车事件
     keyupdown() {
       document.onkeydown = () => {
@@ -362,6 +319,7 @@ export default {
         }
       };
     },
+    // 分页
     handleSizeChange(val) {
       this.tableQuery.page = 1;
       this.tableQuery.size = val;
@@ -370,16 +328,12 @@ export default {
     handleCurrentChange(val) {
       this.tableQuery.page = val;
       this.getTable();
-    }
-  },
-  components: {
-    device_upload,
-    device_add,
-    device_update,
-    selectCompany,
-    selectUser,
-    selectDevicetype,
-    selectDevice
+    },
+    uploadSuccess() {},
+    uploadError() {
+      alert(1);
+    },
+    uploadProgress() {}
   }
 };
 </script>

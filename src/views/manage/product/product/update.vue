@@ -53,19 +53,19 @@
                 </el-table-column>
                 <el-table-column prop="discount_price" label="优惠金额(元)">
                   <template slot-scope="scope">
-                    <label v-if="!formData.manytype">{{scope.row.discount_price}}</label>
-                    <el-input v-if="formData.manytype" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
-                    <el-button v-if="!formData.manytype" type="primary" @click="manty" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                    <label v-if="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
+                    <el-input v-if="scope.row.isEditManty" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
+                    <el-button v-if="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
                   </template>
                 </el-table-column>
                 <el-table-column prop="pay_type" label="付费方式">
                   <template slot-scope="scope">
-                    <div style="width:100px;margin:0 auto;" v-if="formData.paytypes">
+                    <div style="width:100px;margin:0 auto;" v-if="!scope.row.isEditPayty">
                       <label v-if="scope.row.pay_type==1">计费</label>
                       <label v-if="scope.row.pay_type==2">充值</label>
-                      <el-button type="primary" @click="payty" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
+                      <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
                     </div>
-                    <select v-if="!formData.paytypes" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
+                    <select v-if="scope.row.isEditPayty" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
                       <option value="1">计费</option>
                       <option value="2">充值</option>
                     </select>
@@ -107,19 +107,19 @@
                 </el-table-column>
                 <el-table-column prop="discount_price" label="优惠金额(元)">
                   <template slot-scope="scope">
-                    <label v-if="!formData.manytype">{{scope.row.discount_price}}</label>
-                    <el-input v-if="formData.manytype" v-on:blur="changeCountCompany(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
-                    <el-button v-if="!formData.manytype" type="primary" @click="manty" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                    <label v-if="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
+                    <el-input v-if="scope.row.isEditManty" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
+                    <el-button v-if="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
                   </template>
                 </el-table-column>
                 <el-table-column prop="pay_type" label="付费方式">
                   <template slot-scope="scope">
-                    <div style="width:100px;margin:0 auto;" v-if="formData.paytypes">
+                    <div style="width:100px;margin:0 auto;" v-if="!scope.row.isEditPayty">
                       <label v-if="scope.row.pay_type==1">计费</label>
                       <label v-if="scope.row.pay_type==2">充值</label>
-                      <el-button type="primary" @click="payty" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
+                      <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
                     </div>
-                    <select v-if="!formData.paytypes" @click="payty" v-on:blur="changeCompany(scope)" v-model="scope.row.pay_type">
+                    <select v-if="scope.row.isEditPayty" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
                       <option value="1">计费</option>
                       <option value="2">充值</option>
                     </select>
@@ -155,19 +155,19 @@
                 </el-table-column>
                 <el-table-column prop="discount_price" label="优惠金额">
                   <template slot-scope="scope">
-                    <label v-if="!formData.manytype">{{scope.row.discount_price}}</label>
-                    <el-input v-if="formData.manytype" v-on:blur="changeCountSim(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
-                    <el-button v-if="!formData.manytype" type="primary" @click="manty" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                    <label v-if="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
+                    <el-input v-if="scope.row.isEditManty" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
+                    <el-button v-if="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
                   </template>
                 </el-table-column>
                 <el-table-column prop="pay_type" label="付费方式">
                   <template slot-scope="scope">
-                    <div style="width:100px;margin:0 auto;" v-if="formData.paytypes">
+                    <div style="width:100px;margin:0 auto;" v-if="!scope.row.isEditPayty">
                       <label v-if="scope.row.pay_type==1">计费</label>
                       <label v-if="scope.row.pay_type==2">充值</label>
-                      <el-button type="primary" @click="payty" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
+                      <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
                     </div>
-                    <select v-if="!formData.paytypes" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
+                    <select v-if="scope.row.isEditPayty" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
                       <option value="1">计费</option>
                       <option value="2">充值</option>
                     </select>
@@ -203,19 +203,19 @@
                 </el-table-column>
                 <el-table-column prop="discount_price" label="优惠金额(元)">
                   <template slot-scope="scope">
-                    <label v-if="!formData.manytype">{{scope.row.discount_price}}</label>
-                    <el-input v-if="formData.manytype" v-on:blur="changeCountSms(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
-                    <el-button v-if="!formData.manytype" type="primary" @click="manty" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                    <label v-if="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
+                    <el-input v-if="scope.row.isEditManty" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
+                    <el-button v-if="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
                   </template>
                 </el-table-column>
                 <el-table-column prop="pay_type" label="付费方式">
                   <template slot-scope="scope">
-                    <div style="width:100px;margin:0 auto;" v-if="formData.paytypes">
+                    <div style="width:100px;margin:0 auto;" v-if="!scope.row.isEditPayty">
                       <label v-if="scope.row.pay_type==1">计费</label>
                       <label v-if="scope.row.pay_type==2">充值</label>
-                      <el-button type="primary" @click="payty" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
+                      <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
                     </div>
-                    <select v-if="!formData.paytypes" v-on:blur="changeSms(scope)" v-model="scope.row.pay_type">
+                    <select v-if="scope.row.isEditPayty" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
                       <option value="1">计费</option>
                       <option value="2">充值</option>
                     </select>
@@ -294,11 +294,13 @@ export default {
   filters: {},
   computed: {},
   methods: {
-    payty() {
-      this.formData.paytypes = false;
+    // 计费方式修改
+    payty(scope) {
+      scope.row.isEditPayty = true;
     },
-    manty() {
-      this.formData.manytype = true;
+    // 金额修改
+    manty(scope) {
+      scope.row.isEditManty = true;
     },
     //修改产品名称
     titletype() {
@@ -366,188 +368,8 @@ export default {
           this.$emit("error");
         });
     },
-    // 编辑厂商金额
-    changeCountCompany(scope) {
-      scope.row.present_price =
-        scope.row.original_price - scope.row.discount_price;
-      updateProductDetail(scope.row)
-        .then(res => {
-          if (res.data.code == 0) {
-            this.formData.manytype = false;
-            this.detaiN();
-            this.$emit("success");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "success"
-            });
-          } else {
-            this.$emit("error");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        })
-        .catch(() => {
-          this.$alert("接口错误", "提示", {
-            type: "error"
-          });
-          this.$emit("error");
-        });
-    },
-    // 编辑sim卡金额
-    changeCountSim(scope) {
-      scope.row.present_price =
-        scope.row.original_price - scope.row.discount_price;
-      updateProductDetail(scope.row)
-        .then(res => {
-          if (res.data.code == 0) {
-            this.formData.manytype = false;
-            this.detaiN();
-            this.$emit("success");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "success"
-            });
-          } else {
-            this.$emit("error");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        })
-        .catch(() => {
-          this.$alert("接口错误", "提示", {
-            type: "error"
-          });
-          this.$emit("error");
-        });
-    },
-    // 编辑短信金额
-    changeCountSms(scope) {
-      scope.row.present_price =
-        scope.row.original_price - scope.row.discount_price;
-      updateProductDetail(scope.row)
-        .then(res => {
-          if (res.data.code == 0) {
-            this.formData.manytype = false;
-            this.detaiN();
-            this.$emit("success");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "success"
-            });
-          } else {
-            this.$emit("error");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        })
-        .catch(() => {
-          this.$alert("接口错误", "提示", {
-            type: "error"
-          });
-          this.$emit("error");
-        });
-    },
     // 编辑车辆计费
     changeCou(scope) {
-      updateProductDetail(scope.row)
-        .then(res => {
-          if (res.data.code == 0) {
-            this.formData.paytypes = true;
-            this.detaiN();
-            this.$emit("success");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "success"
-            });
-          } else {
-            this.$emit("error");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        })
-        .catch(() => {
-          this.$alert("接口错误", "提示", {
-            type: "error"
-          });
-          this.$emit("error");
-        });
-    },
-    // 编辑厂商计费
-    changeCompany(scope) {
-      updateProductDetail(scope.row)
-        .then(res => {
-          if (res.data.code == 0) {
-            this.formData.paytypes = true;
-            this.detaiN();
-            this.$emit("success");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "success"
-            });
-          } else {
-            this.$emit("error");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        })
-        .catch(() => {
-          this.$alert("接口错误", "提示", {
-            type: "error"
-          });
-          this.$emit("error");
-        });
-    },
-    // 编辑Sim卡计费
-    changeSim(scope) {
-      updateProductDetail(scope.row)
-        .then(res => {
-          if (res.data.code == 0) {
-            this.formData.paytypes = true;
-            this.detaiN();
-            this.$emit("success");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "success"
-            });
-          } else {
-            this.$emit("error");
-            this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        })
-        .catch(() => {
-          this.$alert("接口错误", "提示", {
-            type: "error"
-          });
-          this.$emit("error");
-        });
-    },
-    // 编辑短信计费
-    changeSms(scope) {
       updateProductDetail(scope.row)
         .then(res => {
           if (res.data.code == 0) {
