@@ -37,7 +37,6 @@ export const addProducts = query => {
 // 添加收费单项
 export const addProductDetail = query => {
   var queryQS = qs.stringify(query);
-  console.log(queryQS);
   return ajax.post("/ordermanage/AddFees_package_detail", queryQS);
 };
 // 编辑收费单项

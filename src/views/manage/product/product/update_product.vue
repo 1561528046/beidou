@@ -1,16 +1,8 @@
 <template>
-  <div style="text-align: center; width: 600px ; height:600px; background-color:#fff;">
+  <div>
     <el-form status-icon :rules="rules" :model="formData " ref="baseForm">
       <!-- <el-row :gutter="30 ">
             </el-row> -->
-      <el-form-item label="选择服务项" prop="detail_type">
-        <el-select v-model="formData.detail_type" style="width:100%; float:left;">
-          <el-option label="授权车辆" value="1">授权车辆</el-option>
-          <el-option label="授权厂商" value="3">授权厂商</el-option>
-          <el-option label="SIM卡" value="5">SIM卡</el-option>
-          <el-option label="短信" value="4">短信</el-option>
-        </el-select>
-      </el-form-item>
       <!-- 车辆 -->
       <el-form-item v-if="formData.detail_type=='1'">
         <template slot-scope="scope">
@@ -37,7 +29,7 @@
       <el-form-item v-if="formData.detail_type=='3'">
         <template slot-scope="scope">
           <label style="float:left;">终端厂商</label>
-          <select-company v-model="formData.company_id" style="width:100%;" :clearable="true"></select-company>
+          <select-company v-model="formData.company_id" :company_name.sync="formData.company_name" style="width:100%;" :clearable="true"></select-company>
           <label style="float:left;">收费单项</label>
           <el-select style="width:100%;" v-model="formData.detail_name">
             <el-option value="开通">开通</el-option>
@@ -109,7 +101,7 @@ import { rules } from "@/utils/rules.js";
 import selectCompany from "@/components/select-company.vue";
 import selectIndustry from "@/components/select-industry.vue";
 import selectDeviceType from "@/components/select-devicetype.vue";
-import { addProductDetail, getDeviceCompany } from "@/api/index.js";
+import { addProductDetail } from "@/api/index.js";
 import addProduct from "@/components/product/product-manage.vue";
 export default {
   data() {
@@ -118,9 +110,9 @@ export default {
       industrys: this.$dict.industry,
       button_type: true,
       formData: {
-        package_id: this.$props.package_id,
+        package_id: this.$props.parent_id,
         detail_name: "",
-        detail_type: "",
+        detail_type: this.$props.parent_type,
         original_price: "",
         discount_price: "",
         present_price: "",
@@ -142,7 +134,8 @@ export default {
     };
   },
   props: {
-    package_id: String
+    parent_id: String,
+    parent_type: Number
   },
   watch: {},
   computed: {},
@@ -189,19 +182,9 @@ export default {
     //添加收费项
     formSubmit() {
       if (this.formData.detail_type == 1) {
-        this.detail_type = this.formData.device_type;
+        this.formData.detail_type = this.formData.device_type;
       } else if (this.formData.detail_type == 4) {
         this.formData.detail_name = "短信";
-      }
-      if (!this.formData.company_id == "") {
-        getDeviceCompany({ id: this.formData.company_id }).then(res => {
-          if (res.data.code == 0) {
-            this.formData.company_name = res.data.data[0].company_name;
-            this.formData.company_name = this.formData.company_name.trim();
-          }
-        });
-      } else {
-        this.formData.company_id == "";
       }
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

@@ -24,6 +24,11 @@
         <el-button type="primary" size="small" @click="addFrom">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
+        <router-link :to="{name:'product-binding'}" style="margin-left: 15px;">
+          <el-button type="primary" size="mini" style="padding-top: 6px;padding-bottom: 9px;">
+            <i class="iconfont icon-team"></i> 分配用户
+          </el-button>
+        </router-link>
         <!-- <router-link :to="{name:'product-add'}">
           <el-button type="primary" size="small">
             <i class="el-icon-upload el-icon--right"></i> 添加
@@ -35,14 +40,13 @@
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="title" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column width="400" label="操作">
+        <el-table-column width="300" label="操作">
           <template slot-scope="scope">
             <router-link :to="{name:'product-update',params:{id:scope.row.package_id}}">
               <el-button type="primary" size="small">
                 <i class="el-icon-upload el-icon--right"></i> 授权详情
               </el-button>
             </router-link>
-            <el-button style="margin-left:15px;height:33px; padding-top:6px;" size="small" icon="iconfont icon-team" type="primary">分配用户</el-button>
             <el-button style="margin-left:15px;" size="small" icon="el-icon-delete" @click="delFrom(scope)">删除</el-button>
           </template>
           <!-- <template slot-scope="scope">
@@ -174,7 +178,6 @@ export default {
     },
     //查询产品列表
     getTable() {
-      console.log(this.tableQuery);
       this.tableLoading = true;
       var query = Object.assign({}, this.tableQuery);
       getProductList(query)

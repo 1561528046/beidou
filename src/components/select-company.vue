@@ -1,7 +1,7 @@
 <template slot-scope="scope">
   <el-select v-model="company_id" placeholder="请选择" filterable no-match-text=" " :clearable="clearable">
     <template slot-scope="scope">
-      <el-option v-for="item in lists" :key="item.company_id" :label="item.company_name" :value="item.company_id">
+      <el-option v-for="item in list" :key="item.company_id" :label="item.company_name" :value="item.company_id">
       </el-option>
     </template>
   </el-select>
@@ -19,6 +19,12 @@ export default {
   watch: {
     company_id: function() {
       this.$emit("input", this.company_id);
+      this.$emit(
+        "update:company_name",
+        this.list.filter(item => {
+          return item.company_id == this.company_id;
+        })[0].company_name
+      );
     },
     value: function() {
       this.company_id = this.value;
@@ -27,19 +33,7 @@ export default {
       }
     }
   },
-  computed: {
-    lists: function() {
-      var metas = [];
-      for (var i = 0; i < this.list.length; i++) {
-        if (this.list[i].company_id == this.company_id) {
-          console.log(1);
-        } else {
-          metas.push(this.list[i]);
-        }
-      }
-      return metas;
-    }
-  },
+  computed: {},
   props: {
     value: String,
     clearable: Boolean

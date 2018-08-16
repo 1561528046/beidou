@@ -23,6 +23,12 @@ export default {
       component: () => import("@/views/manage/product/product/update.vue")
     },
     {
+      path: "product-binding",
+      name: "product-binding",
+      meta: { name: "分配用户", hidden: true },
+      component: () => import("@/views/manage/product/product/binding.vue")
+    },
+    {
       path: "user-select",
       name: "user-select",
       meta: { name: "用户查询", icon: "iconfont icon-boxplot-fill" },
