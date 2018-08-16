@@ -1,6 +1,6 @@
 <template>
   <div class="vehicle-form">
-    <el-form label-width="200px" status-icon :rules="rules" :model="formData" size="small">
+    <el-form label-width="200px" :rules="rules" :model="formData" size="small" ref="baseForm">
       <!-- 服务商信息 -->
       <el-card shadow="hover">
         <div slot="header" class="clearfix">
@@ -8,8 +8,8 @@
         </div>
         <el-row :gutter="30">
           <el-col :span="8">
-            <el-form-item label="服务到期日期" prop="end_date">
-              <el-date-picker v-model="formData.end_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;">
+            <el-form-item label="服务到期日期" prop="contract_date">
+              <el-date-picker v-model="formData.contract_date" :picker-options="pickerOptions" value-format="yyyy-MM-dd" align="center" type="date" placeholder="选择日期" style="width:100%;">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -33,39 +33,29 @@
         </div>
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="道路运输证号" prop="road_transport">
-              <el-input v-model="formData.road_transport"></el-input>
+            <el-form-item label="道路运输证号" prop="transport_no">
+              <el-input v-model="formData.transport_no"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="行驶证发证日期" prop="drivecard_release_date">
-              <el-date-picker v-model="formData.drivecard_release_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;">
+            <el-form-item label="行驶证发证日期" prop="issue_date" value-format="yyyy-MM-dd">
+              <el-date-picker v-model="formData.issue_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyy-MM-dd">
               </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="所属地区">
-              <select-city v-model="formData.area" style="width:100%;"></select-city>
+            <el-form-item label="所属地区" prop="area">
+              <select-city v-model="formData.area" :province_id.sync="formData.province_id" :city_id.sync="formData.city_id" :county_id.sync="formData.county_id" style="width:100%;"></select-city>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="接入车辆类型" prop="vehicle_type">
-              <el-select v-model="formData.vehicle_type" placeholder="接入车辆类型" style="width:100%;">
-                <el-option label="普通货运车辆" value="1"></el-option>
-                <el-option label="危险品车辆" value="2"></el-option>
-                <el-option label="长途客运、班线车辆" value="3"></el-option>
-                <el-option label="城市公共交通车辆" value="4"></el-option>
-                <el-option label="出租车" value="5"></el-option>
-                <el-option label="网约车" value="6"></el-option>
-                <el-option label="校车" value="7"></el-option>
-                <el-option label="警务车辆" value="8"></el-option>
-                <el-option label="其他车辆" value="9"></el-option>
-              </el-select>
+            <el-form-item label="接入车辆类型" prop="type">
+              <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="接入车辆状态" prop="vehicle_type">
-              <el-select v-model="formData.vehicle_type" placeholder="接入车辆类型" style="width:100%;">
+            <el-form-item label="接入车辆状态" prop="source">
+              <el-select v-model="formData.source" placeholder="接入车辆类型" style="width:100%;">
                 <el-option label="新增" value="1"></el-option>
                 <el-option label="转网" value="2"></el-option>
               </el-select>
@@ -73,29 +63,25 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="燃料种类" prop="flue_type">
-              <el-select v-model="formData.flue_type" placeholder="燃料种类" style="width:100%;">
-                <el-option :label="fuleType.name" :value="value" v-for="(fuleType,value) in $dict.fule_type" :key="fuleType.name">
-                  {{fuleType.name}}
-                </el-option>
-              </el-select>
+              <select-fule-type v-model="formData.flue_type" style="width:100%;"></select-fule-type>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车牌号" style="margin-bottom:0;">
+            <el-form-item label="车牌号" style="margin-bottom:0;" class="is-required">
               <el-row>
                 <el-col :span="11">
-                  <el-form-item prop="vehicle_no" :rules="rules.vehicle_no">
-                    <el-input v-model="formData.vehicle_no"></el-input>
+                  <el-form-item prop="license">
+                    <el-input v-model="formData.license"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12" :offset="1">
-                  <el-form-item prop="plate_color">
-                    <el-select v-model="formData.plate_color" placeholder="">
+                  <el-form-item prop="license_color">
+                    <el-select v-model="formData.license_color" placeholder="请选择车牌颜色">
                       <div slot="prefix">
-                        <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="$dict.get_plate_color(formData.plate_color).style">
+                        <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="$dict.get_license_color(formData.license_color).style">
                         </span>
                       </div>
-                      <el-option :label="plateColor.name" :value="value" v-for="(plateColor,value) in plate_colors" :key="plateColor.name">
+                      <el-option :label="plateColor.name" :value="value" v-for="(plateColor,value) in license_colors" :key="plateColor.name">
                         <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="plateColor.style"> </span>
                         {{plateColor.name}}
                       </el-option>
@@ -105,26 +91,25 @@
               </el-row>
             </el-form-item>
           </el-col>
-
           <el-col :span="8">
-            <el-form-item label="业户/车主" prop="companyname">
-              <el-input v-model="formData.companyname"></el-input>
+            <el-form-item label="业户/车主" prop="owner">
+              <el-input v-model="formData.owner"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="联系人" prop="vehicle_owner_name">
-              <el-input v-model="formData.vehicle_owner_name"></el-input>
+            <el-form-item label="联系人" prop="linkman">
+              <el-input v-model="formData.linkman"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="联系人手机" prop="vehicle_owner_phone">
-              <el-input v-model="formData.vehicle_owner_phone"></el-input>
+            <el-form-item label="联系人手机" prop="tel">
+              <el-input v-model="formData.tel"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-card>
 
-      <el-card shadow="hover" v-if="formData.vehicle_type==1">
+      <el-card shadow="hover" v-if="formData.type==1">
         <div slot="header" class="clearfix">
           <span>普通货运车辆 </span>
         </div>
@@ -133,82 +118,108 @@
             <div class="el-tag el-tag--warning" style="display:block;text-align:center;margin-bottom:15px; height:auto;">
               提示：请正确填写车辆信息。为了不影响车辆审核结果,请填写正确道路运输证号!
               <br>【核定载质量】与【准牵引总质量】两项至少填一项；
-              <a href="#" style="color:blue;">下载填写要求说明</a>
+              <a href="/static/全国道路货运公共监管与服务平台数据录入要求.pdf" download style="color:blue;">下载填写要求说明</a>
             </div>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="车辆识别代码/车架号" prop="name">
-              <el-input v-model="formData.name"></el-input>
+          <el-col :span="8" prop="vin">
+            <el-form-item label="车辆识别代码/车架号" prop="vin">
+              <el-input v-model="formData.vin"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="8" prop="brand_id">
             <el-form-item label="车辆品牌">
-              <el-input v-model="formData.vbrand_name"></el-input>
+              <el-input v-model="formData.brand_id"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车辆类型">
-              <el-input v-model="formData.prod_code_text"></el-input>
+            <el-form-item label="车辆型号" prop="model">
+              <el-input v-model="formData.model"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="发动机号">
+            <el-form-item label="车辆类型" prop="vtype">
+              <select-vtype v-model="formData.vtype" style="width:100%" clearable></select-vtype>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="发动机号" prop="engine_no">
               <el-input v-model="formData.engine_no"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="发动机型号">
-              <el-input v-model="formData.prod_code_text"></el-input>
+            <el-form-item label="发动机型号" prop="engine_type">
+              <el-input v-model="formData.engine_type"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="总质量(kg)">
-              <el-input v-model="formData.vehicle_ton"></el-input>
+            <el-form-item label="总质量(kg)" prop="total_ton">
+              <el-input v-model="formData.total_ton"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="核定载质量(kg)">
+            <el-form-item label="核定载质量(kg)" prop="load_ton">
               <el-input v-model="formData.load_ton"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="准牵引总质量(kg)">
-              <el-input v-model="formData.vehicle_draw_ton"></el-input>
+            <el-form-item label="准牵引总质量(kg)" prop="draw_ton">
+              <el-input v-model="formData.draw_ton"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="外廓尺寸(mm)长">
-              <el-input v-model="formData.vehicle_length"></el-input>
+            <el-form-item label="外廓尺寸(mm)长" prop="length">
+              <el-input v-model="formData.length"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="宽">
-              <el-input v-model="formData.vehicle_width"></el-input>
+            <el-form-item label="宽" prop="width">
+              <el-input v-model="formData.width"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="高">
-              <el-input v-model="formData.vehicle_height"></el-input>
+            <el-form-item label="高" prop="heigth">
+              <el-input v-model="formData.heigth"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="货厢内部尺寸(mm)长">
+            <el-form-item label="货厢内部尺寸(mm)长" prop="box_length">
               <el-input v-model="formData.box_length"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="宽">
+            <el-form-item label="宽" prop="box_width">
               <el-input v-model="formData.box_width"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="高">
+            <el-form-item label="高" prop="box_height">
               <el-input v-model="formData.box_height"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="轴数">
-              <el-input v-model="formData.vehicle_axis"></el-input>
+            <el-form-item label="轴数" prop="axis">
+              <el-input v-model="formData.axis"></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="24">
+            <el-form-item label="车辆登记证1" prop="register_no1">
+              <input type="file">
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="车辆登记证2" prop="register_no2">
+              <input type="file">
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="车辆合格证/行驶证" prop="driver_no">
+              <input type="file">
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="车身照片" prop="img">
+              <input type="file">
             </el-form-item>
           </el-col>
         </el-row>
@@ -222,34 +233,98 @@
         </div>
         <el-row :gutter="30">
           <el-col :span="8">
-            <el-form-item label="设备厂商" prop="name">
-              <el-input v-model="formData.name"></el-input>
+            <el-form-item label="设备厂商" prop="company_id">
+              <el-input v-model="formData.company_id"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="设备ID" prop="name">
-              <el-input v-model="formData.name"></el-input>
+            <el-form-item label="终端ID" prop="device_id">
+              <el-input v-model="formData.device_id"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="SIM ID" prop="name">
-              <el-input v-model="formData.name"></el-input>
+            <el-form-item label="SIM卡卡号" prop="sim_id">
+              <el-input v-model="formData.sim_id"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="安装SIM卡号" prop="name">
-              <el-input v-model="formData.name"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="设备厂商" prop="name">
-              <el-input v-model="formData.name"></el-input>
+            <el-form-item label="安装SIM卡号" prop="sim_no">
+              <el-input v-model="formData.sim_no"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-card>
+
+      <!-- 其他信息 -->
+      <el-card shadow="hover">
+        <div slot="header" class="clearfix">
+          <span>其他信息
+          </span>
+        </div>
+        <el-row :gutter="30">
+          <el-col :span="8">
+            <el-form-item label="车辆出厂时间" prop="factory_date">
+              <el-input v-model="formData.factory_date"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="车身颜色" prop="body_color">
+              <el-input v-model="formData.body_color"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="经营范围" prop="business_scope">
+              <el-input v-model="formData.business_scope"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="轮胎数" prop="tyre">
+              <el-input v-model="formData.tyre"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="轮胎规格" prop="tyre_size">
+              <el-input v-model="formData.tyre_size"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="道路运输经营许可证号" prop="transport_license">
+              <el-input v-model="formData.transport_license"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="车辆购置方式" prop="purchase">
+              <el-input v-model="formData.purchase"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="车辆保险到期时间" prop="insurance_date">
+              <el-date-picker v-model="formData.insurance_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyy-MM-dd">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="检验有效期至" prop="valid_date">
+              <el-date-picker v-model="formData.valid_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyy-MM-dd">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="车辆保险种类" prop="insurance_type">
+              <el-checkbox-group v-model="checkedInsuranceTypes">
+                <el-checkbox v-for="(insurance_type,index) in insurance_types" :label="index+1" :key="index+1">{{insurance_type}}</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item v-if="checkedInsuranceTypes.indexOf(7)!=-1">
+              <el-input></el-input>
+            </el-form-item>
+
+          </el-col>
+
+        </el-row>
+      </el-card>
       <el-form-item style="text-align:center;">
-        <el-button type="primary" @click="onSubmit" size="large">立即创建</el-button>
+        <el-button type="primary" @click="formSubmit" size="large">立即创建</el-button>
       </el-form-item>
 
       <!-- <button @click="$router.go(-1)">a</button> -->
@@ -257,72 +332,87 @@
   </div>
 </template>
 <script>
-// [
-//   "普通货运车辆",
-//   "危险品车辆",
-//   "长途客运、班线车辆",
-//   "城市公共交通车辆",
-//   "出租车",
-//   "网约车",
-//   "校车",
-//   "警务车辆",
-//   "其他车辆"
-// ];
-import { rules } from "@/utils/rules.js";
+import { addVehicle } from "@/api/index.js";
 import moment from "moment";
 import selectCity from "@/components/select-city.vue";
+import selectVehicleType from "@/components/select-vehicle-type.vue";
+import selectFuleType from "@/components/select-fule-type.vue";
+import selectVtype from "@/components/select-vtype.vue";
+import { Rules } from "./rules.js";
+
 export default {
+  components: { selectVehicleType, selectCity, selectFuleType, selectVtype },
   data() {
     return {
+      insurance_types: [
+        "交强险",
+        "盗抢险",
+        "三者",
+        "车损险",
+        "车上人员险",
+        "货物运输险",
+        "其它"
+      ],
+      checkedInsuranceTypes: [1],
+      viewData: {
+        //用于渲染的数据
+      },
       formData: {
-        area: [13000, 13001, 13000],
-        name: "",
-        end_date: "", //到期日期
-        vehicle_type: "", //车辆类型
-        road_transport: "", //道路运输证号
-        drivecard_release_date: "", //行驶证发证日期
-        fule_type: "", //燃料种类*
-        vehicle_no: "", //车牌号*
-        plate_color: "", //车牌颜色*
-        area_code: "", //所属地区*
-        city_id: "", //所属地区*
-        county: "", //所属地区*
-        companyname: "", //车主/业户*
-        vehicle_owner_name: "", //联系人*
-        vehicle_owner_phone: "", //联系人手机*
-        //车辆基本信息
-        vin_code: "", //车辆识别代码/车架号*
-        vbrand_name: "", //车辆品牌：*
-        prod_code_text: "", //车辆型号：*
-        engine_no: "", //发动机号：*
-        engine_type: "", //发动机型号：*
-        vehicle_ton: "", //总质量(kg)：*
-        load_ton: "", //核定载质量(kg)：*
-        vehicle_draw_ton: "", //准牵引总质量(kg)：*
-        vehicle_length: "", //外廓尺寸(mm)长：*
-        vehicle_width: "", //宽：*
-        vehicle_height: "", //高：*
-        box_length: "", //货厢内部尺寸(mm)长：*
-        box_width: "", //宽：*
-        box_height: "", //高：*
-        vehicle_axis: "", //轴数：*
-        registration_certificate_file: "", //车辆登记证1：
-        registration_certificate_file2: "", //车辆登记证2：
-        driving_lic_or_cert_file: "", //车辆合格证/行驶证：
-        vehicle_body_photo_file: "", //车身照片：
-        //终端信息
-        tmac: "", //终端_i_d：*
-        commaddr: "", //_s_i_m卡卡号：*
-        //其它信息
-        out_factory_time: "", //车辆出厂时间：
-        vehicle_color: "", //车身颜色：
-        vehicle_business_scope: "", //经营范围：
-        vehicle_tyre_number: "", //轮胎数：
-        vehicle_tyre_size: "", //轮胎规格：
-        corp_road_transport: "", //道路运输经营许可证号：
-        insurance_expirate_time: "", //车辆保险到期时间：
-        valid_date_check: "", //检验有效期至：
-        insurance_type: "" //车辆保险种类：
+        area: [],
+        //提交的数据
+        sim_id: "1", //Sim Id
+        sim_no: "15930616103", //真实SIM卡号
+        device_id: "1", //设备Id
+        license: "冀R12345", //车牌号
+        contract_date: "20180808", //服务到期日期
+        first_time: "", //首次定位时间
+        province_id: "", //省id
+        city_id: "", //市id
+        county_id: "", //县id
+        ip: "", //车辆接入ip
+        port: "", //车辆接入端口
+        issue_date: "", //行驶证签发日期
+        type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
+        fuel_type: "", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
+        license_color: "1", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
+        owner: "111", //车主/业户
+        linkman: "111", //联系人
+        tel: "15930616103", //联系电话
+        factory_date: "", //出厂时间
+        body_color: "", //车身颜色：1黄色，2蓝色，3白色，4黑色，5其它
+        business_scope: "", //经营范围
+        tyre: "", //轮胎数
+        tyre_size: "", //轮胎规格
+        purchase: "", //购置方式：1分期，2全款
+        insurance_date: "", //车辆保险到期日期
+        insurance_type: "", //车辆保险种类：1交强险，2盗抢险，3三者，4车损险，5车上人员险，6货物运输险，7其它
+        valid_date: "", //检验有效期至
+        time: "", //记录添加时间
+        vin: "121212", //车辆识别代码/vin
+        brand_id: "1", //车辆品牌id
+        end_time: "", //离线时间
+        vid: "", //全国平台车辆ID
+        source: "1", //接入车辆状态：1新增，2转网
+        transport_license: "", //道路运输经营许可证
+        transport_no: "", //道路运输证号
+        vtype: "1", //车辆类型
+        register_no1: "", //车辆登记证1
+        register_no2: "", //车辆登记证2
+        driver_no: "", //车辆合格证/行驶证
+        img: "", //车身照片
+        model: "11", //车辆型号
+        engine_no: "11", //发动机号
+        engine_type: "11", //发动机类型
+        total_ton: "11", //总质量(kg)
+        load_ton: "11", //核定载质量(kg)
+        draw_ton: "11", //准牵引总质量(kg)
+        length: "11", //外廓尺寸(mm)长
+        width: "11", //外廓尺寸(mm)宽
+        heigth: "11", //外廓尺寸(mm)高
+        box_length: "11", //货厢内部尺寸(mm)长
+        box_width: "11", //货厢内部尺寸(mm)宽
+        box_height: "11", //货厢内部尺寸(mm)高
+        axis: "11" //轴数
       },
       pickerOptions: {
         shortcuts: [
@@ -349,42 +439,13 @@ export default {
         ]
       },
       rules: {
-        ...rules,
-        vehicle_no: [
-          {
-            trigger: "blur",
-            component: this,
-            validator: function(rule, value, callback) {
-              var fule_type = rule.component.formData.fule_type;
-              var vehicleNo01, vehicleNo02, vehicleNo03;
-              // 如果是电车，那么走新的判断，程超
-              if (fule_type == "3") {
-                vehicleNo01 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{7}$/;
-                vehicleNo02 = /^[\u4e00-\u9fa5]{2}[A-Za-z0-9]{6}$/;
-                vehicleNo03 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{6}[\u4e00-\u9fa5]{1}$/;
-              } else {
-                vehicleNo01 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{6}$/;
-                vehicleNo02 = /^[\u4e00-\u9fa5]{2}[A-Za-z0-9]{5}$/;
-                vehicleNo03 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{5}[\u4e00-\u9fa5]{1}$/;
-              }
-              var result =
-                vehicleNo01.test(value) ||
-                vehicleNo02.test(value) ||
-                vehicleNo03.test(value);
-              if (result) {
-                callback();
-              } else {
-                callback(new Error("车牌号不正确"));
-              }
-            }
-          }
-        ]
+        ...new Rules(this)
       }
     };
   },
   computed: {
-    plate_colors: function() {
-      var result = Object.assign({}, this.$dict.plate_color);
+    license_colors: function() {
+      var result = Object.assign({}, this.$dict.license_color);
       if (this.formData.flue_type == 3) {
         //如果燃油种类是电 只能选择黄绿色车牌
         delete result["1"];
@@ -392,13 +453,58 @@ export default {
       } else {
         delete result["3"];
       }
-      this.$set(this.formData, "plate_color", "");
+      if (
+        !result[this.formData.license_color] &&
+        this.formData.license_color != ""
+      ) {
+        this.$set(this.formData, "license_color", "");
+      }
       return result;
     }
   },
   created() {},
-  methods: {},
-  components: { selectCity }
+  methods: {
+    formSubmit() {
+      this.$refs.baseForm.validate((isVaildate, errorItem) => {
+        if (isVaildate) {
+          var postData = Object.assign({}, this.formData);
+          addVehicle(postData)
+            .then(res => {
+              if (res.data.code == 0) {
+                this.$emit("success");
+                this.$notify.success({
+                  title: "成功",
+                  message: res.data.msg
+                });
+              } else {
+                this.$emit("error");
+                this.$notify.error({
+                  title: "失败",
+                  message: res.data.msg
+                });
+              }
+            })
+            .catch(() => {
+              this.$notify.error({
+                title: "失败",
+                message: "接口错误"
+              });
+              this.$emit("error");
+            });
+        } else {
+          var errormsg = "";
+          for (var key in errorItem) {
+            errormsg += errorItem[key][0].message + "<br>";
+          }
+          this.$notify.error({
+            title: "错误",
+            dangerouslyUseHTMLString: true,
+            message: errormsg
+          });
+        }
+      });
+    }
+  }
 };
 </script>
 <style scoped lang="less">
