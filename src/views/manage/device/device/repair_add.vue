@@ -3,8 +3,8 @@
     <!-- 设备信息 -->
     <el-row :gutter="30">
       <el-col :span="12">
-        <el-form-item prop="reason" label="维修原因">
-          <el-input v-model="formData.reason"></el-input>
+        <el-form-item prop="remark" label="维修原因">
+          <el-input v-model="formData.remark"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -18,11 +18,6 @@
           <el-input v-model="formData.logistics "></el-input>
         </el-form-item>
       </el-col>
-      <!-- <el-col :span="12 ">
-                <el-form-item label="维修状态 ">
-                    <el-input value="维修 " :disabled="true "></el-input>
-                </el-form-item>
-            </el-col> -->
     </el-row>
     <el-form-item style="text-align:center; ">
       <el-button type="primary " size="large " @click="formSubmit ">提交</el-button>
@@ -31,24 +26,24 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
-import { addDeviceRepair, getDeviceAll } from "@/api/index.js";
+import { updateDeviceRepair, getDeviceAll } from "@/api/index.js";
 import selectDevice from "@/components/select-device.vue";
 export default {
   data() {
     return {
       formData: {
+        remark: "",
+        device_id: this.$props.device_id,
         back_time: "",
-        reason: "",
         logistics: "",
-        device_id: selectDevice.props.num,
-        state: "1"
+        operate_type: "1"
       },
       rules: {
         ...rules,
         reason: [
           { required: true, message: "请填写维修原因", trigger: "change" }
         ],
-        back_time: [
+        back_start_time: [
           { required: true, message: "请填写返厂时间", trigger: "change" }
         ],
         logistics: [
@@ -61,6 +56,9 @@ export default {
       state1: "",
       state2: ""
     };
+  },
+  props: {
+    device_id: String
   },
   computed: {},
   created() {},
@@ -102,8 +100,9 @@ export default {
     formSubmit() {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
+          console.log(this.formData);
           var postData = Object.assign({}, this.formData);
-          addDeviceRepair(postData)
+          updateDeviceRepair(postData)
             .then(res => {
               if (res.data.code == 0) {
                 this.$emit("success");

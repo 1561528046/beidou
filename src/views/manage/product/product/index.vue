@@ -6,7 +6,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="产品名称">
-              <select-product v-model="tableQuery.package_id" style="width:100%;"></select-product>
+              <select-product v-model="tableQuery.package_id" style="width:100%;" :clearable="true" :pro="pro"></select-product>
             </el-form-item>
           </el-col>
           <el-col :offset="isCollapse?0:6" :span="isCollapse?24:10" style="text-align: right;">
@@ -82,6 +82,7 @@ export default {
   },
   data() {
     return {
+      pro: 0,
       isCollapse: false,
       tableQuery: {
         package_id: "", //收费套餐id
@@ -137,6 +138,7 @@ export default {
         key: this.addKey++,
         on: {
           success: () => {
+            this.pro++;
             this.getTable();
             this.$msgbox.close();
           },
@@ -248,7 +250,7 @@ export default {
     },
     handleSizeChange(val) {
       this.tableQuery.page = 1;
-      this.tableQuery.limit = val;
+      this.tableQuery.size = val;
       this.getTable();
     },
     handleCurrentChange(val) {

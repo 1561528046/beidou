@@ -17,7 +17,7 @@ export default {
       component: () => import("@/views/manage/product/product/add.vue")
     },
     {
-      path: "product-update",
+      path: "product-update/:id",
       name: "product-update",
       meta: { name: "产品管理-编辑", hidden: true },
       component: () => import("@/views/manage/product/product/update.vue")

@@ -7,6 +7,7 @@
       <div class="_body">
         <div class="_list">
           <div v-if="leftList.length==0" style="padding:20px 0; text-align: center; color:#999;">
+
             数据为空
           </div>
           <el-table :data="leftList" style="width: 100%" v-if="leftList.length!=0" size="mini" @selection-change="leftSelectionChange">
