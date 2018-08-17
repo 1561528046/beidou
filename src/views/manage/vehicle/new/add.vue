@@ -9,7 +9,7 @@
         <el-row :gutter="30">
           <el-col :span="8">
             <el-form-item label="服务到期日期" prop="contract_date">
-              <el-date-picker v-model="formData.contract_date" :picker-options="pickerOptions" value-format="yyyy-MM-dd" align="center" type="date" placeholder="选择日期" style="width:100%;">
+              <el-date-picker v-model="formData.contract_date" :picker-options="pickerOptions" value-format="yyyyMMdd" align="center" type="date" placeholder="选择日期" style="width:100%;">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -38,8 +38,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="行驶证发证日期" prop="issue_date" value-format="yyyy-MM-dd">
-              <el-date-picker v-model="formData.issue_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyy-MM-dd">
+            <el-form-item label="行驶证发证日期" prop="issue_date">
+              <el-date-picker v-model="formData.issue_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyyMMdd">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -162,7 +162,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="准牵引总质量(kg)" prop="draw_ton">
+            <el-form-item label="准牵引总质量(kg)" prop="draw_ton" v-if="formData.license_color==1">
               <el-input v-model="formData.draw_ton"></el-input>
             </el-form-item>
           </el-col>
@@ -177,8 +177,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="高" prop="heigth">
-              <el-input v-model="formData.heigth"></el-input>
+            <el-form-item label="高" prop="height">
+              <el-input v-model="formData.height"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -299,13 +299,13 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="车辆保险到期时间" prop="insurance_date">
-              <el-date-picker v-model="formData.insurance_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyy-MM-dd">
+              <el-date-picker v-model="formData.insurance_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyyMMdd">
               </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="检验有效期至" prop="valid_date">
-              <el-date-picker v-model="formData.valid_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyy-MM-dd">
+              <el-date-picker v-model="formData.valid_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyyMMdd">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -326,8 +326,6 @@
       <el-form-item style="text-align:center;">
         <el-button type="primary" @click="formSubmit" size="large">立即创建</el-button>
       </el-form-item>
-
-      <!-- <button @click="$router.go(-1)">a</button> -->
     </el-form>
   </div>
 </template>
@@ -338,10 +336,17 @@ import selectCity from "@/components/select-city.vue";
 import selectVehicleType from "@/components/select-vehicle-type.vue";
 import selectFuleType from "@/components/select-fule-type.vue";
 import selectVtype from "@/components/select-vtype.vue";
+import selectGroup from "@/components/select-group/select-group.vue";
 import { Rules } from "./rules.js";
 
 export default {
-  components: { selectVehicleType, selectCity, selectFuleType, selectVtype },
+  components: {
+    selectVehicleType,
+    selectCity,
+    selectFuleType,
+    selectVtype,
+    selectGroup
+  },
   data() {
     return {
       insurance_types: [
@@ -356,6 +361,10 @@ export default {
       checkedInsuranceTypes: [1],
       viewData: {
         //用于渲染的数据
+      },
+      groupData: {
+        level: "",
+        path: ""
       },
       formData: {
         area: [],
@@ -408,11 +417,12 @@ export default {
         draw_ton: "11", //准牵引总质量(kg)
         length: "11", //外廓尺寸(mm)长
         width: "11", //外廓尺寸(mm)宽
-        heigth: "11", //外廓尺寸(mm)高
+        height: "11", //外廓尺寸(mm)高
         box_length: "11", //货厢内部尺寸(mm)长
         box_width: "11", //货厢内部尺寸(mm)宽
         box_height: "11", //货厢内部尺寸(mm)高
-        axis: "11" //轴数
+        axis: "11", //轴数
+        group_id: "" //分组ID
       },
       pickerOptions: {
         shortcuts: [
@@ -462,8 +472,34 @@ export default {
       return result;
     }
   },
+  watch: {
+    "formData.box_length": function(val) {
+      //货厢内部尺寸(mm)长
+      if (val == "--") {
+        this.setBoxVal();
+      }
+    },
+    "formData.box_width": function(val) {
+      //货厢内部尺寸(mm)宽
+      if (val == "--") {
+        this.setBoxVal();
+      }
+    },
+    "formData.box_height": function(val) {
+      //货厢内部尺寸(mm)高
+      if (val == "--") {
+        this.setBoxVal();
+      }
+    }
+  },
   created() {},
   methods: {
+    setBoxVal() {
+      //内部尺寸长宽高其中一个为-- 都设为--
+      this.formData.box_height = "--";
+      this.formData.box_width = "--";
+      this.formData.box_length = "--";
+    },
     formSubmit() {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
@@ -507,12 +543,11 @@ export default {
   }
 };
 </script>
-<style scoped lang="less">
+<style lang="less">
 .vehicle-form {
   padding: 20px;
-}
-
-.el-card {
-  margin-bottom: 20px;
+  .el-card {
+    margin-bottom: 20px;
+  }
 }
 </style>

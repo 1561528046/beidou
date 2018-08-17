@@ -2,16 +2,16 @@ export const dict = {
   //全局字典
   license_color: {
     "1": {
-      backgroundColor: "#FFBF00",
-      borderColor: "#ffa500",
-      name: "黄色",
-      style: "background:#FFBF00;border:1px solid #ffa500;"
-    },
-    "2": {
       backgroundColor: "#005aff",
       borderColor: "#005aff",
       name: "蓝色",
       style: "background:#005aff;border:1px solid #005aff;"
+    },
+    "2": {
+      backgroundColor: "#FFBF00",
+      borderColor: "#ffa500",
+      name: "黄色",
+      style: "background:#FFBF00;border:1px solid #ffa500;"
     },
     "3": {
       backgroundColor: "#18ce65",
