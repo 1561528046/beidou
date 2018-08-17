@@ -38,17 +38,49 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}">
-        </el-table-column>
-        <el-table-column prop="reason" label="维修原因" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="logistics" label="物流信息" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="state" label="维修状态" :formatter="(row)=>{return this.$dict.get_repair_state(row.state)}"></el-table-column>
-        <el-table-column prop="back_time" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.back_time)}">
-        </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column prop="device_no" label="终端ID" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="state" label="维修状态" :formatter="(row)=>{return this.$dict.get_repair_state(row.state)}">
           <template slot-scope="scope">
-            <el-button :type="buttontype(scope)" size="small" @click="repaired(scope,2)">已修复</el-button>
+            <el-tag v-if="scope.row.state==1">
+              维修
+            </el-tag>
+            <el-tag v-if="scope.row.state==2">
+              已修复
+            </el-tag>
+            <el-tag v-if="scope.row.state==3">
+              报废
+            </el-tag>
+            <el-tag v-if="scope.row.state==4">
+              更换
+            </el-tag>
+            <el-tag v-if="scope.row.state==5">
+              安装
+            </el-tag>
+            <el-tag v-if="scope.row.state==6">
+              解绑
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="300">
+          <template slot-scope="scope">
+            <el-button :type="buttontype(scope)" size="small" @click="repaireds(scope,2)">已修复</el-button>
             <el-button :type="buttontype(scope)" size="small" @click="repaired(scope,3)">报废</el-button>
+            <el-tooltip placement="top-start">
+              <div slot="content">
+                维修记录xxxxxxxxxxxx<br> 维修记录xxxxxxxxxxxx
+                <br> 维修记录xxxxxxxxxxxx
+                <br> 维修记录xxxxxxxxxxxx
+              </div>
+              <el-button size="small"> 维修信息</el-button>
+            </el-tooltip>
+            <el-dialog width="30%" title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+              <label>备注：</label>
+              <el-input v-model="tableQuery.reason"></el-input>
+              <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="primarys(scope,2)">确 定</el-button>
+                <el-button @click="addDialog = false">取 消</el-button>
+              </span>
+            </el-dialog>
           </template>
         </el-table-column>
       </el-table>
@@ -57,25 +89,30 @@
         </el-pagination>
       </div>
     </el-card>
+
   </div>
 </template>
 <script>
 /* eslint-disable */
 import selectRepairstate from "@/components/select-repairstate.vue";
 import repair_add from "./add.vue";
-import { getDeviceRepairList, updateDeviceRepair } from "@/api/index.js";
+import { getDeviceRepairList, addDeviceRepair } from "@/api/index.js";
 export default {
   created() {
     this.getListTable();
   },
   data() {
     return {
+      addKey: 0,
+      parent_id: "",
+      addDialog: false,
       isCollapse: false,
       tableQuery: {
         start_back_time: "",
         end_back_time: "",
         back_time: "",
         logistics: "",
+        reason: "",
         state: "",
         size: 10,
         page: 1
@@ -127,7 +164,7 @@ export default {
         if (state == 3) {
           this.$confirm("确认报废？").then(() => {
             scope.row.state = state;
-            updateDeviceRepair(scope.row).then(res => {
+            addDeviceRepair(scope.row).then(res => {
               if (res.data.code == 0) {
                 this.$message.success(res.data.msg);
                 scope.row.state = state;
@@ -138,20 +175,24 @@ export default {
           });
         }
       }
-
-      if (scope.row.state != 3) {
-        if (state == 2) {
+    },
+    repaireds(scope) {
+      this.addKey++;
+      this.addDialog = true;
+      this.parent_id = scope.row.device_no;
+    },
+    primarys(scope, state) {
+      scope.row.reason = this.tableQuery.reason;
+      scope.row.state = state;
+      addDeviceRepair(scope.row).then(res => {
+        if (res.data.code == 0) {
+          this.$message.success(res.data.msg);
           scope.row.state = state;
-          updateDeviceRepair(scope.row).then(res => {
-            if (res.data.code == 0) {
-              this.$message.success(res.data.msg);
-              scope.row.state = state;
-            } else {
-              this.$message.error(res.data.msg);
-            }
-          });
+          this.addDialog = false;
+        } else {
+          this.$message.error(res.data.msg);
         }
-      }
+      });
     },
     buttontype(scope) {
       if (scope.row.state == 3) {

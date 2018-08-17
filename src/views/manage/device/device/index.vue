@@ -54,9 +54,6 @@
         <el-button type="primary" size="small" @click="addFrom">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
-        <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-          <add-device :parent_id="parent_id" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-device>
-        </el-dialog>
         <router-link :to="{name:'device-binding'}" style="margin-left: 15px;">
           <el-button type="primary" size="small">
             <i class="el-icon-upload el-icon--right"></i> 设备绑定管理
@@ -98,21 +95,23 @@
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
-
             <el-button size="small" :type="buttontype(scope)" @click="repair_addFrom(scope)">
               <i class="el-icon-upload el-icon--right"></i>设备维修</el-button>
             <el-button size="small" @click="delRow(scope)" icon="el-icon-delete">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="编辑 " :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
-        <update-device :device_id="updateId " @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-device>
-      </el-dialog>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
         </el-pagination>
       </div>
     </el-card>
+    <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <add-device :parent_id="parent_id" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-device>
+    </el-dialog>
+    <el-dialog title="编辑 " :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+      <update-device :device_id="updateId " @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-device>
+    </el-dialog>
   </div>
 </template>
 <script>
