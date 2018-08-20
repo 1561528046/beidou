@@ -123,6 +123,7 @@ export default {
         .then(() => {
           delProduct({ package_id: scope.row.package_id }).then(res => {
             if (res.data.code == 0) {
+              this.pro++;
               this.$message.success(res.data.msg);
               this.getTable();
             } else {

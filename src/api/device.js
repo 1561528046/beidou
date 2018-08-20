@@ -77,7 +77,7 @@ export const getDeviceRepairAll = query => {
   });
 };
 export const getDeviceRepairList = query => {
-  return ajax.get("/device_operate_log/GetListByPage", {
+  return ajax.get("/device/GetRepairListByPage", {
     params: query
   });
 };
@@ -99,6 +99,11 @@ export const updateDeviceRepair = query => {
 export const delDeviceRepair = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/device_repair/Delete", queryQS, {
+    params: query
+  });
+};
+export const getOperateLogList = query => {
+  return ajax.get("/device/GetDeviceOperateLog", {
     params: query
   });
 };
