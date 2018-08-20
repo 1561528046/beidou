@@ -266,6 +266,9 @@ export default {
         selectDevice.props.num = scope.row.device_id;
         var vNode = this.$createElement(repair_add, {
           key: this.addKey++,
+          props: {
+            device_id: scope.row.device_id
+          },
           on: {
             success: () => {
               this.getTable();

@@ -23,11 +23,15 @@ export default {
       if (this.list.length == 0) {
         this.init();
       }
+    },
+    pro: function() {
+      this.init();
     }
   },
   props: {
     value: String,
-    clearable: Boolean
+    clearable: Boolean,
+    pro: Number
   },
   created() {
     this.init();

@@ -235,7 +235,7 @@ export default {
     },
     handleSizeChange(val) {
       this.tableQuery.page = 1;
-      this.tableQuery.limit = val;
+      this.tableQuery.size = val;
       this.getTable();
     },
     handleCurrentChange(val) {

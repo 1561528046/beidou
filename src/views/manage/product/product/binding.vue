@@ -20,7 +20,7 @@
               <i class="el-icon-caret-top" v-if="userFilterOpen"></i>
             </div> -->
           </div>
-          <!-- 渲染用户列表 -->
+          <!-- 渲染产品列表 -->
           <!-- @click="changeUser(user)" :class="{active:user.user_id==currentUser.user_id}" -->
           <ul class=user-list>
             <li v-for="product in productlist" @click="changeUser(product)" :key="product.package_id">{{product.title}}</li>
@@ -85,8 +85,8 @@
 /* eslint-disable */
 import {
   getUserList,
-  getUserSim,
-  getSimAllUnbind,
+  // getUserSim,
+  // getSimAllUnbind,
   addUserSim,
   delUserSim,
   getProductList
@@ -162,6 +162,7 @@ export default {
   },
   props: ["user_type"], //来自router的user_type 根据user_type 区分公司和个人
   methods: {
+    // 分页
     bindSizeChange(val) {
       this.bindTableQuery.page = 1;
       this.bindTableQuery.size = val;
@@ -180,37 +181,41 @@ export default {
       this.unbindTableQuery.page = val;
       this.renderUnbind();
     },
+    // 分页结束
     renderBind() {
-      this.$set(this.$data, "leftList", []);
-      if (this.currentUser.user_id) {
-        var postData = Object.assign({}, this.bindTableQuery);
-        postData.user_id = this.currentUser.user_id;
-        getUserSim(postData).then(res => {
-          this.rightValues = [];
-          if (res.data.code == 0) {
-            var arr = res.data.data.map(item => {
-              item.parent = "left";
-              return item;
-            });
-            this.$set(this.$data, "leftList", arr);
-            this.bindTableQuery.total = res.data.total;
-          } else {
-            this.bindTableQuery.total = 0;
-          }
-        });
-      }
+      this.leftList = [{ sim_no: "12345", iccid: "6789", belong: "河北" }];
+      console.log(this.leftList);
+      // this.$set(this.$data, "leftList", []);
+      // if (this.currentUser.user_id) {
+      //   var postData = Object.assign({}, this.bindTableQuery);
+      //   postData.user_id = this.currentUser.user_id;
+      //   getUserSim(postData).then(res => {
+      //     this.rightValues = [];
+      //     if (res.data.code == 0) {
+      //       var arr = res.data.data.map(item => {
+      //         item.parent = "left";
+      //         return item;
+      //       });
+      //       this.$set(this.$data, "leftList", arr);
+      //       this.bindTableQuery.total = res.data.total;
+      //     } else {
+      //       this.bindTableQuery.total = 0;
+      //     }
+      //   });
+      // }
     },
     renderUnbind() {
-      getSimAllUnbind(this.unbindTableQuery).then(res => {
-        if (res.data.code == 0) {
-          var arr = res.data.data.map(item => {
-            item.parent = "right";
-            return item;
-          });
-          this.$set(this.$data, "rightList", arr);
-          this.unbindTableQuery.total = res.data.total;
-        }
-      });
+      this.rightList = [{ sim_no: "12345", iccid: "6789", belong: "廊坊" }];
+      // getSimAllUnbind(this.unbindTableQuery).then(res => {
+      //   if (res.data.code == 0) {
+      //     var arr = res.data.data.map(item => {
+      //       item.parent = "right";
+      //       return item;
+      //     });
+      //     this.$set(this.$data, "rightList", arr);
+      //     this.unbindTableQuery.total = res.data.total;
+      //   }
+      // });
     },
     //产品列表
     renderProduct() {
@@ -222,6 +227,7 @@ export default {
         }
       });
     },
+    //分页左右箭头
     userPagerPrev() {
       if (isNaN(Number(parseInt(this.userTableQuery.page)))) {
         this.userTableQuery.page = 1;
@@ -240,6 +246,8 @@ export default {
         this.userTableQuery.page = parseInt(this.userTableQuery.page) + 1;
       }
     },
+    //分页左右箭头结束
+    // 左右穿梭箭头
     onleft(items, next) {
       //右到左
       if (!this.currentUser.user_id) {
@@ -297,6 +305,8 @@ export default {
           next(false);
         });
     },
+    // 左右穿梭箭头结束
+    // 列表单独项点击事件
     changeUser(product) {
       this.titles[0] = product.title;
       this.currentUser = product;
@@ -304,7 +314,6 @@ export default {
       this.renderUnbind();
     }
   },
-
   components: { adminTransfer }
 };
 </script>

@@ -38,18 +38,6 @@ export default {
       component: () => import("@/views/manage/device/repair/index.vue")
     },
     {
-      path: "repair-device-add",
-      name: "repair-add",
-      meta: { name: "维修设备管理-添加", hidden: true },
-      component: () => import("@/views/manage/device/repair/add.vue")
-    },
-    {
-      path: "repair-device-update",
-      name: "repair-update",
-      meta: { name: "维修设备管理-编辑", hidden: true },
-      component: () => import("@/views/manage/device/repair/update.vue")
-    },
-    {
       path: "sim",
       name: "sim",
       meta: {
