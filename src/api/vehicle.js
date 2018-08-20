@@ -20,7 +20,7 @@ export const getVheicleList = query => {
     params: query
   });
 };
-export const getVheicle = query => {
+export const getVehicle = query => {
   return ajax.get("/vehicle/GetById", {
     params: query
   });
@@ -39,6 +39,41 @@ export const updateVehicle = query => {
 export const delVehicle = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("vehicle/DeleteVehicle", queryQS, {
+    params: query
+  });
+};
+export const getVehicleBrand = query => {
+  query = Object.assign(
+    {
+      brand_name: ""
+    },
+    query
+  );
+  return ajax.get("/vehicle/GetBrandByField", {
+    params: query
+  });
+};
+export const getVehicleType = query => {
+  query = Object.assign(
+    {
+      brand_name: "",
+      brand_mold: ""
+    },
+    query
+  );
+  return ajax.get("/vehicle/GetMoldByField", {
+    params: query
+  });
+};
+export const getVehicleDetails = query => {
+  query = Object.assign(
+    {
+      brand_name: "",
+      brand_mold: ""
+    },
+    query
+  );
+  return ajax.get("/vehicle/GetMoldExtByField", {
     params: query
   });
 };
