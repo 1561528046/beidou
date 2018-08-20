@@ -338,7 +338,6 @@ import selectVehicleType from "@/components/select-vehicle-type.vue";
 import selectFlueType from "@/components/select-flue-type.vue";
 import selectVtype from "@/components/select-vtype.vue";
 import selectDevice from "@/components/select-device.vue";
-import selectDevice from "@/components/select-device.vue";
 import selectBrand from "./select-brand.vue";
 import selectType from "./select-type.vue";
 
