@@ -23,7 +23,7 @@ export const dict = {
   get_license_color: function(key) {
     return this.license_color[key] || {};
   },
-  fule_type: {
+  flue_type: {
     "1": "柴油",
     "2": "汽油",
     "3": "电",
@@ -31,8 +31,8 @@ export const dict = {
     "5": "液化天然气(LNG)",
     "6": "压缩天然气(CNG)"
   },
-  get_fule_type: function(key) {
-    return this.fule_type[key] || {};
+  get_flue_type: function(key) {
+    return this.flue_type[key] || {};
   },
   device_type: {
     "1": "定位终端",
