@@ -1,12 +1,6 @@
 //user API
-import ajax from "./index.js";
+import ajax from "./ajax.js";
 import qs from "qs";
-export const getVehicleList = query => {
-  return ajax.get("/get_vehicle", {
-    params: query
-  });
-};
-
 //用户管理
 export const getUserAll = query => {
   query = query || {
@@ -142,7 +136,7 @@ export const delRole = query => {
 
 //登陆
 export const loginIn = query => {
-  return ajax.get("/user/Login/", {
+  return ajax.get("/user/Login", {
     params: query
   });
 };

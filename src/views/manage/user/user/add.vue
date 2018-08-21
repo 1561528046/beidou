@@ -9,7 +9,6 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="所属分组" prop="group_id">
-
             <select-group v-model="formData.group_id" :useing="['add','edit','remove']"></select-group>
           </el-form-item>
         </el-col>

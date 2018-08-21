@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <link rel="stylesheet" href="http://at.alicdn.com/t/font_770472_bi7ngs6wf1f.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_770472_cu2jzdb7m4f.css">
     <el-container>
       <el-header style="padding:0;" v-if="!$route.meta.fullscreen">
         <base-nav></base-nav>
@@ -30,10 +30,10 @@ body,
 import baseNav from "@/components/base-nav.vue";
 import baseSlidebar from "@/components/base-slidebar.vue";
 export default {
-  created() {},
   components: {
     baseNav,
     baseSlidebar
-  }
+  },
+  methods: {}
 };
 </script>

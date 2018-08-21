@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    Hello!
+    {{$store.user}} Hello!
   </div>
 </template>
 <script>

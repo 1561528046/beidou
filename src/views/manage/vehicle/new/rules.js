@@ -68,6 +68,7 @@ export const Rules = function(vm) {
       {
         trigger: "change",
         validator: function(rule, value, callback) {
+          value = value.slice(0, 11);
           var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
           if (reg.test(value)) {
             callback();
@@ -79,7 +80,7 @@ export const Rules = function(vm) {
     ],
     type: [{ required: true, message: "必须选择车辆类型" }],
     sim_no: [{ required: true, message: "必须选择安装SIM卡号" }],
-    device_id: [{ required: true, message: "必须选择设备" }],
+    device_no: [{ required: true, message: "必须选择设备" }],
     contract_date: [{ required: true, message: "必须选择服务到期日期" }],
     owner: [
       { required: true, message: "必须输入车主/业户" },

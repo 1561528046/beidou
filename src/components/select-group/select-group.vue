@@ -140,6 +140,7 @@ export default {
     nodeClick(data, node) {
       this.$set(this.$data, "currentNodeData", data);
       this.visible = false;
+      this.$emit("input", this.currentNodeData.group_id);
       this.$emit("update:group_id", this.currentNodeData.group_id);
       this.$emit("update:parentid", node.parent.data.group_id || 0);
     },

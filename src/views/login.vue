@@ -15,73 +15,66 @@
   </div>
 </template>
 <style scoped lang="less">
-  .login-form {
-    margin: 0 auto;
-    margin-top: 10%;
-    width: 25%;
-  }
+.login-form {
+  margin: 0 auto;
+  margin-top: 10%;
+  width: 25%;
+}
 </style>
 <script>
-  import { rules } from "@/utils/rules.js";
-  import { loginIn } from "@/api/index.js";
-  export default {
-    data() {
-      return {
-
-        formData: {
-          user_name: "",
-          pass_word: "",
-
-        },
-        rules: {
-          ...rules,
-          user_name: [{ required: true, message: "用户名不能为空", trigger: "change" }],
-          pass_word: [
-            {
-              required: true,
-              min: 3,
-              max: 20,
-              message: "密码长度在 3 到 20 个字符",
-              trigger: "change",
-              validator: this.validatePassword
-            }
-          ]
-        }
-      };
-    },
-
-    methods: {
-      formSubmit() {
-        this.$refs.baseForm.validate((isVaildate, errorItem) => {
-          if (isVaildate) {
-            var postData = Object.assign({}, this.formData);
-            postData.pass_word = postData.pass_word.MD5(16);
-            loginIn(postData)
-              .then(res => {
-                if (res.data.code == 0) {
-                  this.$message.success(res.data.msg);
-                  localStorage.ACCOUTNtoken = res.data.token;
-                } else {
-                  this.$message.error(res.data.msg);
-                }
-              })
-              .catch(() => {
-                this.$message.error("接口错误");
-              });
-          } else {
-            var errormsg = "";
-            for (var key in errorItem) {
-              errormsg += errorItem[key][0].message + "<br>";
-            }
-            this.$notify.error({
-              title: '错误',
-              dangerouslyUseHTMLString: true,
-              message: errormsg
-            });
-
+import { rules } from "@/utils/rules.js";
+import { loginIn } from "@/api/index.js";
+export default {
+  data() {
+    return {
+      formData: {
+        user_name: "",
+        pass_word: ""
+      },
+      rules: {
+        ...rules,
+        user_name: [
+          { required: true, message: "用户名不能为空", trigger: "change" }
+        ],
+        pass_word: [
+          {
+            required: true,
+            min: 3,
+            max: 20,
+            message: "密码长度在 3 到 20 个字符",
+            trigger: "change",
+            validator: this.validatePassword
           }
-        })
+        ]
       }
+    };
+  },
+
+  methods: {
+    formSubmit() {
+      this.$refs.baseForm.validate(isVaildate => {
+        if (isVaildate) {
+          var postData = Object.assign({}, this.formData);
+          postData.pass_word = postData.pass_word.MD5(16);
+          loginIn(postData)
+            .then(res => {
+              if (res.data.code == 0) {
+                this.$message.success("登陆成功！");
+                this.$store.commit(
+                  "loginIn",
+                  Object.assign({ token: res.data.token }, res.data.data[0])
+                );
+                this.$router.replace("/");
+              } else {
+                this.$message.error(res.data.msg);
+              }
+            })
+            .catch(() => {
+              this.$message.error("接口错误");
+            });
+        }
+      });
     }
-  };
+  }
+};
 </script>

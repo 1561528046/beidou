@@ -1,7 +1,14 @@
-import ajax from "./index.js";
+import ajax from "./ajax.js";
 import qs from "qs";
 //设备管理
 export const getDeviceAll = query => {
+  query = Object.assign(
+    {
+      state: "",
+      device_no: ""
+    },
+    query
+  );
   return ajax.get("/device/GetAll", {
     params: query
   });

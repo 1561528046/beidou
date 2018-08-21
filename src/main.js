@@ -5,16 +5,11 @@ import "normalize.css";
 import "element-ui/lib/theme-chalk/index.css";
 import "@/style/index.less";
 import router from "./router/index.js";
-import axios from "axios";
+import ajax from "@/api/ajax.js";
 import "@/utils/md5.js";
 import store from "./store";
 import { dict, utils } from "./utils/base";
-//创建axios实例，注入mock拦截
-var axios1 = axios.create({
-  baseURL: "http://192.168.88.100:725/api/",
-  timeout: 2000
-});
-Vue.prototype.$ajax = axios1;
+Vue.prototype.$ajax = ajax;
 Vue.prototype.$dict = dict;
 Vue.prototype.$utils = utils;
 window.routerDict = {};
