@@ -4,9 +4,13 @@ import user from "@/router/user.js";
 import vehicle from "@/router/vehicle.js";
 import device from "@/router/device.js";
 import product from "@/router/product.js";
+import store from "@/store";
+import NProgress from "nprogress"; // progress bar
+import "nprogress/nprogress.css";
+NProgress.configure({ showSpinner: false }); // 隐藏右上loading图标
 Vue.use(Router);
 
-export default new Router({
+var router = new Router({
   routes: [
     {
       path: "/",
@@ -65,7 +69,25 @@ export default new Router({
       path: "/404",
       meta: { hidden: true },
       component: () => import("@/views/404.vue")
-    }
-    // { path: "*", redirect: "/404", meta: { hidden: true, fullscreen: true } }
+    },
+    { path: "*", redirect: "/404", meta: { hidden: true, fullscreen: true } }
   ]
 });
+router.beforeEach((to, from, next) => {
+  if (store.getters.isLogin) {
+    if (to.name == "login") {
+      next({ path: "/" });
+    }
+    next();
+  } else {
+    if (to.name != "login") {
+      next({ name: "login" });
+    }
+    next();
+  }
+  NProgress.inc();
+});
+router.afterEach(() => {
+  NProgress.done(); // finish progress bar
+});
+export default router;

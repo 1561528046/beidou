@@ -1,6 +1,6 @@
 //车辆API
 //vehicle API
-import ajax from "./index.js";
+import ajax from "./ajax.js";
 import qs from "qs";
 export const getVheicleAll = query => {
   return ajax.get("/vehicle/GetAll", {
@@ -8,15 +8,17 @@ export const getVheicleAll = query => {
   });
 };
 
-export const getVheicleList = query => {
+export const getVehicleList = query => {
   query = Object.assign(
     {
       size: 10,
-      page: 1
+      page: 1,
+      user_id: "",
+      state: ""
     },
     query
   );
-  return ajax.get("/vehicle/GetListByPage", {
+  return ajax.get("/vehicle/GetVehicleByPage", {
     params: query
   });
 };

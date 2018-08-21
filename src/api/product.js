@@ -1,4 +1,4 @@
-import ajax from "./index.js";
+import ajax from "./ajax.js";
 // eslint-disable-next-line
 import qs from "qs";
 //产品管理

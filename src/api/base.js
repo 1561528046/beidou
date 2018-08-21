@@ -1,5 +1,5 @@
 //通用API
-import ajax from "./index.js";
+import ajax from "./ajax.js";
 // eslint-disable-next-line
 import qs from "qs";
 //根据parent_id 获取地区

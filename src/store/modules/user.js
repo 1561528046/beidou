@@ -1,29 +1,34 @@
-const storeData = {
-  token: "", //token
-  rights: [], //用户权限范围
-  loginTime: "" //登陆日期 判断用户失效
-};
-localStorage.BEIDOU = JSON.stringify(storeData);
-function getToken() {
-  if (localStorage.BEIDOU) {
-    // var userData = JSON.stringify(localStorage.BEIDOU);
-    // console.log(JSON.parse(userData));
-  }
+var userData = {};
+if (localStorage.BEIDOU) {
+  userData = JSON.parse(localStorage.BEIDOU);
+} else {
+  // location.href = "/#/login";
 }
 const user = {
   state: {
-    ...storeData,
-    token: getToken()
+    token: userData.token || "", //token
+    rights: userData.rights || [], //用户权限范围
+    loginTime: "", //登陆日期 判断用户失效
+    user_id: userData.user_id || "", //用户ID
+    real_name: userData.real_name || "" //昵称
   },
   mutations: {
-    SET_TOKEN: (state, token) => {
-      state.token = token;
+    loginIn(state, userInfo) {
+      state.real_name = userInfo.real_name;
+      state.rights = userInfo.rights.split(",");
+      state.user_id = userInfo.user_id;
+      state.token = userInfo.token;
+      localStorage.setItem("BEIDOU", JSON.stringify(state));
     },
-    loginOut() {}
+    loginOut() {
+      localStorage.removeItem("BEIDOU");
+    }
   },
-  actions: {
-    // 登出
-    LogOut() {}
+  actions: {},
+  getters: {
+    isLogin: state => {
+      return !!state.token;
+    }
   }
 };
 
