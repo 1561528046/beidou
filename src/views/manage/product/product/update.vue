@@ -1,5 +1,5 @@
 <template>
-  <div style="text-align: center; width:97%;" class="admin-table-container">
+  <div class="admin-table-container">
     <el-form status-icon :rules="rules" :model="formData" ref="baseForm">
       <!-- <el-row :gutter="30 ">
             </el-row> -->
@@ -10,12 +10,12 @@
               <label style="font-size:16px; float:left;">产品名称：</label>
               <label style="width:130px;float:left; text-align:center; display:inline-block;" v-if="!this.title_type">{{formData.title}}</label>
               <el-input v-if="this.title_type" v-on:blur="titleblur()" v-model="formData.title" style="float:left; width:130px;" size="mini"></el-input>
-              <el-button type="primary" icon="el-icon-edit" @click="titletype()" circle style="padding:5px;margin-left: -44px;"></el-button>
+              <el-button type="primary" icon="el-icon-edit" @click="titletype()" circle style="padding:5px;"></el-button>
             </div>
           </template>
         </el-form-item>
       </el-card>
-      <el-card shadow="hover" v-if="!formData.detail[0]==''" style="margin-bottom:20px;">
+      <el-card shadow="hover" style="margin-bottom:20px;">
         <!-- 授权车辆 -->
         <div style=" text-align: left; width: 100%;padding-top: 4px; margin-bottom: 4px;" class="clearfix" @click="Collapse">
           <i v-show="!local" class="el-icon-arrow-right" style="float:right;"></i>
@@ -26,7 +26,7 @@
           <el-button type="primary" size="mini" @click="addFrom(1)" style="margin-left:20px;">添加</el-button>
         </div>
         <el-form-item>
-          <el-table v-show="local" size="mini" :data="formData.detail" class="admin-table-list" style="width: 100%; margin-top: 20px">
+          <el-table v-show="local" size="mini" :data="formData.detail" class="admin-table-list" style="width: 100%; margin-top: 20px" v-loading="tableLoading">
             <el-table-column prop="car_type" label="车辆类型">
               <template slot-scope="scope">
                 <label v-if="scope.row.car_type==1">物流运输(普货)</label>
@@ -53,9 +53,9 @@
             </el-table-column>
             <el-table-column prop="discount_price" label="优惠金额(元)">
               <template slot-scope="scope">
-                <label v-if="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
-                <el-input v-if="scope.row.isEditManty" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
-                <el-button v-if="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                <label v-show="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
+                <el-button v-show="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                <el-input v-show="scope.row.isEditManty" :ref="'editInput'+scope.row.detail_id" @blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
               </template>
             </el-table-column>
             <el-table-column prop="pay_type" label="付费方式">
@@ -79,7 +79,7 @@
           </el-table>
         </el-form-item>
       </el-card>
-      <el-card shadow="hover" v-if="!formData.company[0]==''" style="margin-bottom:20px;">
+      <el-card shadow="hover" style="margin-bottom:20px;">
         <!-- 授权厂商 -->
         <div style=" text-align: left; width: 100%;padding-top: 4px;margin-bottom: 4px;" class="clearfix" @click="Collapse2">
           <i v-show="!local2" class="el-icon-arrow-right" style="float:right;"></i>
@@ -131,7 +131,7 @@
           </el-table>
         </el-form-item>
       </el-card>
-      <el-card shadow="hover" v-if="!formData.sim[0]==''" style="margin-bottom:20px;">
+      <el-card shadow="hover" style="margin-bottom:20px;">
         <!-- SIM卡 -->
         <div s style=" text-align: left; width: 100%;padding-top: 4px; margin-bottom: 4px;" class="clearfix" @click="Collapse3">
           <i v-show="!local3" class="el-icon-arrow-right" style="float:right;"></i>
@@ -179,7 +179,7 @@
           </el-table>
         </el-form-item>
       </el-card>
-      <el-card shadow="hover" v-if="!formData.sms[0]==''" style="margin-bottom:52px;">
+      <el-card shadow="hover" style="margin-bottom:52px;">
         <!-- 短信 -->
         <div style=" text-align: left; width: 100%;padding-top: 4px; margin-bottom: 4px;" class="clearfix" @click="Collapse4">
           <i v-show="!local4" class="el-icon-arrow-right" style="float:right;"></i>
@@ -198,7 +198,7 @@
             <el-table-column prop="discount_price" label="优惠金额(元)">
               <template slot-scope="scope">
                 <label v-if="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
-                <el-input v-if="scope.row.isEditManty" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
+                <el-input v-if="scope.row.isEditManty" autofocus="scope.row.isfocus" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
                 <el-button v-if="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
               </template>
             </el-table-column>
@@ -258,6 +258,7 @@ export default {
   components: { selectCompany, updateProduct },
   data() {
     return {
+      tableLoading: false,
       local: false,
       local2: false,
       local3: false,
@@ -301,7 +302,10 @@ export default {
     },
     // 金额修改
     manty(scope) {
-      scope.row.isEditManty = true;
+      this.$set(scope.row, "isEditManty", true);
+      this.$nextTick(() => {
+        this.$refs["editInput" + scope.row.detail_id].focus();
+      });
     },
     //修改产品名称
     titletype() {
@@ -338,8 +342,10 @@ export default {
           this.$emit("error");
         });
     },
-    // 编辑车辆金额
+    // 编辑金额
     changeCount(scope) {
+      // this.$set(scope.row, "isEditManty", false);
+      this.tableLoading = true;
       scope.row.present_price =
         scope.row.original_price - scope.row.discount_price;
       updateProductDetail(scope.row)
@@ -368,7 +374,7 @@ export default {
           this.$emit("error");
         });
     },
-    // 编辑车辆计费
+    // 编辑计费
     changeCou(scope) {
       updateProductDetail(scope.row)
         .then(res => {
@@ -406,32 +412,38 @@ export default {
     },
     // 根据id查询收费项
     detaiN() {
-      getProductDetail({ package_id: this.formData.package_id }).then(res => {
-        if (res.data.code == 0) {
-          this.formData.detail = [];
-          this.formData.company = [];
-          this.formData.sms = [];
-          this.formData.sim = [];
-          for (var i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].detail_type == 1) {
-              // 定位终端
-              this.formData.detail.push(res.data.data[i]);
-            } else if (res.data.data[i].detail_type == 2) {
-              // 视频终端
-              this.formData.detail.push(res.data.data[i]);
-            } else if (res.data.data[i].detail_type == 3) {
-              // 厂商
-              this.formData.company.push(res.data.data[i]);
-            } else if (res.data.data[i].detail_type == 4) {
-              // 短信
-              this.formData.sms.push(res.data.data[i]);
-            } else if (res.data.data[i].detail_type == 5) {
-              // sim卡
-              this.formData.sim.push(res.data.data[i]);
+      this.tableLoading = true;
+      getProductDetail({ package_id: this.formData.package_id })
+        .then(res => {
+          if (res.data.code == 0) {
+            this.formData.detail = [];
+            this.formData.company = [];
+            this.formData.sms = [];
+            this.formData.sim = [];
+            for (var i = 0; i < res.data.data.length; i++) {
+              if (res.data.data[i].detail_type == 1) {
+                // 定位终端
+                this.formData.detail.push(res.data.data[i]);
+              } else if (res.data.data[i].detail_type == 2) {
+                // 视频终端
+                this.formData.detail.push(res.data.data[i]);
+              } else if (res.data.data[i].detail_type == 3) {
+                // 厂商
+                this.formData.company.push(res.data.data[i]);
+              } else if (res.data.data[i].detail_type == 4) {
+                // 短信
+                this.formData.sms.push(res.data.data[i]);
+              } else if (res.data.data[i].detail_type == 5) {
+                // sim卡
+                this.formData.sim.push(res.data.data[i]);
+              }
             }
           }
-        }
-      });
+          this.tableLoading = false;
+        })
+        .catch(() => {
+          this.tableLoading = false;
+        });
     },
     // 添加单一收费项
     addFrom(type) {

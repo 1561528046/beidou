@@ -29,9 +29,9 @@ export default {
       component: () => import("@/views/manage/product/product/binding.vue")
     },
     {
-      path: "user-select",
-      name: "user-select",
-      meta: { name: "用户查询", icon: "iconfont icon-boxplot-fill" },
+      path: "order-select",
+      name: "order-select",
+      meta: { name: "订单查询", icon: "iconfont icon-boxplot-fill" },
       component: () => import("@/views/manage/product/user/index.vue")
     },
     {

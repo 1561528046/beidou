@@ -67,13 +67,6 @@ export const delProduct = query => {
     params: query
   });
 };
-// 查询订单
-export const getOrderList = query => {
-  return ajax.get("/ordermanage/GetOrderListByPage", {
-    params: query
-  });
-};
-
 // 获取产品下的用户
 export const getProductUser = query => {
   return ajax.get("/ordermanage/GetFeesPackageUser", {
@@ -105,5 +98,24 @@ export const delProductUser = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/ordermanage/FeesPackageUntieUser", queryQS, {
     params: { package_id: query.package_id }
+  });
+};
+
+// 查询订单
+export const getOrderList = query => {
+  return ajax.get("/ordermanage/GetOrderListByPage", {
+    params: query
+  });
+};
+export const getUserOrderList = query => {
+  return ajax.get("/ordermanage/UserGetOrderListByPage", {
+    params: query
+  });
+};
+
+// 根据单号查询资料
+export const getEnquiry = query => {
+  return ajax.get("/ordermanage/GetByOrder_No", {
+    params: query
   });
 };

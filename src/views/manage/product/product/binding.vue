@@ -22,8 +22,8 @@
           </div>
           <!-- 渲染产品列表 -->
           <!-- @click="changeUser(user)" :class="{active:user.user_id==currentUser.user_id}" -->
-          <ul class=user-list>
-            <li v-for="product in productlist" @click="changeUser(product)" :key="product.package_id">{{product.title}}</li>
+          <ul class="user-list">
+            <li v-for="product in productlist" :class="{active:product.package_id==currentUser.package_id}" @click="changeUser(product)" :key="product.package_id">{{product.title}}</li>
           </ul>
           <div class="user-pager">
             <el-input placeholder="页码" size="small" v-model="userTableQuery.page">
@@ -472,8 +472,12 @@ export default {
     padding: 0 15px;
   }
   li.active {
-    color: #1890ff;
-    background: #fff;
+    color: #fff;
+    background: #1890ff !important;
+  }
+  li:hover {
+    background-color: #f5f7fa;
+    cursor: pointer;
   }
 }
 </style>

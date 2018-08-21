@@ -2,7 +2,7 @@
   <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
     <!-- 设备信息 -->
     <el-form-item label="终端厂商" prop="company_id">
-      <company-select v-model="formData.company_id" style="width: 100%;"></company-select>
+      <company-select v-model="formData.company_id" style="width: 360px;"></company-select>
       <!-- <el-input v-model="formData.company_name"></el-input> -->
     </el-form-item>
     <el-form-item v-if="formData.company_id">

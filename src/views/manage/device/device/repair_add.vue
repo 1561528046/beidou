@@ -18,6 +18,11 @@
           <el-input v-model="formData.logistics "></el-input>
         </el-form-item>
       </el-col>
+      <el-col :span="12">
+        <el-form-item prop="last_logistics_no" label=" 物流单号 ">
+          <el-input v-model="formData.last_logistics_no "></el-input>
+        </el-form-item>
+      </el-col>
     </el-row>
     <el-form-item style="text-align:center; ">
       <el-button type="primary " size="large " @click="formSubmit ">提交</el-button>
@@ -36,6 +41,7 @@ export default {
         device_id: this.$props.device_id,
         back_time: "",
         logistics: "",
+        last_logistics_no: "",
         operate_type: "3"
       },
       rules: {
@@ -48,6 +54,9 @@ export default {
         ],
         logistics: [
           { required: true, message: "请填写物流信息", trigger: "change" }
+        ],
+        last_logistics_no: [
+          { required: true, message: "请填写物流单号", trigger: "change" }
         ]
       },
       simss: [],
@@ -100,6 +109,7 @@ export default {
     formSubmit() {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
+          console.log(this.formData);
           var postData = Object.assign({}, this.formData);
           updateDeviceRepair(postData)
             .then(res => {

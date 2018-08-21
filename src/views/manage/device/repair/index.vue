@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="维修状态">
-              <el-select v-model="tableQuery.operate_type" style="width:100%;">
+              <el-select v-model="tableQuery.operate_type" style="width:100%;" :clearable="true">
                 <el-option label="维修中" value="3">维修中</el-option>
                 <el-option label="已修复" value="4">已修复</el-option>
                 <el-option label="报废" value="5">报废</el-option>
@@ -27,6 +27,11 @@
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="物流信息">
               <el-input v-model="tableQuery.logistics"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item label="物流单号">
+              <el-input v-model="tableQuery.logistics_no"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -42,10 +47,11 @@
     <el-card shadow="always">
       <!-- v-loading="tableLoading" 加载动画 -->
       <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="time" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"> </el-table-column>
+        <el-table-column prop="last_backtime" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.last_backtime)}"> </el-table-column>
         <el-table-column prop="device_no" label="终端ID" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="last_reason" label="维修原因" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="last_logistics" label="物流信息" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="last_logistics_no" label="物流单号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="state" label="维修状态" :formatter="(row)=>{return this.$dict.get_repair_state(row.state)}">
           <template slot-scope="scope">
             <el-tag type="success" v-if="scope.row.state==1">
@@ -61,11 +67,11 @@
         </el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
-            <el-button :type="button_type(scope)" size="small" @click="repaired(scope,4)" :disabled="buttontype(scope)">已修复</el-button>
-            <el-button :type="button_type(scope)" size="small" @click="scrap(scope,5)" :disabled="buttontype(scope)">报废</el-button>
+            <el-button :type="repaired_button_type(scope)" size="small" @click="repaired(scope,4)" :disabled="repaired_buttontype(scope)">已修复</el-button>
+            <el-button :type="scrap_button_type(scope)" size="small" @click="scrap(scope,5)" :disabled="scrap_buttontype(scope)">报废</el-button>
             <el-popover placement="left-end" width="450" trigger="click">
               <el-table :data="gridData">
-                <el-table-column width="150" label="时间" property="time" :formatter="formatChildTime"></el-table-column>
+                <el-table-column width="150" label="时间" property="back_time" :formatter="formatChildTime"></el-table-column>
                 <el-table-column width="150" label="状态" property="state">
                   <template slot-scope="scope">
                     <el-tag type="danger" v-if="scope.row.state==3">
@@ -79,19 +85,10 @@
                     </el-tag>
                   </template>
                 </el-table-column>
-                <!-- :formatter="formatChildReason" -->
                 <el-table-column width="150" label="备注" property="reason"></el-table-column>
               </el-table>
               <el-button style="margin-left:10px;" size="small" slot="reference" @click="OperateLogList(scope)">维修记录</el-button>
             </el-popover>
-            <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-              <label>备注：</label>
-              <el-input v-model="tableQuery.reason"></el-input>
-              <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="FixedRepair(scope,4)">确 定</el-button>
-                <el-button @click="addDialog = false">取 消</el-button>
-              </span>
-            </el-dialog>
           </template>
         </el-table-column>
       </el-table>
@@ -101,6 +98,22 @@
       </div>
     </el-card>
 
+    <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <label>备注：</label>
+      <el-input v-model="tablegrid.remark"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="FixedRepair()">确 定</el-button>
+        <el-button @click="addDialog = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog width="30%" title="" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <label>备注：</label>
+      <el-input v-model="tablegrid.remark"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="FixedScrap()">确 定</el-button>
+        <el-button @click="delDialog = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -122,6 +135,7 @@ export default {
       addKey: 0,
       parent_id: "",
       addDialog: false,
+      delDialog: false,
       isCollapse: false,
       tableLoading: true,
       tableQuery: {
@@ -130,10 +144,19 @@ export default {
         end_back_time: "",
         device_no: "",
         device_id: "",
-        reason: "",
+        remark: "",
+        back_time: "",
         logistics: "",
+        logistics_no: "",
         size: 10,
         page: 1
+      },
+      tablegrid: {
+        device_id: "",
+        operate_type: "",
+        remark: "",
+        back_time: "",
+        logistics: ""
       },
       tableData: {
         total: 0,
@@ -174,17 +197,16 @@ export default {
   },
   methods: {
     formatChildTime(row) {
-      return this.$utils.formatDate(row.time);
+      return this.$utils.formatDate(row.back_time);
     },
     // formatChildReason(row) {
-    //   return this.$utils.baseFormatter(row.reason);
+    //  return this.$utils.baseFormatter(row.reason)
     // },
     // 维修记录
     OperateLogList(scope) {
       getOperateLogList({ device_id: scope.row.device_id }).then(res => {
         if (res.data.code == 0) {
           this.gridData = res.data.data;
-          console.log(this.gridData);
         } else {
           this.$message.error(res.data.msg);
         }
@@ -201,44 +223,65 @@ export default {
     },
     // 报废
     scrap(scope, state) {
-      this.$confirm("确认报废？").then(() => {
-        scope.row.operate_type = state;
-        updateDeviceRepair(scope.row).then(res => {
-          if (res.data.code == 0) {
-            this.$message.success(res.data.msg);
-            this.getListTable();
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        });
-      });
-    },
-    // 已修复
-    repaired(scope) {
       this.addKey++;
-      this.addDialog = true;
+      this.delDialog = true;
       this.parent_id = scope.row.device_no;
+      this.tablegrid.device_id = scope.row.device_id;
+      this.tablegrid.operate_type = state;
+      this.tablegrid.remark = "";
     },
-    // 已修复确认操作
-    FixedRepair(scope, state) {
-      scope.row.operate_type = state;
-      updateDeviceRepair(scope.row).then(res => {
+    // 确认报废
+    FixedScrap() {
+      updateDeviceRepair(this.tablegrid).then(res => {
         if (res.data.code == 0) {
           this.$message.success(res.data.msg);
+          this.delDialog = false;
           this.getListTable();
-          this.addDialog = false;
         } else {
           this.$message.error(res.data.msg);
         }
       });
     },
-    button_type(scope) {
+
+    // 已修复
+    repaired(scope, state) {
+      this.addKey++;
+      this.addDialog = true;
+      this.parent_id = scope.row.device_no;
+      this.tablegrid.device_id = scope.row.device_id;
+      this.tablegrid.operate_type = state;
+    },
+    // 已修复确认操作
+    FixedRepair() {
+      updateDeviceRepair(this.tablegrid).then(res => {
+        if (res.data.code == 0) {
+          this.$message.success(res.data.msg);
+          this.addDialog = false;
+          this.getListTable();
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
+    repaired_button_type(scope) {
+      if (scope.row.state == 4 || scope.row.state == 1) {
+        return "info";
+      }
+      return "primary";
+    },
+    repaired_buttontype(scope) {
+      if (scope.row.state == 4 || scope.row.state == 1) {
+        return true;
+      }
+      return false;
+    },
+    scrap_button_type(scope) {
       if (scope.row.state == 4) {
         return "info";
       }
       return "primary";
     },
-    buttontype(scope) {
+    scrap_buttontype(scope) {
       if (scope.row.state == 4) {
         return true;
       }
@@ -255,7 +298,6 @@ export default {
       getDeviceRepairList(query)
         .then(res => {
           if (res.data.code == 0) {
-            console.log(res.data.data);
             this.$set(this.$data, "tableData", res.data);
           } else {
             this.$set(this.$data, "tableData", []);

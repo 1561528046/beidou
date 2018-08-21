@@ -6,7 +6,8 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="订单日期">
-              <el-input></el-input>
+              <el-date-picker value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -26,22 +27,25 @@
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="车辆类型">
-              <el-input></el-input>
+              <select-industry style="width:100%;"></select-industry>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="终端厂商">
-              <el-input></el-input>
+              <select-company style="width:100%;" :clearable="true"></select-company>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="终端类型">
-              <el-input></el-input>
+              <select-devicetype style="width: 100%;" v-model="tableQuery.device_type"></select-devicetype>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="支付方式">
-              <el-input></el-input>
+              <el-select style="width:100%;" :clearable="true">
+                <el-option label="计费" value="1">计费</el-option>
+                <el-option label="扣费" value="2">扣费</el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
@@ -61,12 +65,6 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <!-- <el-button type="primary" size="small" @click="addFrom">
-          <i class="el-icon-upload el-icon--right"></i> 添加
-        </el-button> -->
-        <!-- <el-button type="primary" size="small">导出
-                    <i class="el-icon-upload el-icon--right"></i>
-                </el-button> -->
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="cdate" label="订单日期" :formatter="(row)=>{return this.$utils.formatDate(row.cdate)}"> </el-table-column>
@@ -83,7 +81,7 @@
           <template slot-scope="scope ">
             <el-button size="small " type="primary " icon="el-icon-success ">确认订单</el-button>
             <el-button size="small " icon="el-icon-error">取消订单</el-button>
-            <el-button size="small " type="primary" icon=" el-icon-document ">查看资料</el-button>
+            <el-button size="small " type="primary" icon=" el-icon-document " @click="Enquiry(scope)">查看资料</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -104,9 +102,17 @@ import {
 } from "@/api/index.js";
 import selectCompanytype from "@/components/select-companytype.vue";
 import selectCompany from "@/components/select-company.vue";
+import selectDevicetype from "@/components/select-devicetype.vue";
+import selectIndustry from "@/components/select-industry.vue";
 // import addProduct from "./add.vue";
 // import updateComponents from "./update.vue";
 export default {
+  components: {
+    selectCompanytype,
+    selectCompany,
+    selectDevicetype,
+    selectIndustry
+  },
   created() {
     this.getTable();
     this.keyupSubmit();
@@ -115,6 +121,15 @@ export default {
     return {
       isCollapse: false,
       tableQuery: {
+        order_no: "",
+        car_no: "",
+        car_type: "",
+        company_id: "",
+        company_name: "",
+        state: "",
+        user_id: "",
+        start_time: "",
+        end_time: "",
         size: 10,
         page: 1
       },
@@ -136,6 +151,9 @@ export default {
     this.restaurants = this.loadAll();
   },
   methods: {
+    Enquiry() {
+      console.log(1);
+    },
     //删除
     delRow(scope) {
       this.$confirm("确认删除？")
@@ -275,7 +293,6 @@ export default {
       this.tableQuery.page = val;
       this.getTable();
     }
-  },
-  components: { selectCompanytype, selectCompany }
+  }
 };
 </script>
