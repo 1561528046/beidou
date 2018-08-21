@@ -73,3 +73,37 @@ export const getOrderList = query => {
     params: query
   });
 };
+
+// 获取产品下的用户
+export const getProductUser = query => {
+  return ajax.get("/ordermanage/GetFeesPackageUser", {
+    params: query
+  });
+};
+// 获取未绑定产品的用户
+export const getProductAllUnbind = query => {
+  query = Object.assign(
+    {
+      page: 1,
+      size: 10
+    },
+    query
+  );
+  return ajax.get("/ordermanage/GetUnboundFeesPackage", {
+    params: query
+  });
+};
+// 批量用户绑定产品
+export const addProductUser = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/ordermanage/FeesPackageBindUser", queryQS, {
+    params: { package_id: query.package_id }
+  });
+};
+// 用户解绑产品
+export const delProductUser = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/ordermanage/FeesPackageUntieUser", queryQS, {
+    params: { package_id: query.package_id }
+  });
+};

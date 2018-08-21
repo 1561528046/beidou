@@ -36,14 +36,14 @@ export default {
         device_id: this.$props.device_id,
         back_time: "",
         logistics: "",
-        operate_type: "1"
+        operate_type: "3"
       },
       rules: {
         ...rules,
-        reason: [
+        remark: [
           { required: true, message: "请填写维修原因", trigger: "change" }
         ],
-        back_start_time: [
+        back_time: [
           { required: true, message: "请填写返厂时间", trigger: "change" }
         ],
         logistics: [
@@ -100,7 +100,6 @@ export default {
     formSubmit() {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
-          console.log(this.formData);
           var postData = Object.assign({}, this.formData);
           updateDeviceRepair(postData)
             .then(res => {

@@ -51,7 +51,8 @@ export const dict = {
   device_state: {
     "1": "未安装",
     "2": "已安装",
-    "3": "维修中"
+    "3": "维修中",
+    "4": "报废"
   },
   get_device_state: function(key) {
     return this.device_state[key] || "--";
@@ -64,10 +65,11 @@ export const dict = {
     return this.save_media[key] || "--";
   },
   repair_state: {
-    "1": "维修",
-    "2": "已修复",
-    "3": "报废",
-    "4": "更换"
+    "1": "安装",
+    "2": "解绑",
+    "3": "维修",
+    "4": "修复",
+    "5": "报废"
   },
   get_repair_state: function(key) {
     return this.repair_state[key] || "--";
