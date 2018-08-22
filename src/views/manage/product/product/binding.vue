@@ -82,7 +82,6 @@
 </template>
 
 <script>
-/* eslint-disable */
 import {
   getUserList,
   // getUserSim,
