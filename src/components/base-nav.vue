@@ -7,8 +7,7 @@
       </div>
     </el-col>
     <el-col :span="8+5" style="text-align:center;">
-      <el-menu mode="horizontal" :default-active="defaultActive" :router="true" background-color="#001529" text-color="rgba(255, 255, 255, 0.65)"
-        active-text-color="#1890ff" style="border-bottom:0;">
+      <el-menu mode="horizontal" :default-active="defaultActive" :router="true" background-color="#001529" text-color="rgba(255, 255, 255, 0.65)" active-text-color="#1890ff" style="border-bottom:0;">
         <template v-for="route in routes">
           <!-- 只显示一级栏目 -->
           <!-- <el-submenu :index="route.path" v-if="route.children" :key="route.name">
@@ -28,7 +27,7 @@
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <router-link :to="{name:'login'}">退出</router-link>
+              <a @click="loginOut"> 退出</a>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -39,18 +38,25 @@
 </template>
 
 <script>
-  export default {
-    computed: {
-      defaultActive() {
-        if (this.$route.matched.length) {
-          return this.$route.matched[0].path || "/";
-        } else {
-          return "";
-        }
-      },
-      routes() {
-        return this.$router.options.routes;
+export default {
+  computed: {
+    defaultActive() {
+      if (this.$route.matched.length) {
+        return this.$route.matched[0].path || "/";
+      } else {
+        return "";
       }
+    },
+    routes() {
+      return this.$router.options.routes;
     }
-  };
+  },
+  methods: {
+    loginOut() {
+      this.$store.dispatch("loginOut").then(() => {
+        this.$router.replace({ name: "login" });
+      });
+    }
+  }
+};
 </script>

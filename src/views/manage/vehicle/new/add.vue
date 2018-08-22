@@ -115,8 +115,8 @@
         </div>
         <el-row :gutter="30">
           <el-col :span="24">
-            <div class="el-tag el-tag--warning" style="display:block;text-align:center;margin-bottom:15px; height:auto;">
-              提示：请正确填写车辆信息。为了不影响车辆审核结果,请填写正确道路运输证号!
+            <div class="el-tag el-tag--warning" style="display:block; padding:5px 15px;margin-bottom:15px; height:auto;">
+              <i class="iconfont icon-info-circle"></i> 提示：请正确填写车辆信息。为了不影响车辆审核结果,请填写正确道路运输证号!
               <br>【核定载质量】与【准牵引总质量】两项至少填一项；
               <a href="/static/全国道路货运公共监管与服务平台数据录入要求.pdf" download style="color:blue;">下载填写要求说明</a>
             </div>
@@ -196,130 +196,152 @@
               <el-input v-model="formData.box_height"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="24">
             <el-form-item label="轴数" prop="axis">
               <el-input-number v-model.number="formData.axis" :step="1" :min="2" :max="20"></el-input-number>
             </el-form-item>
           </el-col>
-
+          <el-col :span="24" style="height:30px; border-bottom:1px dashed #ddd; margin-bottom:30px;"></el-col>
           <el-col :span="24">
-            <el-form-item label="车辆登记证1" prop="register_no1">
-              <input type="file">
+            <div class="el-tag el-tag--warning" style="display:block; padding:5px 15px;margin-bottom:15px; height:auto;">
+              <i class="iconfont icon-info-circle"></i> 提示：所有图片小于10M，jpg、jpeg格式
+              <br>车身照片上传车辆左前方45角度图片
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item prop="register_no1" class="vehicle-upload-img" label-width="0px">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('register_no1',res,file)}" :before-upload="uploadBefore">
+                <img v-if="formData.register_no1 " :src="$dict.BASE_URL+formData.register_no1 " class="avatar ">
+                <i v-else class="el-icon-plus avatar-uploader-icon "></i>
+              </el-upload>
+              <span style="color: #f56c6c;">*</span> 车辆登记证1
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="车辆登记证2" prop="register_no2">
-              <input type="file">
+          <el-col :span="6 ">
+            <el-form-item prop="register_no2" class="vehicle-upload-img" label-width="0px">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('register_no2',res,file)}" :before-upload="uploadBefore">
+                <img v-if="formData.register_no2 " :src="$dict.BASE_URL+formData.register_no2 " class="avatar ">
+                <i v-else class="el-icon-plus avatar-uploader-icon "></i>
+              </el-upload>
+              车辆登记证2
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="车辆合格证/行驶证" prop="driver_no">
-              <input type="file">
+          <el-col :span="6">
+            <el-form-item prop="driver_no" class="vehicle-upload-img" label-width="0px">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('driver_no',res,file)}" :before-upload="uploadBefore">
+                <img v-if="formData.driver_no " :src="$dict.BASE_URL+formData.driver_no " class="avatar ">
+                <i v-else class="el-icon-plus avatar-uploader-icon "></i>
+              </el-upload>
+              <span style="color: #f56c6c;">*</span> 车辆合格证/行驶证
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="车身照片" prop="img">
-              <input type="file">
+          <el-col :span="6 ">
+            <el-form-item prop="img" class="vehicle-upload-img" label-width="0px">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('img',res,file)}" :before-upload="uploadBefore">
+                <img v-if="formData.img " :src="$dict.BASE_URL+formData.img " class="avatar ">
+                <i v-else class="el-icon-plus avatar-uploader-icon "></i>
+              </el-upload>
+              <span style="color: #f56c6c;">*</span> 车身照片
             </el-form-item>
           </el-col>
         </el-row>
       </el-card>
 
       <!-- 终端信息 -->
-      <el-card shadow="hover">
-        <div slot="header" class="clearfix">
+      <el-card shadow="hover ">
+        <div slot="header " class="clearfix ">
           <span>终端信息
           </span>
         </div>
-        <el-row :gutter="30">
-          <el-col :span="8">
-            <el-form-item label="终端ID" prop="device_no">
-              <select-device v-model="formData.device_no" :state="1" :device_id.sync="formData.device_id" :company_name.sync="viewData.company_name"></select-device>
+        <el-row :gutter="30 ">
+          <el-col :span="8 ">
+            <el-form-item label="终端ID " prop="device_no ">
+              <select-device v-model="formData.device_no " :state="1 " :device_id.sync="formData.device_id " :company_name.sync="viewData.company_name "></select-device>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="设备厂商">
+          <el-col :span="8 ">
+            <el-form-item label="设备厂商 ">
               {{viewData.company_name}}
             </el-form-item>
           </el-col>
 
-          <el-col :span="8" style="height:50px;">
+          <el-col :span="8 " style="height:50px; ">
 
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="SIM卡卡号" prop="sim_id">
-              <select-sim :state="1" v-model="formData.sim_id"></select-sim>
+          <el-col :span="8 ">
+            <el-form-item label="SIM卡卡号 " prop="sim_id ">
+              <select-sim :state="1 " v-model="formData.sim_id "></select-sim>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="安装SIM卡号" prop="sim_no">
-              <el-input v-model="formData.sim_no"></el-input>
+          <el-col :span="8 ">
+            <el-form-item label="安装SIM卡号 " prop="sim_no ">
+              <el-input v-model="formData.sim_no "></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-card>
 
       <!-- 其他信息 -->
-      <el-card shadow="hover">
-        <div slot="header" class="clearfix">
+      <el-card shadow="hover ">
+        <div slot="header " class="clearfix ">
           <span>其他信息
           </span>
         </div>
-        <el-row :gutter="30">
-          <el-col :span="8">
-            <el-form-item label="车辆出厂时间" prop="factory_date">
-              <el-input v-model="formData.factory_date"></el-input>
+        <el-row :gutter="30 ">
+          <el-col :span="8 ">
+            <el-form-item label="车辆出厂时间 " prop="factory_date ">
+              <el-input v-model="formData.factory_date "></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="车身颜色" prop="body_color">
-              <el-input v-model="formData.body_color"></el-input>
+          <el-col :span="8 ">
+            <el-form-item label="车身颜色 " prop="body_color ">
+              <el-input v-model="formData.body_color "></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="经营范围" prop="business_scope">
-              <el-input v-model="formData.business_scope"></el-input>
+          <el-col :span="8 ">
+            <el-form-item label="经营范围 " prop="business_scope ">
+              <el-input v-model="formData.business_scope "></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="轮胎数" prop="tyre">
-              <el-input v-model="formData.tyre"></el-input>
+          <el-col :span="8 ">
+            <el-form-item label="轮胎数 " prop="tyre ">
+              <el-input v-model="formData.tyre "></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="轮胎规格" prop="tyre_size">
-              <el-input v-model="formData.tyre_size"></el-input>
+          <el-col :span="8 ">
+            <el-form-item label="轮胎规格 " prop="tyre_size ">
+              <el-input v-model="formData.tyre_size "></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="道路运输经营许可证号" prop="transport_license">
-              <el-input v-model="formData.transport_license"></el-input>
+          <el-col :span="8 ">
+            <el-form-item label="道路运输经营许可证号 " prop="transport_license ">
+              <el-input v-model="formData.transport_license "></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="车辆购置方式" prop="purchase">
-              <el-input v-model="formData.purchase"></el-input>
+          <el-col :span="8 ">
+            <el-form-item label="车辆购置方式 " prop="purchase ">
+              <el-input v-model="formData.purchase "></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="车辆保险到期时间" prop="insurance_date">
-              <el-date-picker v-model="formData.insurance_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyyMMdd">
+          <el-col :span="8 ">
+            <el-form-item label="车辆保险到期时间 " prop="insurance_date ">
+              <el-date-picker v-model="formData.insurance_date " :picker-options="pickerOptions " align="center " type="date " placeholder="选择日期 " style="width:100%; " value-format="yyyyMMdd ">
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="检验有效期至" prop="valid_date">
-              <el-date-picker v-model="formData.valid_date" :picker-options="pickerOptions" align="center" type="date" placeholder="选择日期" style="width:100%;" value-format="yyyyMMdd">
+          <el-col :span="8 ">
+            <el-form-item label="检验有效期至 " prop="valid_date ">
+              <el-date-picker v-model="formData.valid_date " :picker-options="pickerOptions " align="center " type="date " placeholder="选择日期 " style="width:100%; " value-format="yyyyMMdd ">
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="车辆保险种类" prop="insurance_type">
-              <el-checkbox-group v-model="checkedInsuranceTypes">
-                <el-checkbox v-for="(insurance_type,index) in insurance_types" :label="index+1" :key="index+1">{{insurance_type}}</el-checkbox>
+          <el-col :span="24 ">
+            <el-form-item label="车辆保险种类 " prop="insurance_type ">
+              <el-checkbox-group v-model="checkedInsuranceTypes ">
+                <el-checkbox v-for="(insurance_type,index) in insurance_types " :label="index+1 " :key="index+1 ">{{insurance_type}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
-            <el-form-item v-if="checkedInsuranceTypes.indexOf(7)!=-1">
+            <el-form-item v-if="checkedInsuranceTypes.indexOf(7)!=-1 ">
               <el-input></el-input>
             </el-form-item>
 
@@ -327,8 +349,8 @@
 
         </el-row>
       </el-card>
-      <el-form-item style="text-align:center;">
-        <el-button type="primary" @click="formSubmit" size="large">立即创建</el-button>
+      <el-form-item style="text-align:center; ">
+        <el-button type="primary " @click="formSubmit " size="large ">立即创建</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -381,9 +403,13 @@ export default {
         path: ""
       },
       formData: {
-        area: [],
+        area: ["130000", "130100", "130102"],
         //提交的数据
-        sim_id: "1", //Sim Id
+        register_no1: "", //车辆登记证1
+        register_no2: "", //车辆登记证2
+        driver_no: "", //车辆合格证/行驶证
+        img: "", //车身照片
+        sim_id: "1440148331815", //Sim Id
         sim_no: "15930616103", //真实SIM卡号
         device_id: "34", //设备Id
         device_no: "1358641",
@@ -421,10 +447,7 @@ export default {
         transport_license: "", //道路运输经营许可证
         transport_no: "", //道路运输证号
         vtype: "1", //车辆类型
-        register_no1: "", //车辆登记证1
-        register_no2: "", //车辆登记证2
-        driver_no: "", //车辆合格证/行驶证
-        img: "", //车身照片
+
         model: "CA1133PK45L3R5E1", //车辆型号
         engine_no: "123", //发动机号
         engine_type: "123", //发动机类型
@@ -546,6 +569,20 @@ export default {
       this.formData.box_width = "--";
       this.formData.box_length = "--";
     },
+    uploadSuccess(flied, res) {
+      this.formData[flied] = res.data[0].path;
+    },
+    uploadBefore(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 5;
+      if (!isJPG) {
+        this.$message.error("必须上传 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 5MB!");
+      }
+      return isJPG && isLt2M;
+    },
     formSubmit() {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
@@ -594,6 +631,16 @@ export default {
   padding: 20px;
   .el-card {
     margin-bottom: 20px;
+  }
+}
+.vehicle-upload-img {
+  text-align: center;
+  &.is-error .el-upload {
+    border-color: #f56c6c;
+  }
+  .el-form-item__error {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>

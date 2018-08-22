@@ -31,6 +31,7 @@ export const getVehicle = query => {
 export const addVehicle = query => {
   query = qs.stringify(query);
   return ajax.post("http://localhost:10462/api/vehicle/AddVehicle", query);
+  // return ajax.post("/vehicle/AddVehicle", query);
 };
 export const updateVehicle = query => {
   var queryQS = qs.stringify(query);

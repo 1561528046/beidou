@@ -4,7 +4,7 @@ import user from "@/router/user.js";
 import vehicle from "@/router/vehicle.js";
 import device from "@/router/device.js";
 import product from "@/router/product.js";
-// import store from "@/store";
+import store from "@/store";
 import NProgress from "nprogress"; // progress bar
 import "nprogress/nprogress.css";
 NProgress.configure({ showSpinner: false }); // 隐藏右上loading图标
@@ -74,19 +74,19 @@ var router = new Router({
   ]
 });
 router.beforeEach((to, from, next) => {
-  // if (store.getters.isLogin) {
-  //   if (to.name == "login") {
-  //     next({ path: "/" });
-  //   }
-  //   next();
-  // } else {
-  //   if (to.name != "login") {
-  //     next({ name: "login" });
-  //   }
-  //   next();
-  // }
-  next();
   NProgress.inc();
+  if (store.getters.isLogin) {
+    if (to.name == "login") {
+      next({ path: "/" });
+    }
+    next();
+  } else {
+    if (to.name != "login") {
+      next({ name: "login" });
+    }
+    next();
+  }
+  NProgress.done();
 });
 router.afterEach(() => {
   NProgress.done(); // finish progress bar

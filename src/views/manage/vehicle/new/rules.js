@@ -15,52 +15,55 @@ export const Rules = function(vm) {
   };
 
   //传入vm 用于多条件判断
-  this.license = [
-    {
-      required: true,
-      message: "必须填写车牌号",
-      trigger: "change"
-    },
-    {
-      trigger: "change",
-      validator: function(rule, value, callback) {
-        if (value.length >= 8 && !/[\u4e00-\u9fa5]/.test(value[0])) {
-          //如果首位不是中文，走vin的验证
-          if (
-            !/^[-a-zA-Z0-9]+$/.test(value) ||
-            [8, 17, 18].indexOf(value.length) == -1
-          ) {
-            callback(new Error("请输入正确的车辆识别码/车架号"));
+  Object.assign(this, {
+    // img: [{ required: true, message: "车身照片" }],
+    // register_no1: [{ required: true, message: "车辆登记证1" }],
+    // driver_no: [{ required: true, message: "车辆合格证/行驶证" }],
+    license: [
+      {
+        required: true,
+        message: "必须填写车牌号",
+        trigger: "change"
+      },
+      {
+        trigger: "change",
+        validator: function(rule, value, callback) {
+          if (value.length >= 8 && !/[\u4e00-\u9fa5]/.test(value[0])) {
+            //如果首位不是中文，走vin的验证
+            if (
+              !/^[-a-zA-Z0-9]+$/.test(value) ||
+              [8, 17, 18].indexOf(value.length) == -1
+            ) {
+              callback(new Error("请输入正确的车辆识别码/车架号"));
+              return false;
+            }
+            callback();
             return false;
           }
-          callback();
-          return false;
-        }
-        var fule_type = vm.formData.fule_type;
-        var vehicleNo01, vehicleNo02, vehicleNo03;
-        // 如果是电车，那么走新的判断，程超
-        if (fule_type == "3") {
-          vehicleNo01 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{7}$/;
-          vehicleNo02 = /^[\u4e00-\u9fa5]{2}[A-Za-z0-9]{6}$/;
-          vehicleNo03 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{6}[\u4e00-\u9fa5]{1}$/;
-        } else {
-          vehicleNo01 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{6}$/;
-          vehicleNo02 = /^[\u4e00-\u9fa5]{2}[A-Za-z0-9]{5}$/;
-          vehicleNo03 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{5}[\u4e00-\u9fa5]{1}$/;
-        }
-        var result =
-          vehicleNo01.test(value) ||
-          vehicleNo02.test(value) ||
-          vehicleNo03.test(value);
-        if (result) {
-          callback();
-        } else {
-          callback(new Error("车牌号不正确"));
+          var fule_type = vm.formData.fule_type;
+          var vehicleNo01, vehicleNo02, vehicleNo03;
+          // 如果是电车，那么走新的判断，程超
+          if (fule_type == "3") {
+            vehicleNo01 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{7}$/;
+            vehicleNo02 = /^[\u4e00-\u9fa5]{2}[A-Za-z0-9]{6}$/;
+            vehicleNo03 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{6}[\u4e00-\u9fa5]{1}$/;
+          } else {
+            vehicleNo01 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{6}$/;
+            vehicleNo02 = /^[\u4e00-\u9fa5]{2}[A-Za-z0-9]{5}$/;
+            vehicleNo03 = /^[\u4e00-\u9fa5]{1}[A-Za-z0-9]{5}[\u4e00-\u9fa5]{1}$/;
+          }
+          var result =
+            vehicleNo01.test(value) ||
+            vehicleNo02.test(value) ||
+            vehicleNo03.test(value);
+          if (result) {
+            callback();
+          } else {
+            callback(new Error("车牌号不正确"));
+          }
         }
       }
-    }
-  ];
-  Object.assign(this, {
+    ],
     transport_no: [baseRule.num],
     flue_type: [{ required: true, message: "必须选择燃油种类" }],
     sim_id: [
