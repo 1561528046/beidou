@@ -4,7 +4,7 @@
       <!-- <el-row :gutter="30 ">
             </el-row> -->
       <!-- 车辆 -->
-      <el-form-item v-if="formData.detail_type=='1'">
+      <el-form-item v-if="formData.detail_type=='1'||'2'">
         <template slot-scope="scope">
           <label style="float:left;">车辆类型</label>
           <select-industry v-model="formData.car_type" style="width:100%;"></select-industry>
@@ -111,6 +111,7 @@ export default {
       button_type: true,
       formData: {
         package_id: this.$props.parent_id,
+        detail: "",
         detail_name: "",
         detail_type: this.$props.parent_type,
         original_price: "",
@@ -181,7 +182,7 @@ export default {
     },
     //添加收费项
     formSubmit() {
-      if (this.formData.detail_type == 1) {
+      if (this.formData.detail_type == 1 || 2) {
         this.formData.detail_type = this.formData.device_type;
       } else if (this.formData.detail_type == 4) {
         this.formData.detail_name = "短信";

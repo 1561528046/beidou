@@ -1,20 +1,20 @@
 <template>
-    <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
-        <!-- 设备信息 -->
-        <el-row :gutter="30">
-            <el-col :span="24">
-                <el-form-item label="终端厂商名称" prop="company_name">
-                    <el-input v-model="formData.company_name"></el-input>
-                </el-form-item>
-            </el-col>
-        </el-row>
-
-        <el-form-item style="text-align:center;">
-            <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
+  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
+    <!-- 设备信息 -->
+    <el-row :gutter="30">
+      <el-col :span="24">
+        <el-form-item label="终端厂商名称" prop="company_name">
+          <el-input v-model="formData.company_name"></el-input>
         </el-form-item>
+      </el-col>
+    </el-row>
 
-        <!-- <button @click="$router.go(-1)">a</button> -->
-    </el-form>
+    <el-form-item style="text-align:center;">
+      <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
+    </el-form-item>
+
+    <!-- <button @click="$router.go(-1)">a</button> -->
+  </el-form>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
@@ -25,7 +25,7 @@ export default {
     return {
       device_total_turn: true,
       formData: {
-        company_id: this.company_id, //设备厂商id
+        company_id: this.$props.company_id, //设备厂商id
         area: [],
         company_name: "", //设备厂商名称
         company_type: "" //设备厂商类型：1前装厂商，2后装厂商
@@ -54,7 +54,9 @@ export default {
       this.formData.device_total = "";
     }
   },
-  props: ["company_id"],
+  props: {
+    company_id: String
+  },
   created() {
     // 获取信息
     getDeviceCompany({ id: this.formData.company_id }).then(res => {

@@ -94,21 +94,32 @@
         </el-pagination>
       </div>
     </el-card>
+    <el-dialog width="29%" title="添加" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+      <add-sim @success=" ()=> {this.getTable();this.addDialog = false;}" :key="addKey"></add-sim>
+    </el-dialog>
+    <el-dialog width="29%" title="编辑" :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+      <update-sim :sim_no="updateId" @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId=''}" :key="addKey"></update-sim>
+    </el-dialog>
   </div>
 </template>
 <script>
 /* eslint-disable */
 import { getSimList, delSim, getUserAll } from "@/api/index.js";
 import selectUser from "@/components/select-user.vue";
-import addComponents from "./add.vue";
-import updateComponents from "./update.vue";
+import addSim from "./add.vue";
+import updateSim from "./update.vue";
 export default {
+  components: { selectUser, addSim, updateSim },
   created() {
     this.getTable();
     this.keyupSubmit();
   },
   data() {
     return {
+      addDialog: false,
+      updateDialog: false,
+      updateId: "",
+      addKey: 0,
       isCollapse: false,
       dateRange: "",
       tableQuery: {
@@ -193,7 +204,6 @@ export default {
     },
     realNameHandleSelect(item) {
       this.$nextTick(() => {
-        console.log(item);
         this.tableQuery.user_id = item.user_id || "";
       });
     },
@@ -240,59 +250,16 @@ export default {
         })
         .catch(() => {});
     },
+    //添加sim卡
     addFrom() {
-      //添加
-      var vNode = this.$createElement(addComponents, {
-        key: this.addKey++,
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "添加",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
+      this.addKey++;
+      this.addDialog = true;
     },
-    //编辑
+    //编辑sim卡
     updateForm(scope) {
-      var vNode = this.$createElement(updateComponents, {
-        key: this.addKey++,
-        props: {
-          sim_no: scope.row.sim_no
-        },
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "编辑",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
-    },
-    handleSizeChange(val) {
-      this.tableQuery.page = 1;
-      this.tableQuery.size = val;
-      this.getTable();
-    },
-    handleCurrentChange(val) {
-      this.tableQuery.page = val;
-      this.getTable();
+      this.addKey++;
+      this.updateDialog = true;
+      this.updateId = scope.row.sim_no;
     },
     //回车事件
     keyupSubmit() {
@@ -319,9 +286,18 @@ export default {
           this.tableLoading = false;
         })
         .catch(() => {});
+    },
+    // 分页
+    handleSizeChange(val) {
+      this.tableQuery.page = 1;
+      this.tableQuery.size = val;
+      this.getTable();
+    },
+    handleCurrentChange(val) {
+      this.tableQuery.page = val;
+      this.getTable();
     }
-  },
-  components: { selectUser }
+  }
 };
 </script>
 <style>

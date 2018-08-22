@@ -71,7 +71,7 @@
             <el-button :type="scrap_button_type(scope)" size="small" @click="scrap(scope,5)" :disabled="scrap_buttontype(scope)">报废</el-button>
             <el-popover placement="left-end" width="450" trigger="click">
               <el-table :data="gridData">
-                <el-table-column width="150" label="时间" property="back_time" :formatter="formatChildTime"></el-table-column>
+                <el-table-column width="150" label="时间" property="time" :formatter="formatChildTime"></el-table-column>
                 <el-table-column width="150" label="状态" property="state">
                   <template slot-scope="scope">
                     <el-tag type="danger" v-if="scope.row.state==3">
@@ -97,7 +97,6 @@
         </el-pagination>
       </div>
     </el-card>
-
     <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <label>备注：</label>
       <el-input v-model="tablegrid.remark"></el-input>
@@ -156,7 +155,8 @@ export default {
         operate_type: "",
         remark: "",
         back_time: "",
-        logistics: ""
+        logistics: "",
+        last_logistics_no: ""
       },
       tableData: {
         total: 0,
@@ -197,11 +197,8 @@ export default {
   },
   methods: {
     formatChildTime(row) {
-      return this.$utils.formatDate(row.back_time);
+      return this.$utils.formatDate(row.time);
     },
-    // formatChildReason(row) {
-    //  return this.$utils.baseFormatter(row.reason)
-    // },
     // 维修记录
     OperateLogList(scope) {
       getOperateLogList({ device_id: scope.row.device_id }).then(res => {

@@ -112,6 +112,12 @@
     <el-dialog title="编辑 " :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
       <update-device :device_id="updateId " @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-device>
     </el-dialog>
+    <el-dialog title="添加维修设备信息" :visible.sync="repairDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+      <repair-add :device_id="repairId " @success=" ()=> {this.getTable();this.repairDialog = false;this.repairId = '';}" :key="addKey"></repair-add>
+    </el-dialog>
+    <el-dialog width="21%" title="上传" :visible.sync="uploadDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+      <device-upload @success=" ()=> {this.getTable();this.uploadDialog = false;}" :key="addKey"></device-upload>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -120,19 +126,20 @@ import selectUser from "@/components/select-user.vue";
 import selectDevicetype from "@/components/select-devicetype.vue";
 import selectDevice from "@/components/select-device.vue";
 import addDevice from "./add.vue";
-import repair_add from "./repair_add.vue";
+import repairAdd from "./repair_add.vue";
 import updateDevice from "./update.vue";
-import device_upload from "./upload.vue";
+import deviceUpload from "./upload.vue";
 import { getDeviceList, delDevice } from "@/api/index.js";
 export default {
   components: {
-    device_upload,
+    deviceUpload,
     addDevice,
     updateDevice,
     selectCompany,
     selectUser,
     selectDevicetype,
-    selectDevice
+    selectDevice,
+    repairAdd
   },
   created() {
     this.getTable();
@@ -144,6 +151,9 @@ export default {
       parent_id: "",
       updateDialog: false,
       updateId: "",
+      repairDialog: false,
+      repairId: "",
+      uploadDialog: false,
       isCollapse: false,
       dateRange: "",
       tableQuery: {
@@ -211,33 +221,10 @@ export default {
     }
   },
   methods: {
-    // 按钮样式
-    buttontype(scope) {
-      if (scope.row.state == 1) {
-        return "primary";
-      }
-      return "info";
-    },
     //上传
     openUpload() {
-      var vNode = this.$createElement(device_upload, {
-        key: this.addKey++,
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "上传",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
+      this.addKey++;
+      this.uploadDialog = true;
     },
     //删除设备
     delRow(scope) {
@@ -260,40 +247,13 @@ export default {
       this.addDialog = true;
       this.parent_id = scope.row ? scope.row.device_id : 1;
     },
-    //维修设备添加
-    repair_addFrom(scope) {
-      if (scope.row.state == 1) {
-        selectDevice.props.num = scope.row.device_id;
-        var vNode = this.$createElement(repair_add, {
-          key: this.addKey++,
-          props: {
-            device_id: scope.row.device_id
-          },
-          on: {
-            success: () => {
-              this.getTable();
-              this.$msgbox.close();
-            },
-            error: function() {}
-          }
-        });
-        this.$msgbox({
-          showConfirmButton: false, //是否显示确定按钮
-          customClass: "admin-message-form",
-          title: "添加维修设备信息",
-          closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-          closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-          message: vNode
-        });
-      }
-    },
-    //编辑
+    //编辑设备
     updateForm(scope) {
       this.updateDialog = true;
       this.updateId = scope.row.device_id;
       this.addKey++;
     },
-    //获取列表
+    //获取设备列表
     getTable() {
       this.tableLoading = true;
       if (this.tableQuery.real_name == "") {
@@ -311,6 +271,19 @@ export default {
           this.tableLoading = false;
         })
         .catch(() => {});
+    },
+    //维修设备添加
+    repair_addFrom(scope) {
+      this.repairDialog = true;
+      this.repairId = scope.row.device_id;
+      this.addKey++;
+    },
+    // 按钮样式
+    buttontype(scope) {
+      if (scope.row.state == 1) {
+        return "primary";
+      }
+      return "info";
     },
     //回车事件
     keyupdown() {

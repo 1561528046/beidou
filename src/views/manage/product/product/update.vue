@@ -9,7 +9,7 @@
             <div style="width:280px; line-height:33px;">
               <label style="font-size:16px; float:left;">产品名称：</label>
               <label style="width:130px;float:left; text-align:center; display:inline-block;" v-if="!this.title_type">{{formData.title}}</label>
-              <el-input v-if="this.title_type" v-on:blur="titleblur()" v-model="formData.title" style="float:left; width:130px;" size="mini"></el-input>
+              <el-input :ref="'editTitle'" v-if="this.title_type" v-on:blur="titleblur()" v-model="formData.title" style="float:left; width:130px;" size="mini"></el-input>
               <el-button type="primary" icon="el-icon-edit" @click="titletype()" circle style="padding:5px;"></el-button>
             </div>
           </template>
@@ -60,12 +60,12 @@
             </el-table-column>
             <el-table-column prop="pay_type" label="付费方式">
               <template slot-scope="scope">
-                <div style="width:100px;margin:0 auto;" v-if="!scope.row.isEditPayty">
-                  <label v-if="scope.row.pay_type==1">计费</label>
-                  <label v-if="scope.row.pay_type==2">充值</label>
+                <div style="width:80px;" v-show="!scope.row.isEditPayty">
+                  <label v-show="scope.row.pay_type==1">计费</label>
+                  <label v-show="scope.row.pay_type==2">充值</label>
                   <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
                 </div>
-                <select v-if="scope.row.isEditPayty" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
+                <select v-show="scope.row.isEditPayty" :ref="'editSelect'+scope.row.detail_id" @blur="changeCou(scope)" v-model="scope.row.pay_type">
                   <option value="1">计费</option>
                   <option value="2">充值</option>
                 </select>
@@ -105,19 +105,19 @@
             </el-table-column>
             <el-table-column prop="discount_price" label="优惠金额(元)">
               <template slot-scope="scope">
-                <label v-if="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
-                <el-input v-if="scope.row.isEditManty" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
-                <el-button v-if="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                <label v-show="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
+                <el-button v-show="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                <el-input v-show="scope.row.isEditManty" :ref="'editInput'+scope.row.detail_id" @blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
               </template>
             </el-table-column>
             <el-table-column prop="pay_type" label="付费方式">
               <template slot-scope="scope">
-                <div style="width:100px;margin:0 auto;" v-if="!scope.row.isEditPayty">
-                  <label v-if="scope.row.pay_type==1">计费</label>
-                  <label v-if="scope.row.pay_type==2">充值</label>
+                <div style="width:80px;" v-show="!scope.row.isEditPayty">
+                  <label v-show="scope.row.pay_type==1">计费</label>
+                  <label v-show="scope.row.pay_type==2">充值</label>
                   <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
                 </div>
-                <select v-if="scope.row.isEditPayty" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
+                <select v-show="scope.row.isEditPayty" :ref="'editSelect'+scope.row.detail_id" @blur="changeCou(scope)" v-model="scope.row.pay_type">
                   <option value="1">计费</option>
                   <option value="2">充值</option>
                 </select>
@@ -151,19 +151,19 @@
             </el-table-column>
             <el-table-column prop="discount_price" label="优惠金额">
               <template slot-scope="scope">
-                <label v-if="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
-                <el-input v-if="scope.row.isEditManty" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
-                <el-button v-if="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                <label v-show="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
+                <el-button v-show="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                <el-input v-show="scope.row.isEditManty" :ref="'editInput'+scope.row.detail_id" @blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
               </template>
             </el-table-column>
             <el-table-column prop="pay_type" label="付费方式">
               <template slot-scope="scope">
-                <div style="width:100px;margin:0 auto;" v-if="!scope.row.isEditPayty">
-                  <label v-if="scope.row.pay_type==1">计费</label>
-                  <label v-if="scope.row.pay_type==2">充值</label>
+                <div style="width:80px;" v-show="!scope.row.isEditPayty">
+                  <label v-show="scope.row.pay_type==1">计费</label>
+                  <label v-show="scope.row.pay_type==2">充值</label>
                   <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
                 </div>
-                <select v-if="scope.row.isEditPayty" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
+                <select v-show="scope.row.isEditPayty" :ref="'editSelect'+scope.row.detail_id" @blur="changeCou(scope)" v-model="scope.row.pay_type">
                   <option value="1">计费</option>
                   <option value="2">充值</option>
                 </select>
@@ -197,19 +197,19 @@
             </el-table-column>
             <el-table-column prop="discount_price" label="优惠金额(元)">
               <template slot-scope="scope">
-                <label v-if="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
-                <el-input v-if="scope.row.isEditManty" autofocus="scope.row.isfocus" v-on:blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
-                <el-button v-if="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                <label v-show="!scope.row.isEditManty">{{scope.row.discount_price}}</label>
+                <el-button v-show="!scope.row.isEditManty" type="primary" @click="manty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; float-right;"></el-button>
+                <el-input v-show="scope.row.isEditManty" :ref="'editInput'+scope.row.detail_id" @blur="changeCount(scope)" style="width:136px;" size="small" v-model="scope.row.discount_price"></el-input>
               </template>
             </el-table-column>
             <el-table-column prop="pay_type" label="付费方式">
               <template slot-scope="scope">
-                <div style="width:100px;margin:0 auto;" v-if="!scope.row.isEditPayty">
-                  <label v-if="scope.row.pay_type==1">计费</label>
-                  <label v-if="scope.row.pay_type==2">充值</label>
+                <div style="width:80px;" v-show="!scope.row.isEditPayty">
+                  <label v-show="scope.row.pay_type==1">计费</label>
+                  <label v-show="scope.row.pay_type==2">充值</label>
                   <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
                 </div>
-                <select v-if="scope.row.isEditPayty" v-on:blur="changeCou(scope)" v-model="scope.row.pay_type">
+                <select v-show="scope.row.isEditPayty" :ref="'editSelect'+scope.row.detail_id" @blur="changeCou(scope)" v-model="scope.row.pay_type">
                   <option value="1">计费</option>
                   <option value="2">充值</option>
                 </select>
@@ -298,7 +298,10 @@ export default {
   methods: {
     // 计费方式修改
     payty(scope) {
-      scope.row.isEditPayty = true;
+      this.$set(scope.row, "isEditPayty", true);
+      this.$nextTick(() => {
+        this.$refs["editSelect" + scope.row.detail_id].focus();
+      });
     },
     // 金额修改
     manty(scope) {
@@ -309,7 +312,10 @@ export default {
     },
     //修改产品名称
     titletype() {
-      this.title_type = true;
+      this.$set(this.$data, "title_type", true);
+      this.$nextTick(() => {
+        this.$refs["editTitle"].focus();
+      });
     },
     titleblur() {
       this.title_type = false;
@@ -344,7 +350,6 @@ export default {
     },
     // 编辑金额
     changeCount(scope) {
-      // this.$set(scope.row, "isEditManty", false);
       this.tableLoading = true;
       scope.row.present_price =
         scope.row.original_price - scope.row.discount_price;
@@ -376,6 +381,7 @@ export default {
     },
     // 编辑计费
     changeCou(scope) {
+      this.tableLoading = true;
       updateProductDetail(scope.row)
         .then(res => {
           if (res.data.code == 0) {
