@@ -65,11 +65,13 @@ export default {
                   Object.assign({ token: res.data.token }, res.data.data[0])
                 );
                 this.$router.replace("/");
+                location.reload();
               } else {
                 this.$message.error(res.data.msg);
               }
             })
-            .catch(() => {
+            .catch(err => {
+              console.log(err);
               this.$message.error("接口错误");
             });
         }

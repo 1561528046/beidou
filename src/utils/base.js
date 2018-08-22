@@ -1,23 +1,27 @@
 export const dict = {
   //全局字典
+  // BASE_URL: "http://192.168.88.100:725/",
+  // API_URL: "http://192.168.88.100:725/api",
+  BASE_URL: "http://localhost:10462/",
+  API_URL: "http://localhost:10462/api",
   license_color: {
     "1": {
-      backgroundColor: "#005aff",
-      borderColor: "#005aff",
+      backgroundColor: "#006DD9",
+      borderColor: "#0b64bd",
       name: "蓝色",
-      style: "background:#005aff;border:1px solid #005aff;"
+      style: "background:#006DD9;border:1px solid #0b64bd;color:#FFF;"
     },
     "2": {
-      backgroundColor: "#FFBF00",
-      borderColor: "#ffa500",
+      backgroundColor: "#ffbf00",
+      borderColor: "#efb404",
       name: "黄色",
-      style: "background:#FFBF00;border:1px solid #ffa500;"
+      style: "background:#ffbf00;border:1px solid #ffa500;color:#000;"
     },
     "3": {
       backgroundColor: "#18ce65",
       borderColor: "#000",
       name: "绿色",
-      style: "background:#18ce65;border:1px solid #000;"
+      style: "background:#18ce65;border:1px solid #000;color:#FFF; "
     }
   },
   get_license_color: function(key) {

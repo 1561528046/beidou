@@ -6,7 +6,7 @@
       <!-- <el-input v-model="formData.company_name"></el-input> -->
     </el-form-item>
     <el-form-item v-if="formData.company_id">
-      <el-upload action="medium " drag accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel " :http-request="uploadFunc " :show-file-list="false" class="o-el-upload--text">
+      <el-upload action="medium" drag accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel " :http-request="uploadFunc " :show-file-list="false" class="o-el-upload--text">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">只能上传excel文件
           <em>点击上传</em>

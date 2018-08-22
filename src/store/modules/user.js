@@ -1,9 +1,4 @@
-var userData = {};
-if (localStorage.BEIDOU) {
-  userData = JSON.parse(localStorage.BEIDOU);
-} else {
-  // location.href = "/#/login";
-}
+var userData = JSON.parse(localStorage.BEIDOU || "{}");
 const user = {
   state: {
     token: userData.token || "", //token
@@ -20,11 +15,19 @@ const user = {
       state.token = userInfo.token;
       localStorage.setItem("BEIDOU", JSON.stringify(state));
     },
-    loginOut() {
+    clearLoginInfo() {
       localStorage.removeItem("BEIDOU");
     }
   },
-  actions: {},
+  actions: {
+    loginOut(context) {
+      console.log(111);
+      return new Promise(resolve => {
+        context.commit("clearLoginInfo");
+        resolve();
+      });
+    }
+  },
   getters: {
     isLogin: state => {
       return !!state.token;

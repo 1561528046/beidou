@@ -122,6 +122,7 @@ export default {
     return {
       userFilterOpen: false, //用户筛选展开关闭
       userTableQuery: {
+        // user_id: this.$store.state.user.user_id,
         user_type: "",
         real_name: "",
         size: 20,
@@ -140,7 +141,7 @@ export default {
         total: 0
       },
       currentUser: {},
-      titles: ["请选择用户", "未绑定设备"],
+      titles: ["请在左侧选择用户", "未绑定设备"],
       userList: [],
       leftList: [],
       rightList: [],

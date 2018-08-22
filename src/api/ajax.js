@@ -1,26 +1,24 @@
 import axios from "axios";
 import { Message } from "element-ui";
+// eslint-disable-next-line
+import store from "@/store";
+
 //import qs from "qs";
 //获取用户token，如果没有，跳转到登录页面
 // 创建axios实例
 const ajax = axios.create({
   headers: {
     "Content-Type": "application/x-www-form-urlencoded" //请求头
+    // Authorization: store.state.user.token
   },
-  // baseURL: "http://192.168.88.6:5000/mock/11/",
+  // baseURL: "http://localhost:10462/api/",
   baseURL: "http://192.168.88.100:725/api/",
   timeout: 5000 // request timeout
 });
 // 添加请求拦截器
 ajax.interceptors.request.use(
   function(config) {
-    // 在发送请求之前做些什么
-    // Message({
-    //   message: "发送请求",
-    //   type: "success",
-    //   duration: 5 * 1000
-    // });
-
+    // config.headers["Authorization"] = store.state.user.token;
     return config;
   },
   function(error) {
