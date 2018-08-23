@@ -7,7 +7,7 @@ export default {
     {
       path: "gghypt_vehicle",
       name: "gghypt_vehicle",
-      meta: { name: "普货全国联动管理", icon: "iconfont icon-guohui" },
+      meta: { name: "全国联动车辆管理", icon: "iconfont icon-guohui" },
       props: { vehicle_type: 1 }, //根据vehicle_type区分普货和其他类型车辆
       component: () => import("@/views/manage/vehicle/index.vue"),
       children: [
@@ -54,7 +54,7 @@ export default {
     {
       path: "other_vehicle",
       name: "other_vehicle",
-      meta: { name: "其他车辆管理", icon: "iconfont icon-golden-fill" },
+      meta: { name: "自营车辆管理", icon: "iconfont icon-golden-fill" },
       props: { vehicle_type: 2 }, //根据vehicle_type区分普货和其他类型车辆
       component: () => import("@/views/manage/vehicle/index.vue"),
       children: [
@@ -97,6 +97,18 @@ export default {
           component: () => import("@/views/manage/vehicle/new/add.vue")
         }
       ]
+    },
+    {
+      path: "vehicle-repair",
+      name: "vehicle-repair",
+      meta: { name: "维修车辆管理", icon: "iconfont icon-wrench-fill" },
+      component: () => import("@/views/manage/vehicle/index.vue")
+    },
+    {
+      path: "vehicle-pcap",
+      name: "vehicle-pcap",
+      meta: { name: "车辆数据连接", icon: "iconfont icon-swap" },
+      component: () => import("@/views/manage/vehicle/index.vue")
     }
   ]
 };

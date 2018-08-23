@@ -31,7 +31,7 @@
 
           <el-col :span="6" v-show="isCollapse">
             <el-form-item label="业户">
-              <el-input v-model="tableQuery.device_no" placeholder="终端ID"></el-input>
+              <el-input v-model="tableQuery.owner" placeholder="业户"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-show="isCollapse">
@@ -80,7 +80,7 @@
             <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style">{{scope.row.license}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="vin" label="车架号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="vin" label="车架号" :formatter="$utils.baseFormatter" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="device_no" label="终端ID" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="sim_id" label="SIM ID" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="owner" label="业户" :formatter="$utils.baseFormatter"> </el-table-column>

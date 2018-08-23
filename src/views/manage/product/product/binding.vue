@@ -83,7 +83,7 @@
 
 <script>
 import {
-  getUserList,
+  // getUserList,
   // getUserSim,
   // getSimAllUnbind,
   getProductUser,

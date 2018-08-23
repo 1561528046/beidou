@@ -8,8 +8,8 @@ import store from "@/store";
 // 创建axios实例
 const ajax = axios.create({
   headers: {
-    "Content-Type": "application/x-www-form-urlencoded" //请求头
-    // Authorization: store.state.user.token
+    // "Content-Type": "application/x-www-form-urlencoded", //请求头
+    Authorization: store.state.user.token
   },
   // baseURL: "http://localhost:10462/api/",
   baseURL: "http://192.168.88.100:725/api/",
