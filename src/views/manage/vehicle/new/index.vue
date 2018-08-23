@@ -89,7 +89,7 @@
         <el-table-column prop="contract_date" label="到期日期" :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"> </el-table-column>
         <el-table-column label="操作" width="350">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-edit" @click="goEdit(scope)">编辑</el-button>
             <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
             <el-dropdown size="mini" split-button style="margin-left:10px;">
               更多操作
@@ -219,6 +219,12 @@ export default {
     }
   },
   methods: {
+    goEdit(scope) {
+      this.$router.push({
+        name: "gghypt_vehicle_edit",
+        query: { vehicle_id: scope.row.vehicle_id }
+      });
+    },
     handleSizeChange(val) {
       //每页数量切换
       this.tableQuery.page = 1;

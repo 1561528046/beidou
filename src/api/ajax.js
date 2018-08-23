@@ -39,7 +39,6 @@ ajax.interceptors.response.use(
           type: "error"
         });
       }
-      return response;
     }
     if (response.status != 200) {
       Message({
@@ -50,7 +49,11 @@ ajax.interceptors.response.use(
 
       return response;
     }
-    // 对响应数据做点什么
+    if (response.data.code == 3) {
+      store.dispatch("loginOut").then(() => {
+        location.reload();
+      });
+    }
     return response;
   },
   function(error) {

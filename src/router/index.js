@@ -76,8 +76,6 @@ var router = new Router({
 });
 router.beforeEach((to, from, next) => {
   NProgress.inc();
-  store;
-  next();
   if (store.getters.isLogin) {
     if (to.name == "login") {
       next({ path: "/" });
