@@ -7,6 +7,7 @@ import product from "@/router/product.js";
 import report from "@/router/report.js";
 import store from "@/store";
 import NProgress from "nprogress"; // progress bar
+import { Message } from "element-ui";
 import "nprogress/nprogress.css";
 NProgress.configure({ showSpinner: false }); // 隐藏右上loading图标
 Vue.use(Router);
@@ -72,6 +73,8 @@ var router = new Router({
 });
 router.beforeEach((to, from, next) => {
   NProgress.inc();
+  store;
+  next();
   if (store.getters.isLogin) {
     if (to.name == "login") {
       next({ path: "/" });
@@ -80,6 +83,11 @@ router.beforeEach((to, from, next) => {
   } else {
     if (to.name != "login") {
       next({ name: "login" });
+      Message({
+        showClose: true,
+        message: "请重新登录！",
+        type: "error"
+      });
     }
     next();
   }
