@@ -10,7 +10,7 @@ export const getDeviceAll = query => {
     query
   );
 
-  return ajax.get("http://192.168.88.100:10462/api/device/GetAll", {
+  return ajax.get("/device/GetAll", {
     params: query
   });
 };
@@ -24,67 +24,56 @@ export const getDeviceAllUnbind = query => {
     },
     query
   );
-  return ajax.get(
-    "http://192.168.88.100:10462/api/Device/GetUnboundListByPage",
-    {
-      params: query
-    }
-  );
+  return ajax.get("/Device/GetUnboundListByPage", {
+    params: query
+  });
 };
 export const getUserDevice = query => {
-  return ajax.get("http://192.168.88.100:10462/api/device/GetUserDevice", {
+  return ajax.get("/device/GetUserDevice", {
     params: query
   });
 };
 //给用户分配设备
 export const addUserDevice = query => {
   var queryQS = qs.stringify({ device_ids: query.device_ids });
-  return ajax.post(
-    "http://192.168.88.100:10462/api/device/AddUserDevice",
-    queryQS,
-    {
-      params: { user_id: query.user_id }
-    }
-  );
+  return ajax.post("/device/AddUserDevice", queryQS, {
+    params: { user_id: query.user_id }
+  });
 };
 
 //删除用户分配的设备
 export const delUserDevice = query => {
   var queryQS = qs.stringify({ device_ids: query.device_ids });
-  return ajax.post(
-    "http://192.168.88.100:10462/api/device/DeleteUserDevice",
-    queryQS,
-    {
-      params: { user_id: query.user_id }
-    }
-  );
+  return ajax.post("/device/DeleteUserDevice", queryQS, {
+    params: { user_id: query.user_id }
+  });
 };
 
 export const getDeviceList = query => {
-  return ajax.get("http://192.168.88.100:10462/api/device/GetListByPage", {
+  return ajax.get("/device/GetListByPage", {
     params: query
   });
 };
 export const getDevice = query => {
-  return ajax.get("http://192.168.88.100:10462/api/device/GetByID", {
+  return ajax.get("/device/GetByID", {
     params: query
   });
 };
 export const addDevice = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("http://192.168.88.100:10462/api/device/Add", queryQS, {
+  return ajax.post("/device/Add", queryQS, {
     params: query
   });
 };
 export const updateDevice = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("http://192.168.88.100:10462/api/device/Update", queryQS, {
+  return ajax.post("/device/Update", queryQS, {
     params: query
   });
 };
 export const delDevice = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("http://192.168.88.100:10462/api/device/Delete", queryQS, {
+  return ajax.post("/device/Delete", queryQS, {
     params: query
   });
 };

@@ -29,13 +29,13 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="time" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="time" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="time" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
-        <!--  :formatter="(row)=>{return this.$utils.formatDate(row.time)}" -->
-        <el-table-column prop="time" label="时间"> </el-table-column>
+        <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"> </el-table-column>
         <el-table-column prop="time" label="行驶里程" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="time" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="time" label="速度(公里/时)" :formatter="$utils.baseFormatter "> </el-table-column>>
@@ -43,26 +43,34 @@
       <div class="admin-table-pager ">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
         </el-pagination>
+        <select-pager :total="model.total" :size="model.size" :page="model.page" :changge="pageFn"></select-pager>
       </div>
     </el-card>
+
   </div>
 </template>
 <script>
-import {} from "@/api/index.js";
+import { getReport } from "@/api/index.js";
+import selectPager from "@/components/select-pager.vue";
 export default {
-  components: {},
+  components: { selectPager },
   created() {
     this.getTable();
     this.keyupSubmit();
   },
   data() {
     return {
+      model: {
+        total: [], //总页数
+        size: 10, //每页显示条目个数不传默认10
+        page: 1 //当前页码
+      },
       isCollapse: false,
       tableQuery: {
-        beginTime: "",
-        endTime: "",
+        beginTime: "20180822161756",
+        endTime: "20180823101826",
         Time: "",
-        simId: "",
+        simId: "064620623980",
         size: 10,
         page: 1
       },
@@ -110,29 +118,26 @@ export default {
   },
   mounted() {},
   methods: {
-    //查询产品列表
+    pageFn(val) {
+      this.model.page = val;
+    },
+    //查询列表
     getTable() {
       this.tableLoading = true;
-      this.tableData.data = [{ time: "1" }];
-      this.tableLoading = false;
-      // if (this.simee.address) {
-      //   this.tableQuery.company_id = this.simee.address;
-      // }
-      // if (this.tableQuery.company_nameta == "") {
-      //   this.tableQuery.company_id = "";
-      // }
-      // var query = Object.assign({}, this.tableQuery);
-      // getDeviceCompanyList(query)
-      //   .then(res => {
-      //     if (res.data.code == 0) {
-      //       this.$set(this.$data, "tableData", res.data);
-      //     } else {
-      //       this.$set(this.$data, "tableData", []);
-      //       this.$message.error(res.data.msg);
-      //     }
-      //     this.tableLoading = false;
-      //   })
-      //   .catch(() => {});
+      var query = Object.assign({}, this.tableQuery);
+      getReport(query)
+        .then(res => {
+          console.log(res);
+          if (res.data.code == 0) {
+            console.log(res.data.data);
+            this.$set(this.$data, "tableData", res.data);
+          } else {
+            this.$set(this.$data, "tableData", []);
+            this.$message.error(res.data.msg);
+          }
+          this.tableLoading = false;
+        })
+        .catch(() => {});
     },
     //回车事件
     keyupSubmit() {
@@ -153,11 +158,6 @@ export default {
     handleCurrentChange(val) {
       this.tableQuery.page = val;
       this.getTable();
-    },
-    renderReverse(rst) {
-      if (rst.status == 0) {
-        alert(rst.result.formatted_address);
-      } else alert(rst.status + "\n解码出错");
     }
   }
 };

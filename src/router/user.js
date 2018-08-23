@@ -74,7 +74,7 @@ export default {
     {
       path: "role",
       name: "role",
-      meta: { name: "角色管理", icon: "iconfont icon-driver" },
+      meta: { name: "角色管理", icon: "iconfont icon-jiaose" },
       component: () => import("@/views/manage/user/role/index.vue")
     },
     {

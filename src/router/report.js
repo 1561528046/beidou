@@ -7,7 +7,7 @@ export default {
     {
       path: "driving",
       name: "report-driving",
-      meta: { name: "驾驶行为分析", icon: "iconfont icon-boxplot-fill" },
+      meta: { name: "驾驶行为分析", icon: "iconfont icon-jiashi" },
       component: () => import("@/views/manage/report/driving/index.vue"),
       children: [
         {

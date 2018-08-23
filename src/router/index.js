@@ -53,7 +53,10 @@ var router = new Router({
         {
           path: "server-state",
           name: "server-state",
-          meta: { name: "服务器状态", icon: "iconfont icon-sever-fill" }
+          meta: {
+            name: "服务器状态",
+            icon: "iconfont icon-fuwuqi1"
+          }
         }
       ]
     },
