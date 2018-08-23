@@ -380,6 +380,9 @@ export default {
     selectDevice,
     selectSim
   },
+  props: {
+    is_enter: Number //is_enter是否录入全国平台：1是，2否
+  },
   data() {
     return {
       insurance_types: [
@@ -404,6 +407,7 @@ export default {
       },
       formData: {
         area: ["130000", "130100", "130102"],
+        is_enter: this.$props.is_enter,
         //提交的数据
         register_no1: "", //车辆登记证1
         register_no2: "", //车辆登记证2

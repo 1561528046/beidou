@@ -21,7 +21,6 @@ const user = {
   },
   actions: {
     loginOut(context) {
-      console.log(111);
       return new Promise(resolve => {
         context.commit("clearLoginInfo");
         resolve();
