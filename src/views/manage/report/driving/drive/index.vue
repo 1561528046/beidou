@@ -153,7 +153,13 @@ export default {
     handleCurrentChange(val) {
       this.tableQuery.page = val;
       this.getTable();
+    },
+    renderReverse(rst) {
+      if (rst.status == 0) {
+        alert(rst.result.formatted_address);
+      } else alert(rst.status + "\n解码出错");
     }
   }
 };
 </script>
+ 
