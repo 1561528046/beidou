@@ -13,8 +13,13 @@
               <el-input v-model="tableQuery.vin" placeholder="车架号"></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="6" v-show="isCollapse">
+            <el-form-item label="终端ID">
+              <el-input v-model="tableQuery.device_no" placeholder="终端ID"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
-            <el-form-item label="SIM卡号">
+            <el-form-item label="SIM ID">
               <el-input v-model="tableQuery.sim_id" placeholder="SIM卡号"></el-input>
             </el-form-item>
           </el-col>
@@ -23,15 +28,27 @@
               <el-input v-model="tableQuery.sim_no" placeholder="安装SIM卡号"></el-input>
             </el-form-item>
           </el-col>
+
           <el-col :span="6" v-show="isCollapse">
-            <el-form-item label="终端ID">
-              <el-input v-model="tableQuery.device_no" placeholder="终端ID"></el-input>
+            <el-form-item label="所属地区">
+              <select-city-input :area.sync="tableQuery.area" :select-all="true" style="width:100%;" clearable></select-city-input>
             </el-form-item>
           </el-col>
-
           <el-col :span="6" v-show="isCollapse">
             <el-form-item label="业户">
               <el-input v-model="tableQuery.owner" placeholder="业户"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6" v-show="isCollapse">
+            <el-form-item label="首次入网时间">
+              <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="tableQuery.first_online_time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6" v-show="isCollapse">
+            <el-form-item label="服务到期日期">
+              <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="tableQuery.contract_date_end" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-show="isCollapse">
@@ -45,12 +62,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-show="isCollapse">
-            <el-form-item label="首次入网时间">
-              <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="first_online_time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
+
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
@@ -94,10 +106,11 @@
             <el-dropdown size="mini" split-button style="margin-left:10px;">
               更多操作
               <el-dropdown-menu slot="dropdown" class="vehicle-list-more">
-                <el-dropdown-item>续费</el-dropdown-item>
                 <el-dropdown-item>车辆位置</el-dropdown-item>
                 <el-dropdown-item>更新定位</el-dropdown-item>
-                <el-dropdown-item>开通</el-dropdown-item>
+                <el-dropdown-item>平台续费</el-dropdown-item>
+                <el-dropdown-item>厂商续费</el-dropdown-item>
+                <el-dropdown-item>厂商激活</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -155,7 +168,9 @@
 <script>
 /* eslint-disable */
 import { getVehicleList } from "@/api/index.js";
+import selectCityInput from "@/components/select-city-input.vue";
 export default {
+  components: { selectCityInput },
   created() {
     this.getTable();
   },
@@ -175,6 +190,7 @@ export default {
         page: 1
       },
       tableData: {
+        area: [],
         total: 0,
         data: []
       },
@@ -239,7 +255,8 @@ export default {
     getTable() {
       //获取列表
       this.tableLoading = true;
-      var query = Object.assign({}, this.tableQuery);
+      var query = Object.assign({}, this.tableQuery, this.tableQuery.area);
+      delete query.area;
       getVehicleList(query)
         .then(res => {
           if (res.data.code == 0) {

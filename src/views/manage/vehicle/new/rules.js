@@ -64,8 +64,9 @@ export const Rules = function(vm) {
         }
       }
     ],
+    license_color: [{ required: true, message: "必须选择车牌颜色" }],
     transport_no: [baseRule.num],
-    flue_type: [{ required: true, message: "必须选择燃油种类" }],
+    fuel_type: [{ required: true, message: "必须选择燃油种类" }],
     sim_id: [
       { required: true, message: "必须选择SIM卡号" },
       {
@@ -185,6 +186,17 @@ export const Rules = function(vm) {
         validator: function(rule, value, callback) {
           var min = 1000; //蓝色牌照不能小于100 其他不能小于1000
           var reg = /^[1-9][\d]{3,9}(\.[\d]{1,2})?$/;
+
+          if (value == "" && vm.formData.draw_ton == "") {
+            callback(
+              new Error("【核定载质量】与【准牵引总质量】二者至少填一项")
+            );
+            return false;
+          }
+          if (vm.formData.draw_ton != "" && value == "") {
+            callback();
+            return false;
+          }
           if (vm.formData.license_color == "1") {
             min = 100;
             reg = /^[1-9][\d]{2,9}(\.[\d]{1,2})?$/;
@@ -194,12 +206,6 @@ export const Rules = function(vm) {
             return false;
           }
 
-          if (value == "" && vm.formData.draw_ton == "") {
-            callback(
-              new Error("【核定载质量】与【准牵引总质量】二者至少填一项")
-            );
-            return false;
-          }
           if (
             !isNaN(vm.formData.total_ton) &&
             parseFloat(vm.formData.total_ton) < parseFloat(value)

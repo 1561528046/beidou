@@ -2,6 +2,8 @@ import axios from "axios";
 import { Message } from "element-ui";
 // eslint-disable-next-line
 import store from "@/store";
+// eslint-disable-next-line
+import { dict } from "@/utils/base.js";
 
 //import qs from "qs";
 //获取用户token，如果没有，跳转到登录页面
@@ -13,6 +15,7 @@ const ajax = axios.create({
   },
   // baseURL: "http://localhost:10462/api/",
   baseURL: "http://192.168.88.100:725/api/",
+  // baseURL: dict.API_URL,
   timeout: 5000 // request timeout
 });
 // 添加请求拦截器

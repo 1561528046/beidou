@@ -23,21 +23,25 @@ export const getVehicleList = query => {
   });
 };
 export const getVehicle = query => {
-  return ajax.get("/vehicle/GetById", {
+  return ajax.get("/vehicle/GetVehicleByID", {
     params: query
   });
 };
 
 export const addVehicle = query => {
-  query = qs.stringify(query);
-  return ajax.post("http://localhost:10462/api/vehicle/AddVehicle", query);
-  // return ajax.post("/vehicle/AddVehicle", query);
+  var queryQS = qs.stringify(query);
+  // return ajax.post("http://localhost:10462/api/vehicle/AddVehicle", query);
+  return ajax.post(
+    "http://192.168.88.88:10462/api/vehicle/AddVehicle",
+    queryQS
+  );
 };
 export const updateVehicle = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("vehicle/UpdateVehicle", queryQS, {
-    params: query
-  });
+  return ajax.post(
+    "http://192.168.88.88:10462/api/vehicle/UpdateVehicle",
+    queryQS
+  );
 };
 export const delVehicle = query => {
   var queryQS = qs.stringify(query);

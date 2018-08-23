@@ -1,8 +1,8 @@
 <template>
-    <el-select v-model="sim_no" :placeholder="placeholder" filterable remote :remote-method="remoteMethod" :loading="loading" style="width: 100%;" :clearable="clearable">
-        <el-option v-for="item in list" :key="item.sim_no" :label="item.sim_no" :value="item.sim_no">
-        </el-option>
-    </el-select>
+  <el-select v-model="sim_no" :placeholder="placeholder" filterable remote :remote-method="remoteMethod" :loading="loading" style="width: 100%;" :clearable="clearable">
+    <el-option v-for="item in list" :key="item.sim_no" :label="item.sim_no" :value="item.sim_no">
+    </el-option>
+  </el-select>
 </template>
 <script>
 import { getSimAll } from "@/api/index.js";
@@ -17,6 +17,9 @@ export default {
   watch: {
     sim_no: function() {
       this.$emit("input", this.sim_no);
+    },
+    value: function() {
+      this.sim_no = this.$props.value;
     }
   },
   props: {
@@ -34,7 +37,7 @@ export default {
   },
   methods: {
     initData() {
-      if (this.sim_no.length) {
+      if (!this.sim_no || this.sim_no < 3) {
         return false;
       }
       getSimAll({ sim_no: this.sim_no, state: this.$props.state }).then(res => {

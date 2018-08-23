@@ -1772,7 +1772,7 @@ QuickDeal.prototype = {
       }
 
       //燃料类型 2017.12.20
-      if (row.flueType == "3") {
+      if (row.fuelType == "3") {
         //电
         $("#plateColorId")
           .find("option")
@@ -1907,10 +1907,10 @@ QuickDeal.prototype = {
         $("#otherCheckInsuranceType").css("display", "");
         $("#otherCheckInsuranceType").val(row.insuranceTypeOther);
       }
-      if (row.flueType == "" || row.flueType == "0") {
+      if (row.fuelType == "" || row.fuelType == "0") {
         $("#fule_type option[value='1']").attr("selected", "selected");
       } else {
-        $("#fule_type option[value='" + row.flueType + "']").attr(
+        $("#fule_type option[value='" + row.fuelType + "']").attr(
           "selected",
           "selected"
         );
@@ -1922,7 +1922,7 @@ QuickDeal.prototype = {
       _this.vehicleAuditStatus = row.auditStatus; //用于判断如何显示车辆县级下拉
       //已审核车辆不允许修改: 道路运输证号、车牌号码、车牌颜色、车架号、所属地区，燃料种类
       if (row.auditStatus == 1) {
-        if (row.flueType == "3") {
+        if (row.fuelType == "3") {
           $("#fule_type").css("background-color", "#e5e5e5");
           $("#fule_type").attr("disabled", true);
         } else {
@@ -1965,7 +1965,7 @@ QuickDeal.prototype = {
         row.firstPositionFlag > 0 &&
         row.vinCode != row.vehicleNo
       ) {
-        if (row.flueType == "3") {
+        if (row.fuelType == "3") {
           $("#fule_type").css("background-color", "#e5e5e5");
           $("#fule_type").attr("disabled", true);
         } else {

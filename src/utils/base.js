@@ -2,8 +2,8 @@ export const dict = {
   //全局字典
   // BASE_URL: "http://192.168.88.100:725/",
   // API_URL: "http://192.168.88.100:725/api",
-  BASE_URL: "http://localhost:10462/",
-  API_URL: "http://localhost:10462/api",
+  BASE_URL: "http://192.168.88.88:10462/",
+  API_URL: "http://192.168.88.88:10462/api",
   license_color: {
     "1": {
       backgroundColor: "#006DD9",
@@ -27,7 +27,7 @@ export const dict = {
   get_license_color: function(key) {
     return this.license_color[key] || {};
   },
-  flue_type: {
+  fuel_type: {
     "1": "柴油",
     "2": "汽油",
     "3": "电",
@@ -35,8 +35,8 @@ export const dict = {
     "5": "液化天然气(LNG)",
     "6": "压缩天然气(CNG)"
   },
-  get_flue_type: function(key) {
-    return this.flue_type[key] || {};
+  get_fuel_type: function(key) {
+    return this.fuel_type[key] || {};
   },
   device_type: {
     "1": "定位终端",

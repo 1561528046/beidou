@@ -19,6 +19,9 @@ export default {
   },
   watch: {
     vbrandCode: function() {
+      if (!this.vbrandCode) {
+        return false;
+      }
       this.$emit("input", this.vbrandCode);
       this.$emit(
         "update:vbrandName",
@@ -28,10 +31,11 @@ export default {
       );
     },
     value: function() {
-      this.vbrandCode = this.value;
-      if (this.list.length == 0) {
-        this.init();
-      }
+      this.init();
+      // this.vbrandCode = this.value;
+      // if (this.list.length == 0) {
+      //   this.init();
+      // }
     }
   },
   computed: {},
@@ -61,13 +65,16 @@ export default {
         });
     },
     init() {
+      if (!this.$props.value) {
+        return false;
+      }
       getVehicleBrand({ brand_name: this.vbrandName })
         .then(res => {
           this.loading = false;
           if (res.data.code == 0 && res.data.data.length) {
             this.$set(this.$data, "list", res.data.data);
             this.$nextTick(() => {
-              this.vbrandCode = this.value;
+              this.vbrandCode = this.$props.value;
             });
           } else {
             this.$set(this.$data, "list", []);

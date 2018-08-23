@@ -62,8 +62,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="燃料种类" prop="flue_type">
-              <select-flue-type v-model="formData.flue_type" style="width:100%;"></select-flue-type>
+            <el-form-item label="燃料种类" prop="fuel_type">
+              <select-fuel-type v-model="formData.fuel_type" style="width:100%;"></select-fuel-type>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -106,6 +106,7 @@
               <el-input v-model="formData.tel"></el-input>
             </el-form-item>
           </el-col>
+
         </el-row>
       </el-card>
 
@@ -356,11 +357,16 @@
   </div>
 </template>
 <script>
-import { addVehicle, getVehicleDetails } from "@/api/index.js";
+import {
+  addVehicle,
+  getVehicleDetails,
+  getVehicle,
+  updateVehicle
+} from "@/api/index.js";
 import moment from "moment";
 import selectCity from "@/components/select-city.vue";
 import selectVehicleType from "@/components/select-vehicle-type.vue";
-import selectFlueType from "@/components/select-flue-type.vue";
+import selectFuelType from "@/components/select-fuel-type.vue";
 import selectVtype from "@/components/select-vtype.vue";
 import selectDevice from "@/components/select-device.vue";
 import selectSim from "@/components/select-sim.vue";
@@ -373,7 +379,7 @@ export default {
   components: {
     selectVehicleType,
     selectCity,
-    selectFlueType,
+    selectFuelType,
     selectVtype,
     selectBrand,
     selectType,
@@ -395,15 +401,22 @@ export default {
         "其它"
       ],
       checkedInsuranceTypes: [1],
+      isEdit: this.$route.name == "gghypt_vehicle_edit",
       viewData: {
         //用于渲染的数据
         disabledLicense: false, //车牌号是否可用，编辑时 如果车牌号为正确格式，则不可编辑，如果为vin大架号 则可以编辑
-        vehicleDetails: {}, //车辆数据
+        vehicleDetails: {}, //车辆型号数据
         company_name: ""
       },
       groupData: {
         level: "",
         path: ""
+      },
+      modify_img: {
+        modify_img1: 1,
+        modify_img2: 1,
+        modify_img3: 1,
+        modify_img4: 1
       },
       formData: {
         area: ["130000", "130100", "130102"],
@@ -413,25 +426,25 @@ export default {
         register_no2: "", //车辆登记证2
         driver_no: "", //车辆合格证/行驶证
         img: "", //车身照片
-        sim_id: "1440148331815", //Sim Id
-        sim_no: "15930616103", //真实SIM卡号
-        device_id: "34", //设备Id
-        device_no: "1358641",
-        license: "冀R12345", //车牌号
-        contract_date: "20180808", //服务到期日期
+        sim_id: "", //Sim Id
+        sim_no: "", //真实SIM卡号
+        device_id: "", //设备Id
+        device_no: "",
+        license: "", //车牌号
+        contract_date: "", //服务到期日期
         first_time: "", //首次定位时间
         province_id: "", //省id
         city_id: "", //市id
         county_id: "", //县id
         ip: "", //车辆接入ip
         port: "", //车辆接入端口
-        issue_date: "20180808", //行驶证签发日期
+        issue_date: "", //行驶证签发日期
         type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
-        fuel_type: "1", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
-        license_color: "1", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
-        owner: "啊啊", //车主/业户
-        linkman: "啊啊", //联系人
-        tel: "15930616103", //联系电话
+        fuel_type: "", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
+        license_color: "", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
+        owner: "", //车主/业户
+        linkman: "", //联系人
+        tel: "", //联系电话
         factory_date: "", //出厂时间
         body_color: "", //车身颜色：1黄色，2蓝色，3白色，4黑色，5其它
         business_scope: "", //经营范围
@@ -442,30 +455,29 @@ export default {
         insurance_type: "", //车辆保险种类：1交强险，2盗抢险，3三者，4车损险，5车上人员险，6货物运输险，7其它
         valid_date: "", //检验有效期至
         time: "", //记录添加时间
-        vin: "12345678", //车辆识别代码/vin
-        vbrandCode: "122", //车辆品牌id
-        vbrandName: "解放牌",
+        vin: "", //车辆识别代码/vin
+        vbrandCode: "", //车辆品牌id
+        vbrandName: "",
         end_time: "", //离线时间
         vid: "", //全国平台车辆ID
-        source: "1", //接入车辆状态：1新增，2转网
+        source: "", //接入车辆状态：1新增，2转网
         transport_license: "", //道路运输经营许可证
         transport_no: "", //道路运输证号
-        vtype: "1", //车辆类型
+        vtype: "", //车辆类型
 
-        model: "CA1133PK45L3R5E1", //车辆型号
-        engine_no: "123", //发动机号
-        engine_type: "123", //发动机类型
-        total_ton: "1111", //总质量(kg)
-        load_ton: "1100", //核定载质量(kg)
-        draw_ton: "1111", //准牵引总质量(kg)
-        length: "1111", //外廓尺寸(mm)长
-        width: "1100", //外廓尺寸(mm)宽
-        height: "1100", //外廓尺寸(mm)高
-        box_length: "1100", //货厢内部尺寸(mm)长
-        box_width: "1000", //货厢内部尺寸(mm)宽
-        box_height: "888", //货厢内部尺寸(mm)高
-        axis: "11", //轴数
-        flue_type: "1" //燃油种类
+        model: "", //车辆型号
+        engine_no: "", //发动机号
+        engine_type: "", //发动机类型
+        total_ton: "", //总质量(kg)
+        load_ton: "", //核定载质量(kg)
+        draw_ton: "", //准牵引总质量(kg)
+        length: "", //外廓尺寸(mm)长
+        width: "", //外廓尺寸(mm)宽
+        height: "", //外廓尺寸(mm)高
+        box_length: "", //货厢内部尺寸(mm)长
+        box_width: "", //货厢内部尺寸(mm)宽
+        box_height: "", //货厢内部尺寸(mm)高
+        axis: "" //轴数
       },
       pickerOptions: {
         shortcuts: [
@@ -499,7 +511,7 @@ export default {
   computed: {
     license_colors: function() {
       var result = Object.assign({}, this.$dict.license_color);
-      if (this.formData.flue_type == 3) {
+      if (this.formData.fuel_type == 3) {
         //如果燃油种类是电 只能选择黄绿色车牌
         delete result["1"];
         delete result["2"];
@@ -565,7 +577,92 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+    //如果是编辑
+
+    if (this.isEdit) {
+      getVehicle({ vehicle_id: this.$route.query.vehicle_id })
+        .then(res => {
+          if (res.data.code == 0 && res.data.data.length) {
+            Object.assign(this.formData, res.data.data[0]);
+          } else {
+            this.$alert("没有对应数据， 或已经删除！", {
+              callback: () => {
+                this.$router.go(-1);
+              }
+            });
+          }
+        })
+        .catch(() => {
+          this.$alert("没有对应数据， 或已经删除！", {
+            callback: () => {
+              this.$router.go(-1);
+            }
+          });
+        });
+      // var data = {
+      //   area: ["130000", "130100", "130102"],
+      //   is_enter: this.$props.is_enter,
+      //   //提交的数据
+      //   register_no1: "", //车辆登记证1
+      //   register_no2: "", //车辆登记证2
+      //   driver_no: "", //车辆合格证/行驶证
+      //   img: "", //车身照片
+      //   sim_id: "1440148331815", //Sim Id
+      //   sim_no: "15930616103", //真实SIM卡号
+      //   device_id: "34", //设备Id
+      //   device_no: "1358641",
+      //   license: "冀R12345", //车牌号
+      //   contract_date: "20180808", //服务到期日期
+      //   first_time: "", //首次定位时间
+      //   province_id: "", //省id
+      //   city_id: "", //市id
+      //   county_id: "", //县id
+      //   ip: "", //车辆接入ip
+      //   port: "", //车辆接入端口
+      //   issue_date: "20180808", //行驶证签发日期
+      //   type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
+      //   fuel_type: "1", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
+      //   license_color: "1", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
+      //   owner: "啊啊", //车主/业户
+      //   linkman: "啊啊", //联系人
+      //   tel: "15930616103", //联系电话
+      //   factory_date: "", //出厂时间
+      //   body_color: "", //车身颜色：1黄色，2蓝色，3白色，4黑色，5其它
+      //   business_scope: "", //经营范围
+      //   tyre: "", //轮胎数
+      //   tyre_size: "", //轮胎规格
+      //   purchase: "", //购置方式：1分期，2全款
+      //   insurance_date: "", //车辆保险到期日期
+      //   insurance_type: "", //车辆保险种类：1交强险，2盗抢险，3三者，4车损险，5车上人员险，6货物运输险，7其它
+      //   valid_date: "", //检验有效期至
+      //   time: "", //记录添加时间
+      //   vin: "12345678", //车辆识别代码/vin
+      //   vbrandCode: "122", //车辆品牌id
+      //   vbrandName: "解放牌",
+      //   end_time: "", //离线时间
+      //   vid: "", //全国平台车辆ID
+      //   source: "1", //接入车辆状态：1新增，2转网
+      //   transport_license: "", //道路运输经营许可证
+      //   transport_no: "", //道路运输证号
+      //   vtype: "22", //车辆类型
+
+      //   model: "CA1133PK45L3R5E1", //车辆型号
+      //   engine_no: "123", //发动机号
+      //   engine_type: "123", //发动机类型
+      //   total_ton: "1111", //总质量(kg)
+      //   load_ton: "1100", //核定载质量(kg)
+      //   draw_ton: "1111", //准牵引总质量(kg)
+      //   length: "1111", //外廓尺寸(mm)长
+      //   width: "1100", //外廓尺寸(mm)宽
+      //   height: "1100", //外廓尺寸(mm)高
+      //   box_length: "1100", //货厢内部尺寸(mm)长
+      //   box_width: "1000", //货厢内部尺寸(mm)宽
+      //   box_height: "888", //货厢内部尺寸(mm)高
+      //   axis: "11", //轴数
+      // };
+    }
+  },
   methods: {
     setBoxVal() {
       //内部尺寸长宽高其中一个为-- 都设为--
@@ -575,6 +672,10 @@ export default {
     },
     uploadSuccess(flied, res) {
       this.formData[flied] = res.data[0].path;
+      var index = ["register_no1", "register_no2", "driver_no", "img"].indexOf(
+        flied
+      );
+      this.modify_img["modify_img" + (parseInt(index) + 1)] = 2;
     },
     uploadBefore(file) {
       const isJPG = file.type === "image/jpeg";
@@ -588,10 +689,16 @@ export default {
       return isJPG && isLt2M;
     },
     formSubmit() {
+      var postMethod = this.isEdit ? updateVehicle : addVehicle; //判断调用哪个方法
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var postData = Object.assign({}, this.formData);
-          addVehicle(postData)
+          postData.is_enter = 1;
+          if (this.isEdit) {
+            postData = Object.assign(postData, this.modify_img);
+            postData.vehicle_id = this.$route.query.vehicle_id;
+          }
+          postMethod(postData)
             .then(res => {
               if (res.data.code == 0) {
                 this.$emit("success");

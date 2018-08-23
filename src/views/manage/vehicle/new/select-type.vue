@@ -23,6 +23,9 @@ export default {
     vbrandName: function() {
       this.list = [];
       this.prodName = "";
+    },
+    value: function() {
+      this.init();
     }
   },
   computed: {},
@@ -31,9 +34,7 @@ export default {
     value: String,
     clearable: Boolean
   },
-  created() {
-    this.init();
-  },
+  created() {},
   methods: {
     remoteMethod(query) {
       if (query.length < 3) {
