@@ -9,6 +9,7 @@ export const getDeviceAll = query => {
     },
     query
   );
+
   return ajax.get("/device/GetAll", {
     params: query
   });
@@ -28,22 +29,22 @@ export const getDeviceAllUnbind = query => {
   });
 };
 export const getUserDevice = query => {
-  return ajax.get("/user/GetUserDevice", {
+  return ajax.get("/device/GetUserDevice", {
     params: query
   });
 };
+//给用户分配设备
 export const addUserDevice = query => {
-  //给用户分配设备
   var queryQS = qs.stringify({ device_ids: query.device_ids });
-  return ajax.post("/user/AddUserDevice", queryQS, {
+  return ajax.post("/device/AddUserDevice", queryQS, {
     params: { user_id: query.user_id }
   });
 };
 
+//删除用户分配的设备
 export const delUserDevice = query => {
-  //删除用户分配的设备
   var queryQS = qs.stringify({ device_ids: query.device_ids });
-  return ajax.post("/user/DeleteUserDevice", queryQS, {
+  return ajax.post("/device/DeleteUserDevice", queryQS, {
     params: { user_id: query.user_id }
   });
 };
@@ -121,8 +122,8 @@ export const getSimAll = query => {
     params: query
   });
 };
+//获取所有没有绑定的SIM卡
 export const getSimAllUnbind = query => {
-  //获取所有没有绑定的SIM卡
   query = Object.assign(
     {
       page: 1,
@@ -137,22 +138,21 @@ export const getSimAllUnbind = query => {
   });
 };
 export const getUserSim = query => {
-  return ajax.get("/user/GetUserSim", {
+  return ajax.get("/sim/GetUserSim", {
     params: query
   });
 };
+//给用户分配SIM卡
 export const addUserSim = query => {
-  //给用户分配SIM卡
   var queryQS = qs.stringify({ sim_nos: query.sim_nos });
-  return ajax.post("/user/AddUserSim", queryQS, {
+  return ajax.post("/sim/AddUserSim", queryQS, {
     params: { user_id: query.user_id }
   });
 };
-
+//删除用户分配的SIM卡
 export const delUserSim = query => {
-  //删除用户分配的SIM卡
   var queryQS = qs.stringify({ sim_nos: query.sim_nos });
-  return ajax.post("/user/DeleteUserSim", queryQS, {
+  return ajax.post("/sim/DeleteUserSim", queryQS, {
     params: { user_id: query.user_id }
   });
 };
@@ -173,7 +173,6 @@ export const getSim = query => {
     params: query
   });
 };
-
 export const addSim = query => {
   query = qs.stringify(query);
   return ajax.post("/sim/Add", query);

@@ -4,6 +4,7 @@ import user from "@/router/user.js";
 import vehicle from "@/router/vehicle.js";
 import device from "@/router/device.js";
 import product from "@/router/product.js";
+import report from "@/router/report.js";
 import store from "@/store";
 import NProgress from "nprogress"; // progress bar
 import { Message } from "element-ui";
@@ -43,20 +44,19 @@ var router = new Router({
         user,
         device,
         product,
+        report,
         {
           path: "vehicle-setting",
           name: "vehicle-setting",
           meta: { name: "车辆参数设置", icon: "iconfont icon-setting-fill" }
         },
         {
-          path: "report",
-          name: "report",
-          meta: { name: "报表", icon: "iconfont icon-fund-fill" }
-        },
-        {
           path: "server-state",
           name: "server-state",
-          meta: { name: "服务器状态", icon: "iconfont icon-sever-fill" }
+          meta: {
+            name: "服务器状态",
+            icon: "iconfont icon-fuwuqi1"
+          }
         }
       ]
     },
