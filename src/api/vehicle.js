@@ -31,11 +31,17 @@ export const getVehicle = query => {
 export const addVehicle = query => {
   var queryQS = qs.stringify(query);
   // return ajax.post("http://localhost:10462/api/vehicle/AddVehicle", query);
-  return ajax.post("/vehicle/AddVehicle", queryQS);
+  return ajax.post(
+    "http://192.168.88.88:10462/api/vehicle/AddVehicle",
+    queryQS
+  );
 };
 export const updateVehicle = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("/vehicle/UpdateVehicle", queryQS);
+  return ajax.post(
+    "http://192.168.88.88:10462/api/vehicle/UpdateVehicle",
+    queryQS
+  );
 };
 export const delVehicle = query => {
   return ajax.post("http://192.168.88.88:10462/api/vehicle/DeleteVehicle", "", {

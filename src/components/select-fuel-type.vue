@@ -9,7 +9,7 @@ export default {
   name: "select-fuel_type",
   data() {
     return {
-      fuel_type: "",
+      fuel_type: this.$props.value,
       fuel_types: this.$dict.fuel_type
     };
   },
@@ -22,7 +22,7 @@ export default {
     }
   },
   props: {
-    value: [String, Number],
+    value: [String],
     clearable: Boolean
   },
   created() {}

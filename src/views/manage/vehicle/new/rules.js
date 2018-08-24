@@ -114,7 +114,7 @@ export const Rules = function(vm) {
         }
       }
     ],
-    brand_id: [{ required: true, message: "必须输入车辆品牌" }],
+    vbrandCode: [{ required: true, message: "必须输入车辆品牌" }],
     model: [{ required: true, message: "必须输入车辆车辆型号" }],
     vtype: [{ required: true, message: "必须输入车辆车辆类型" }],
     engine_no: [

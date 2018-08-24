@@ -45,11 +45,7 @@ var router = new Router({
         device,
         product,
         report,
-        {
-          path: "vehicle-setting",
-          name: "vehicle-setting",
-          meta: { name: "车辆参数设置", icon: "iconfont icon-setting-fill" }
-        },
+
         {
           path: "server-state",
           name: "server-state",

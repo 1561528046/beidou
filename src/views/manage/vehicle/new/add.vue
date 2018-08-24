@@ -122,13 +122,13 @@
               <a href="/static/全国道路货运公共监管与服务平台数据录入要求.pdf" download style="color:blue;">下载填写要求说明</a>
             </div>
           </el-col>
-          <el-col :span="8" prop="vin">
+          <el-col :span="8">
             <el-form-item label="车辆识别代码/车架号" prop="vin">
               <el-input v-model="formData.vin"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8" prop="brand_id">
-            <el-form-item label="车辆品牌">
+          <el-col :span="8">
+            <el-form-item label="车辆品牌" prop="vbrandCode">
               <select-brand v-model="formData.vbrandCode" :vbrandName.sync="formData.vbrandName"></select-brand>
             </el-form-item>
           </el-col>
@@ -390,7 +390,6 @@ export default {
     is_enter: Number //is_enter是否录入全国平台：1是，2否
   },
   data() {
-    console.log(new Rules(this));
     return {
       insurance_types: [
         "交强险",

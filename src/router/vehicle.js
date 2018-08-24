@@ -117,6 +117,11 @@ export default {
       name: "vehicle-pcap",
       meta: { name: "车辆数据连接", icon: "iconfont icon-swap" },
       component: () => import("@/views/manage/vehicle/index.vue")
+    },
+    {
+      path: "vehicle-setting",
+      name: "vehicle-setting",
+      meta: { name: "车辆参数设置", icon: "iconfont icon-setting-fill" }
     }
   ]
 };
