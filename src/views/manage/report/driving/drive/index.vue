@@ -1,22 +1,19 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-
-      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
           <el-col :span="7">
-            <el-form-item label="时间">
-              <el-date-picker value-format="yyyyMMddHHmmss" v-model="tableQuery.Time" type="datetimerange" :picker-options="pickerOptions2" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+            <el-form-item prop="time" label="时间">
+              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item label="车辆">
-              <template>
-                <el-select v-model="tableQuery.simId" style="width:100%;" placeholder="请选择" :clearable="true">
-                  <el-option label="1" value="1"></el-option>
-                </el-select>
-              </template>
+            <el-form-item prop="sim_id" label="选择车辆">
+              <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
+                <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
+              </el-button>
             </el-form-item>
           </el-col>
           <el-col :offset="isCollapse?0:6" :span="isCollapse?24:4" style="text-align: right;">
@@ -28,116 +25,164 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
-      <div class="admin-table-actions">
-
-      </div>
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="time" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="time" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="time" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"> </el-table-column>
-        <el-table-column prop="time" label="行驶里程" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="time" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="time" label="速度(公里/时)" :formatter="$utils.baseFormatter "> </el-table-column>>
+      <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+        <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
+        <el-table-column prop="em_0x01" label="行驶里程"> </el-table-column>
+        <el-table-column prop="" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="speed" label="速度(公里/时)"> </el-table-column>>
       </el-table>
       <div class="admin-table-pager ">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
         </el-pagination>
-        <select-pager :total="model.total" :size="model.size" :page="model.page" :changge="pageFn"></select-pager>
       </div>
     </el-card>
-
+    <el-dialog width="30%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-car @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-car>
+    </el-dialog>
   </div>
 </template>
 <script>
+import { rules } from "@/utils/rules.js";
 import { getReport } from "@/api/index.js";
-import selectPager from "@/components/select-pager.vue";
+import chooseCar from "@/components/choose-car.vue";
 export default {
-  components: { selectPager },
+  components: { chooseCar },
   created() {
-    this.getTable();
     this.keyupSubmit();
+  },
+  computed: {
+    list: function() {
+      return this.tableData.data.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
   },
   data() {
     return {
-      model: {
-        total: [], //总页数
-        size: 10, //每页显示条目个数不传默认10
-        page: 1 //当前页码
-      },
+      addDialog: false,
+      addKey: 0,
       isCollapse: false,
       tableQuery: {
-        beginTime: "20180822161756",
-        endTime: "20180823101826",
-        Time: "",
-        simId: "064620623980",
+        begin_time: "",
+        end_time: "",
+        time: "",
+        sim_id: "",
         size: 10,
         page: 1
+      },
+      rules: {
+        ...rules,
+        sim_id: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请输入simid!"
+          }
+        ],
+        time: [
+          {
+            required: true,
+            trigger: "change",
+            validator: this.validateTime
+          }
+        ]
       },
       simss: [],
       simee: {},
       tableData: {
-        total: 0,
+        total: 32,
         data: []
       },
-      pickerOptions2: {
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
-          }
-        ]
-      },
-      tableLoading: true,
-      addKey: 0,
-      userdetailShow: false
+      tableLoading: false,
+      userdetailShow: false,
+      dialog: true
     };
   },
-  mounted() {},
+  watch: {
+    dialog: function() {
+      this.addDialog = this.dialog;
+    }
+  },
   methods: {
-    pageFn(val) {
-      this.model.page = val;
+    // 选择查询方式
+    addFrom() {
+      this.addKey++;
+      this.addDialog = true;
+      this.dialog = true;
+    },
+    // 回来的数据
+    xz(scope) {
+      this.dialog = scope.row.dialog;
+      this.tableQuery.sim_id = scope.row.license;
+    },
+    // 查询时间验证
+    validateTime(rule, value, callback) {
+      if (value == "") {
+        callback(new Error("请选择时间!"));
+        return false;
+      } else if (parseInt(value[1]) - parseInt(value[0]) > 2000000) {
+        callback(new Error("选择时间不能大于3天!"));
+        return false;
+      } else {
+        this.tableQuery.begin_time = value[0];
+        this.tableQuery.end_time = value[1];
+        callback();
+      }
     },
     //查询列表
     getTable() {
       this.tableLoading = true;
-      var query = Object.assign({}, this.tableQuery);
-      getReport(query)
-        .then(res => {
-          console.log(res);
-          if (res.data.code == 0) {
-            console.log(res.data.data);
-            this.$set(this.$data, "tableData", res.data);
-          } else {
-            this.$set(this.$data, "tableData", []);
-            this.$message.error(res.data.msg);
+      this.$refs.baseForm.validate((isVaildate, errorItem) => {
+        if (isVaildate) {
+          var query = Object.assign({}, this.tableQuery);
+          getReport(query)
+            .then(res => {
+              if (res.data.code == 0) {
+                var data = [];
+                for (var i = 0; i < res.data.data.length; i++) {
+                  data.push(res.data.data[i]);
+                }
+                this.$set(this.tableData, "data", Object.freeze(data));
+                this.$set(this.tableData, "total", this.tableData.data.length);
+                this.$emit("success");
+                this.$notify({
+                  message: res.data.msg,
+                  title: "提示",
+                  type: "success"
+                });
+              } else {
+                this.$set(this.$data, "tableData", []);
+                this.$emit("error");
+                this.$notify({
+                  message: res.data.msg,
+                  title: "提示",
+                  type: "error"
+                });
+              }
+            })
+            .catch(() => {
+              this.$alert("接口错误", "提示", {
+                type: "error"
+              });
+              this.$emit("error");
+            });
+        } else {
+          var errormsg = "";
+          for (var key in errorItem) {
+            errormsg += errorItem[key][0].message + "<br>";
           }
-          this.tableLoading = false;
-        })
-        .catch(() => {});
+          this.$notify.error({
+            title: "错误",
+            dangerouslyUseHTMLString: true,
+            message: errormsg
+          });
+        }
+      });
+      this.tableLoading = false;
     },
     //回车事件
     keyupSubmit() {
