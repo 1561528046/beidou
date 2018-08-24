@@ -39,7 +39,7 @@
               <el-input v-model="tableQuery.owner" placeholder="业户"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-show="isCollapse">
+          <el-col :span="6" v-show="isCollapse" v-if="$props.state!=1">
             <el-form-item label="首次入网时间">
               <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="tableQuery.first_online_time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
               </el-date-picker>
@@ -51,7 +51,7 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-show="isCollapse">
+          <el-col :span="6" v-show="isCollapse" v-if="$props.state!=1">
             <el-form-item label="离线天数">
               <el-select v-model="tableQuery.offline_days" placeholder="离线天数" style="width:100%;" clearable>
                 <el-option label="7天" value="7"></el-option>
@@ -66,7 +66,7 @@
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
-              <el-button type="primary" @click="getTable">查询</el-button>
+              <el-button type="primary" @click="getTable" :loading="tableQueryLoading">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -76,13 +76,18 @@
       <div class="admin-table-actions">
         <router-link :to="{path:'new/add'}">
           <el-button type="primary" size="small">
-            <i class="el-icon-upload el-icon--right"></i> 添加
+            <i class="el-icon-plus"></i> 添加
           </el-button>
         </router-link>
         &nbsp;
-
-        <el-button type="primary" size="small">导出
-          <i class="el-icon-upload el-icon--right"></i>
+        <el-button type="primary" size="small">
+          <i class="el-icon-tickets"></i> 单车导入
+        </el-button>
+        <el-button type="primary" size="small">
+          <i class="el-icon-upload2"></i> 批量导入
+        </el-button>
+        <el-button type="primary" size="small">
+          <i class="el-icon-download"></i> 导出
         </el-button>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
@@ -106,10 +111,10 @@
             <el-dropdown size="mini" split-button style="margin-left:10px;">
               更多操作
               <el-dropdown-menu slot="dropdown" class="vehicle-list-more">
-                <el-dropdown-item>车辆位置</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state==1">车辆位置</el-dropdown-item>
                 <el-dropdown-item>更新定位</el-dropdown-item>
-                <el-dropdown-item>平台续费</el-dropdown-item>
-                <el-dropdown-item>厂商续费</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state!=1">平台续费</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state!=1">厂商续费</el-dropdown-item>
                 <el-dropdown-item>厂商激活</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -175,11 +180,13 @@ export default {
     this.getTable();
   },
   props: {
-    vehicle_type: Number, //vehicle_type区分普货和其他类型车辆
-    state: Number //state: 1新增车辆 2定位车辆 3到期车辆
+    type: Number, //type 接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
+    state: Number, //state 车辆状态 1、新增车辆 2、定位车辆 3、到期车辆
+    is_enter: Number //is_enter是否录入全国平台：1是，2否
   },
   data() {
     return {
+      tableQueryLoading: false, //大列表查询
       isCollapse: false,
       first_online_time: [], //首次入网 时间范围
       tableQuery: {
@@ -237,7 +244,7 @@ export default {
   methods: {
     goEdit(scope) {
       this.$router.push({
-        name: "gghypt_vehicle_edit",
+        path: "new/edit",
         query: { vehicle_id: scope.row.vehicle_id }
       });
     },

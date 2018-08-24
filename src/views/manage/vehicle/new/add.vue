@@ -182,21 +182,23 @@
               <el-input v-model="formData.height"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="货厢内部尺寸(mm)长" prop="box_length">
-              <el-input v-model="formData.box_length"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="宽" prop="box_width">
-              <el-input v-model="formData.box_width"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="高" prop="box_height">
-              <el-input v-model="formData.box_height"></el-input>
-            </el-form-item>
-          </el-col>
+          <template v-if="$props.type!=2">
+            <el-col :span="8">
+              <el-form-item label="货厢内部尺寸(mm)长" prop="box_length">
+                <el-input v-model="formData.box_length"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="宽" prop="box_width">
+                <el-input v-model="formData.box_width"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="高" prop="box_height">
+                <el-input v-model="formData.box_height"></el-input>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="24">
             <el-form-item label="轴数" prop="axis">
               <el-input-number v-model.number="formData.axis" :step="1" :min="2" :max="20"></el-input-number>
@@ -215,7 +217,7 @@
                 <img v-if="formData.register_no1 " :src="$dict.BASE_URL+formData.register_no1 " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-              <span style="color: #f56c6c;">*</span> 车辆登记证1
+              <span class="upload-form-item-span">*</span> 车辆登记证1
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -224,7 +226,7 @@
                 <img v-if="formData.register_no2 " :src="$dict.BASE_URL+formData.register_no2 " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-              车辆登记证2
+              <span class="upload-form-item-span">*</span>车辆登记证2
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -233,7 +235,7 @@
                 <img v-if="formData.driver_no " :src="$dict.BASE_URL+formData.driver_no " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-              <span style="color: #f56c6c;">*</span> 车辆合格证/行驶证
+              <span class="upload-form-item-span">*</span> 车辆合格证/行驶证
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -242,7 +244,7 @@
                 <img v-if="formData.img " :src="$dict.BASE_URL+formData.img " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-              <span style="color: #f56c6c;">*</span> 车身照片
+              <span class="upload-form-item-span">*</span>车身照片
             </el-form-item>
           </el-col>
         </el-row>
@@ -351,7 +353,7 @@
         </el-row>
       </el-card>
       <el-form-item style="text-align:center;">
-        <el-button type="primary " @click="formSubmit " size="large">立即创建</el-button>
+        <el-button type="primary " @click="formSubmit" size="large">提交</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -387,10 +389,13 @@ export default {
     selectSim
   },
   props: {
+    is_edit: Boolean, //是否是编辑
+    type: Number, //type 接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
     is_enter: Number //is_enter是否录入全国平台：1是，2否
   },
   data() {
     return {
+      isInit: false,
       insurance_types: [
         "交强险",
         "盗抢险",
@@ -401,7 +406,6 @@ export default {
         "其它"
       ],
       checkedInsuranceTypes: [1],
-      isEdit: this.$route.name == "gghypt_vehicle_edit",
       viewData: {
         //用于渲染的数据
         disabledLicense: false, //车牌号是否可用，编辑时 如果车牌号为正确格式，则不可编辑，如果为vin大架号 则可以编辑
@@ -419,6 +423,8 @@ export default {
         modify_img4: 1
       },
       formData: {
+        //除普货外，车辆具体型号大块中 只有车架号VIN是必填
+        //只有普货用和全国平台有关联的内容，包括验证规则，车辆具体型号内容等
         area: ["130000", "130100", "130102"],
         is_enter: this.$props.is_enter,
         //提交的数据
@@ -464,7 +470,6 @@ export default {
         transport_license: "", //道路运输经营许可证
         transport_no: "", //道路运输证号
         vtype: "", //车辆类型
-
         model: "", //车辆型号
         engine_no: "", //发动机号
         engine_type: "", //发动机类型
@@ -503,9 +508,7 @@ export default {
           }
         ]
       },
-      rules: {
-        ...new Rules(this)
-      }
+      rules: {}
     };
   },
   computed: {
@@ -529,6 +532,11 @@ export default {
   },
   watch: {
     "formData.model": function() {
+      if (this.$props.is_edit && this.isInit == false) {
+        console.log(1);
+        //编辑模式第一次不进行赋值
+        return false;
+      }
       getVehicleDetails({
         brand_name: this.formData.vbrandName,
         brand_mold: this.formData.model
@@ -544,17 +552,17 @@ export default {
             data.boxWidth = "--";
           }
           this.formData.box_height = data.boxHeight || "--";
-          this.formData.box_length = data.boxLength;
-          this.formData.box_width = data.boxWidth;
+          this.formData.box_length = data.boxLength || "";
+          this.formData.box_width = data.boxWidth || "";
           this.formData.engine_type = data.engineType;
           this.formData.load_ton = data.loadTon || "--";
-          this.formData.axis = data.vehicleAxis;
-          this.formData.height = data.vehicleHeight;
-          this.formData.length = data.vehicleLength;
-          this.formData.width = data.vehicleWidth;
-          this.formData.total_ton = data.vehicleTon;
-          this.formData.tyre = data.vehicleTyreNumber;
-          this.formData.tyre_size = data.vehicleTyreSize;
+          this.formData.axis = data.vehicleAxis || "";
+          this.formData.height = data.vehicleHeight || "";
+          this.formData.length = data.vehicleLength || "";
+          this.formData.width = data.vehicleWidth || "";
+          this.formData.total_ton = data.vehicleTon || "";
+          this.formData.tyre = data.vehicleTyreNumber || "";
+          this.formData.tyre_size = data.vehicleTyreSize || "";
         }
       });
     },
@@ -578,13 +586,23 @@ export default {
     }
   },
   created() {
-    //如果是编辑
+    //根据不同的车辆类型生成不同的验证规则
+    this.isInit = false;
 
-    if (this.isEdit) {
+    this.$set(
+      this.$data,
+      "rules",
+      new Rules(this, this.$props.type, this.$props.is_enter)
+    );
+    //编辑模式
+    if (this.$props.is_edit) {
       getVehicle({ vehicle_id: this.$route.query.vehicle_id })
         .then(res => {
           if (res.data.code == 0 && res.data.data.length) {
             Object.assign(this.formData, res.data.data[0]);
+            this.$nextTick(() => {
+              this.isInit = true;
+            });
           } else {
             this.$alert("没有对应数据， 或已经删除！", {
               callback: () => {
@@ -600,68 +618,71 @@ export default {
             }
           });
         });
+    } else {
+      var data = {
+        area: ["130000", "130100", "130102"],
+        is_enter: this.$props.is_enter,
+        //提交的数据
+        register_no1: "", //车辆登记证1
+        register_no2: "", //车辆登记证2
+        driver_no: "", //车辆合格证/行驶证
+        img: "", //车身照片
+        sim_id: "1440148331815", //Sim Id
+        sim_no: "15930616103", //真实SIM卡号
+        device_id: "34", //设备Id
+        device_no: "1358641",
+        license: "冀R12345", //车牌号
+        contract_date: "20180808", //服务到期日期
+        first_time: "", //首次定位时间
+        province_id: "", //省id
+        city_id: "", //市id
+        county_id: "", //县id
+        ip: "", //车辆接入ip
+        port: "", //车辆接入端口
+        issue_date: "20180808", //行驶证签发日期
+        type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
+        fuel_type: "1", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
+        license_color: "1", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
+        owner: "啊啊", //车主/业户
+        linkman: "啊啊", //联系人
+        tel: "15930616103", //联系电话
+        factory_date: "", //出厂时间
+        body_color: "", //车身颜色：1黄色，2蓝色，3白色，4黑色，5其它
+        business_scope: "", //经营范围
+        tyre: "", //轮胎数
+        tyre_size: "", //轮胎规格
+        purchase: "", //购置方式：1分期，2全款
+        insurance_date: "", //车辆保险到期日期
+        insurance_type: "", //车辆保险种类：1交强险，2盗抢险，3三者，4车损险，5车上人员险，6货物运输险，7其它
+        valid_date: "", //检验有效期至
+        time: "", //记录添加时间
+        vin: "12345678", //车辆识别代码/vin
+        vbrandCode: "122", //车辆品牌id
+        vbrandName: "解放牌",
+        end_time: "", //离线时间
+        vid: "", //全国平台车辆ID
+        source: "1", //接入车辆状态：1新增，2转网
+        transport_license: "", //道路运输经营许可证
+        transport_no: "1111", //道路运输证号
+        vtype: "22", //车辆类型
+        model: "CA1133PK45L3R5E1", //车辆型号
+        engine_no: "123", //发动机号
+        engine_type: "123", //发动机类型
+        total_ton: "1111", //总质量(kg)
+        load_ton: "1100", //核定载质量(kg)
+        draw_ton: "1111", //准牵引总质量(kg)
+        length: "1111", //外廓尺寸(mm)长
+        width: "1100", //外廓尺寸(mm)宽
+        height: "1100", //外廓尺寸(mm)高
+        box_length: "1100", //货厢内部尺寸(mm)长
+        box_width: "1000", //货厢内部尺寸(mm)宽
+        box_height: "888", //货厢内部尺寸(mm)高
+        axis: "11" //轴数
+      };
+      for (var key in data) {
+        this.formData[key] = data[key];
+      }
     }
-    var data = {
-      area: ["130000", "130100", "130102"],
-      is_enter: this.$props.is_enter,
-      //提交的数据
-      register_no1: "", //车辆登记证1
-      register_no2: "", //车辆登记证2
-      driver_no: "", //车辆合格证/行驶证
-      img: "", //车身照片
-      sim_id: "1440148331815", //Sim Id
-      sim_no: "15930616103", //真实SIM卡号
-      device_id: "34", //设备Id
-      device_no: "1358641",
-      license: "冀R12345", //车牌号
-      contract_date: "20180808", //服务到期日期
-      first_time: "", //首次定位时间
-      province_id: "", //省id
-      city_id: "", //市id
-      county_id: "", //县id
-      ip: "", //车辆接入ip
-      port: "", //车辆接入端口
-      issue_date: "20180808", //行驶证签发日期
-      type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
-      fuel_type: "1", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
-      license_color: "1", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
-      owner: "啊啊", //车主/业户
-      linkman: "啊啊", //联系人
-      tel: "15930616103", //联系电话
-      factory_date: "", //出厂时间
-      body_color: "", //车身颜色：1黄色，2蓝色，3白色，4黑色，5其它
-      business_scope: "", //经营范围
-      tyre: "", //轮胎数
-      tyre_size: "", //轮胎规格
-      purchase: "", //购置方式：1分期，2全款
-      insurance_date: "", //车辆保险到期日期
-      insurance_type: "", //车辆保险种类：1交强险，2盗抢险，3三者，4车损险，5车上人员险，6货物运输险，7其它
-      valid_date: "", //检验有效期至
-      time: "", //记录添加时间
-      vin: "12345678", //车辆识别代码/vin
-      vbrandCode: "122", //车辆品牌id
-      vbrandName: "解放牌",
-      end_time: "", //离线时间
-      vid: "", //全国平台车辆ID
-      source: "1", //接入车辆状态：1新增，2转网
-      transport_license: "", //道路运输经营许可证
-      transport_no: "1111", //道路运输证号
-      vtype: "22", //车辆类型
-      model: "CA1133PK45L3R5E1", //车辆型号
-      engine_no: "123", //发动机号
-      engine_type: "123", //发动机类型
-      total_ton: "1111", //总质量(kg)
-      load_ton: "1100", //核定载质量(kg)
-      draw_ton: "1111", //准牵引总质量(kg)
-      length: "1111", //外廓尺寸(mm)长
-      width: "1100", //外廓尺寸(mm)宽
-      height: "1100", //外廓尺寸(mm)高
-      box_length: "1100", //货厢内部尺寸(mm)长
-      box_width: "1000", //货厢内部尺寸(mm)宽
-      box_height: "888", //货厢内部尺寸(mm)高
-      axis: "11" //轴数
-    };
-    Object.assign(this.formData, data);
   },
   methods: {
     setBoxVal() {
@@ -689,25 +710,26 @@ export default {
       return isJPG && isLt2M;
     },
     formSubmit() {
-      var postMethod = this.isEdit ? updateVehicle : addVehicle; //判断调用哪个方法
+      var loader = this.$loading({ text: "正在提交" });
+      var postMethod = this.is_edit ? updateVehicle : addVehicle; //判断调用哪个方法
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var postData = Object.assign({}, this.formData);
           postData.is_enter = 1;
-          if (this.isEdit) {
+          if (this.is_edit) {
             postData = Object.assign(postData, this.modify_img);
             postData.vehicle_id = this.$route.query.vehicle_id;
           }
           postMethod(postData)
             .then(res => {
+              loader.close();
               if (res.data.code == 0) {
-                this.$emit("success");
                 this.$notify.success({
                   title: "成功",
                   message: res.data.msg
                 });
+                this.$router.replace("./");
               } else {
-                this.$emit("error");
                 this.$notify.error({
                   title: "失败",
                   message: res.data.msg
@@ -715,13 +737,14 @@ export default {
               }
             })
             .catch(() => {
+              loader.close();
               this.$notify.error({
                 title: "失败",
                 message: "接口错误"
               });
-              this.$emit("error");
             });
         } else {
+          loader.close();
           var errormsg = "";
           for (var key in errorItem) {
             errormsg += errorItem[key][0].message + "<br>";
@@ -752,6 +775,15 @@ export default {
   .el-form-item__error {
     width: 100%;
     text-align: center;
+  }
+  .upload-form-item-span {
+    color: #f56c6c;
+    display: none;
+  }
+  &.is-required {
+    .upload-form-item-span {
+      display: inline;
+    }
   }
 }
 </style>
