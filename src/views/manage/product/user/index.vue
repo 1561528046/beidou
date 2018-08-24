@@ -40,17 +40,17 @@
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="cdate" label="用户名称" :formatter="(row)=>{return this.$utils.formatDate(row.cdate)}"> </el-table-column>
-        <el-table-column prop="order_no" label="所属地区" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="fees_detail_name" label="联系人" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="license" label="联系电话" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="car_type" label="产品名称" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column width="400" label="操作 ">
-          <template slot-scope="scope ">
-            <el-button size="small " type="primary" icon=" el-icon-document ">查看订单明细</el-button>
+        <el-table-column prop="order_no" label="所属地区" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="fees_detail_name" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="license" label="联系电话" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="car_type" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column width="400" label="操作">
+          <template slot-scope="scope">
+            <el-button size="small " type="primary" icon=" el-icon-document">查看订单明细</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div class="admin-table-pager ">
+      <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
         </el-pagination>
       </div>

@@ -14,18 +14,18 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item prop="logistics" label=" 物流信息 ">
-          <el-input v-model="formData.logistics "></el-input>
+        <el-form-item prop="logistics" label=" 物流信息">
+          <el-input v-model="formData.logistics"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item prop="last_logistics_no" label=" 物流单号 ">
-          <el-input v-model="formData.last_logistics_no "></el-input>
+        <el-form-item prop="last_logistics_no" label=" 物流单号">
+          <el-input v-model="formData.last_logistics_no"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
-    <el-form-item style="text-align:center; ">
-      <el-button type="primary " size="large " @click="formSubmit ">提交</el-button>
+    <el-form-item style="text-align:center;">
+      <el-button type="primary " size="large " @click="formSubmit">提交</el-button>
     </el-form-item>
   </el-form>
 </template>

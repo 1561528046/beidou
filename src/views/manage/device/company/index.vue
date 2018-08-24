@@ -50,10 +50,10 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog width="29%" title="添加" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+    <el-dialog width="29%" title="添加" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <add-components @success=" ()=> {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
     </el-dialog>
-    <el-dialog width="29%" title="编辑" :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+    <el-dialog width="29%" title="编辑" :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <update-components :company_id="updateId" @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId=''}" :key="addKey"></update-components>
     </el-dialog>
   </div>

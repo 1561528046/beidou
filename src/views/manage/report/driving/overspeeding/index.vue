@@ -41,20 +41,20 @@
             </div>
             <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
                 <el-table-column prop="time" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
-                <el-table-column prop="time" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
+                <el-table-column prop="time" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="time" label="所属组织" :formatter="$utils.baseFormatter"> </el-table-column>
                 <!--  :formatter="(row)=>{return this.$utils.formatDate(row.time)}" -->
                 <el-table-column prop="time" label="所选时间段"> </el-table-column>
-                <el-table-column prop="time" label="超速时长" :formatter="$utils.baseFormatter "> </el-table-column>
-                <el-table-column prop="time" label="超速率" :formatter="$utils.baseFormatter "> </el-table-column>
-                <el-table-column prop="time" label="开始速度" :formatter="$utils.baseFormatter "> </el-table-column>
-                <el-table-column prop="time" label="开始里程" :formatter="$utils.baseFormatter "> </el-table-column>
-                <el-table-column prop="time" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
-                <el-table-column prop="time" label="结束速度" :formatter="$utils.baseFormatter "> </el-table-column>
-                <el-table-column prop="time" label="结束里程" :formatter="$utils.baseFormatter "> </el-table-column>
-                <el-table-column prop="time" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
+                <el-table-column prop="time" label="超速时长" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="time" label="超速率" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="time" label="开始速度" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="time" label="开始里程" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="time" label="开始位置" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="time" label="结束速度" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="time" label="结束里程" :formatter="$utils.baseFormatter"> </el-table-column>
+                <el-table-column prop="time" label="结束位置" :formatter="$utils.baseFormatter"> </el-table-column>
             </el-table>
-            <div class="admin-table-pager ">
+            <div class="admin-table-pager">
                 <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
                 </el-pagination>
             </div>

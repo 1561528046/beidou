@@ -52,29 +52,29 @@ export default {
       ]
     },
     {
-      path: "other_vehicle",
-      name: "other_vehicle",
-      meta: { name: "自营车辆管理", icon: "iconfont icon-golden-fill" },
+      path: "danger_vehicle",
+      name: "danger_vehicle",
+      meta: { name: "危险品车辆", icon: "iconfont icon-weihuo" },
       props: { is_enter: 2 }, //根据is_enter区分普货和其他类型车辆
       component: () => import("@/views/manage/vehicle/index.vue"),
       children: [
         {
           path: "new",
-          name: "other_vehicle_list_new",
+          name: "",
           meta: { name: "新增车辆管理", icon: "iconfont icon-zongheguanli" },
           props: { is_enter: 1, state: 1 }, //is_enter是否录入全国平台：1是，2否
           component: () => import("@/views/manage/vehicle/new/index.vue")
         },
         {
           path: "position",
-          name: "other_vehicle_list_position",
+          name: "",
           meta: { name: "定位车辆管理", icon: "iconfont icon-location-fill" },
           props: { is_enter: 1, state: 2 }, //is_enter是否录入全国平台：1是，2否
           component: () => import("@/views/manage/vehicle/new/index.vue")
         },
         {
           path: "timeout",
-          name: "other_vehicle_list_timeout",
+          name: "",
           meta: {
             name: "到期车辆管理",
             icon: "iconfont icon-time-circle-fill"
@@ -84,14 +84,14 @@ export default {
         },
         {
           path: "new/add",
-          name: "other_vehicle_add",
+          name: "",
           meta: { name: "新增车辆管理-添加", hidden: true },
           props: { is_enter: 1, state: 1 },
           component: () => import("@/views/manage/vehicle/new/add.vue")
         },
         {
           path: "new/edit",
-          name: "other_vehicle_edit",
+          name: "",
           meta: { name: "新增车辆管理-编辑", hidden: true },
           props: { is_enter: 1, state: 1 },
           component: () => import("@/views/manage/vehicle/new/add.vue")
@@ -99,10 +99,18 @@ export default {
       ]
     },
     {
+      path: "other_vehicle",
+      name: "other_vehicle",
+      meta: { name: "客运车辆", icon: "iconfont icon-bus" },
+      props: { is_enter: 2 }, //根据is_enter区分普货和其他类型车辆
+      component: () => import("@/views/manage/vehicle/index.vue"),
+      children: []
+    },
+    {
       path: "vehicle-repair",
       name: "vehicle-repair",
       meta: { name: "维修车辆管理", icon: "iconfont icon-wrench-fill" },
-      component: () => import("@/views/manage/vehicle/index.vue")
+      component: () => import("@/views/manage/vehicle/repair.vue")
     },
     {
       path: "vehicle-pcap",

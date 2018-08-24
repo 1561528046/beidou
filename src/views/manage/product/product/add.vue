@@ -1,12 +1,12 @@
 <template>
   <div style="text-align: center;  background-color:#fff;">
     <el-form status-icon :rules="rules" :model="formData " ref="baseForm">
-      <!-- <el-row :gutter="30 ">
+      <!-- <el-row :gutter="30">
             </el-row> -->
       <el-form-item label="产品名称" prop="title">
         <el-input placeholder="请输入" v-model="formData.title"></el-input>
       </el-form-item>
-      <el-form-item style="text-align:center; ">
+      <el-form-item style="text-align:center;">
         <template slot-scope="scope">
           <el-button :type="buttontype(scope)" @click="formSubmit" size="large">提交</el-button>
         </template>

@@ -109,13 +109,13 @@
     <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <add-device :parent_id="parent_id" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-device>
     </el-dialog>
-    <el-dialog title="编辑 " :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+    <el-dialog title="编辑 " :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <update-device :device_id="updateId " @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-device>
     </el-dialog>
-    <el-dialog title="添加维修设备信息" :visible.sync="repairDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+    <el-dialog title="添加维修设备信息" :visible.sync="repairDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <repair-add :device_id="repairId " @success=" ()=> {this.getTable();this.repairDialog = false;this.repairId = '';}" :key="addKey"></repair-add>
     </el-dialog>
-    <el-dialog width="21%" title="上传" :visible.sync="uploadDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+    <el-dialog width="21%" title="上传" :visible.sync="uploadDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <device-upload @success=" ()=> {this.getTable();this.uploadDialog = false;}" :key="addKey"></device-upload>
     </el-dialog>
   </div>

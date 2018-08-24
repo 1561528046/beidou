@@ -68,24 +68,24 @@
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="cdate" label="订单日期" :formatter="(row)=>{return this.$utils.formatDate(row.cdate)}"> </el-table-column>
-        <el-table-column prop="order_no" label="订单号" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="fees_detail_name" label="订单类型" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="car_type" label="车辆类型" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="fees_detail_company_name" label="终端厂商" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="fees_detail_type" label="终端类型" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="order_amount" label="订单金额" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="pay_type" label="支付方式" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="state" label="订单状态" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column width="400" label="操作 ">
-          <template slot-scope="scope ">
-            <el-button size="small " type="primary " icon="el-icon-success ">确认订单</el-button>
+        <el-table-column prop="order_no" label="订单号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="fees_detail_name" label="订单类型" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="car_type" label="车辆类型" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="fees_detail_company_name" label="终端厂商" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="fees_detail_type" label="终端类型" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="order_amount" label="订单金额" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="pay_type" label="支付方式" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="state" label="订单状态" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column width="400" label="操作">
+          <template slot-scope="scope">
+            <el-button size="small " type="primary " icon="el-icon-success">确认订单</el-button>
             <el-button size="small " icon="el-icon-error">取消订单</el-button>
             <el-button size="small " type="primary" icon=" el-icon-document " @click="Enquiry(scope)">查看资料</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div class="admin-table-pager ">
+      <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
         </el-pagination>
       </div>

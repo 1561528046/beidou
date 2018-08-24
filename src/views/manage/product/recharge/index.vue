@@ -33,21 +33,21 @@
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="" label="余额" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="用户名" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column width="400" label="操作 ">
-          <template slot-scope="scope ">
-            <el-button size="small " type="primary " icon="el-icon-edit ">充值</el-button>
+        <el-table-column prop="" label="用户名" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column width="400" label="操作">
+          <template slot-scope="scope">
+            <el-button size="small " type="primary " icon="el-icon-edit">充值</el-button>
             <el-button size="small " type="primary " icon="el-icon-tickets">充值明细</el-button>
-            <el-button size="small " type="primary " icon="el-icon-menu ">二维码生成</el-button>
+            <el-button size="small " type="primary " icon="el-icon-menu">二维码生成</el-button>
           </template>
-          <!-- <template slot-scope="scope ">
-                        <el-button type="primary " size="small " @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}}) ">
+          <!-- <template slot-scope="scope">
+                        <el-button type="primary " size="small " @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}})">
                             编辑
                         </el-button>
                     </template> -->
         </el-table-column>
       </el-table>
-      <div class="admin-table-pager ">
+      <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
         </el-pagination>
       </div>

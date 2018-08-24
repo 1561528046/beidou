@@ -59,7 +59,7 @@
             <el-dropdown-item style="padding:2px 15px;">
               <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
                                     application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " class="o-el-upload--text">
-                <!-- <i class="el-icon-upload el-icon--right "></i> 点击上传 -->
+                <!-- <i class="el-icon-upload el-icon--right"></i> 点击上传 -->
                 <el-button size="small" icon="el-icon-upload2" type="primary" style="display: block;width:100%;">点击上传</el-button>
               </el-upload>
             </el-dropdown-item>
@@ -73,7 +73,7 @@
         </el-dropdown>
 
       </div>
-      <el-table :data="tableData.data " v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
+      <el-table :data="tableData.data " v-loading="tableLoading " style="width: 100% " class="admin-table-list">
         <el-table-column prop="time " label="添加时间 " :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
         <el-table-column prop="icc_id" label="ICCID" :formatter="$utils.baseFormatter">
         </el-table-column>
@@ -94,10 +94,10 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog width="29%" title="添加" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+    <el-dialog width="29%" title="添加" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <add-sim @success=" ()=> {this.getTable();this.addDialog = false;}" :key="addKey"></add-sim>
     </el-dialog>
-    <el-dialog width="29%" title="编辑" :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog ">
+    <el-dialog width="29%" title="编辑" :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <update-sim :sim_no="updateId" @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId=''}" :key="addKey"></update-sim>
     </el-dialog>
   </div>

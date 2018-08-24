@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form status-icon :rules="rules" :model="formData " ref="baseForm">
-      <!-- <el-row :gutter="30 ">
+      <!-- <el-row :gutter="30">
             </el-row> -->
       <!-- 车辆 -->
       <el-form-item v-if="formData.detail_type=='1'||'2'">
@@ -76,7 +76,7 @@
           <el-input v-model="formData.original_price" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
         </template>
       </el-form-item>
-      <el-form-item style="text-align:center; ">
+      <el-form-item style="text-align:center;">
         <template slot-scope="scope">
           <el-button :type="buttontype(scope)" @click="formSubmit" size="large">提交</el-button>
         </template>

@@ -167,7 +167,7 @@
 </style>
 <script>
 /* eslint-disable */
-import { getVehicleList } from "@/api/index.js";
+import { getVehicleList, delVehicle } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 export default {
   components: { selectCityInput },
@@ -240,6 +240,21 @@ export default {
         name: "gghypt_vehicle_edit",
         query: { vehicle_id: scope.row.vehicle_id }
       });
+    },
+    delRow(scope) {
+      //删除
+      this.$confirm("确认删除？")
+        .then(() => {
+          delVehicle(scope.row).then(res => {
+            if (res.data.code == 0) {
+              this.$message.success(res.data.msg);
+              this.getTable();
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+        })
+        .catch(() => {});
     },
     handleSizeChange(val) {
       //每页数量切换
