@@ -16,7 +16,14 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-col :offset="isCollapse?0:6" :span="isCollapse?24:4" style="text-align: right;">
+          <el-col :span="7">
+            <el-form-item prop="sim_id" label="类型">
+              <el-select style="width:100%;">
+                <el-option></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
@@ -26,24 +33,15 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="类型" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="" label="越界报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="区域超速报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="进出区域" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="进出线路" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="路段行驶时间不足或过长" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="路线偏离" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="区域超速报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="区域低速报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="进出入区域" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="线路偏移" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="关键点监控报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="线路超速报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="线路低速报警" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="设备号" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="开始时间" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="结束时间" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="时长" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="网络流量统计" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>

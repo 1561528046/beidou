@@ -8,25 +8,25 @@ export default {
     {
       path: "alarm",
       name: "report-alarm",
-      meta: { name: "报警报表", icon: "iconfont icon-jiashi" },
+      meta: { name: "报警报表", icon: "iconfont icon-baojing" },
       component: () => import("@/views/manage/report/alarm/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "statistical",
+          name: "alarm-statistical",
           meta: {
             name: "报警统计表",
-            icon: "iconfont icon-xingshizheng"
+            icon: "iconfont icon-tongji1"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/alarm/statistical/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
-          meta: { name: "报警明细表", icon: "iconfont icon-chaosu1" },
+          path: "details",
+          name: "alarm-details",
+          meta: { name: "报警明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/alarm/details/index.vue")
         }
       ]
     },
@@ -34,53 +34,53 @@ export default {
     {
       path: "drive",
       name: "report-drive",
-      meta: { name: "行车报表", icon: "iconfont icon-jiashi" },
+      meta: { name: "行车报表", icon: "iconfont icon-my-" },
       component: () => import("@/views/manage/report/drive/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "night-summary",
+          name: "deive-night-summary",
           meta: {
             name: "夜间行车汇总表",
-            icon: "iconfont icon-xingshizheng"
+            icon: "iconfont icon-huizong"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/drive/night-summary/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
-          meta: { name: "夜间行车明细表", icon: "iconfont icon-chaosu1" },
+          path: "night-details",
+          name: "drive-night-details",
+          meta: { name: "夜间行车明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/drive/night-details/index.vue")
         },
         {
-          path: "overspeeding",
-          name: "report-driving-overspeeding",
-          meta: { name: "停车汇总表", icon: "iconfont icon-chaosu2" },
+          path: "parking-summary",
+          name: "drive-parking-summary",
+          meta: { name: "停车汇总表", icon: "iconfont icon-huizong" },
           component: () =>
-            import("@/views/manage/report/driving/overspeeding/index.vue")
+            import("@/views/manage/report/drive/parking-summary/index.vue")
         },
         {
-          path: "overspeeding",
-          name: "report-driving-overspeeding",
-          meta: { name: "停车明细表", icon: "iconfont icon-chaosu2" },
+          path: "parking-details",
+          name: "drive-parking-details",
+          meta: { name: "停车明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeeding/index.vue")
+            import("@/views/manage/report/drive/parking-details/index.vue")
         },
         {
-          path: "overspeeding",
-          name: "report-driving-overspeeding",
-          meta: { name: "ACC点火汇总表", icon: "iconfont icon-chaosu2" },
+          path: "acc-statistical",
+          name: "drive-acc-statistical",
+          meta: { name: "ACC点火统计表", icon: "iconfont icon-tongji1" },
           component: () =>
-            import("@/views/manage/report/driving/overspeeding/index.vue")
+            import("@/views/manage/report/drive/acc-statistical/index.vue")
         },
         {
-          path: "overspeeding",
-          name: "report-driving-overspeeding",
-          meta: { name: "ACC点火明细表", icon: "iconfont icon-chaosu2" },
+          path: "acc-details",
+          name: "drive-acc-details",
+          meta: { name: "ACC点火明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeeding/index.vue")
+            import("@/views/manage/report/drive/acc-details/index.vue")
         }
       ]
     },
@@ -92,28 +92,28 @@ export default {
       component: () => import("@/views/manage/report/driving/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "track",
+          name: "driving-track",
           meta: {
             name: "行驶轨迹明细",
             icon: "iconfont icon-xingshizheng"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/driving/track/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
+          path: "summary",
+          name: "driving-summary",
           meta: { name: "轨迹超速汇总表", icon: "iconfont icon-chaosu1" },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/driving/summary/index.vue")
         },
         {
-          path: "overspeeding",
-          name: "report-driving-overspeeding",
+          path: "derails",
+          name: "driving-details",
           meta: { name: "轨迹超速明细表", icon: "iconfont icon-chaosu2" },
           component: () =>
-            import("@/views/manage/report/driving/overspeeding/index.vue")
+            import("@/views/manage/report/driving/details/index.vue")
         }
       ]
     },
@@ -121,25 +121,25 @@ export default {
     {
       path: "fence",
       name: "report-fence",
-      meta: { name: "电子围栏报表", icon: "iconfont icon-jiashi" },
+      meta: { name: "电子围栏报表", icon: "iconfont icon-dianziweilan" },
       component: () => import("@/views/manage/report/fence/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "fence-statistical",
+          name: "fence-statistical",
           meta: {
             name: "电子围栏统计表",
-            icon: "iconfont icon-xingshizheng"
+            icon: "iconfont icon-tongji1"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/fence/statistical/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
-          meta: { name: "电子围栏明细表", icon: "iconfont icon-chaosu1" },
+          path: "fence-details",
+          name: "fence-details",
+          meta: { name: "电子围栏明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/fence/details/index.vue")
         }
       ]
     },
@@ -147,25 +147,25 @@ export default {
     {
       path: "glitch",
       name: "report-glitch",
-      meta: { name: "故障报警报表", icon: "iconfont icon-jiashi" },
+      meta: { name: "故障报警报表", icon: "iconfont icon-guzhangbaojing" },
       component: () => import("@/views/manage/report/glitch/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "glitch-statistical",
+          name: "glitch-statistical",
           meta: {
             name: "故障报警统计表",
-            icon: "iconfont icon-xingshizheng"
+            icon: "iconfont icon-tongji1"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/glitch/statistical/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
-          meta: { name: "故障报警明细表", icon: "iconfont icon-chaosu1" },
+          path: "glitch-details",
+          name: "glitch-details",
+          meta: { name: "故障报警明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/glitch/details/index.vue")
         }
       ]
     },
@@ -173,25 +173,25 @@ export default {
     {
       path: "mileage",
       name: "report-mileage",
-      meta: { name: "里程报表", icon: "iconfont icon-jiashi" },
+      meta: { name: "里程报表", icon: "iconfont icon-licheng" },
       component: () => import("@/views/manage/report/mileage/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "mileage-summary",
+          name: "mileage-summary",
           meta: {
             name: "里程汇总表",
-            icon: "iconfont icon-xingshizheng"
+            icon: "iconfont icon-huizong"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/mileage/summary/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
-          meta: { name: "里程明细表", icon: "iconfont icon-chaosu1" },
+          path: "mileage-details",
+          name: "mileage-details",
+          meta: { name: "里程明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/mileage/details/index.vue")
         }
       ]
     },
@@ -199,25 +199,25 @@ export default {
     {
       path: "selectdata",
       name: "report-selectdata",
-      meta: { name: "数据查询", icon: "iconfont icon-jiashi" },
+      meta: { name: "数据查询", icon: "iconfont icon-shujuchaxun" },
       component: () => import("@/views/manage/report/selectdata/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "selectdata-updata",
+          name: "selectdata-updata",
           meta: {
             name: "上报数据查询表",
-            icon: "iconfont icon-xingshizheng"
+            icon: "iconfont icon-shujuchaxun"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/selectdata/updata/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
-          meta: { name: "下发信息明细表", icon: "iconfont icon-chaosu1" },
+          path: "selectdata-details",
+          name: "selectdata-details",
+          meta: { name: "下发信息明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/selectdata/details/index.vue")
         }
       ]
     },
@@ -225,53 +225,62 @@ export default {
     {
       path: "userbehavior",
       name: "report-userbehavior",
-      meta: { name: "用户行为分析表", icon: "iconfont icon-jiashi" },
+      meta: {
+        name: "用户行为分析表",
+        icon: "iconfont icon-yonghuhangweifenxi"
+      },
       component: () => import("@/views/manage/report/userbehavior/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "userbehavior-online",
+          name: "userbehavior-online",
           meta: {
             name: "在线时长统计",
-            icon: "iconfont icon-xingshizheng"
+            icon: "iconfont icon-tongji1"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/userbehavior/online/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
-          meta: { name: "用户登录明细", icon: "iconfont icon-chaosu1" },
+          path: "userbehavior-login",
+          name: "userbehavior-login",
+          meta: {
+            name: "用户登录明细",
+            icon: "iconfont icon-yonghudenglurenxianxing"
+          },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/userbehavior/login/index.vue")
         },
         {
-          path: "overspeeding",
-          name: "report-driving-overspeeding",
-          meta: { name: "用户操作日志", icon: "iconfont icon-chaosu2" },
+          path: "userbehavior-operation",
+          name: "userbehavior-operation",
+          meta: { name: "用户操作日志", icon: "iconfont icon-yonghucaozuo" },
           component: () =>
-            import("@/views/manage/report/driving/overspeeding/index.vue")
+            import("@/views/manage/report/userbehavior/operation/index.vue")
         },
         {
-          path: "overspeeding",
-          name: "report-driving-overspeeding",
-          meta: { name: "用户媒体明细", icon: "iconfont icon-chaosu2" },
+          path: "userbehavior-media",
+          name: "userbehavior-media",
+          meta: { name: "用户媒体明细", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeeding/index.vue")
+            import("@/views/manage/report/userbehavior/media/index.vue")
         },
         {
-          path: "overspeeding",
-          name: "report-driving-overspeeding",
-          meta: { name: "车辆维护记录", icon: "iconfont icon-chaosu2" },
+          path: "userbehavior-vehicle",
+          name: "userbehavior-vehicle",
+          meta: {
+            name: "车辆维护记录",
+            icon: "iconfont icon-cheliangweihubaoyang"
+          },
           component: () =>
-            import("@/views/manage/report/driving/overspeeding/index.vue")
+            import("@/views/manage/report/userbehavior/vehicle/index.vue")
         },
         {
-          path: "overspeeding",
-          name: "report-driving-overspeeding",
-          meta: { name: "设备变更报表", icon: "iconfont icon-chaosu2" },
+          path: "userbehavior-device",
+          name: "userbehavior-device",
+          meta: { name: "设备变更报表", icon: "iconfont icon-shebeibiangeng" },
           component: () =>
-            import("@/views/manage/report/driving/overspeeding/index.vue")
+            import("@/views/manage/report/userbehavior/device/index.vue")
         }
       ]
     },
@@ -279,25 +288,28 @@ export default {
     {
       path: "vehiclelink",
       name: "report-vehiclelink",
-      meta: { name: "车辆连接统计表", icon: "iconfont icon-jiashi" },
+      meta: {
+        name: "车辆连接统计表",
+        icon: "iconfont icon-vehicle_connection"
+      },
       component: () => import("@/views/manage/report/vehiclelink/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "vehiclelink-summary",
+          name: "vehiclelink-summary",
           meta: {
             name: "车辆上线下线汇总表",
-            icon: "iconfont icon-xingshizheng"
+            icon: "iconfont icon-huizong"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/vehiclelink/summary/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
-          meta: { name: "车辆上线下线明细表", icon: "iconfont icon-chaosu1" },
+          path: "vehiclelink-details",
+          name: "vehiclelink-details",
+          meta: { name: "车辆上线下线明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/vehiclelink/details/index.vue")
         }
       ]
     },
@@ -305,25 +317,25 @@ export default {
     {
       path: "video",
       name: "report-video",
-      meta: { name: "视频报警报表", icon: "iconfont icon-jiashi" },
+      meta: { name: "视频报警报表", icon: "iconfont icon-shipinbaojing" },
       component: () => import("@/views/manage/report/video/index.vue"),
       children: [
         {
-          path: "drive",
-          name: "report-driving-drive",
+          path: "video-statistical",
+          name: "video-statistical",
           meta: {
             name: "视频报警统计表",
-            icon: "iconfont icon-xingshizheng"
+            icon: "iconfont icon-tongji1"
           },
           component: () =>
-            import("@/views/manage/report/driving/drive/index.vue")
+            import("@/views/manage/report/video/statistical/index.vue")
         },
         {
-          path: "overspeed",
-          name: "report-driving-overspeed",
-          meta: { name: "视频报警明细表", icon: "iconfont icon-chaosu1" },
+          path: "video-details",
+          name: "video-details",
+          meta: { name: "视频报警明细表", icon: "iconfont icon-mingxi" },
           component: () =>
-            import("@/views/manage/report/driving/overspeed/index.vue")
+            import("@/views/manage/report/video/details/index.vue")
         }
       ]
     }

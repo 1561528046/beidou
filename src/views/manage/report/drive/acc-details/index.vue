@@ -31,19 +31,9 @@
         <el-table-column prop="" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
         <el-table-column prop="time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="" label="越界报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="区域超速报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="进出区域" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="进出线路" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="路段行驶时间不足或过长" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="路线偏离" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="区域超速报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="区域低速报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="进出入区域" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="线路偏移" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="关键点监控报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="线路超速报警" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="线路低速报警" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="运行时长" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>

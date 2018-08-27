@@ -29,10 +29,10 @@
         <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="em_0x01" label="行驶里程"> </el-table-column>
-        <el-table-column prop="" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="speed" label="速度(公里/时)"> </el-table-column>>
+        <el-table-column prop="time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
+        <el-table-column prop="time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
+        <el-table-column prop="" label="上线总数" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="下线总数" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
