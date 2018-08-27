@@ -1,12 +1,12 @@
 <template>
   <div class="admin-table-container">
-    <el-card shadow="always ">
-      <div class="admin-table-actions ">
+    <el-card shadow="always">
+      <div class="admin-table-actions">
         <el-button type="primary" size="small" @click="addFrom">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
+      <el-table :data="tableData.data" v-loading="tableLoading " style="width: 100% " class="admin-table-list">
         <el-table-column prop="role_name" label="角色名 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">

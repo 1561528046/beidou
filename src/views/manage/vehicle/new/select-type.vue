@@ -34,7 +34,11 @@ export default {
     value: String,
     clearable: Boolean
   },
-  created() {},
+  created() {
+    if (this.$props.value.length) {
+      this.init();
+    }
+  },
   methods: {
     remoteMethod(query) {
       if (query.length < 3) {

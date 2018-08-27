@@ -1,7 +1,7 @@
 <template>
   <div class="admin-table-container">
     <el-form status-icon :rules="rules" :model="formData" ref="baseForm">
-      <!-- <el-row :gutter="30 ">
+      <!-- <el-row :gutter="30">
             </el-row> -->
       <el-card shadow="hover" style="margin-bottom:20px; height: 72px;">
         <el-form-item prop="title" style="padding:0;">
@@ -63,7 +63,7 @@
                 <div style="width:80px;" v-show="!scope.row.isEditPayty">
                   <label v-show="scope.row.pay_type==1">计费</label>
                   <label v-show="scope.row.pay_type==2">充值</label>
-                  <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
+                  <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px;"></el-button>
                 </div>
                 <select v-show="scope.row.isEditPayty" :ref="'editSelect'+scope.row.detail_id" @blur="changeCou(scope)" v-model="scope.row.pay_type">
                   <option value="1">计费</option>
@@ -115,7 +115,7 @@
                 <div style="width:80px;" v-show="!scope.row.isEditPayty">
                   <label v-show="scope.row.pay_type==1">计费</label>
                   <label v-show="scope.row.pay_type==2">充值</label>
-                  <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
+                  <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px;"></el-button>
                 </div>
                 <select v-show="scope.row.isEditPayty" :ref="'editSelect'+scope.row.detail_id" @blur="changeCou(scope)" v-model="scope.row.pay_type">
                   <option value="1">计费</option>
@@ -161,7 +161,7 @@
                 <div style="width:80px;" v-show="!scope.row.isEditPayty">
                   <label v-show="scope.row.pay_type==1">计费</label>
                   <label v-show="scope.row.pay_type==2">充值</label>
-                  <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
+                  <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px;"></el-button>
                 </div>
                 <select v-show="scope.row.isEditPayty" :ref="'editSelect'+scope.row.detail_id" @blur="changeCou(scope)" v-model="scope.row.pay_type">
                   <option value="1">计费</option>
@@ -207,7 +207,7 @@
                 <div style="width:80px;" v-show="!scope.row.isEditPayty">
                   <label v-show="scope.row.pay_type==1">计费</label>
                   <label v-show="scope.row.pay_type==2">充值</label>
-                  <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px; "></el-button>
+                  <el-button type="primary" @click="payty(scope)" icon="el-icon-edit" circle style="padding:3px; margin-left:7px;"></el-button>
                 </div>
                 <select v-show="scope.row.isEditPayty" :ref="'editSelect'+scope.row.detail_id" @blur="changeCou(scope)" v-model="scope.row.pay_type">
                   <option value="1">计费</option>

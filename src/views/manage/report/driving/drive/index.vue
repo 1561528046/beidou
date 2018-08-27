@@ -25,6 +25,7 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+<<<<<<< HEAD
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
@@ -33,8 +34,21 @@
         <el-table-column prop="em_0x01" label="行驶里程"> </el-table-column>
         <el-table-column prop="" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="speed" label="速度(公里/时)"> </el-table-column>>
+=======
+      <div class="admin-table-actions">
+
+      </div>
+      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+        <el-table-column prop="time" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="所属组织" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"> </el-table-column>
+        <el-table-column prop="time" label="行驶里程" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="当时位置" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="速度(公里/时)" :formatter="$utils.baseFormatter"> </el-table-column>>
+>>>>>>> 43a2fdedd5edc0d6ea9c37cd54e585720a23e1cb
       </el-table>
-      <div class="admin-table-pager ">
+      <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
         </el-pagination>
       </div>

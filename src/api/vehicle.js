@@ -44,9 +44,13 @@ export const updateVehicle = query => {
   );
 };
 export const delVehicle = query => {
-  var queryQS = qs.stringify(query);
-  return ajax.post("vehicle/DeleteVehicle", queryQS, {
-    params: query
+  return ajax.post("http://192.168.88.88:10462/api/vehicle/DeleteVehicle", "", {
+    params: {
+      vehicle_id: query.vehicle_id,
+      vid: query.vid,
+      license: query.license,
+      province_id: query.province_id
+    }
   });
 };
 export const getVehicleBrand = query => {
