@@ -49,7 +49,7 @@ export default {
           path: "new/edit/",
           name: "gghypt_vehicle_edit",
           meta: { name: "新增车辆管理-编辑", hidden: true },
-          props: { is_enter: 1, state: 1 },
+          props: { is_enter: 1, state: 1, is_edit: true },
           component: () => import("@/views/manage/vehicle/new/add.vue")
         }
       ]

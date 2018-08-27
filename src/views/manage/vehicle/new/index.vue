@@ -94,7 +94,8 @@
         <el-table-column prop="first_time" label="首次入网时间" :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"></el-table-column>
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
-            <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style">{{scope.row.license}}</span>
+
+            <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="vin" label="车架号" :formatter="$utils.baseFormatter" show-overflow-tooltip> </el-table-column>
@@ -126,6 +127,10 @@
         </el-pagination>
       </div>
     </el-card>
+    <!-- 车辆详情查看 -->
+    <el-dialog title="车辆详情" :center="true" @closed="clearShowDetails" :visible.sync="detailsVisible" width="75%" :append-to-body="true">
+      <view-vehicle :type="$props.type" :is_enter="$props.is_enter" @error="clearShowDetails" :vehicle_id="showDetailsVehicle.vehicle_id" v-if="detailsVisible"></view-vehicle>
+    </el-dialog>
   </div>
 </template>
 <style lang="less">
@@ -174,8 +179,9 @@
 /* eslint-disable */
 import { getVehicleList, delVehicle } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
+import viewVehicle from "@/components/view-vehicle.vue";
 export default {
-  components: { selectCityInput },
+  components: { selectCityInput, viewVehicle },
   created() {
     this.getTable();
   },
@@ -186,6 +192,8 @@ export default {
   },
   data() {
     return {
+      showDetailsVehicle: {}, //正在显示的车辆
+      detailsVisible: false, //查看详情显示隐藏
       tableQueryLoading: false, //大列表查询
       isCollapse: false,
       first_online_time: [], //首次入网 时间范围
@@ -242,6 +250,14 @@ export default {
     }
   },
   methods: {
+    clearShowDetails() {
+      this.$set(this.$data, "showDetailsVehicle", {});
+      this.detailsVisible = false;
+    },
+    showDetails(scope) {
+      this.$set(this.$data, "showDetailsVehicle", scope.row);
+      this.detailsVisible = true;
+    },
     goEdit(scope) {
       this.$router.push({
         path: "new/edit",

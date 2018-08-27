@@ -260,25 +260,26 @@
         <el-row :gutter="30">
           <el-col :span="8">
             <el-form-item label="设备厂商">
-              {{viewData.company_name}}
+              {{formData.company_name||"--"}}
             </el-form-item>
           </el-col>
 
           <el-col :span="8">
             <el-form-item label="终端ID " prop="device_no">
-              <select-device v-model="formData.device_no " :state="1 " :device_id.sync="formData.device_id " :company_name.sync="viewData.company_name"></select-device>
+              <choose-device v-model="formData.device_no " :state="1" :sim_id.sync="formData.sim_id" :device_id.sync="formData.device_id " :company_name.sync="formData.company_name">
+              </choose-device>
             </el-form-item>
           </el-col>
 
           <el-col :span="8">
             <el-form-item label="SIM ID " prop="sim_id">
-              <select-sim :state="1 " v-model="formData.sim_id"></select-sim>
+              <!-- <select-sim :state="1 " v-model="formData.sim_id"></select-sim> -->
+              {{formData.sim_id}}
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="安装SIM卡号 " prop="sim_no">
               <choose-sim v-model="formData.sim_no"></choose-sim>
-              <!-- <el-input v-model="formData.sim_no"></el-input> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -371,8 +372,8 @@ import selectCity from "@/components/select-city.vue";
 import selectVehicleType from "@/components/select-vehicle-type.vue";
 import selectFuelType from "@/components/select-fuel-type.vue";
 import selectVtype from "@/components/select-vtype.vue";
-import selectDevice from "@/components/select-device.vue";
 import chooseSim from "@/components/choose-sim.vue";
+import chooseDevice from "@/components/choose-device.vue";
 import selectBrand from "./select-brand.vue";
 import selectType from "./select-type.vue";
 
@@ -386,7 +387,7 @@ export default {
     selectVtype,
     selectBrand,
     selectType,
-    selectDevice,
+    chooseDevice,
     chooseSim
   },
   props: {
@@ -410,8 +411,7 @@ export default {
       viewData: {
         //用于渲染的数据
         disabledLicense: false, //车牌号是否可用，编辑时 如果车牌号为正确格式，则不可编辑，如果为vin大架号 则可以编辑
-        vehicleDetails: {}, //车辆型号数据
-        company_name: ""
+        vehicleDetails: {} //车辆型号数据
       },
       groupData: {
         level: "",
@@ -437,6 +437,7 @@ export default {
         sim_no: "", //真实SIM卡号
         device_id: "", //设备Id
         device_no: "",
+        company_name: "",
         license: "", //车牌号
         contract_date: "", //服务到期日期
         first_time: "", //首次定位时间

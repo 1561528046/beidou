@@ -13,17 +13,17 @@ export default {
     // }
     // this.$set(this.$data, "list", Object.freeze(list));
     // 打开一个WebSocket:
-    // var ll = "";
-    // var ws = new WebSocket("ws://localhost:3000/");
-    // // 响应onmessage事件:
-    // ws.onmessage = function(msg) {
-    //   ll += msg;
-    //   msg;
-    //   // console.log(msg);
-    // };
-    // setInterval(() => {
-    //   console.log(ll.length);
-    // }, 1000);
+    window.ll = [];
+    var ws = new WebSocket("ws://localhost:3000/");
+    ws.binaryType = "arraybuffer";
+    // 响应onmessage事件:
+    ws.onmessage = function(msg) {
+      // console.log(msg);
+      ll.push(new Int16Array(msg.data));
+    };
+    setInterval(() => {
+      this.l = window.ll.length;
+    }, 100);
   },
   data() {
     return {

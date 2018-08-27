@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-input v-model="sim_no" :placeholder="placeholder" @focus="dialogTableVisible = true">
+  <div style="line-height:1;">
+    <el-input v-model="device_no" :placeholder="placeholder" @focus="dialogTableVisible = true">
       <el-button slot="append" icon="el-icon-error" @click="clearChoose">清空</el-button>
       <el-button slot="append" type="primary" icon="el-icon-more" @click="dialogTableVisible = true">选择</el-button>
     </el-input>
@@ -14,24 +14,29 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="ICCID卡号">
-              <el-input v-model="tableQuery.icc_id" placeholder="ICCID卡号"></el-input>
+            <el-form-item label="终端ID">
+              <el-input v-model="tableQuery.device_id" placeholder="终端ID"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="SIM卡号">
-              <el-input v-model="tableQuery.sim_no" placeholder="SIM卡号"></el-input>
+            <el-form-item label="SIM ID">
+              <el-input v-model="tableQuery.sim_id" placeholder="SIM ID"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
-            <el-form-item label="所属运营商" label-width="82px">
-              <el-input v-model="tableQuery.belong" placeholder="所属运营商"></el-input>
+            <el-form-item label="终端类型">
+              <select-devicetype style="width: 100%;" v-model="tableQuery.device_type"></select-devicetype>
             </el-form-item>
           </el-col>
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item label="终端厂商">
+              <select-company v-model="tableQuery.company_id" style="width:100%;" :clearable="true"></select-company>
+            </el-form-item>
+          </el-col>
+
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="分配用户">
-              <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.real_name" :fetch-suggestions="realNameQuerySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="realNameHandleSelect">
-              </el-autocomplete>
+              <select-user v-model="tableQuery.user_id" style="width:100%;" :clearable="true"></select-user>
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -43,15 +48,18 @@
           </el-col>
         </el-row>
       </el-form>
-      <el-table :data="tableData.data " v-loading="tableLoading " style="width: 100% " class="admin-table-list" max-height="300">
-        <el-table-column prop="time " label="添加时间 " :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
-        <el-table-column prop="icc_id" label="ICCID" :formatter="$utils.baseFormatter">
+      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+        <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
+        <el-table-column prop="device_type" label="终端类型" :formatter="(row)=>{return this.$dict.get_device_type(row.device_type)}">
         </el-table-column>
-        <el-table-column prop="sim_no" label="Sim卡号" :formatter="$utils.baseFormatter">
+        <el-table-column prop="company_name" label="终端厂商" :formatter="$utils.baseFormatter" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="device_no" label="终端ID"></el-table-column>
+        <el-table-column prop="sim_id" label="SIM ID" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="protocol_type" label="协议类型" :formatter="(row)=>{return this.$dict.get_protocol_type(row.protocol_type)}">
         </el-table-column>
-        <el-table-column prop="belong" label="所属运营商" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="real_name" label="分配用户" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="state" label="当前状态" :formatter="(row)=>{return this.$dict.get_sim_state(row.state)}"></el-table-column>
+        <el-table-column prop="real_name" label="分配用户" :formatter="$utils.baseFormatter">
+        </el-table-column>
+        <el-table-column prop="state" label="状态" :formatter="(row)=>{return this.$dict.get_device_state(row.state)}"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="small" icon="el-icon-check" @click="choose(scope)">选择</el-button>
@@ -66,25 +74,37 @@
   </div>
 </template>
 <script>
-import { getSimList, getUserAll } from "@/api/index.js";
+import { getDeviceList, getUserAll } from "@/api/index.js";
+import selectCompany from "@/components/select-company.vue";
+import selectUser from "@/components/select-user.vue";
+import selectDevicetype from "@/components/select-devicetype.vue";
+import selectDevice from "@/components/select-device.vue";
 export default {
+  component: {
+    selectCompany,
+    selectUser,
+    selectDevicetype,
+    selectDevice
+  },
   data() {
     return {
       dialogTableVisible: false,
       loading: false,
       dateRange: [],
-      sim_no: "",
+      device_no: "",
       isCollapse: false,
       tableQuery: {
-        sim_no: "",
-        state: "",
-        belong: "",
-        icc_id: "",
-        user_id: "",
-        startDate: "",
-        endDate: "",
-        size: 10,
+        device_type: "",
+        device_id: "",
+        company_name: "",
+        company_id: "",
         real_name: "",
+        user_id: "",
+        sim_id: "",
+        start_date: "",
+        end_date: "",
+        state: "",
+        size: 10,
         page: 1
       },
       tableData: {
@@ -126,15 +146,8 @@ export default {
     };
   },
   watch: {
-    sim_no: function() {
-      this.$emit("input", this.sim_no);
-    },
-    dateRange: function() {
-      this.tableQuery.startDate = this.dateRange[0];
-      this.tableQuery.endData = this.dateRange[1];
-    },
     value: function() {
-      this.sim_no = this.$props.value;
+      this.device_no = this.$props.value;
     }
   },
   props: {
@@ -146,7 +159,7 @@ export default {
     }
   },
   created() {
-    this.sim_no = this.value;
+    this.sim_id = this.value;
     this.getTable();
   },
   methods: {
@@ -174,25 +187,34 @@ export default {
       });
     },
     choose(scope) {
-      this.sim_no = scope.row.sim_no;
-      this.$emit("input", scope.row.sim_no);
+      console.log(scope);
+      this.device_no = scope.row.device_no;
+      this.$emit("input", scope.row.device_no);
+      this.$emit("update:device_id", scope.row.device_id);
+      this.$emit("update:company_name", scope.row.company_name);
+      this.$emit("update:sim_id", scope.row.sim_id);
       this.dialogTableVisible = false;
     },
     clearChoose() {
-      this.sim_no = "";
+      this.device_no = "";
       this.$emit("input", "");
+      this.$emit("update:device_id", "");
+      this.$emit("update:company_name", "");
+      this.$emit("update:sim_id", "");
     },
     getTable() {
       this.tableLoading = true;
       if (this.tableQuery.real_name == "") {
         this.tableQuery.user_id = "";
       }
-      getSimList(this.tableQuery)
+      var query = Object.assign({}, this.tableQuery);
+      getDeviceList(query)
         .then(res => {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);
           } else {
             this.$set(this.$data, "tableData", []);
+            this.$message.error(res.data.msg);
           }
           this.tableLoading = false;
         })
