@@ -29,10 +29,18 @@
         <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="em_0x01" label="行驶里程"> </el-table-column>
-        <el-table-column prop="" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="speed" label="速度(公里/时)"> </el-table-column>>
+        <el-table-column prop="time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
+        <el-table-column prop="time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
+        <el-table-column prop="" label="GPS讯号丢失/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="GNSS模块故障/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="GNSS天线未接或剪断/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="GNSS天线短路/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="主电源欠压/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="主电源漏电/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="LCD或显示器故障/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="TTS模块故障/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="摄像头故障/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="VSS故障/已处理" :formatter="$utils.baseFormatter"> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
