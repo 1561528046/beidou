@@ -1,65 +1,66 @@
 <template>
-    <div class="admin-table-container">
-        <el-card shadow="always" class="admin-table-search">
+  <div class="admin-table-container">
+    <el-card shadow="always" class="admin-table-search">
 
-            <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
-                <el-row :gutter="30">
-                    <el-col :span="6">
-                        <el-form-item label="时间">
-                            <el-date-picker v-model="tableQuery.Time" value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
-                            </el-date-picker>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="车辆">
-                            <template>
-                                <el-select v-model="tableQuery.simId" style="width:100%;" placeholder="请选择" :clearable="true">
-                                    <el-option label="1" value="1"></el-option>
-                                </el-select>
-                            </template>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="限速速度">
-                            <template>
-                                <el-select v-model="tableQuery.simId" style="width:100%;" placeholder="请选择" :clearable="true">
-                                    <el-option label="1" value="1"></el-option>
-                                </el-select>
-                            </template>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="isCollapse?24:6" style="text-align: right;">
-                        <el-form-item>
-                            <el-button type="primary" @click="getTable">查询</el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
-        </el-card>
-        <el-card shadow="always">
-            <div class="admin-table-actions">
-            </div>
-            <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-                <el-table-column prop="time" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="所属组织" :formatter="$utils.baseFormatter"> </el-table-column>
-                <!--  :formatter="(row)=>{return this.$utils.formatDate(row.time)}" -->
-                <el-table-column prop="time" label="所选时间段"> </el-table-column>
-                <el-table-column prop="time" label="超速时长" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="超速率" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="开始速度" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="开始里程" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="开始位置" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="结束速度" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="结束里程" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="结束位置" :formatter="$utils.baseFormatter"> </el-table-column>
-            </el-table>
-            <div class="admin-table-pager">
-                <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
-                </el-pagination>
-            </div>
-        </el-card>
-    </div>
+      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+        <el-row :gutter="30">
+          <el-col :span="6">
+            <el-form-item label="时间">
+              <el-date-picker v-model="tableQuery.Time" value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="车辆">
+              <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
+                <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
+              </el-button>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="限速速度">
+              <template>
+                <el-select v-model="tableQuery.simId" style="width:100%;" placeholder="请选择" :clearable="true">
+                  <el-option label="1" value="1"></el-option>
+                </el-select>
+              </template>
+            </el-form-item>
+          </el-col>
+          <el-col :span="isCollapse?24:6" style="text-align: right;">
+            <el-form-item>
+              <el-button type="primary" @click="getTable">查询</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-card>
+    <el-card shadow="always">
+      <div class="admin-table-actions">
+      </div>
+      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+        <el-table-column prop="time" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="所属组织" :formatter="$utils.baseFormatter"> </el-table-column>
+        <!--  :formatter="(row)=>{return this.$utils.formatDate(row.time)}" -->
+        <el-table-column prop="time" label="所选时间段"> </el-table-column>
+        <el-table-column prop="time" label="超速时长" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="超速率" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="开始速度" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="开始里程" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="开始位置" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="结束速度" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="结束里程" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="结束位置" :formatter="$utils.baseFormatter"> </el-table-column>
+      </el-table>
+      <div class="admin-table-pager">
+        <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
+        </el-pagination>
+      </div>
+    </el-card>
+    <el-dialog width="30%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-car @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-car>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import {} from "@/api/index.js";
@@ -71,6 +72,7 @@ export default {
   },
   data() {
     return {
+      addDialog: false,
       isCollapse: false,
       tableQuery: {
         beginTime: "",
@@ -127,7 +129,6 @@ export default {
     //查询产品列表
     getTable() {
       this.tableLoading = true;
-      this.tableData.data = [{ time: "1" }];
       this.tableLoading = false;
       // if (this.simee.address) {
       //   this.tableQuery.company_id = this.simee.address;

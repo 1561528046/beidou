@@ -47,7 +47,7 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import { getReport } from "@/api/index.js";
-import chooseCar from "@/components/choose-vehicle.vue";
+import chooseCar from "@/components/choose-car.vue";
 export default {
   components: { chooseCar },
   created() {
