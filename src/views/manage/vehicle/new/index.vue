@@ -74,18 +74,18 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <router-link :to="{path:'new/add'}">
+        <router-link :to="{path:'new/add'}" v-if="$props.state==1">
           <el-button type="primary" size="small">
             <i class="el-icon-plus"></i> 添加
           </el-button>
         </router-link>
         &nbsp;
-        <el-button type="primary" size="small">
+        <!-- <el-button type="primary" size="small" v-if="$props.state==2">
           <i class="el-icon-tickets"></i> 单车导入
         </el-button>
-        <el-button type="primary" size="small">
+        <el-button type="primary" size="small" v-if="$props.state==2">
           <i class="el-icon-upload2"></i> 批量导入
-        </el-button>
+        </el-button> -->
         <el-button type="primary" size="small">
           <i class="el-icon-download"></i> 导出
         </el-button>
@@ -111,11 +111,11 @@
             <el-dropdown size="mini" split-button style="margin-left:10px;">
               更多操作
               <el-dropdown-menu slot="dropdown" class="vehicle-list-more">
-                <el-dropdown-item v-if="$props.state==1">车辆位置</el-dropdown-item>
-                <el-dropdown-item>更新定位</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state!=1">车辆位置</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state==1">更新定位</el-dropdown-item>
                 <el-dropdown-item v-if="$props.state!=1">平台续费</el-dropdown-item>
                 <el-dropdown-item v-if="$props.state!=1">厂商续费</el-dropdown-item>
-                <el-dropdown-item>厂商激活</el-dropdown-item>
+                <el-dropdown-item>厂商激活(2个图片，一个备注)</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>

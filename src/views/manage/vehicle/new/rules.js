@@ -17,6 +17,7 @@ export const Rules = function(vm, type, is_enter) {
 
   if (is_enter == 1) {
     return {
+      source: [{ required: true, message: "必须选择接入状态" }],
       img: [{ required: true, message: "车身照片" }],
       register_no1: [{ required: true, message: "车辆登记证1" }],
       driver_no: [{ required: true, message: "车辆合格证/行驶证" }],

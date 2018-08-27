@@ -49,24 +49,6 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="接入车辆类型" prop="type">
-              <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="接入车辆状态" prop="source">
-              <el-select v-model="formData.source" placeholder="接入车辆状态" style="width:100%;">
-                <el-option label="新增" value="1"></el-option>
-                <el-option label="转网" value="2"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="燃料种类" prop="fuel_type">
-              <select-fuel-type v-model="formData.fuel_type" style="width:100%;"></select-fuel-type>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
             <el-form-item label="车牌号" style="margin-bottom:0;" class="is-required">
               <el-row>
                 <el-col :span="11">
@@ -91,6 +73,25 @@
               </el-row>
             </el-form-item>
           </el-col>
+          <el-col :span="8" v-if="$props.is_enter!=1">
+            <el-form-item label="接入车辆类型" prop="type">
+              <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="接入车辆状态" prop="source" v-if="$props.is_enter==1">
+              <el-select v-model="formData.source" placeholder="接入车辆状态" style="width:100%;">
+                <el-option label="新增" value="1"></el-option>
+                <el-option label="转网" value="2"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="燃料种类" prop="fuel_type">
+              <select-fuel-type v-model="formData.fuel_type" style="width:100%;"></select-fuel-type>
+            </el-form-item>
+          </el-col>
+
           <el-col :span="8">
             <el-form-item label="业户/车主" prop="owner">
               <el-input v-model="formData.owner"></el-input>
@@ -258,27 +259,26 @@
         </div>
         <el-row :gutter="30">
           <el-col :span="8">
-            <el-form-item label="终端ID " prop="device_no">
-              <select-device v-model="formData.device_no " :state="1 " :device_id.sync="formData.device_id " :company_name.sync="viewData.company_name"></select-device>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
             <el-form-item label="设备厂商">
               {{viewData.company_name}}
             </el-form-item>
           </el-col>
 
-          <el-col :span="8 " style="height:50px;">
-
-          </el-col>
           <el-col :span="8">
-            <el-form-item label="SIM卡卡号 " prop="sim_id">
+            <el-form-item label="终端ID " prop="device_no">
+              <select-device v-model="formData.device_no " :state="1 " :device_id.sync="formData.device_id " :company_name.sync="viewData.company_name"></select-device>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="8">
+            <el-form-item label="SIM ID " prop="sim_id">
               <select-sim :state="1 " v-model="formData.sim_id"></select-sim>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="安装SIM卡号 " prop="sim_no">
-              <el-input v-model="formData.sim_no"></el-input>
+              <choose-sim v-model="formData.sim_no"></choose-sim>
+              <!-- <el-input v-model="formData.sim_no"></el-input> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -293,7 +293,8 @@
         <el-row :gutter="30">
           <el-col :span="8">
             <el-form-item label="车辆出厂时间 " prop="factory_date">
-              <el-input v-model="formData.factory_date"></el-input>
+              <el-date-picker v-model="formData.factory_date" :picker-options="pickerOptions" value-format="yyyyMMdd" align="center" type="date" placeholder="选择日期" style="width:100%;">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -371,7 +372,7 @@ import selectVehicleType from "@/components/select-vehicle-type.vue";
 import selectFuelType from "@/components/select-fuel-type.vue";
 import selectVtype from "@/components/select-vtype.vue";
 import selectDevice from "@/components/select-device.vue";
-import selectSim from "@/components/select-sim.vue";
+import chooseSim from "@/components/choose-sim.vue";
 import selectBrand from "./select-brand.vue";
 import selectType from "./select-type.vue";
 
@@ -386,7 +387,7 @@ export default {
     selectBrand,
     selectType,
     selectDevice,
-    selectSim
+    chooseSim
   },
   props: {
     is_edit: Boolean, //是否是编辑
@@ -619,69 +620,69 @@ export default {
           });
         });
     } else {
-      var data = {
-        area: ["130000", "130100", "130102"],
-        is_enter: this.$props.is_enter,
-        //提交的数据
-        register_no1: "", //车辆登记证1
-        register_no2: "", //车辆登记证2
-        driver_no: "", //车辆合格证/行驶证
-        img: "", //车身照片
-        sim_id: "1440148331815", //Sim Id
-        sim_no: "15930616103", //真实SIM卡号
-        device_id: "34", //设备Id
-        device_no: "1358641",
-        license: "冀R12345", //车牌号
-        contract_date: "20180808", //服务到期日期
-        first_time: "", //首次定位时间
-        province_id: "", //省id
-        city_id: "", //市id
-        county_id: "", //县id
-        ip: "", //车辆接入ip
-        port: "", //车辆接入端口
-        issue_date: "20180808", //行驶证签发日期
-        type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
-        fuel_type: "1", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
-        license_color: "1", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
-        owner: "啊啊", //车主/业户
-        linkman: "啊啊", //联系人
-        tel: "15930616103", //联系电话
-        factory_date: "", //出厂时间
-        body_color: "", //车身颜色：1黄色，2蓝色，3白色，4黑色，5其它
-        business_scope: "", //经营范围
-        tyre: "", //轮胎数
-        tyre_size: "", //轮胎规格
-        purchase: "", //购置方式：1分期，2全款
-        insurance_date: "", //车辆保险到期日期
-        insurance_type: "", //车辆保险种类：1交强险，2盗抢险，3三者，4车损险，5车上人员险，6货物运输险，7其它
-        valid_date: "", //检验有效期至
-        time: "", //记录添加时间
-        vin: "12345678", //车辆识别代码/vin
-        vbrandCode: "122", //车辆品牌id
-        vbrandName: "解放牌",
-        end_time: "", //离线时间
-        vid: "", //全国平台车辆ID
-        source: "1", //接入车辆状态：1新增，2转网
-        transport_license: "", //道路运输经营许可证
-        transport_no: "1111", //道路运输证号
-        vtype: "22", //车辆类型
-        model: "CA1133PK45L3R5E1", //车辆型号
-        engine_no: "123", //发动机号
-        engine_type: "123", //发动机类型
-        total_ton: "1111", //总质量(kg)
-        load_ton: "1100", //核定载质量(kg)
-        draw_ton: "1111", //准牵引总质量(kg)
-        length: "1111", //外廓尺寸(mm)长
-        width: "1100", //外廓尺寸(mm)宽
-        height: "1100", //外廓尺寸(mm)高
-        box_length: "1100", //货厢内部尺寸(mm)长
-        box_width: "1000", //货厢内部尺寸(mm)宽
-        box_height: "888", //货厢内部尺寸(mm)高
-        axis: "11" //轴数
-      };
-      for (var key in data) {
-        this.formData[key] = data[key];
-      }
+      // var data = {
+      //   area: ["130000", "130100", "130102"],
+      //   is_enter: this.$props.is_enter,
+      //   //提交的数据
+      //   register_no1: "", //车辆登记证1
+      //   register_no2: "", //车辆登记证2
+      //   driver_no: "", //车辆合格证/行驶证
+      //   img: "", //车身照片
+      //   sim_id: "1440148331815", //Sim Id
+      //   sim_no: "15930616103", //真实SIM卡号
+      //   device_id: "34", //设备Id
+      //   device_no: "1358641",
+      //   license: "冀R12345", //车牌号
+      //   contract_date: "20180808", //服务到期日期
+      //   first_time: "", //首次定位时间
+      //   province_id: "", //省id
+      //   city_id: "", //市id
+      //   county_id: "", //县id
+      //   ip: "", //车辆接入ip
+      //   port: "", //车辆接入端口
+      //   issue_date: "20180808", //行驶证签发日期
+      //   type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
+      //   fuel_type: "1", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
+      //   license_color: "1", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
+      //   owner: "啊啊", //车主/业户
+      //   linkman: "啊啊", //联系人
+      //   tel: "15930616103", //联系电话
+      //   factory_date: "", //出厂时间
+      //   body_color: "", //车身颜色：1黄色，2蓝色，3白色，4黑色，5其它
+      //   business_scope: "", //经营范围
+      //   tyre: "", //轮胎数
+      //   tyre_size: "", //轮胎规格
+      //   purchase: "", //购置方式：1分期，2全款
+      //   insurance_date: "", //车辆保险到期日期
+      //   insurance_type: "", //车辆保险种类：1交强险，2盗抢险，3三者，4车损险，5车上人员险，6货物运输险，7其它
+      //   valid_date: "", //检验有效期至
+      //   time: "", //记录添加时间
+      //   vin: "12345678", //车辆识别代码/vin
+      //   vbrandCode: "122", //车辆品牌id
+      //   vbrandName: "解放牌",
+      //   end_time: "", //离线时间
+      //   vid: "", //全国平台车辆ID
+      //   source: "1", //接入车辆状态：1新增，2转网
+      //   transport_license: "", //道路运输经营许可证
+      //   transport_no: "1111", //道路运输证号
+      //   vtype: "22", //车辆类型
+      //   model: "CA1133PK45L3R5E1", //车辆型号
+      //   engine_no: "123", //发动机号
+      //   engine_type: "123", //发动机类型
+      //   total_ton: "1111", //总质量(kg)
+      //   load_ton: "1100", //核定载质量(kg)
+      //   draw_ton: "1111", //准牵引总质量(kg)
+      //   length: "1111", //外廓尺寸(mm)长
+      //   width: "1100", //外廓尺寸(mm)宽
+      //   height: "1100", //外廓尺寸(mm)高
+      //   box_length: "1100", //货厢内部尺寸(mm)长
+      //   box_width: "1000", //货厢内部尺寸(mm)宽
+      //   box_height: "888", //货厢内部尺寸(mm)高
+      //   axis: "11" //轴数
+      // };
+      // for (var key in data) {
+      //   this.formData[key] = data[key];
+      // }
     }
   },
   methods: {

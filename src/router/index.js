@@ -41,9 +41,9 @@ var router = new Router({
       component: () => import("@/views/manage/index.vue"),
       children: [
         vehicle,
-        user,
         device,
         product,
+        user,
         report,
 
         {

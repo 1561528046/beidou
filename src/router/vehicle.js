@@ -55,28 +55,28 @@ export default {
       ]
     },
     {
-      path: "danger_vehicle",
-      name: "danger_vehicle",
-      meta: { name: "危险品车辆", icon: "iconfont icon-weihuo" },
+      path: "other_vehicle",
+      name: "other_vehicle",
+      meta: { name: "其他车辆", icon: "iconfont icon-weihuo" },
       component: () => import("@/views/manage/vehicle/index.vue"),
       children: [
         {
           path: "new",
-          name: "danger_vehicle_list_new",
+          name: "other_vehicle_list_new",
           meta: { name: "新增车辆管理", icon: "iconfont icon-zongheguanli" },
           props: { is_enter: 2, state: 1, type: 1 },
           component: () => import("@/views/manage/vehicle/new/index.vue")
         },
         {
           path: "position",
-          name: "danger_vehicle_list_position",
+          name: "other_vehicle_list_position",
           meta: { name: "定位车辆管理", icon: "iconfont icon-location-fill" },
           props: { is_enter: 2, state: 2, type: 1 },
           component: () => import("@/views/manage/vehicle/new/index.vue")
         },
         {
           path: "timeout",
-          name: "danger_vehicle_list_timeout",
+          name: "other_vehicle_list_timeout",
           meta: {
             name: "到期车辆管理",
             icon: "iconfont icon-time-circle-fill"
@@ -86,67 +86,67 @@ export default {
         },
         {
           path: "new/add",
-          name: "danger_vehicle_add",
+          name: "other_vehicle_add",
           meta: { name: "新增车辆管理-添加", hidden: true },
           props: { is_enter: 2, type: 1 },
           component: () => import("@/views/manage/vehicle/new/add.vue")
         },
         {
           path: "new/edit/",
-          name: "danger_vehicle_edit",
+          name: "other_vehicle_edit",
           meta: { name: "新增车辆管理-编辑", hidden: true },
           props: { is_enter: 2, type: 1, is_edit: true },
           component: () => import("@/views/manage/vehicle/new/add.vue")
         }
       ]
     },
-    {
-      path: "bus_vehicle",
-      name: "bus_vehicle",
-      meta: { name: "客运车辆", icon: "iconfont icon-bus" },
-      props: { is_enter: 2 },
-      component: () => import("@/views/manage/vehicle/index.vue"),
-      children: [
-        {
-          path: "new",
-          name: "bus_vehicle_list_new",
-          meta: { name: "新增车辆管理", icon: "iconfont icon-zongheguanli" },
-          props: { is_enter: 2, state: 1, type: 3 },
-          component: () => import("@/views/manage/vehicle/new/index.vue")
-        },
-        {
-          path: "position",
-          name: "bus_vehicle_list_position",
-          meta: { name: "定位车辆管理", icon: "iconfont icon-location-fill" },
-          props: { is_enter: 2, state: 2, type: 3 },
-          component: () => import("@/views/manage/vehicle/new/index.vue")
-        },
-        {
-          path: "timeout",
-          name: "bus_vehicle_list_timeout",
-          meta: {
-            name: "到期车辆管理",
-            icon: "iconfont icon-time-circle-fill"
-          },
-          props: { is_enter: 2, state: 3, type: 3 },
-          component: () => import("@/views/manage/vehicle/new/index.vue")
-        },
-        {
-          path: "new/add",
-          name: "bus_vehicle_add",
-          meta: { name: "新增车辆管理-添加", hidden: true },
-          props: { is_enter: 1, state: 1, type: 3 },
-          component: () => import("@/views/manage/vehicle/new/add.vue")
-        },
-        {
-          path: "new/edit/",
-          name: "bus_vehicle_edit",
-          meta: { name: "新增车辆管理-编辑", hidden: true },
-          props: { is_enter: 1, state: 1, type: 3 },
-          component: () => import("@/views/manage/vehicle/new/add.vue")
-        }
-      ]
-    },
+    // {
+    //   path: "bus_vehicle",
+    //   name: "bus_vehicle",
+    //   meta: { name: "其他车辆", icon: "iconfont icon-bus" },
+    //   props: { is_enter: 2 },
+    //   component: () => import("@/views/manage/vehicle/index.vue"),
+    //   children: [
+    //     {
+    //       path: "new",
+    //       name: "bus_vehicle_list_new",
+    //       meta: { name: "新增车辆管理", icon: "iconfont icon-zongheguanli" },
+    //       props: { is_enter: 2, state: 1, type: 3 },
+    //       component: () => import("@/views/manage/vehicle/new/index.vue")
+    //     },
+    //     {
+    //       path: "position",
+    //       name: "bus_vehicle_list_position",
+    //       meta: { name: "定位车辆管理", icon: "iconfont icon-location-fill" },
+    //       props: { is_enter: 2, state: 2, type: 3 },
+    //       component: () => import("@/views/manage/vehicle/new/index.vue")
+    //     },
+    //     {
+    //       path: "timeout",
+    //       name: "bus_vehicle_list_timeout",
+    //       meta: {
+    //         name: "到期车辆管理",
+    //         icon: "iconfont icon-time-circle-fill"
+    //       },
+    //       props: { is_enter: 2, state: 3, type: 3 },
+    //       component: () => import("@/views/manage/vehicle/new/index.vue")
+    //     },
+    //     {
+    //       path: "new/add",
+    //       name: "bus_vehicle_add",
+    //       meta: { name: "新增车辆管理-添加", hidden: true },
+    //       props: { is_enter: 1, state: 1, type: 3 },
+    //       component: () => import("@/views/manage/vehicle/new/add.vue")
+    //     },
+    //     {
+    //       path: "new/edit/",
+    //       name: "bus_vehicle_edit",
+    //       meta: { name: "新增车辆管理-编辑", hidden: true },
+    //       props: { is_enter: 1, state: 1, type: 3 },
+    //       component: () => import("@/views/manage/vehicle/new/add.vue")
+    //     }
+    //   ]
+    // },
     {
       path: "vehicle-repair",
       name: "vehicle-repair",
