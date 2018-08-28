@@ -3,41 +3,44 @@
     <el-row :gutter="30">
       <el-col :span="7">
         <el-form-item label="车牌号" prop="query_mode">
-          <el-input v-model="formData.license"></el-input>
+          <el-input v-model="formData.cade"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="7">
         <el-form-item label="用户">
-          <el-input v-model="formData.user_id"></el-input>
+          <el-input v-model="formData.cade"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="7">
         <el-form-item label="终端ID">
-          <el-input v-model="formData.device_id"></el-input>
+          <el-input v-model="formData.cade"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="3" style="text-align: right;">
         <el-form-item>
           <label style="display:inline-block; width:100%;"></label>
-          <el-button size="small" @click="selectForm" type="primary">搜索</el-button>
+          <el-button size="small" type="primary">搜索</el-button>
         </el-form-item>
       </el-col>
     </el-row>
     <template>
       <el-table :data="tableData.data" border style="width: 100%">
-        <el-table-column prop="license" label="车牌号" width="260">
-        </el-table-column>
-        <el-table-column prop="user_id" label="用户" width="260">
-        </el-table-column>
-        <el-table-column prop="device_id" label="终端ID" width="260">
-        </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="状态" width="50">
           <template slot-scope="scope">
-            <el-button style="margin-left:20px;" size="small" @click="formSubmit(scope)">选择</el-button>
+            <el-checkbox size="medium" v-model="scope.row.checked" style="margin-left:7px;"></el-checkbox>
           </template>
+        </el-table-column>
+        <el-table-column prop="license" label="车牌号">
+        </el-table-column>
+        <el-table-column prop="user_id" label="用户">
+        </el-table-column>
+        <el-table-column prop="device_id" label="终端ID">
         </el-table-column>
       </el-table>
     </template>
+    <el-form-item style="text-align:center; margin-top:20px;margin-bottom:-10px;">
+      <el-button type="primary" size="small">提交</el-button>
+    </el-form-item>
     <!-- <button @click="$router.go(-1)">a</button> -->
   </el-form>
 </template>
@@ -46,15 +49,16 @@ import { rules } from "@/utils/rules.js";
 export default {
   data() {
     return {
+      checked: true,
       formData: {
-        license: "",
-        user_id: "",
-        device_id: "",
-        page: 1,
-        size: 10
+        query_mode: "",
+        cade: ""
       },
       tableData: {
-        data: [{ license: "064620623980", user_id: "abc", device_id: "0000" }]
+        data: [
+          { license: "064620623980", user_id: "abc", device_id: "0000" },
+          { license: 12345, user_id: "abce", device_id: "0001" }
+        ]
       },
       rules: {
         ...rules
@@ -64,9 +68,6 @@ export default {
   watch: {},
   created() {},
   methods: {
-    selectForm() {
-      console.log(this.formData);
-    },
     formSubmit(scope) {
       this.$set(scope.row, "dialog", false);
       this.$emit("button", scope);

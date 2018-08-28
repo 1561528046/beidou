@@ -4,30 +4,37 @@
 
       <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
-          <el-col :span="7">
-            <el-form-item label="时间123">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+          <el-col :span="6">
+            <el-form-item label="时间">
+              <el-date-picker v-model="tableQuery.Time" value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="6">
             <el-form-item label="车辆">
-              <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
+              <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectvehicle">
                 <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
               </el-button>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
-            <el-form-item label="限速速度">
+          <el-col :span="6">
+            <el-form-item label="用户">
+              <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectuser">
+                <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
+              </el-button>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item label="限速速度(公里小时)">
               <template>
-                <el-select v-model="tableQuery.simId" style="width:100%;" placeholder="请选择" :clearable="true">
-                  <el-option label="1" value="1"></el-option>
-                </el-select>
+                <el-input></el-input>
               </template>
             </el-form-item>
           </el-col>
-          <el-col :span="3" style="text-align: right;">
+          <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
@@ -41,8 +48,8 @@
         <el-table-column prop="time" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="time" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="time" label="所属组织" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="time" label="开始时间"> </el-table-column>
-        <el-table-column prop="time" label="结束时间"> </el-table-column>
+        <el-table-column prop="time" label="开始时间" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="time" label="结束时间" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="time" label="超速次数" :formatter="$utils.baseFormatter"> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
@@ -50,23 +57,28 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog width="30%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-car @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-car>
+    <el-dialog width="50%" title="选择信息" :visible.sync="vehicleDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vcheckbox @button="xz" @success=" () => {this.getTable();this.vehicleDialog = false;}" :key="addKey"></choose-vcheckbox>
+    </el-dialog>
+    <el-dialog width="30%" title="选择信息" :visible.sync="userDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-user @button="xz" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-user>
     </el-dialog>
   </div>
 </template>
 <script>
 import {} from "@/api/index.js";
-import chooseCar from "@/components/choose-vehicle.vue";
+import chooseVcheckbox from "@/components/choose-vcheckbox";
+import chooseUser from "@/components/choose-user";
 export default {
-  components: { chooseCar },
+  components: { chooseVcheckbox, chooseUser },
   created() {
     this.getTable();
     this.keyupSubmit();
   },
   data() {
     return {
-      addDialog: false,
+      vehicleDialog: false,
+      userDialog: false,
       isCollapse: false,
       tableQuery: {
         beginTime: "",
@@ -120,10 +132,23 @@ export default {
   },
   mounted() {},
   methods: {
+    selectvehicle() {
+      this.addKey++;
+      this.vehicleDialog = true;
+      this.dialog = true;
+    },
+    selectuser() {
+      this.addKey++;
+      this.userDialog = true;
+    },
+    // 回来的数据
+    xz(scope) {
+      this.dialog = scope.row.dialog;
+      this.tableQuery.sim_id = scope.row.license;
+    },
     //查询产品列表
     getTable() {
       this.tableLoading = true;
-      this.tableData.data = [{ time: "1" }];
       this.tableLoading = false;
       // if (this.simee.address) {
       //   this.tableQuery.company_id = this.simee.address;
@@ -143,10 +168,6 @@ export default {
       //     this.tableLoading = false;
       //   })
       //   .catch(() => {});
-    },
-    addFrom() {
-      this.addKey++;
-      this.addDialog = true;
     },
     //回车事件
     keyupSubmit() {
