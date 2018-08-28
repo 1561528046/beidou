@@ -119,3 +119,24 @@ export const getEnquiry = query => {
     params: query
   });
 };
+// 确认订单
+export const ReviewOrder = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/ordermanage/ReviewOrder", queryQS, {
+    params: query
+  });
+};
+// 取消订单
+export const CancelOrder = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/ordermanage/CancelOrder", queryQS, {
+    params: query
+  });
+};
+// 取消订单审核
+export const ReviewCancel = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/ordermanage/ReviewCancel", queryQS, {
+    params: query
+  });
+};

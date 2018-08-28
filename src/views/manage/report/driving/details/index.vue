@@ -1,32 +1,27 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-
-      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
-          <el-col :span="6">
-            <el-form-item label="时间">
-              <el-date-picker v-model="tableQuery.Time" value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+          <el-col :span="7">
+            <el-form-item prop="time" label="时间">
+              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="车辆">
+          <el-col :span="7">
+            <el-form-item prop="sim_id" label="选择车辆">
               <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
                 <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
               </el-button>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="限速速度">
-              <template>
-                <el-select v-model="tableQuery.simId" style="width:100%;" placeholder="请选择" :clearable="true">
-                  <el-option label="1" value="1"></el-option>
-                </el-select>
-              </template>
+          <el-col :span="7">
+            <el-form-item label="限时速度">
+              <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="isCollapse?24:6" style="text-align: right;">
+          <el-col :span="3" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
@@ -35,8 +30,6 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
-      <div class="admin-table-actions">
-      </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="time" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="time" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -56,30 +49,57 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog width="30%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-car @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-car>
+    <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vehicle @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-vehicle>
     </el-dialog>
   </div>
 </template>
 <script>
-import {} from "@/api/index.js";
+import { rules } from "@/utils/rules.js";
+import { getReport } from "@/api/index.js";
+import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: {},
+  components: { chooseVehicle },
   created() {
-    this.getTable();
     this.keyupSubmit();
+  },
+  computed: {
+    list: function() {
+      return this.tableData.data.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
   },
   data() {
     return {
       addDialog: false,
+      addKey: 0,
       isCollapse: false,
       tableQuery: {
-        beginTime: "",
-        endTime: "",
-        Time: "",
-        simId: "",
+        begin_time: "",
+        end_time: "",
+        time: "",
+        sim_id: "",
         size: 10,
         page: 1
+      },
+      rules: {
+        ...rules,
+        sim_id: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请输入simid!"
+          }
+        ],
+        time: [
+          {
+            required: true,
+            trigger: "change",
+            validator: this.validateTime
+          }
+        ]
       },
       simss: [],
       simee: {},
@@ -87,66 +107,92 @@ export default {
         total: 0,
         data: []
       },
-      pickerOptions2: {
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
-          }
-        ]
-      },
-      tableLoading: true,
-      addKey: 0,
-      userdetailShow: false
+      tableLoading: false,
+      userdetailShow: false,
+      dialog: true
     };
   },
-  mounted() {},
+  watch: {
+    dialog: function() {
+      this.addDialog = this.dialog;
+    }
+  },
   methods: {
-    //查询产品列表
+    // 选择查询方式
+    addFrom() {
+      this.addKey++;
+      this.addDialog = true;
+      this.dialog = true;
+    },
+    // 回来的数据
+    xz(scope) {
+      this.dialog = scope.row.dialog;
+      this.tableQuery.sim_id = scope.row.license;
+    },
+    // 查询时间验证
+    validateTime(rule, value, callback) {
+      if (value == "") {
+        callback(new Error("请选择时间!"));
+        return false;
+      } else if (parseInt(value[1]) - parseInt(value[0]) > 2000000) {
+        callback(new Error("选择时间不能大于3天!"));
+        return false;
+      } else {
+        this.tableQuery.begin_time = value[0];
+        this.tableQuery.end_time = value[1];
+        callback();
+      }
+    },
+    //查询列表
     getTable() {
       this.tableLoading = true;
+      this.$refs.baseForm.validate((isVaildate, errorItem) => {
+        if (isVaildate) {
+          var query = Object.assign({}, this.tableQuery);
+          getReport(query)
+            .then(res => {
+              if (res.data.code == 0) {
+                var data = [];
+                for (var i = 0; i < res.data.data.length; i++) {
+                  data.push(res.data.data[i]);
+                }
+                this.$set(this.tableData, "data", Object.freeze(data));
+                this.$set(this.tableData, "total", this.tableData.data.length);
+                this.$emit("success");
+                this.$notify({
+                  message: res.data.msg,
+                  title: "提示",
+                  type: "success"
+                });
+              } else {
+                this.$set(this.$data, "tableData", []);
+                this.$emit("error");
+                this.$notify({
+                  message: res.data.msg,
+                  title: "提示",
+                  type: "error"
+                });
+              }
+            })
+            .catch(() => {
+              this.$alert("接口错误", "提示", {
+                type: "error"
+              });
+              this.$emit("error");
+            });
+        } else {
+          var errormsg = "";
+          for (var key in errorItem) {
+            errormsg += errorItem[key][0].message + "<br>";
+          }
+          this.$notify.error({
+            title: "错误",
+            dangerouslyUseHTMLString: true,
+            message: errormsg
+          });
+        }
+      });
       this.tableLoading = false;
-      // if (this.simee.address) {
-      //   this.tableQuery.company_id = this.simee.address;
-      // }
-      // if (this.tableQuery.company_nameta == "") {
-      //   this.tableQuery.company_id = "";
-      // }
-      // var query = Object.assign({}, this.tableQuery);
-      // getDeviceCompanyList(query)
-      //   .then(res => {
-      //     if (res.data.code == 0) {
-      //       this.$set(this.$data, "tableData", res.data);
-      //     } else {
-      //       this.$set(this.$data, "tableData", []);
-      //       this.$message.error(res.data.msg);
-      //     }
-      //     this.tableLoading = false;
-      //   })
-      //   .catch(() => {});
     },
     //回车事件
     keyupSubmit() {
@@ -171,3 +217,12 @@ export default {
   }
 };
 </script>
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+</style>

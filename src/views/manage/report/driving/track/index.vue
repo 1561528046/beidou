@@ -39,17 +39,17 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog width="30%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-car @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-car>
+    <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vehicle @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-vehicle>
     </el-dialog>
   </div>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
 import { getReport } from "@/api/index.js";
-import chooseCar from "@/components/choose-vehicle.vue";
+import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { chooseCar },
+  components: { chooseVehicle },
   created() {
     this.keyupSubmit();
   },

@@ -453,11 +453,10 @@ export default {
     },
     // 添加单一收费项
     addFrom(type) {
-      this.formData.detail_type = type;
       this.addKey++;
       this.addDialog = true;
       this.parent_id = this.formData.package_id;
-      this.parent_type = this.formData.detail_type;
+      this.parent_type = type;
     },
     // 删除单一收费项
     delDetail(scope) {
