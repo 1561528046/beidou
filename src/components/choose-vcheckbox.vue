@@ -39,7 +39,7 @@
       </el-table>
     </template>
     <el-form-item style="text-align:center; margin-top:20px;margin-bottom:-10px;">
-      <el-button type="primary" size="small">提交</el-button>
+      <el-button type="primary" size="small" @click="formSubmit">提交</el-button>
     </el-form-item>
     <!-- <button @click="$router.go(-1)">a</button> -->
   </el-form>
@@ -51,13 +51,14 @@ export default {
     return {
       checked: true,
       formData: {
-        query_mode: "",
-        cade: ""
+        license: "",
+        user_id: "",
+        device_id: ""
       },
       tableData: {
         data: [
           { license: "064620623980", user_id: "abc", device_id: "0000" },
-          { license: 12345, user_id: "abce", device_id: "0001" }
+          { license: "0123456789", user_id: "abc", device_id: "0000" }
         ]
       },
       rules: {
@@ -68,9 +69,14 @@ export default {
   watch: {},
   created() {},
   methods: {
-    formSubmit(scope) {
-      this.$set(scope.row, "dialog", false);
-      this.$emit("button", scope);
+    formSubmit() {
+      var arr = [];
+      for (var i = 0; i < this.tableData.data.length; i++) {
+        if (this.tableData.data[i].checked) {
+          arr.push(this.tableData.data[i]);
+        }
+      }
+      this.$emit("button", arr);
     }
   },
   components: {}

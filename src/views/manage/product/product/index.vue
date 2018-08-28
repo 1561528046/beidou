@@ -25,7 +25,7 @@
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
         <router-link :to="{name:'product-binding'}" style="margin-left: 15px;">
-          <el-button type="primary" size="mini" style="padding-top: 6px;padding-bottom: 9px;">
+          <el-button type="primary" size="mini" style="padding-top: 9px;padding-bottom: 9px;">
             <i class="iconfont icon-team"></i> 分配用户
           </el-button>
         </router-link>

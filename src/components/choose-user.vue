@@ -7,17 +7,18 @@
             <el-checkbox size="medium" v-model="scope.row.checked" style="margin-left:7px;"></el-checkbox>
           </template>
         </el-table-column>
-        <el-table-column prop="user_id" label="用户">
+        <el-table-column prop="real_name" label="用户">
         </el-table-column>
       </el-table>
     </template>
     <el-form-item style="text-align:center; margin-top:20px;margin-bottom:-10px;">
-      <el-button type="primary" size="small">提交</el-button>
+      <el-button type="primary" size="small" @click="formSubmit">提交</el-button>
     </el-form-item>
   </el-form>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import { getUserChildrenList, getVehicleByPage } from "@/api/index.js";
 export default {
   data() {
     return {
@@ -29,7 +30,7 @@ export default {
         size: 10
       },
       tableData: {
-        data: [{ license: "064620623980", user_id: "abc", device_id: "0000" }]
+        data: []
       },
       rules: {
         ...rules
@@ -37,14 +38,37 @@ export default {
     };
   },
   watch: {},
-  created() {},
+  created() {
+    this.getTable();
+  },
   methods: {
-    selectForm() {
-      console.log(this.formData);
+    formSubmit() {
+      var arr = [];
+      for (var i = 0; i < this.tableData.data.length; i++) {
+        if (this.tableData.data[i].checked) {
+          arr.push(this.tableData.data[i]);
+        }
+      }
+      this.$emit("button", arr);
+      for (var j = 0; j < arr.length; j++) {
+        this.formData.user_id = this.formData.user_id + arr[j].user_id + ",";
+      }
+      this.formData.user_id = this.formData.user_id.substring(
+        0,
+        this.formData.user_id.lastIndexOf(",")
+      );
+      getVehicleByPage({ user_ids: this.formData.user_id }).then(res => {
+        if (res.data.code == 0) {
+          console.log(res.data.data);
+        }
+      });
     },
-    formSubmit(scope) {
-      this.$set(scope.row, "dialog", false);
-      this.$emit("button", scope);
+    getTable() {
+      getUserChildrenList({ user_id: 1 }).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.tableData, "data", res.data.data);
+        }
+      });
     }
   },
   components: {}

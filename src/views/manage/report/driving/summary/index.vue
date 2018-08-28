@@ -13,21 +13,21 @@
           <el-col :span="6">
             <el-form-item label="车辆">
               <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectvehicle">
-                <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
+                <el-input type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
               </el-button>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="用户">
               <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectuser">
-                <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
+                <el-input type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
               </el-button>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
-            <el-form-item label="限速速度(公里小时)">
+            <el-form-item label="限速速度">
               <template>
-                <el-input></el-input>
+                <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"></el-input>
               </template>
             </el-form-item>
           </el-col>
@@ -61,7 +61,7 @@
       <choose-vcheckbox @button="xz" @success=" () => {this.getTable();this.vehicleDialog = false;}" :key="addKey"></choose-vcheckbox>
     </el-dialog>
     <el-dialog width="30%" title="选择信息" :visible.sync="userDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-user @button="xz" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-user>
+      <choose-user @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-user>
     </el-dialog>
   </div>
 </template>
@@ -85,6 +85,8 @@ export default {
         endTime: "",
         Time: "",
         simId: "",
+        license: "",
+        real_name: "",
         size: 10,
         page: 1
       },
@@ -135,7 +137,6 @@ export default {
     selectvehicle() {
       this.addKey++;
       this.vehicleDialog = true;
-      this.dialog = true;
     },
     selectuser() {
       this.addKey++;
@@ -143,8 +144,26 @@ export default {
     },
     // 回来的数据
     xz(scope) {
-      this.dialog = scope.row.dialog;
-      this.tableQuery.sim_id = scope.row.license;
+      this.vehicleDialog = false;
+      for (var i = 0; i < scope.length; i++) {
+        this.tableQuery.license =
+          this.tableQuery.license + scope[i].license + ",";
+      }
+      this.tableQuery.license = this.tableQuery.license.substring(
+        0,
+        this.tableQuery.license.lastIndexOf(",")
+      );
+    },
+    user(scope) {
+      this.userDialog = false;
+      for (var i = 0; i < scope.length; i++) {
+        this.tableQuery.real_name =
+          this.tableQuery.real_name + scope[i].real_name + ",";
+      }
+      this.tableQuery.real_name = this.tableQuery.real_name.substring(
+        0,
+        this.tableQuery.real_name.lastIndexOf(",")
+      );
     },
     //查询产品列表
     getTable() {
@@ -192,3 +211,12 @@ export default {
   }
 };
 </script>
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+</style>

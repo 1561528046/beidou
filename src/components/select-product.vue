@@ -5,7 +5,7 @@
   </el-select>
 </template>
 <script>
-import { getProductAll } from "@/api/index.js";
+import { getProductList } from "@/api/index.js";
 export default {
   name: "select-product",
   data() {
@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     init() {
-      getProductAll().then(res => {
+      getProductList({ page: 1, size: 100 }).then(res => {
         if (res.data.code == 0 && res.data.data.length) {
           this.$set(this.$data, "list", res.data.data);
           if (this.value && this.value.length) {

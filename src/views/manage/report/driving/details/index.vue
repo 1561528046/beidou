@@ -17,8 +17,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item prop="sim_id" label="限时速度">
-              <el-input type="text" v-model="tableQuery.sim_id"></el-input>
+            <el-form-item label="限时速度">
+              <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3" style="text-align: right;">
@@ -217,3 +217,12 @@ export default {
   }
 };
 </script>
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+</style>

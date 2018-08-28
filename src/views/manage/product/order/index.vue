@@ -6,13 +6,13 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="订单日期">
-              <el-date-picker value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+              <el-date-picker value-format="yyyyMMdd" v-model="tableQuery.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
               </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="订单号">
-              <el-input></el-input>
+              <el-input v-model="tableQuery.order_no"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -22,22 +22,22 @@
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="车牌号">
-              <el-input></el-input>
+              <el-input v-model="tableQuery.car_no"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="车辆类型">
-              <select-industry style="width:100%;"></select-industry>
+              <select-industry v-model="tableQuery.car_type" style="width:100%;"></select-industry>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="终端厂商">
-              <select-company style="width:100%;" :clearable="true"></select-company>
+              <select-company v-model="tableQuery.company_id" style="width:100%;" :clearable="true"></select-company>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="终端类型">
-              <select-devicetype style="width: 100%;" v-model="tableQuery.device_type"></select-devicetype>
+              <select-devicetype style="width: 100%;"></select-devicetype>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
@@ -79,9 +79,9 @@
         <el-table-column prop="state" label="订单状态" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " type="primary " icon="el-icon-success">确认订单</el-button>
-            <el-button size="small " icon="el-icon-error">取消订单</el-button>
-            <el-button size="small " type="primary" icon=" el-icon-document " @click="Enquiry(scope)">查看资料</el-button>
+            <el-button size="small " type="primary " icon="el-icon-success" @click="review">确认订单</el-button>
+            <el-button size="small " icon="el-icon-error" @click="cancel">取消订单</el-button>
+            <el-button size="small " type="primary" icon=" el-icon-document " @click="enquiry(scope)">查看资料</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -98,7 +98,10 @@ import {
   getDeviceCompanyList,
   delCompany,
   getDeviceCompanyAll,
-  getOrderList
+  getOrderList,
+  ReviewOrder,
+  CancelOrder,
+  ReviewCancel
 } from "@/api/index.js";
 import selectCompanytype from "@/components/select-companytype.vue";
 import selectCompany from "@/components/select-company.vue";
@@ -128,6 +131,7 @@ export default {
         company_name: "",
         state: "",
         user_id: "",
+        time: "",
         start_time: "",
         end_time: "",
         size: 10,
@@ -139,6 +143,37 @@ export default {
         total: 0,
         data: []
       },
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
       tableLoading: true,
       addKey: 0,
       userdetailShow: false,
@@ -148,78 +183,26 @@ export default {
     };
   },
   mounted() {
-    this.restaurants = this.loadAll();
+    // this.restaurants = this.loadAll();
   },
   methods: {
-    Enquiry() {
+    // 查看资料
+    enquiry(scope) {
+      console.log(scope.row.order_no);
+    },
+    // 确认订单
+    review() {
       console.log(1);
     },
-    //删除
-    delRow(scope) {
-      this.$confirm("确认删除？")
-        .then(() => {
-          delCompany(scope.row).then(res => {
-            if (res.data.code == 0) {
-              this.$message.success(res.data.msg);
-              this.getTable();
-            } else {
-              this.$message.error(res.data.msg);
-            }
-          });
-        })
-        .catch(() => {});
+    // 取消订单
+    cancel() {
+      console.log(2);
     },
-    //添加
-    addFrom() {
-      var vNode = this.$createElement(addProduct, {
-        key: this.addKey++,
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "添加",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
-    },
-    //编辑
-    updateForm(scope) {
-      var vNode = this.$createElement(updateComponents, {
-        key: this.addKey++,
-        props: {
-          company_id: scope.row.company_id
-        },
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "编辑",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
-    },
-    //查询产品列表
+    //查询订单列表
     getTable() {
       var query = Object.assign({}, this.tableQuery);
       getOrderList(query)
         .then(res => {
-          console.log(res);
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);
           } else {
@@ -239,51 +222,6 @@ export default {
         }
       };
     },
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createFilter(queryString) {
-      return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        );
-      };
-    },
-    loadAll() {
-      getDeviceCompanyAll().then(res => {
-        if (res.data.code == 0) {
-          for (var i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].real_name !== "") {
-              this.simss.push({
-                value: res.data.data[i].company_name,
-                address: res.data.data[i].company_id
-              });
-            }
-          }
-        }
-      });
-      return this.simss;
-    },
-    handleSelect(item) {
-      this.simee = { value: item.value, address: item.address };
-      this.getTable();
-    },
-    handleClick() {
-      alert("button click");
-    },
-    filterTag(value, row) {
-      return row.tag === value;
-    },
-    filterHandler(value, row, column) {
-      const property = column["property"];
-      return row[property] === value;
-    },
     handleSizeChange(val) {
       this.tableQuery.page = 1;
       this.tableQuery.size = val;
@@ -293,6 +231,51 @@ export default {
       this.tableQuery.page = val;
       this.getTable();
     }
+    //     loadAll() {
+    //   getDeviceCompanyAll().then(res => {
+    //     if (res.data.code == 0) {
+    //       for (var i = 0; i < res.data.data.length; i++) {
+    //         if (res.data.data[i].real_name !== "") {
+    //           this.simss.push({
+    //             value: res.data.data[i].company_name,
+    //             address: res.data.data[i].company_id
+    //           });
+    //         }
+    //       }
+    //     }
+    //   });
+    //   return this.simss;
+    // },
+    // handleSelect(item) {
+    //   this.simee = { value: item.value, address: item.address };
+    //   this.getTable();
+    // },
+    // querySearch(queryString, cb) {
+    //   var restaurants = this.restaurants;
+    //   var results = queryString
+    //     ? restaurants.filter(this.createFilter(queryString))
+    //     : restaurants;
+    //   // 调用 callback 返回建议列表的数据
+    //   cb(results);
+    // },
+    // createFilter(queryString) {
+    //   return restaurant => {
+    //     return (
+    //       restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+    //       0
+    //     );
+    //   };
+    // },
+    // handleClick() {
+    //   alert("button click");
+    // },
+    // filterTag(value, row) {
+    //   return row.tag === value;
+    // },
+    // filterHandler(value, row, column) {
+    //   const property = column["property"];
+    //   return row[property] === value;
+    // },
   }
 };
 </script>
