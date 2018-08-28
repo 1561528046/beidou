@@ -346,10 +346,9 @@
                 <el-checkbox v-for="(insurance_type,index) in insurance_types " :label="index+1 " :key="index+1">{{insurance_type}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
-            <el-form-item v-if="checkedInsuranceTypes.indexOf(7)!=-1">
-              <el-input></el-input>
+            <el-form-item v-if="checkedInsuranceTypes.indexOf(7)!=-1" prop="insurance_type_other">
+              <el-input v-model="formData.insurance_type_other"></el-input>
             </el-form-item>
-
           </el-col>
 
         </el-row>
@@ -461,6 +460,7 @@ export default {
         purchase: "", //购置方式：1分期，2全款
         insurance_date: "", //车辆保险到期日期
         insurance_type: "", //车辆保险种类：1交强险，2盗抢险，3三者，4车损险，5车上人员险，6货物运输险，7其它
+        insurance_type_other: "", //其他车辆保险种类
         valid_date: "", //检验有效期至
         time: "", //记录添加时间
         vin: "", //车辆识别代码/vin
@@ -717,7 +717,6 @@ export default {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var postData = Object.assign({}, this.formData);
-          postData.is_enter = 1;
           if (this.is_edit) {
             postData = Object.assign(postData, this.modify_img);
             postData.vehicle_id = this.$route.query.vehicle_id;
@@ -730,7 +729,7 @@ export default {
                   title: "成功",
                   message: res.data.msg
                 });
-                this.$router.replace("./");
+                this.$router.replace(".");
               } else {
                 this.$notify.error({
                   title: "失败",

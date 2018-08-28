@@ -15,8 +15,8 @@ const ajax = axios.create({
   },
   // baseURL: "http://localhost:10462/api/",
   // baseURL: "http://192.168.88.100:725/api/",
-  baseURL: dict.API_URL,
-  timeout: 5000 // request timeout
+  baseURL: dict.API_URL
+  // timeout: 5000 // request timeout
 });
 // 添加请求拦截器
 ajax.interceptors.request.use(

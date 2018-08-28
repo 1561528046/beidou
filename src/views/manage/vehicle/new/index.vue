@@ -31,7 +31,7 @@
 
           <el-col :span="6" v-show="isCollapse">
             <el-form-item label="所属地区">
-              <select-city-input :area.sync="tableQuery.area" :select-all="true" style="width:100%;" clearable></select-city-input>
+              <select-city-input :area.sync="area" :select-all="true" style="width:100%;" clearable></select-city-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-show="isCollapse">
@@ -41,19 +41,19 @@
           </el-col>
           <el-col :span="6" v-show="isCollapse" v-if="$props.state!=1">
             <el-form-item label="首次入网时间">
-              <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="tableQuery.first_online_time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
+              <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="first_date" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
               </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-show="isCollapse">
             <el-form-item label="服务到期日期">
-              <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="tableQuery.contract_date_end" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
+              <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="contract_date" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
               </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-show="isCollapse" v-if="$props.state!=1">
             <el-form-item label="离线天数">
-              <el-select v-model="tableQuery.offline_days" placeholder="离线天数" style="width:100%;" clearable>
+              <el-select v-model="tableQuery.leave_day" placeholder="离线天数" style="width:100%;" clearable>
                 <el-option label="7天" value="7"></el-option>
                 <el-option label="30天" value="30"></el-option>
                 <el-option label="90天" value="90"></el-option>
@@ -109,14 +109,17 @@
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="goEdit(scope)">编辑</el-button>
             <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
-            <el-dropdown size="mini" split-button style="margin-left:10px;">
-              更多操作
+            <el-dropdown size="mini" style="margin-left:10px;" @command="handleCommand" trigger="click">
+              <el-button size="mini">
+                更多菜单
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
               <el-dropdown-menu slot="dropdown" class="vehicle-list-more">
-                <el-dropdown-item v-if="$props.state!=1">车辆位置</el-dropdown-item>
-                <el-dropdown-item v-if="$props.state==1">更新定位</el-dropdown-item>
-                <el-dropdown-item v-if="$props.state!=1">平台续费</el-dropdown-item>
-                <el-dropdown-item v-if="$props.state!=1">厂商续费</el-dropdown-item>
-                <el-dropdown-item>厂商激活(2个图片，一个备注)</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state!=1" :command="{command:'view-position',data:scope}">车辆位置</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state==1" :command="{command:'update-position',data:scope}">更新定位</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state!=1" :command="{command:'renew-platform',data:scope}">平台续费</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state!=1" :command="{command:'renew-company',data:scope}">厂商续费</el-dropdown-item>
+                <el-dropdown-item :command="{command:'active-company',data:scope}">厂商激活(2个图片，一个备注)</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -131,6 +134,40 @@
     <el-dialog title="车辆详情" :center="true" @closed="clearShowDetails" :visible.sync="detailsVisible" width="75%" :append-to-body="true">
       <view-vehicle :type="$props.type" :is_enter="$props.is_enter" @error="clearShowDetails" :vehicle_id="showDetailsVehicle.vehicle_id" v-if="detailsVisible"></view-vehicle>
     </el-dialog>
+    <el-dialog title="厂商开通" :center="true" @closed="openCompanyClosed" :visible.sync="openCompany.visible" :append-to-body="true">
+      <el-form label-position="top" :model="openCompany.postData" size="small" ref="baseForm">
+        <el-row :gutter="30">
+          <el-col :span="12">
+            <el-form-item prop="img1" label="图片1" style="text-align:center;">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false">
+                <img v-if="openCompany.postData.img1 " :src="$dict.BASE_URL+openCompany.postData.img1 " class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item prop="img2" label="图片2" style="text-align:center;">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false">
+                <img v-if="openCompany.postData.img2 " :src="$dict.BASE_URL+openCompany.postData.img2 " class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item prop="note" label="备注">
+              <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="openCompany.postData.note">
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" style="text-align:center;">
+            <el-button @click="openCompanyClosed">取消</el-button>
+            <el-button type="primary">提交</el-button>
+          </el-col>
+        </el-row>
+
+      </el-form>
+    </el-dialog>
+
   </div>
 </template>
 <style lang="less">
@@ -192,20 +229,40 @@ export default {
   },
   data() {
     return {
+      openCompany: {
+        postData: {
+          img1: "",
+          img2: "",
+          note: ""
+        },
+        visible: false,
+        vehicle: {} //厂商开通车辆
+      },
       showDetailsVehicle: {}, //正在显示的车辆
       detailsVisible: false, //查看详情显示隐藏
       tableQueryLoading: false, //大列表查询
       isCollapse: false,
       first_online_time: [], //首次入网 时间范围
+      contract_date: [],
+      first_date: [],
+      area: [],
       tableQuery: {
+        device_no: "",
+        is_enter: this.$props.is_enter,
+        province_id: "",
+        city_id: "",
+        county_id: "",
         type: this.$props.type,
         state: this.$props.state,
-        user_id: 1,
+        leave_day: "",
+        first_startdate: "",
+        first_enddate: "",
+        contract_startdate: "",
+        contract_enddate: "",
         size: 10,
         page: 1
       },
       tableData: {
-        area: [],
         total: 0,
         data: []
       },
@@ -244,12 +301,44 @@ export default {
     };
   },
   watch: {
-    first_online_time: function() {
-      this.tableQuery.first_online_time_start = this.first_online_time[0];
-      this.tableQuery.first_online_time_end = this.first_online_time[1];
+    contract_date: function(newVal) {
+      console.log(11);
+      this.tableQuery.contract_startdate = newVal[0];
+      this.tableQuery.contract_enddate = newVal[1];
+    },
+    first_date: function(newVal) {
+      this.tableQuery.first_startdate = newVal[0];
+      this.tableQuery.first_enddate = newVal[1];
+    },
+    area: function(newVal) {
+      Object.assign(this.tableQuery, this.$utils.formatArea(newVal));
     }
   },
   methods: {
+    handleCommand(command) {
+      console.log(command.command);
+      switch (command.command) {
+        case "active-company":
+          this.openCompanyShow(command.data);
+          break;
+      }
+    },
+    openCompanyClosed() {
+      //厂商开通关闭
+      this.$set(this.openCompany, "postData", {
+        img1: "",
+        img2: "",
+        note: ""
+      });
+      this.$set(this.openCompany, "vehicle", {});
+      this.openCompany.visible = false;
+      this.openCompany.addKey += 1;
+    },
+    openCompanyShow(scope) {
+      //厂商开通弹出
+      this.$set(this.openCompany, "vehicle", scope.row);
+      this.openCompany.visible = true;
+    },
     clearShowDetails() {
       this.$set(this.$data, "showDetailsVehicle", {});
       this.detailsVisible = false;

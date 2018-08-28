@@ -7,23 +7,30 @@
 <script>
 export default {
   created() {
-    // var list = [];
-    // for (var i = 0; i < 200000; i++) {
-    //   list.push({ license: "冀R" + i, lat: i, lng: i, time: i });
-    // }
-    // this.$set(this.$data, "list", Object.freeze(list));
-    // 打开一个WebSocket:
-    window.ll = [];
-    var ws = new WebSocket("ws://localhost:3000/");
-    ws.binaryType = "arraybuffer";
-    // 响应onmessage事件:
-    ws.onmessage = function(msg) {
-      // console.log(msg);
-      ll.push(new Int16Array(msg.data));
-    };
-    setInterval(() => {
-      this.l = window.ll.length;
-    }, 100);
+    // window.ll = [];
+    // var ws = new WebSocket("ws://localhost:9999/");
+    // ws.binaryType = "arraybuffer";
+
+    // ws.onmessage = msg => {
+    //   ll.push(msg);
+    //   if (ll.length == 2) {
+    //     ws.close();
+    //     this.l = window.ll.length;
+    //   }
+    // };
+
+    // // setTimeout(() => {
+    // //   this.l = window.ll.length;
+    // //   ws.close();
+    // // }, 2000);
+    var uint8array = new Uint8Array(
+      "126,2,0,0,42,1,49,1,1,16,18,81,9,0,8,0,0,0,0,0,3,2,85,9,76,6,245,3,88,0,0,2,88,0,4,24,1,3,25,21,32,1,4,0,0,0,0,2,2,0,6,3,2,0,7,158,126".split(
+        ","
+      )
+    );
+
+    function format(buffer) {}
+    format(uint8array);
   },
   data() {
     return {

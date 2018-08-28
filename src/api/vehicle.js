@@ -44,7 +44,7 @@ export const updateVehicle = query => {
   );
 };
 export const delVehicle = query => {
-  return ajax.post("http://192.168.88.88:10462/api/vehicle/DeleteVehicle", "", {
+  return ajax.post("/vehicle/DeleteVehicle", "", {
     params: {
       vehicle_id: query.vehicle_id,
       vid: query.vid,
