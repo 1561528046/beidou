@@ -140,3 +140,22 @@ export const ReviewCancel = query => {
     params: query
   });
 };
+// 充值管理列表
+export const getCanRechargeUsers = query => {
+  return ajax.get("/ordermanage/GetCanRechargeUsers", {
+    params: query
+  });
+};
+// 充值
+export const Recharge = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/ordermanage/Recharge", queryQS, {
+    params: query
+  });
+};
+// 获取充值记录
+export const getUserRechargeRecord = query => {
+  return ajax.get("/ordermanage/GetUserRechargeRecord", {
+    params: query
+  });
+};

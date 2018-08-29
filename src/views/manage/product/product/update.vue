@@ -43,8 +43,8 @@
             </el-table-column>
             <el-table-column prop="detail_type" label="终端类型">
               <template slot-scope="scope">
-                <label v-if="scope.row.detail_type==1">定位终端</label>
-                <label v-if="scope.row.detail_type==2">视频终端</label>
+                <label v-if="scope.row.device_type==1">定位终端</label>
+                <label v-if="scope.row.device_type==2">视频终端</label>
               </template>
             </el-table-column>
             <el-table-column prop="detail_name" label="收费单项">
@@ -87,7 +87,7 @@
           <span>授权厂商
             <i class="header-icon iconfont icon-company"></i>
           </span>
-          <el-button type="primary" @click="addFrom(3)" style="margin-left:20px;" size="mini">添加</el-button>
+          <el-button type="primary" @click="addFrom(2)" style="margin-left:20px;" size="mini">添加</el-button>
         </div>
         <el-form-item>
           <el-table v-show="local2" size="mini" :data="formData.company" c class="admin-table-list" style="width: 100%; margin-top: 20px">
@@ -139,7 +139,7 @@
           <span>SIM卡
             <i class="header-icon iconfont icon-sim"></i>
           </span>
-          <el-button type="primary" @click="addFrom(5)" style="margin-left:41px;" size="mini">添加</el-button>
+          <el-button type="primary" @click="addFrom(4)" style="margin-left:41px;" size="mini">添加</el-button>
         </div>
         <el-form-item>
           <el-table v-show="local3" size="mini" :data="formData.sim" class="admin-table-list" style="width: 100%; margin-top: 20px">
@@ -187,7 +187,7 @@
           <span>短信
             <i class="header-icon iconfont icon-mail-fill"></i>
           </span>
-          <el-button type="primary" @click="addFrom(4)" style="margin-left:52px;" size="mini">添加</el-button>
+          <el-button type="primary" @click="addFrom(3)" style="margin-left:52px;" size="mini">添加</el-button>
         </div>
         <el-form-item prop="sms">
           <el-table v-show="local4" size="mini" :data="formData.sms" class="admin-table-list" style="width: 100%; margin-top: 20px">
@@ -431,15 +431,12 @@ export default {
                 // 定位终端
                 this.formData.detail.push(res.data.data[i]);
               } else if (res.data.data[i].detail_type == 2) {
-                // 视频终端
-                this.formData.detail.push(res.data.data[i]);
-              } else if (res.data.data[i].detail_type == 3) {
                 // 厂商
                 this.formData.company.push(res.data.data[i]);
-              } else if (res.data.data[i].detail_type == 4) {
+              } else if (res.data.data[i].detail_type == 3) {
                 // 短信
                 this.formData.sms.push(res.data.data[i]);
-              } else if (res.data.data[i].detail_type == 5) {
+              } else if (res.data.data[i].detail_type == 4) {
                 // sim卡
                 this.formData.sim.push(res.data.data[i]);
               }

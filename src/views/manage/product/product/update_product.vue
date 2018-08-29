@@ -4,7 +4,7 @@
       <!-- <el-row :gutter="30">
             </el-row> -->
       <!-- 车辆 -->
-      <el-form-item v-show="formData.detail_type==1||this.formData.detail_type ==2">
+      <el-form-item v-show="formData.detail_type==1">
         <template slot-scope="scope">
           <label style="float:left;">车辆类型</label>
           <select-industry v-model="formData.car_type" style="width:100%;"></select-industry>
@@ -26,7 +26,7 @@
         </template>
       </el-form-item>
       <!-- 厂商 -->
-      <el-form-item v-show="formData.detail_type==3">
+      <el-form-item v-show="formData.detail_type==2">
         <template slot-scope="scope">
           <label style="float:left;">终端厂商</label>
           <select-company v-model="formData.company_id" :company_name.sync="formData.company_name" style="width:100%;" :clearable="true"></select-company>
@@ -45,7 +45,7 @@
         </template>
       </el-form-item>
       <!-- 短信 -->
-      <el-form-item v-show="formData.detail_type==4">
+      <el-form-item v-show="formData.detail_type==3">
         <template slot-scope="scope">
           <label style="float:left;">单价</label>
           <el-input v-model="formData.original_price" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
@@ -59,7 +59,7 @@
         </template>
       </el-form-item>
       <!-- sim卡 -->
-      <el-form-item v-show="formData.detail_type==5">
+      <el-form-item v-show="formData.detail_type==4">
         <template slot-scope="scope">
           <label style="float:left;">运营商</label>
           <el-select v-model="formData.detail_name" style="width: 100%;">
@@ -179,9 +179,10 @@ export default {
     },
     //添加收费项
     formSubmit() {
-      if (this.formData.detail_type == 1 || this.formData.detail_type == 2) {
-        this.formData.detail_type = this.formData.device_type;
-      } else if (this.formData.detail_type == 4) {
+      if (!this.formData.detail_type == 1) {
+        this.formData.device_type = "";
+      }
+      if (this.formData.detail_type == 3) {
         this.formData.detail_name = "短信";
       }
       this.$refs.baseForm.validate((isVaildate, errorItem) => {

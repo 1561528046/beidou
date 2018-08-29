@@ -10,9 +10,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item prop="sim_id" label="选择车辆">
+            <el-form-item prop="license" label="选择车辆">
               <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
-                <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
+                <el-input type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
               </el-button>
             </el-form-item>
           </el-col>
@@ -70,17 +70,18 @@ export default {
         begin_time: "",
         end_time: "",
         time: "",
+        license: "",
         sim_id: "",
         size: 10,
         page: 1
       },
       rules: {
         ...rules,
-        sim_id: [
+        license: [
           {
             required: true,
             trigger: "change",
-            message: "请输入simid!"
+            message: "请输入车牌号"
           }
         ],
         time: [
@@ -117,7 +118,8 @@ export default {
     // 回来的数据
     xz(scope) {
       this.dialog = scope.row.dialog;
-      this.tableQuery.sim_id = scope.row.license;
+      this.tableQuery.license = scope.row.license;
+      this.tableQuery.smi_id = scope.row.sim_id;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
@@ -136,6 +138,9 @@ export default {
     //查询列表
     getTable() {
       this.tableLoading = true;
+      this.tableQuery.start_time = 20180822161756;
+      this.tableQuery.end_time = 20180823101826;
+      this.tableQuery.sim_id = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);

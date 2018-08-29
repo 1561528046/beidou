@@ -17,7 +17,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="订单类型">
-              <el-input></el-input>
+              <el-select v-model="tableQuery.order_type" :clearable="true" style="width:100%;">
+                <el-option label="授权车辆" value="1">授权车辆</el-option>
+                <el-option label="授权厂商" value="2">授权厂商</el-option>
+                <el-option label="短信" value="3">短信</el-option>
+                <el-option label="SIM卡" value="4">SIM卡</el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
@@ -27,22 +32,22 @@
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="车辆类型">
-              <select-industry v-model="tableQuery.car_type" style="width:100%;"></select-industry>
+              <select-industry :clearable="true" v-model="tableQuery.car_type" style="width:100%;"></select-industry>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="终端厂商">
-              <select-company v-model="tableQuery.company_id" style="width:100%;" :clearable="true"></select-company>
+              <select-company v-model="tableQuery.company_id" :company_name.sync="tableQuery.company_name" style="width:100%;" :clearable="true"></select-company>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="终端类型">
-              <select-devicetype style="width: 100%;"></select-devicetype>
+              <select-devicetype v-model="tableQuery.device_type" style="width: 100%;" :clearable="true"></select-devicetype>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="支付方式">
-              <el-select style="width:100%;" :clearable="true">
+              <el-select v-model="tableQuery.pay_type" style="width:100%;" :clearable="true">
                 <el-option label="计费" value="1">计费</el-option>
                 <el-option label="扣费" value="2">扣费</el-option>
               </el-select>
@@ -50,7 +55,11 @@
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="订单状态">
-              <el-input></el-input>
+              <el-select v-model="tableQuery.state" style="width:100%;" :clearable="true">
+                <el-option label="正常" value="1">正常</el-option>
+                <el-option label="审核中" value="2">审核中</el-option>
+                <el-option label="取消" value="3">取消</el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -69,19 +78,44 @@
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="cdate" label="订单日期" :formatter="(row)=>{return this.$utils.formatDate(row.cdate)}"> </el-table-column>
         <el-table-column prop="order_no" label="订单号" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="fees_detail_name" label="订单类型" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="fees_detail_type" label="订单类型" :formatter="(row)=>{return this.$dict.get_order_detailtype(row.fees_detail_type)}"> </el-table-column>
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="car_type" label="车辆类型" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="car_type" label="车辆类型" :formatter="(row)=>{return this.$dict.get_vehicle_type(row.car_type)}"> </el-table-column>
         <el-table-column prop="fees_detail_company_name" label="终端厂商" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="fees_detail_type" label="终端类型" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="fees_detail_device_type" label="终端类型" :formatter="(row)=>{return this.$dict.get_device_type(row.fees_detail_device_type)}"> </el-table-column>
         <el-table-column prop="order_amount" label="订单金额" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="pay_type" label="支付方式" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="state" label="订单状态" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="pay_type" label="支付方式" :formatter="(row)=>{return this.$dict.get_order_paytype(row.pay_type)}"> </el-table-column>
+        <el-table-column prop="state" label="订单状态" :formatter="(row)=>{return this.$dict.get_order_state(row.state)}"> </el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " type="primary " icon="el-icon-success" @click="review">确认订单</el-button>
-            <el-button size="small " icon="el-icon-error" @click="cancel">取消订单</el-button>
+            <el-button size="small " type="primary " icon="el-icon-success" @click="confirm" v-if="scope.row.state=='1'&&scope.row.has_review=='2'">确认订单</el-button>
+            <el-button size="small " icon="el-icon-error" @click="cancel" v-if="scope.row.has_cancel=='2'">取消订单</el-button>
+            <el-button size="small " icon="el-icon-setting" @click="review" v-if="scope.row.state=='5'&&scope.row.has_review=='2'">取消订单审核</el-button>
             <el-button size="small " type="primary" icon=" el-icon-document " @click="enquiry(scope)">查看资料</el-button>
+            <el-dialog width="30%" title="" :visible.sync="confirmDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+              <label>备注：</label>
+              <el-input v-model="tableConfirm.reason"></el-input>
+              <span slot="footer" class="dialog-footer">
+                <el-button icon="el-icon-success" type="primary" @click="confirmOrder(scope,1)">通过</el-button>
+                <el-button icon="el-icon-error" type="danger" @click="confirmOrder(scope,2)">未通过</el-button>
+                <el-button @click="confirmDialog = false">取 消</el-button>
+              </span>
+            </el-dialog>
+            <el-dialog width="30%" title="" :visible.sync="auditDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+              <label>备注：</label>
+              <el-input v-model="tableConfirm.reason"></el-input>
+              <span slot="footer" class="dialog-footer">
+                <el-button icon="el-icon-success" type="primary" @click="cancelAudit(scope,1)">通过</el-button>
+                <el-button icon="el-icon-error" type="danger" @click="cancelAudit(scope,2)">未通过</el-button>
+                <el-button @click="auditDialog = false">取 消</el-button>
+              </span>
+            </el-dialog>
+            <el-dialog width="20%" title="" :visible.sync="cancelDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+              <div style="width:154px;margin:0 auto;">
+                <el-button type="primary" @click="submit(scope)">确定</el-button>
+                <el-button @click="cancelDialog = false">取 消</el-button>
+              </div>
+            </el-dialog>
           </template>
         </el-table-column>
       </el-table>
@@ -90,6 +124,9 @@
         </el-pagination>
       </div>
     </el-card>
+    <el-dialog width="40%" title="资料信息" :visible.sync="lookDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
+      <order-data :order_no="order_no" @success=" ()=> {this.getTable();this.lookDialog = false;}" :key="addKey"></order-data>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -107,6 +144,8 @@ import selectCompanytype from "@/components/select-companytype.vue";
 import selectCompany from "@/components/select-company.vue";
 import selectDevicetype from "@/components/select-devicetype.vue";
 import selectIndustry from "@/components/select-industry.vue";
+import selectOrderstate from "@/components/select-orderstate.vue";
+import orderData from "./data.vue";
 // import addProduct from "./add.vue";
 // import updateComponents from "./update.vue";
 export default {
@@ -114,7 +153,9 @@ export default {
     selectCompanytype,
     selectCompany,
     selectDevicetype,
-    selectIndustry
+    selectIndustry,
+    selectOrderstate,
+    orderData
   },
   created() {
     this.getTable();
@@ -122,6 +163,12 @@ export default {
   },
   data() {
     return {
+      lookDialog: false,
+      order_no: "",
+      confirmDialog: false,
+      auditDialog: false,
+      cancelDialog: false,
+      addKey: 0,
       isCollapse: false,
       tableQuery: {
         order_no: "",
@@ -130,12 +177,19 @@ export default {
         company_id: "",
         company_name: "",
         state: "",
+        pay_type: "",
         user_id: "",
         time: "",
         start_time: "",
         end_time: "",
         size: 10,
         page: 1
+      },
+      tableConfirm: {
+        order_no: "",
+        orderno: "",
+        reason: "",
+        is_review: ""
       },
       simss: [],
       simee: {},
@@ -175,7 +229,6 @@ export default {
         ]
       },
       tableLoading: true,
-      addKey: 0,
       userdetailShow: false,
       restaurants: [],
       state1: "",
@@ -188,26 +241,74 @@ export default {
   methods: {
     // 查看资料
     enquiry(scope) {
-      console.log(scope.row.order_no);
+      this.addKey++;
+      this.lookDialog = true;
+      this.order_no = scope.row.order_no;
     },
     // 确认订单
+    confirm() {
+      this.addKey++;
+      this.confirmDialog = true;
+    },
+    // 取消订单审核
     review() {
-      console.log(1);
+      this.addKey++;
+      this.auditDialog = true;
+    },
+    confirmOrder(scope, state) {
+      this.tableConfirm.order_no = scope.row.order_no;
+      this.tableConfirm.is_review = state;
+      ReviewOrder(this.tableConfirm).then(res => {
+        if (res.data.code == 0) {
+          this.$message.success(res.data.msg);
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
+    cancelAudit(scope, state) {
+      this.tableConfirm.orderno = scope.row.order_no;
+      this.tableConfirm.is_review = state;
+      ReviewCancel(this.tableConfirm).then(res => {
+        if (res.data.code == 0) {
+          this.$message.success(res.data.msg);
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
     },
     // 取消订单
     cancel() {
-      console.log(2);
+      this.addKey++;
+      this.cancelDialog = true;
+    },
+    submit(scope) {
+      CancelOrder({ order_no: scope.row.order_no }).then(res => {
+        if (res.data.code == 0) {
+          this.$message.success(res.data.msg);
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
     },
     //查询订单列表
     getTable() {
+      if (this.tableQuery.time) {
+        this.tableQuery.start_time = this.tableQuery.time[0];
+        this.tableQuery.end_time = this.tableQuery.time[1];
+      }
       var query = Object.assign({}, this.tableQuery);
       getOrderList(query)
         .then(res => {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);
+            this.tableQuery.start_time = "";
+            this.tableQuery.end_time = "";
           } else {
             this.$set(this.$data, "tableData", []);
             this.$message.error(res.data.msg);
+            this.tableQuery.start_time = "";
+            this.tableQuery.end_time = "";
           }
           this.tableLoading = false;
         })
@@ -222,6 +323,7 @@ export default {
         }
       };
     },
+    // 分页
     handleSizeChange(val) {
       this.tableQuery.page = 1;
       this.tableQuery.size = val;
@@ -231,51 +333,6 @@ export default {
       this.tableQuery.page = val;
       this.getTable();
     }
-    //     loadAll() {
-    //   getDeviceCompanyAll().then(res => {
-    //     if (res.data.code == 0) {
-    //       for (var i = 0; i < res.data.data.length; i++) {
-    //         if (res.data.data[i].real_name !== "") {
-    //           this.simss.push({
-    //             value: res.data.data[i].company_name,
-    //             address: res.data.data[i].company_id
-    //           });
-    //         }
-    //       }
-    //     }
-    //   });
-    //   return this.simss;
-    // },
-    // handleSelect(item) {
-    //   this.simee = { value: item.value, address: item.address };
-    //   this.getTable();
-    // },
-    // querySearch(queryString, cb) {
-    //   var restaurants = this.restaurants;
-    //   var results = queryString
-    //     ? restaurants.filter(this.createFilter(queryString))
-    //     : restaurants;
-    //   // 调用 callback 返回建议列表的数据
-    //   cb(results);
-    // },
-    // createFilter(queryString) {
-    //   return restaurant => {
-    //     return (
-    //       restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-    //       0
-    //     );
-    //   };
-    // },
-    // handleClick() {
-    //   alert("button click");
-    // },
-    // filterTag(value, row) {
-    //   return row.tag === value;
-    // },
-    // filterHandler(value, row, column) {
-    //   const property = column["property"];
-    //   return row[property] === value;
-    // },
   }
 };
 </script>

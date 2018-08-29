@@ -8,12 +8,12 @@
       </el-col>
       <el-col :span="7">
         <el-form-item label="用户">
-          <el-input v-model="formData.user_id"></el-input>
+          <el-input v-model="formData.user_name"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="7">
         <el-form-item label="终端ID">
-          <el-input v-model="formData.device_id"></el-input>
+          <el-input v-model="formData.device_no"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="3" style="text-align: right;">
@@ -27,9 +27,9 @@
       <el-table :data="tableData.data" border style="width: 100%">
         <el-table-column prop="license" label="车牌号" width="260">
         </el-table-column>
-        <el-table-column prop="user_id" label="用户" width="260">
+        <el-table-column prop="" label="用户" width="260">
         </el-table-column>
-        <el-table-column prop="device_id" label="终端ID" width="260">
+        <el-table-column prop="device_no" label="终端ID" width="260">
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -43,18 +43,19 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import { getVehicleByPage } from "@/api/index.js";
 export default {
   data() {
     return {
       formData: {
         license: "",
-        user_id: "",
-        device_id: "",
+        user_name: "",
+        device_no: "",
         page: 1,
         size: 10
       },
       tableData: {
-        data: [{ license: "064620623980", user_id: "abc", device_id: "0000" }]
+        data: []
       },
       rules: {
         ...rules
@@ -65,7 +66,13 @@ export default {
   created() {},
   methods: {
     selectForm() {
-      console.log(this.formData);
+      getVehicleByPage(this.formData).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.tableData, "data", res.data.data);
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
     },
     formSubmit(scope) {
       this.$set(scope.row, "dialog", false);
