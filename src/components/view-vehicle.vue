@@ -1,6 +1,6 @@
 <template>
   <div class="vehicle-form-view">
-    <el-alert title="自动已同步完成" type="success" show-icon v-if="alertVisible"></el-alert>
+    <el-alert title="自动已同步完成（如果处于列队中，给操作按钮，是否同步）" type="success" show-icon v-if="alertVisible"></el-alert>
     <el-form label-width="200px" :model="formData" size="small" ref="baseForm">
 
       <!-- 服务商信息 -->
