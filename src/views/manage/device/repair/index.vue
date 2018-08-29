@@ -69,9 +69,9 @@
           <template slot-scope="scope">
             <el-button :type="repaired_button_type(scope)" size="small" @click="repaired(scope,4)" :disabled="repaired_buttontype(scope)">已修复</el-button>
             <el-button :type="scrap_button_type(scope)" size="small" @click="scrap(scope,5)" :disabled="scrap_buttontype(scope)">报废</el-button>
-            <el-popover placement="left-end" width="450" trigger="click">
+            <el-popover placement="left-end" width="600" trigger="click">
               <el-table :data="gridData">
-                <el-table-column width="150" label="时间" property="time" :formatter="formatChildTime"></el-table-column>
+                <el-table-column width="150" label="操作时间" property="time" :formatter="formatChildTime"></el-table-column>
                 <el-table-column width="150" label="状态" property="state">
                   <template slot-scope="scope">
                     <el-tag type="danger" v-if="scope.row.state==3">
@@ -85,6 +85,7 @@
                     </el-tag>
                   </template>
                 </el-table-column>
+                <el-table-column width="150" label="返厂时间" property="back_time" :formatter="formatBackTime"></el-table-column>
                 <el-table-column width="150" label="备注" property="reason"></el-table-column>
               </el-table>
               <el-button style="margin-left:10px;" size="small" slot="reference" @click="OperateLogList(scope)">维修记录</el-button>
@@ -198,6 +199,9 @@ export default {
   methods: {
     formatChildTime(row) {
       return this.$utils.formatDate(row.time);
+    },
+    formatBackTime(row) {
+      return this.$utils.formatDate(row.back_time);
     },
     // 维修记录
     OperateLogList(scope) {

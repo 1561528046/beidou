@@ -6,16 +6,11 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="用户名">
-              <!-- <el-input v-model="tableQuery.company_name"></el-input>
-                             -->
-              <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.company_name" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
-              </el-autocomplete>
+              <el-input></el-input>
             </el-form-item>
           </el-col>
-          <el-col :offset="isCollapse?0:6" :span="isCollapse?24:6" style="text-align: right;">
+          <el-col :span="18" style="text-align: right;">
             <el-form-item>
-              <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button> -->
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
@@ -24,27 +19,33 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <!-- <el-button type="primary" size="small" @click="addFrom">
-          <i class="el-icon-upload el-icon--right"></i> 添加
-        </el-button> -->
-        <!-- <el-button type="primary" size="small">导出
-                    <i class="el-icon-upload el-icon--right"></i>
-                </el-button> -->
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+        <el-table-column prop="" label="公司名称" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="登录帐号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="联系电话" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="已绑定产品" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="" label="余额" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="用户名" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " type="primary " icon="el-icon-edit">充值</el-button>
-            <el-button size="small " type="primary " icon="el-icon-tickets">充值明细</el-button>
-            <el-button size="small " type="primary " icon="el-icon-menu">二维码生成</el-button>
+            <el-button size="small " type="primary " icon="el-icon-edit" @click="topup">充值</el-button>
+            <el-button size="small " type="primary " icon="el-icon-menu" style="margin-right:10px;">二维码生成</el-button>
+            <el-popover placement="left-end" width="450" trigger="click">
+              <el-table :data="gridData">
+                <el-table-column width="150" label="时间" property="cdate" :formatter="formatChildTime"></el-table-column>
+                <el-table-column width="150" label="充值数量" property="change_money"></el-table-column>
+              </el-table>
+              <el-button size="small " type="primary " icon="el-icon-tickets" slot="reference" @click="OperateLogList(scope)">充值明细</el-button>
+            </el-popover>
+            <el-dialog width="15%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+              <el-input size="small" style="width:94%;margin:0 auto;" v-model="amount"></el-input>元
+              <span slot="footer" style=" display:inline-block; width: 236px;height: 30px;margin: 0 auto;" class="dialog-footer">
+                <el-button style="float:left" size="small" type="primary" @click="confirm(scope)">确 定</el-button>
+                <el-button style="float:right" size="small" @click="addDialog = false">取 消</el-button>
+              </span>
+            </el-dialog>
           </template>
-          <!-- <template slot-scope="scope">
-                        <el-button type="primary " size="small " @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}})">
-                            编辑
-                        </el-button>
-                    </template> -->
         </el-table-column>
       </el-table>
       <div class="admin-table-pager">
@@ -57,14 +58,10 @@
 <script>
 /* eslint-disable */
 import {
-  getDeviceCompanyList,
-  delCompany,
-  getDeviceCompanyAll
+  getCanRechargeUsers,
+  Recharge,
+  getUserRechargeRecord
 } from "@/api/index.js";
-import selectCompanytype from "@/components/select-companytype.vue";
-import selectCompany from "@/components/select-company.vue";
-// import addProduct from "./add.vue";
-// import updateComponents from "./update.vue";
 export default {
   created() {
     this.getTable();
@@ -72,10 +69,11 @@ export default {
   },
   data() {
     return {
+      addDialog: false,
+      amount: "",
+      gridData: [],
       isCollapse: false,
       tableQuery: {
-        company_name: "",
-        company_type: "",
         size: 10,
         page: 1
       },
@@ -93,81 +91,45 @@ export default {
       state2: ""
     };
   },
-  mounted() {
-    this.restaurants = this.loadAll();
-  },
+  mounted() {},
   methods: {
-    //删除产品
-    delRow(scope) {
-      this.$confirm("确认删除？")
-        .then(() => {
-          delCompany(scope.row).then(res => {
-            if (res.data.code == 0) {
-              this.$message.success(res.data.msg);
-              this.getTable();
-            } else {
-              this.$message.error(res.data.msg);
-            }
-          });
-        })
-        .catch(() => {});
+    // 时间转换
+    formatChildTime(row) {
+      return this.$utils.formatDate(row.cdate);
     },
-    //添加产品
-    addFrom() {
-      var vNode = this.$createElement(addProduct, {
-        key: this.addKey++,
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
+    // 充值
+    topup() {
+      this.addKey++;
+      this.addDialog = true;
+    },
+    confirm(scope) {
+      Recharge({ user_id: scope.row.user_id, amount: this.amount }).then(
+        res => {
+          if (res.data.code == 0) {
+            this.addDialog = false;
+            this.amount = "";
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        }
+      );
+    },
+    // 充值记录
+    OperateLogList(scope) {
+      getUserRechargeRecord({ user_id: scope.row.user_id }).then(res => {
+        if (res.data.code == 0) {
+          this.gridData = res.data.data;
+        } else {
+          this.$message.error(res.data.msg);
         }
       });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "添加",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
     },
-    //编辑产品
-    updateForm(scope) {
-      var vNode = this.$createElement(updateComponents, {
-        key: this.addKey++,
-        props: {
-          company_id: scope.row.company_id
-        },
-        on: {
-          success: () => {
-            this.getTable();
-            this.$msgbox.close();
-          },
-          error: function() {}
-        }
-      });
-      this.$msgbox({
-        showConfirmButton: false, //是否显示确定按钮
-        customClass: "admin-message-form",
-        title: "编辑",
-        closeOnClickModal: false, //是否可通过点击遮罩关闭 MessageBox
-        closeOnPressEscape: false, //是否可通过按下 ESC 键关闭 MessageBox
-        message: vNode
-      });
-    },
-    //查询产品列表
+    //查询可以充值的用户列表
     getTable() {
       this.tableLoading = true;
-      if (this.simee.address) {
-        this.tableQuery.company_id = this.simee.address;
-      }
-      if (this.tableQuery.company_nameta == "") {
-        this.tableQuery.company_id = "";
-      }
       var query = Object.assign({}, this.tableQuery);
-      getDeviceCompanyList(query)
+      getCanRechargeUsers(query)
         .then(res => {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);
@@ -188,51 +150,6 @@ export default {
         }
       };
     },
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createFilter(queryString) {
-      return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        );
-      };
-    },
-    loadAll() {
-      getDeviceCompanyAll().then(res => {
-        if (res.data.code == 0) {
-          for (var i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].real_name !== "") {
-              this.simss.push({
-                value: res.data.data[i].company_name,
-                address: res.data.data[i].company_id
-              });
-            }
-          }
-        }
-      });
-      return this.simss;
-    },
-    handleSelect(item) {
-      this.simee = { value: item.value, address: item.address };
-      this.getTable();
-    },
-    handleClick() {
-      alert("button click");
-    },
-    filterTag(value, row) {
-      return row.tag === value;
-    },
-    filterHandler(value, row, column) {
-      const property = column["property"];
-      return row[property] === value;
-    },
     handleSizeChange(val) {
       this.tableQuery.page = 1;
       this.tableQuery.size = val;
@@ -243,6 +160,6 @@ export default {
       this.getTable();
     }
   },
-  components: { selectCompanytype, selectCompany }
+  components: {}
 };
 </script>

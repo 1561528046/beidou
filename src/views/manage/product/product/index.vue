@@ -99,14 +99,11 @@ export default {
       tableLoading: true,
       addKey: 0,
       userdetailShow: false,
-      restaurants: [],
       state1: "",
       state2: ""
     };
   },
-  mounted() {
-    this.restaurants = this.loadAll();
-  },
+  mounted() {},
   methods: {
     handleSizeChange(val) {
       this.tableQuery.page = 1;
@@ -203,41 +200,6 @@ export default {
           this.getTable();
         }
       };
-    },
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createFilter(queryString) {
-      return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        );
-      };
-    },
-    loadAll() {
-      getDeviceCompanyAll().then(res => {
-        if (res.data.code == 0) {
-          for (var i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].real_name !== "") {
-              this.simss.push({
-                value: res.data.data[i].company_name,
-                address: res.data.data[i].company_id
-              });
-            }
-          }
-        }
-      });
-      return this.simss;
-    },
-    handleSelect(item) {
-      this.simee = { value: item.value, address: item.address };
-      this.getTable();
     },
     handleClick() {
       alert("button click");

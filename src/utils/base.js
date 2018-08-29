@@ -1,9 +1,9 @@
 export const dict = {
   //全局字典
-  // BASE_URL: "http://192.168.88.100:725/",
-  // API_URL: "http://192.168.88.100:725/api",
-  BASE_URL: "http://192.168.88.88:10462/",
-  API_URL: "http://192.168.88.88:10462/api",
+  BASE_URL: "http://192.168.88.100:725/",
+  API_URL: "http://192.168.88.100:725/api",
+  // BASE_URL: "http://192.168.88.88:10462/",
+  // API_URL: "http://192.168.88.88:10462/api",
   license_color: {
     "1": {
       backgroundColor: "#006DD9",
@@ -85,6 +85,7 @@ export const dict = {
   get_company_type: function(key) {
     return this.company_type[key] || "--";
   },
+
   //所属行业(单纯记录 非必填):普货，长途，出租，校车，公交车等等
   industry: {
     "1": "物流运输（普货）",
@@ -107,6 +108,33 @@ export const dict = {
   },
   get_sim_state: function(key) {
     return this.sim_state[key] || "未使用";
+  },
+  order_paytype: {
+    "1": "计费",
+    "2": "扣费"
+  },
+  get_order_paytype: function(key) {
+    return this.order_paytype[key] || "--";
+  },
+  order_state: {
+    "1": "开通前装车待审核",
+    "2": "正常",
+    "3": "拒绝开通前装车",
+    "4": "取消订单审核通过",
+    "5": "取消订单审核",
+    "6": "取消订单审核未通过"
+  },
+  get_order_state: function(key) {
+    return this.order_state[key] || "--";
+  },
+  order_detailtype: {
+    "1": "授权车辆",
+    "2": "授权厂商",
+    "3": "短信",
+    "4": "SIM卡"
+  },
+  get_order_detailtype: function(key) {
+    return this.order_detailtype[key] || "--";
   },
   //所属行业(单纯记录 非必填):普货，长途，出租，校车，公交车等等
   vehicle_type: {
