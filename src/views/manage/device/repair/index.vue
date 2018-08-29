@@ -86,7 +86,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column width="150" label="返厂时间" property="back_time" :formatter="formatBackTime"></el-table-column>
-                <el-table-column width="150" label="备注" property="reason"></el-table-column>
+                <el-table-column width="150" label="备注" property="reason" :formatter="formReason"></el-table-column>
               </el-table>
               <el-button style="margin-left:10px;" size="small" slot="reference" @click="OperateLogList(scope)">维修记录</el-button>
             </el-popover>
@@ -202,6 +202,9 @@ export default {
     },
     formatBackTime(row) {
       return this.$utils.formatDate(row.back_time);
+    },
+    formReason(row) {
+      return this.$utils.baseForm(row.reason);
     },
     // 维修记录
     OperateLogList(scope) {

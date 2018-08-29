@@ -14,6 +14,13 @@ export default {
   baseFormatter(row, column, cellValue) {
     return cellValue || "--";
   },
+  baseForm(value) {
+    if (value) {
+      return value;
+    } else {
+      return "--";
+    }
+  },
   /**
    *
    * @param {String} date 20170808 20170808010101
@@ -24,7 +31,7 @@ export default {
    * 除监控外，其他时间不包括时分秒，监控方法另外重写！
    */
   formatDate(date, separator = "-") {
-    if (!date) {
+    if (date == 0) {
       return "--";
     }
     if (date.length == 8 || date.length == 14) {
