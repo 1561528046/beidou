@@ -6,16 +6,12 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="厂商名称">
-              <!-- <el-input v-model="tableQuery.company_name"></el-input>
-                             -->
               <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.company_name" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
               </el-autocomplete>
             </el-form-item>
           </el-col>
           <el-col :offset="isCollapse?0:6" :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
-              <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button> -->
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
@@ -27,9 +23,6 @@
         <el-button type="primary" size="small" @click="addFrom">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
-        <!-- <el-button type="primary" size="small">导出
-                    <i class="el-icon-upload el-icon--right"></i>
-                </el-button> -->
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="company_name" label="终端厂商名称" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -38,11 +31,6 @@
             <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
             <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
           </template>
-          <!-- <template slot-scope="scope">
-                        <el-button type="primary" size="small" @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}})">
-                            编辑
-                        </el-button>
-                    </template> -->
         </el-table-column>
       </el-table>
       <div class="admin-table-pager">
@@ -82,6 +70,7 @@ export default {
   },
   data() {
     return {
+      pro: 0,
       addKey: 0,
       addDialog: false,
       updateDialog: false,
@@ -93,7 +82,7 @@ export default {
         size: 10,
         page: 1
       },
-      simss: [],
+      company: [],
       simee: {},
       tableData: {
         total: 0,
@@ -120,6 +109,7 @@ export default {
             if (res.data.code == 0) {
               this.$message.success(res.data.msg);
               this.getTable();
+              this.loadAll();
             } else {
               this.$message.error(res.data.msg);
             }
@@ -183,6 +173,7 @@ export default {
     },
     querySearch(queryString, cb) {
       var restaurants = this.restaurants;
+      console.log(restaurants.filter(this.createFilter(queryString)));
       var results = queryString
         ? restaurants.filter(this.createFilter(queryString))
         : restaurants;
@@ -205,16 +196,16 @@ export default {
       getDeviceCompanyAll().then(res => {
         if (res.data.code == 0) {
           for (var i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].real_name !== "") {
-              this.simss.push({
-                value: res.data.data[i].company_name,
-                address: res.data.data[i].company_id
+            if (res.data.data[i].real_name != "") {
+              this.company.push({
+                value: res.data.data[i].company_id,
+                address: res.data.data[i].company_name
               });
             }
           }
         }
       });
-      return this.simss;
+      return this.company;
     },
     filterTag(value, row) {
       return row.tag === value;

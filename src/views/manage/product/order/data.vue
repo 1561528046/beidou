@@ -2,13 +2,18 @@
   <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
     <el-row :gutter="30">
       <el-col :span="12">
-        <el-table style="width: 100%" height="300" class="admin-table-list" border>
+        <el-table style="width: 100%" height="200" class="admin-table-list" border>
           <el-table-column prop="" label="图片" :formatter="$utils.baseFormatter"> </el-table-column>
         </el-table>
       </el-col>
       <el-col :span="12">
-        <el-table style="width: 100%" height="300" class="admin-table-list" border>
-          <el-table-column prop="" label="文字" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table style="width: 100%" height="200" class="admin-table-list" border>
+          <el-table-column prop="" label="图片" :formatter="$utils.baseFormatter"> </el-table-column>
+        </el-table>
+      </el-col>
+      <el-col :span="24" style="margin-top:10px;">
+        <el-table style="width: 100%" class="admin-table-list" border>
+          <el-table-column prop="" label="备注" :formatter="$utils.baseFormatter"> </el-table-column>
         </el-table>
       </el-col>
     </el-row>

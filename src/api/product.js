@@ -103,7 +103,7 @@ export const delProductUser = query => {
 
 // 查询订单
 export const getOrderList = query => {
-  return ajax.get("/ordermanage/GetOrderListByPage", {
+  return ajax.get("/ordermanage/GetReviewOrderListByPage", {
     params: query
   });
 };
@@ -156,6 +156,24 @@ export const Recharge = query => {
 // 获取充值记录
 export const getUserRechargeRecord = query => {
   return ajax.get("/ordermanage/GetUserRechargeRecord", {
+    params: query
+  });
+};
+// 获取当前用户名下绑定了收费产品的用户列表
+export const getBindFeesPackageUsers = query => {
+  return ajax.get("/ordermanage/GetBindFeesPackageUsers", {
+    params: query
+  });
+};
+// 获取需要当前用户审核的订单
+export const getReviewOrderListByPage = query => {
+  return ajax.get("/ordermanage/GetReviewOrderListByPage", {
+    params: query
+  });
+};
+// 查询某个用户名下所有的订单
+export const gettReviewOrderListByPage = query => {
+  return ajax.get("/ordermanage/GetReviewOrderListByPage", {
     params: query
   });
 };

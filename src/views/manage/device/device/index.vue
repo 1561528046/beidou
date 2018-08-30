@@ -94,10 +94,24 @@
         <el-table-column prop="state" label="状态" :formatter="(row)=>{return this.$dict.get_device_state(row.state)}"></el-table-column>
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
-            <el-button size="small" type="primary" :disabled="scope.row.disabled" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" :disabled="scope.row.disabled" :type="buttontype(scope)" @click="repair_addFrom(scope)">
-              <i class="el-icon-upload el-icon--right"></i>设备维修</el-button>
-            <el-button size="small" @click="delRow(scope)" icon="el-icon-delete">删除</el-button>
+            <el-button size="small" type="primary" :disabled="scope.row.editDisabled" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
+            <!-- <el-button size="small" :disabled="scope.row.disabled" :type="buttontype(scope)" @click="repair_addFrom(scope)">
+              <i class="el-icon-upload el-icon--right"></i>设备维修</el-button> -->
+            <el-dropdown>
+              <el-button :disabled="scope.row.deviceDisabled" size="small" style="margin-left: 15px;margin-right:15px;" type="primary">
+                设备管理
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item style="padding:2px 15px;">
+                  <el-button size="small" type="danger" :disabled="scope.row.repairDisabled" style="display: block;width:100%;" @click="repair_addFrom(scope)">设备维修</el-button>
+                </el-dropdown-item>
+                <el-dropdown-item style="padding:2px 15px;">
+                  <el-button size="small" type="info" :disabled="scope.row.scrapDisabled" style="display: block;width:100%;" @click="scrap_addFrom(scope)">设备报废</el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <el-button size="small" @click="delRow(scope)" icon="el-icon-delete" :disabled="scope.row.delDisabled">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -115,6 +129,9 @@
     <el-dialog title="添加维修设备信息" :visible.sync="repairDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <repair-add :device_id="repairId " @success=" ()=> {this.getTable();this.repairDialog = false;this.repairId = '';}" :key="addKey"></repair-add>
     </el-dialog>
+    <el-dialog width="30%" title="添加报废设备信息" :visible.sync="scrapDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
+      <scrap-add :device_id="scrapId " @success=" ()=> {this.getTable();this.scrapDialog = false;this.scrapId = '';}" :key="addKey"></scrap-add>
+    </el-dialog>
     <el-dialog width="21%" title="上传" :visible.sync="uploadDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <device-upload @success=" ()=> {this.getTable();this.uploadDialog = false;}" :key="addKey"></device-upload>
     </el-dialog>
@@ -127,6 +144,7 @@ import selectDevicetype from "@/components/select-devicetype.vue";
 import selectDevice from "@/components/select-device.vue";
 import addDevice from "./add.vue";
 import repairAdd from "./repair_add.vue";
+import scrapAdd from "./scrap_add.vue";
 import updateDevice from "./update.vue";
 import deviceUpload from "./upload.vue";
 import { getDeviceList, delDevice } from "@/api/index.js";
@@ -139,7 +157,8 @@ export default {
     selectUser,
     selectDevicetype,
     selectDevice,
-    repairAdd
+    repairAdd,
+    scrapAdd
   },
   created() {
     this.getTable();
@@ -153,6 +172,8 @@ export default {
       updateId: "",
       repairDialog: false,
       repairId: "",
+      scrapDialog: false,
+      scrapId: "",
       uploadDialog: false,
       isCollapse: false,
       dateRange: "",
@@ -265,13 +286,44 @@ export default {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);
             for (var i = 0; i < this.tableData.data.length; i++) {
+              // 编辑状态
               if (
-                this.tableData.data[i].state == 3 ||
-                this.tableData.data[i].state == 4
+                this.tableData.data[i].state == "1" ||
+                this.tableData.data[i].state == "2"
               ) {
-                this.tableData.data[i].disabled = true;
+                this.tableData.data[i].editDisabled = false;
               } else {
-                this.tableData.data[i].disabled = false;
+                this.tableData.data[i].editDisabled = true;
+              }
+              // 管理状态
+              if (this.tableData.data[i].state == "4") {
+                this.tableData.data[i].deviceDisabled = true;
+              } else {
+                this.tableData.data[i].deviceDisabled = false;
+              }
+              // 维修状态
+              if (this.tableData.data[i].state == "1") {
+                this.tableData.data[i].repairDisabled = false;
+              } else {
+                this.tableData.data[i].repairDisabled = true;
+              }
+              // 报废状态
+              if (
+                this.tableData.data[i].state == "1" ||
+                this.tableData.data[i].state == "3"
+              ) {
+                this.tableData.data[i].scrapDisabled = false;
+              } else {
+                this.tableData.data[i].scrapDisabled = true;
+              }
+              // 删除状态
+              if (
+                this.tableData.data[i].state == "1" ||
+                this.tableData.data[i].state == "4"
+              ) {
+                this.tableData.data[i].delDisabled = false;
+              } else {
+                this.tableData.data[i].delDisabled = true;
               }
             }
           } else {
@@ -286,6 +338,11 @@ export default {
     repair_addFrom(scope) {
       this.repairDialog = true;
       this.repairId = scope.row.device_id;
+      this.addKey++;
+    },
+    scrap_addFrom(scope) {
+      this.scrapDialog = true;
+      this.scrapId = scope.row.device_id;
       this.addKey++;
     },
     // 按钮样式
