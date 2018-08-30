@@ -253,7 +253,7 @@ export default {
         city_id: "",
         county_id: "",
         type: this.$props.type,
-        state: this.$props.state,
+        flag: this.$props.state,
         leave_day: "",
         first_startdate: "",
         first_enddate: "",

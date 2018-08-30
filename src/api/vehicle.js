@@ -44,14 +44,8 @@ export const updateVehicle = query => {
   );
 };
 export const delVehicle = query => {
-  return ajax.post("/vehicle/DeleteVehicle", "", {
-    params: {
-      vehicle_id: query.vehicle_id,
-      vid: query.vid,
-      license: query.license,
-      province_id: query.province_id
-    }
-  });
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/DeleteVehicle", queryQS);
 };
 export const getVehicleBrand = query => {
   query = Object.assign(
