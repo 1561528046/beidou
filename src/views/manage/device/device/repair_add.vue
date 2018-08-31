@@ -109,7 +109,6 @@ export default {
     formSubmit() {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
-          console.log(this.formData);
           var postData = Object.assign({}, this.formData);
           updateDeviceRepair(postData)
             .then(res => {

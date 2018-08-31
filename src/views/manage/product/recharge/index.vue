@@ -5,14 +5,14 @@
       <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
           <el-col :span="6">
-            <el-form-item label="用户名">
+            <!-- <el-form-item label="用户名">
               <el-input></el-input>
-            </el-form-item>
+            </el-form-item> -->
           </el-col>
           <el-col :span="18" style="text-align: right;">
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button type="primary" @click="getTable">查询</el-button>
-            </el-form-item>
+            </el-form-item> -->
           </el-col>
         </el-row>
       </el-form>
@@ -21,16 +21,16 @@
       <div class="admin-table-actions">
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="" label="公司名称" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="登录帐号" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="联系电话" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="已绑定产品" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="余额" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column width="400" label="操作">
+        <el-table-column prop="real_name" label="公司名称" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="user_name" label="登录帐号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="tel" label="联系电话" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="title" label="已绑定产品" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="balance" label="余额" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column width="300" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " type="primary " icon="el-icon-edit" @click="topup">充值</el-button>
-            <el-button size="small " type="primary " icon="el-icon-menu" style="margin-right:10px;">二维码生成</el-button>
+            <el-button size="small " type="primary " icon="el-icon-edit" @click="topup" style="margin-right:10px;">充值</el-button>
+            <!-- <el-button size="small " type="primary " icon="el-icon-menu" >二维码生成</el-button> -->
             <el-popover placement="left-end" width="450" trigger="click">
               <el-table :data="gridData">
                 <el-table-column width="150" label="时间" property="cdate" :formatter="formatChildTime"></el-table-column>

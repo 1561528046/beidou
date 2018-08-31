@@ -19,12 +19,13 @@ export default {
   watch: {
     company_id: function() {
       this.$emit("input", this.company_id);
-      this.$emit(
-        "update:company_name",
-        this.list.filter(item => {
+      var company = "";
+      if (this.company_id) {
+        company = this.list.filter(item => {
           return item.company_id == this.company_id;
-        })[0].company_name
-      );
+        })[0].company_name;
+      }
+      this.$emit("update:company_name", company);
     },
     value: function() {
       this.company_id = this.value;

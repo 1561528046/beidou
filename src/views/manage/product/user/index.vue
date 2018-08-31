@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="所属地区">
-              <el-input></el-input>
+              <select-city-input :area.sync="tableQuery.area" :select-all="true" style="width:100%;" clearable></select-city-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -21,8 +21,6 @@
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
-              <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button> -->
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
@@ -30,23 +28,17 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
-      <div class="admin-table-actions">
-        <!-- <el-button type="primary" size="small" @click="addFrom">
-          <i class="el-icon-upload el-icon--right"></i> 添加
-        </el-button> -->
-        <!-- <el-button type="primary" size="small">导出
-                    <i class="el-icon-upload el-icon--right"></i>
-                </el-button> -->
-      </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="cdate" label="用户名称" :formatter="(row)=>{return this.$utils.formatDate(row.cdate)}"> </el-table-column>
+        <el-table-column prop="real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="order_no" label="所属地区" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="fees_detail_name" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="license" label="联系电话" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="car_type" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="tel" label="联系电话" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="title" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " type="primary" icon=" el-icon-document">查看订单明细</el-button>
+            <router-link :to="{name:'order-order',params:{id:scope.row.user_id}}">
+              <el-button size="small " type="primary" icon=" el-icon-document">查看订单明细</el-button>
+            </router-link>
           </template>
         </el-table-column>
       </el-table>
@@ -59,7 +51,12 @@
 </template>
 <script>
 /* eslint-disable */
-import { getUserOrderList } from "@/api/index.js";
+import {
+  getBindFeesPackageUsers,
+  getReviewOrderListByPage,
+  gettReviewOrderListByPage
+} from "@/api/index.js";
+import selectCityInput from "@/components/select-city-input.vue";
 import selectCompanytype from "@/components/select-companytype.vue";
 import selectCompany from "@/components/select-company.vue";
 // import addProduct from "./add.vue";
@@ -73,15 +70,7 @@ export default {
     return {
       isCollapse: false,
       tableQuery: {
-        order_no: "",
-        car_no: "",
-        car_type: "",
-        company_id: "",
-        company_name: "",
-        state: "",
-        user_id: "",
-        start_time: "",
-        end_time: "",
+        area: [],
         size: 10,
         page: 1
       },
@@ -91,7 +80,7 @@ export default {
         total: 0,
         data: []
       },
-      tableLoading: true,
+      tableLoading: false,
       addKey: 0,
       userdetailShow: false,
       restaurants: [],
@@ -99,14 +88,12 @@ export default {
       state2: ""
     };
   },
-  mounted() {
-    this.restaurants = this.loadAll();
-  },
+  mounted() {},
   methods: {
-    //查询产品列表
+    //查询用户列表
     getTable() {
       var query = Object.assign({}, this.tableQuery);
-      getUserOrderList(query)
+      getBindFeesPackageUsers(query)
         .then(res => {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);
@@ -127,51 +114,6 @@ export default {
         }
       };
     },
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createFilter(queryString) {
-      return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        );
-      };
-    },
-    loadAll() {
-      getDeviceCompanyAll().then(res => {
-        if (res.data.code == 0) {
-          for (var i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].real_name !== "") {
-              this.simss.push({
-                value: res.data.data[i].company_name,
-                address: res.data.data[i].company_id
-              });
-            }
-          }
-        }
-      });
-      return this.simss;
-    },
-    handleSelect(item) {
-      this.simee = { value: item.value, address: item.address };
-      this.getTable();
-    },
-    handleClick() {
-      alert("button click");
-    },
-    filterTag(value, row) {
-      return row.tag === value;
-    },
-    filterHandler(value, row, column) {
-      const property = column["property"];
-      return row[property] === value;
-    },
     handleSizeChange(val) {
       this.tableQuery.page = 1;
       this.tableQuery.size = val;
@@ -182,6 +124,6 @@ export default {
       this.getTable();
     }
   },
-  components: { selectCompanytype, selectCompany }
+  components: { selectCompanytype, selectCompany, selectCityInput }
 };
 </script>

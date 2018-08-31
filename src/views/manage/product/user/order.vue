@@ -88,28 +88,7 @@
         <el-table-column prop="state" label="订单状态" :formatter="(row)=>{return this.$dict.get_order_state(row.state)}"> </el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " type="primary " icon="el-icon-success" @click="confirm" v-if="scope.row.state=='1'&&scope.row.has_review=='2'">确认开通</el-button>
-            <!-- <el-button size="small " icon="el-icon-error" @click="cancel" v-if="scope.row.has_cancel=='2'">取消订单</el-button> -->
-            <el-button size="small " icon="el-icon-setting" @click="review" v-if="scope.row.state=='5'&&scope.row.has_review=='2'">取消订单审核</el-button>
-            <el-button size="small " type="primary" icon=" el-icon-document " @click="enquiry(scope)">查看资料</el-button>
-            <el-dialog width="30%" title="" :visible.sync="confirmDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-              <label>备注：</label>
-              <el-input v-model="tableConfirm.reason"></el-input>
-              <span slot="footer" class="dialog-footer">
-                <el-button icon="el-icon-success" type="primary" @click="confirmOrder(scope,1)">通过</el-button>
-                <el-button icon="el-icon-error" type="danger" @click="confirmOrder(scope,2)">未通过</el-button>
-                <el-button @click="confirmDialog = false">取 消</el-button>
-              </span>
-            </el-dialog>
-            <el-dialog width="30%" title="" :visible.sync="auditDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-              <label>备注：</label>
-              <el-input v-model="tableConfirm.reason"></el-input>
-              <span slot="footer" class="dialog-footer">
-                <el-button icon="el-icon-success" type="primary" @click="cancelAudit(scope,1)">通过</el-button>
-                <el-button icon="el-icon-error" type="danger" @click="cancelAudit(scope,2)">未通过</el-button>
-                <el-button @click="auditDialog = false">取 消</el-button>
-              </span>
-            </el-dialog>
+            <el-button size="small " icon="el-icon-error" @click="cancel" v-if="scope.row.has_cancel=='2'">取消订单</el-button>
             <el-dialog width="20%" title="" :visible.sync="cancelDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
               <div style="width:154px;margin:0 auto;">
                 <el-button type="primary" @click="submit(scope)">确定</el-button>
@@ -124,9 +103,6 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog width="35%" title="资料信息" :visible.sync="lookDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <order-data :order_no="order_no" @success=" ()=> {this.getTable();this.lookDialog = false;}" :key="addKey"></order-data>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -135,7 +111,7 @@ import {
   getDeviceCompanyList,
   delCompany,
   getDeviceCompanyAll,
-  getOrderList,
+  gettReviewOrderListByPage,
   ReviewOrder,
   CancelOrder,
   ReviewCancel
@@ -145,7 +121,7 @@ import selectCompany from "@/components/select-company.vue";
 import selectDevicetype from "@/components/select-devicetype.vue";
 import selectIndustry from "@/components/select-industry.vue";
 import selectOrderstate from "@/components/select-orderstate.vue";
-import orderData from "./data.vue";
+// import orderData from "./data.vue";
 // import addProduct from "./add.vue";
 // import updateComponents from "./update.vue";
 export default {
@@ -154,19 +130,16 @@ export default {
     selectCompany,
     selectDevicetype,
     selectIndustry,
-    selectOrderstate,
-    orderData
+    selectOrderstate
+    // orderData
   },
   created() {
+    this.tableQuery.user_id = this.$route.params.id;
     this.getTable();
     this.keyupSubmit();
   },
   data() {
     return {
-      lookDialog: false,
-      order_no: "",
-      confirmDialog: false,
-      auditDialog: false,
       cancelDialog: false,
       addKey: 0,
       isCollapse: false,
@@ -239,37 +212,13 @@ export default {
     // this.restaurants = this.loadAll();
   },
   methods: {
-    // 查看资料
-    enquiry(scope) {
+    // 取消订单
+    cancel() {
       this.addKey++;
-      this.lookDialog = true;
-      this.order_no = scope.row.order_no;
+      this.cancelDialog = true;
     },
-    // 确认订单
-    confirm() {
-      this.addKey++;
-      this.confirmDialog = true;
-    },
-    // 取消订单审核
-    review() {
-      this.addKey++;
-      this.auditDialog = true;
-    },
-    confirmOrder(scope, state) {
-      this.tableConfirm.order_no = scope.row.order_no;
-      this.tableConfirm.is_review = state;
-      ReviewOrder(this.tableConfirm).then(res => {
-        if (res.data.code == 0) {
-          this.$message.success(res.data.msg);
-        } else {
-          this.$message.error(res.data.msg);
-        }
-      });
-    },
-    cancelAudit(scope, state) {
-      this.tableConfirm.orderno = scope.row.order_no;
-      this.tableConfirm.is_review = state;
-      ReviewCancel(this.tableConfirm).then(res => {
+    submit(scope) {
+      CancelOrder({ order_no: scope.row.order_no }).then(res => {
         if (res.data.code == 0) {
           this.$message.success(res.data.msg);
         } else {
@@ -284,7 +233,7 @@ export default {
         this.tableQuery.end_time = this.tableQuery.time[1];
       }
       var query = Object.assign({}, this.tableQuery);
-      getOrderList(query)
+      gettReviewOrderListByPage(query)
         .then(res => {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);

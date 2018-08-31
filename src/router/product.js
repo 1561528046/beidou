@@ -31,8 +31,20 @@ export default {
     {
       path: "order-select",
       name: "order-select",
-      meta: { name: "订单查询", icon: "iconfont icon-dingdanchaxun" },
+      meta: {
+        name: "订单查询",
+        icon: "iconfont icon-dingdanchaxun"
+      },
       component: () => import("@/views/manage/product/user/index.vue")
+    },
+    {
+      path: "order-order/:id",
+      name: "order-order",
+      meta: {
+        name: "订单查询-查询",
+        hidden: true
+      },
+      component: () => import("@/views/manage/product/user/order.vue")
     },
     {
       path: "recharge",

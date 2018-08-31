@@ -146,7 +146,7 @@ export default {
       leftList: [],
       rightList: [],
       leftCol: [
-        { prop: "device_id", label: "终端ID" },
+        { prop: "device_no", label: "终端ID" },
         { prop: "company_name", label: "设备厂商" },
         {
           prop: "device_type",
@@ -157,7 +157,7 @@ export default {
         }
       ],
       rightCol: [
-        { prop: "device_id", label: "终端ID" },
+        { prop: "device_no", label: "终端ID" },
         { prop: "company_name", label: "设备厂商" },
         {
           prop: "device_type",
@@ -265,12 +265,12 @@ export default {
       }
       var postData = {
         user_id: this.currentUser.user_id,
-        device_ids: []
+        device_nos: []
       };
       items.map(item => {
-        postData.device_ids.push(item.device_id);
+        postData.device_nos.push(item.device_no);
       });
-      postData.device_ids = postData.device_ids.join(",");
+      postData.device_nos = postData.device_nos.join(",");
       addUserDevice(postData)
         .then(res => {
           if (res.data.code == 0) {
@@ -292,12 +292,12 @@ export default {
       //左到右
       var postData = {
         user_id: this.currentUser.user_id,
-        device_ids: []
+        device_nos: []
       };
       items.map(item => {
-        postData.device_ids.push(item.device_id);
+        postData.device_nos.push(item.device_no);
       });
-      postData.device_ids = postData.device_ids.join(",");
+      postData.device_nos = postData.device_nos.join(",");
       delUserDevice(postData)
         .then(res => {
           if (res.data.code == 0) {
