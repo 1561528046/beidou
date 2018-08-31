@@ -31,7 +31,7 @@ export default {
    * 除监控外，其他时间不包括时分秒，监控方法另外重写！
    */
   formatDate(date, separator = "-") {
-    if (date == 0) {
+    if (!date) {
       return "--";
     }
     if (date.length == 8 || date.length == 14) {
