@@ -80,6 +80,12 @@
           </el-button>
         </router-link>
         &nbsp;
+        <router-link :to="{path:'new/binding'}" v-if="$props.state==1">
+          <el-button type="primary" size="small">
+            <i class="el-icon-plus"></i> 绑定管理
+          </el-button>
+        </router-link>
+        &nbsp;
         <!-- <el-button type="primary" size="small" v-if="$props.state==2">
           <i class="el-icon-tickets"></i> 单车导入
         </el-button>
@@ -214,7 +220,7 @@
 </style>
 <script>
 /* eslint-disable */
-import { getVehicleList, delVehicle } from "@/api/index.js";
+import { getVehicleList, delVehicle, firstTimeVehicle } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import viewVehicle from "@/components/view-vehicle.vue";
 export default {
@@ -321,7 +327,20 @@ export default {
         case "active-company":
           this.openCompanyShow(command.data);
           break;
+        case "update-position":
+          this.updatePosition(command.data);
+          break;
       }
+    },
+    updatePosition(scope) {
+      firstTimeVehicle(scope.row).then(res => {
+        if (res.data.code == 0) {
+          this.$message.success(res.data.msg);
+          this.getTable();
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
     },
     openCompanyClosed() {
       //厂商开通关闭

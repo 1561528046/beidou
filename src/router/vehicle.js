@@ -15,6 +15,13 @@ export default {
       component: () => import("@/views/manage/vehicle/index.vue"),
       children: [
         {
+          path: "new/binding",
+          name: "gghypt_vehicle_binding",
+          meta: { name: "车辆绑定", hidden: true },
+          props: { is_enter: 1, state: 1 },
+          component: () => import("@/views/manage/vehicle/binding.vue")
+        },
+        {
           path: "new",
           name: "gghypt_vehicle_list_new",
           meta: { name: "新增车辆管理", icon: "iconfont icon-zongheguanli" },

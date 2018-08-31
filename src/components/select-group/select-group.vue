@@ -1,13 +1,33 @@
 <template>
+  <div>
+    <el-popover placement="bottom" width="400" trigger="click" v-model="visible" v-if="!$props.static">
 
-  <el-popover placement="bottom" width="400" trigger="click" v-model="visible">
+      <div slot="reference">
+        <el-input placeholder="点击选择" style="width:100%;" disabled :value="currentNodeData.group_name">
+          <el-button slot="append" icon="el-icon-more" @click="visible = !visible"></el-button>
+        </el-input>
+      </div>
+      <div class="select-group-cotainer">
 
-    <div slot="reference">
-      <el-input placeholder="点击选择" style="width:100%;" disabled :value="currentNodeData.group_name">
-        <el-button slot="append" icon="el-icon-more" @click="visible = !visible"></el-button>
-      </el-input>
-    </div>
-    <div class="select-group-cotainer">
+        <div class="_body" @click.stop>
+          <div class="_filter">
+            <input placeholder="输入关键字进行过滤" v-model="filterText" class="el-input__inner" style="height:30px; line-height:30px;" />
+          </div>
+          <div class="_tree" v-if="list.length">
+            <div v-if="filterEmpty" style="padding:10px; text-align:center; color:#999;">
+              没有相关数据！
+            </div>
+            <el-tree default-expand-all :expand-on-click-node="false" @node-click="nodeClick" :data="list" node-key="group_id" :props="defaultProps" :filter-node-method="filterNode" ref="tree2">
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <tree-item :props="defaultProps" v-model="data" :treeNode="node" @append="append" @remove="remove" @edit="edit" @add="add" placeholder="请输入分组名称" :useing="$props.useing"></tree-item>
+              </span>
+            </el-tree>
+
+          </div>
+        </div>
+      </div>
+    </el-popover>
+    <div class="select-group-cotainer" v-if="$props.static">
 
       <div class="_body" @click.stop>
         <div class="_filter">
@@ -26,8 +46,7 @@
         </div>
       </div>
     </div>
-  </el-popover>
-
+  </div>
 </template>
 <style lang="less">
 .select-group-cotainer {
@@ -66,7 +85,11 @@ export default {
   beforeMount() {
     this.visible = false;
   },
-  props: ["useing", "group_id"],
+  props: {
+    useing: [Array], //开启功能['add','remove','edit']
+    group_id: [String],
+    static: Boolean //是否直接静态平铺
+  },
   data() {
     return {
       visible: false,
@@ -74,10 +97,6 @@ export default {
       filterEmpty: false,
       defaultProps: {
         label: "group_name"
-      },
-      props: {
-        useing: [Array], //开启功能['add','remove','edit']
-        group_id: [String]
       },
       currentNodeData: {},
       addId: 999,

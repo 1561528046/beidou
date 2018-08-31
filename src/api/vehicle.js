@@ -36,6 +36,11 @@ export const addVehicle = query => {
     queryQS
   );
 };
+export const firstTimeVehicle = query => {
+  //更新定位
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/FirstTimeVehicle", queryQS);
+};
 export const updateVehicle = query => {
   var queryQS = qs.stringify(query);
   return ajax.post(
