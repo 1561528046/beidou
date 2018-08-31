@@ -26,9 +26,7 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
         <el-table-column prop="speed" label="速度(公里/时)"> </el-table-column>>
         <el-table-column prop="em_0x01" label="行驶里程"> </el-table-column>
@@ -40,7 +38,7 @@
       </div>
     </el-card>
     <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-vehicle @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-vehicle>
+      <choose-vehicle @button="vehicleCallback" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-vehicle>
     </el-dialog>
   </div>
 </template>
@@ -67,10 +65,11 @@ export default {
       addKey: 0,
       isCollapse: false,
       tableQuery: {
-        begin_time: "",
-        end_time: "",
+        start_time: "",
+        stop_time: "",
         time: "",
         license: "",
+        license_color: "",
         sim_id: "",
         size: 10,
         page: 1
@@ -116,10 +115,11 @@ export default {
       this.dialog = true;
     },
     // 回来的数据
-    xz(scope) {
+    vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
       this.tableQuery.license = scope.row.license;
-      this.tableQuery.smi_id = scope.row.sim_id;
+      this.tableQuery.sim_id = scope.row.sim_id;
+      this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
@@ -130,25 +130,28 @@ export default {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
-        this.tableQuery.begin_time = value[0];
-        this.tableQuery.end_time = value[1];
+        this.tableQuery.start_time = value[0];
+        this.tableQuery.stop_time = value[1];
         callback();
       }
     },
     //查询列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.start_time = 20180822161756;
-      this.tableQuery.end_time = 20180823101826;
       this.tableQuery.sim_id = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
+          console.log(this.tableQuery);
           var query = Object.assign({}, this.tableQuery);
           getReport(query)
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
                 for (var i = 0; i < res.data.data.length; i++) {
+                  res.data.data[i].license = this.tableQuery.license;
+                  res.data.data[
+                    i
+                  ].license_color = this.tableQuery.license_color;
                   data.push(res.data.data[i]);
                 }
                 this.$set(this.tableData, "data", Object.freeze(data));
