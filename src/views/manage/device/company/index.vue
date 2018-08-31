@@ -6,8 +6,9 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="厂商名称">
-              <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.company_name" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
-              </el-autocomplete>
+              <!-- <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.company_name" :fetch-suggestions="false" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
+              </el-autocomplete> -->
+              <el-input v-model="tableQuery.company_name"></el-input>
             </el-form-item>
           </el-col>
           <el-col :offset="isCollapse?0:6" :span="isCollapse?24:6" style="text-align: right;">
@@ -39,10 +40,10 @@
       </div>
     </el-card>
     <el-dialog width="29%" title="添加" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <add-components @success=" ()=> {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
+      <add-components @success=" ()=> {this.getTable();this.company=[];this.loadAll();this.addDialog = false;}" :key="addKey"></add-components>
     </el-dialog>
     <el-dialog width="29%" title="编辑" :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <update-components :company_id="updateId" @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId=''}" :key="addKey"></update-components>
+      <update-components :company_id="updateId" @success=" ()=> {this.getTable();this.company=[];this.loadAll();this.updateDialog = false;this.updateId=''}" :key="addKey"></update-components>
     </el-dialog>
   </div>
 </template>
@@ -109,6 +110,7 @@ export default {
             if (res.data.code == 0) {
               this.$message.success(res.data.msg);
               this.getTable();
+              this.company = [];
               this.loadAll();
             } else {
               this.$message.error(res.data.msg);
@@ -117,13 +119,12 @@ export default {
         })
         .catch(() => {});
     },
-    // 添加厂商名称
+    // 添加厂商
     addFrom() {
-      //添加
       this.addKey++;
       this.addDialog = true;
     },
-    // 修改厂商名称
+    // 修改厂商
     updateForm(scope) {
       //编辑
       this.addKey++;
@@ -173,7 +174,6 @@ export default {
     },
     querySearch(queryString, cb) {
       var restaurants = this.restaurants;
-      console.log(restaurants.filter(this.createFilter(queryString)));
       var results = queryString
         ? restaurants.filter(this.createFilter(queryString))
         : restaurants;
@@ -198,8 +198,8 @@ export default {
           for (var i = 0; i < res.data.data.length; i++) {
             if (res.data.data[i].real_name != "") {
               this.company.push({
-                value: res.data.data[i].company_id,
-                address: res.data.data[i].company_name
+                value: res.data.data[i].company_name,
+                address: res.data.data[i].company_id
               });
             }
           }

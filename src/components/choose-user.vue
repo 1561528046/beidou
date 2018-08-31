@@ -25,9 +25,7 @@ export default {
       formData: {
         license: "",
         user_id: "",
-        device_id: "",
-        page: 1,
-        size: 10
+        device_id: ""
       },
       tableData: {
         data: []
@@ -59,7 +57,9 @@ export default {
       );
       getVehicleByPage({ user_ids: this.formData.user_id }).then(res => {
         if (res.data.code == 0) {
-          console.log(res.data.data);
+          this.$set(this.tableData, "data", res.data.data);
+        } else {
+          this.$message.error(res.data.msg);
         }
       });
     },

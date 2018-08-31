@@ -28,7 +28,6 @@
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="所属组织" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="上线时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
         <el-table-column prop="" label="上线位置"> </el-table-column>
         <el-table-column prop="" label="下线时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>

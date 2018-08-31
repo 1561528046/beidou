@@ -3,23 +3,23 @@
     <el-row :gutter="30">
       <el-col :span="7">
         <el-form-item label="车牌号" prop="query_mode">
-          <el-input v-model="formData.cade"></el-input>
+          <el-input v-model="formData.license"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="7">
-        <el-form-item label="用户">
-          <el-input v-model="formData.cade"></el-input>
+        <el-form-item label="业户">
+          <el-input v-model="formData.owner"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="7">
         <el-form-item label="终端ID">
-          <el-input v-model="formData.cade"></el-input>
+          <el-input v-model="formData.device_no"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="3" style="text-align: right;">
         <el-form-item>
           <label style="display:inline-block; width:100%;"></label>
-          <el-button size="small" type="primary">搜索</el-button>
+          <el-button size="small" type="primary" @click="selectForm">搜索</el-button>
         </el-form-item>
       </el-col>
     </el-row>
@@ -32,9 +32,9 @@
         </el-table-column>
         <el-table-column prop="license" label="车牌号">
         </el-table-column>
-        <el-table-column prop="user_id" label="用户">
+        <el-table-column prop="owner" label="业户">
         </el-table-column>
-        <el-table-column prop="device_id" label="终端ID">
+        <el-table-column prop="device_no" label="终端ID">
         </el-table-column>
       </el-table>
     </template>
@@ -46,20 +46,18 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import { getVehicleByPage } from "@/api/index.js";
 export default {
   data() {
     return {
       checked: true,
       formData: {
         license: "",
-        user_id: "",
-        device_id: ""
+        owner: "",
+        device_no: ""
       },
       tableData: {
-        data: [
-          { license: "064620623980", user_id: "abc", device_id: "0000" },
-          { license: "0123456789", user_id: "abc", device_id: "0000" }
-        ]
+        data: []
       },
       rules: {
         ...rules
@@ -69,6 +67,15 @@ export default {
   watch: {},
   created() {},
   methods: {
+    selectForm() {
+      getVehicleByPage(this.formData).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.tableData, "data", res.data.data);
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
     formSubmit() {
       var arr = [];
       for (var i = 0; i < this.tableData.data.length; i++) {

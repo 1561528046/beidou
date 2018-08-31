@@ -7,8 +7,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="7">
-        <el-form-item label="用户">
-          <el-input v-model="formData.user_name"></el-input>
+        <el-form-item label="业户">
+          <el-input v-model="formData.owner"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="7">
@@ -25,11 +25,11 @@
     </el-row>
     <template>
       <el-table :data="tableData.data" border style="width: 100%">
-        <el-table-column prop="license" label="车牌号" width="260">
+        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter" width="260">
         </el-table-column>
-        <el-table-column prop="" label="用户" width="260">
+        <el-table-column prop="owner" label="业户" :formatter="$utils.baseFormatter" width="260">
         </el-table-column>
-        <el-table-column prop="device_no" label="终端ID" width="260">
+        <el-table-column prop="device_no" label="终端ID" :formatter="$utils.baseFormatter" width="260">
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -49,10 +49,8 @@ export default {
     return {
       formData: {
         license: "",
-        user_name: "",
-        device_no: "",
-        page: 1,
-        size: 10
+        owner: "",
+        device_no: ""
       },
       tableData: {
         data: []
