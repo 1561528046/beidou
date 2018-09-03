@@ -10,9 +10,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item prop="sim_id" label="选择车辆">
+            <el-form-item prop="license" label="选择车辆">
               <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
-                <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
+                <el-input type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
               </el-button>
             </el-form-item>
           </el-col>
@@ -26,7 +26,7 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$utils.get_license_color(row.license_color)}"> </el-table-column>
         <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
         <el-table-column prop="time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
@@ -39,17 +39,17 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog width="30%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-car @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-car>
+    <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vehicle @button="vehicleCallback" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-vehicle>
     </el-dialog>
   </div>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
-import { getReport } from "@/api/index.js";
-import chooseCar from "@/components/choose-vehicle.vue";
+import { getACCDetailByPage } from "@/api/index.js";
+import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { chooseCar },
+  components: { chooseVehicle },
   created() {
     this.keyupSubmit();
   },
@@ -67,20 +67,22 @@ export default {
       addKey: 0,
       isCollapse: false,
       tableQuery: {
-        begin_time: "",
-        end_time: "",
+        start_time: "",
+        stop_time: "",
         time: "",
+        license: "",
+        license_color: "",
         sim_id: "",
         size: 10,
         page: 1
       },
       rules: {
         ...rules,
-        sim_id: [
+        license: [
           {
             required: true,
             trigger: "change",
-            message: "请输入simid!"
+            message: "请输入车牌号"
           }
         ],
         time: [
@@ -115,9 +117,11 @@ export default {
       this.dialog = true;
     },
     // 回来的数据
-    xz(scope) {
+    vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
-      this.tableQuery.sim_id = scope.row.license;
+      this.tableQuery.license = scope.row.license;
+      this.tableQuery.sim_id = scope.row.sim_id;
+      this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
@@ -128,22 +132,27 @@ export default {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
-        this.tableQuery.begin_time = value[0];
-        this.tableQuery.end_time = value[1];
+        this.tableQuery.start_time = value[0];
+        this.tableQuery.stop_time = value[1];
         callback();
       }
     },
     //查询列表
     getTable() {
       this.tableLoading = true;
+      this.tableQuery.sim_id = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
-          getReport(query)
+          getACCDetailByPage(query)
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
                 for (var i = 0; i < res.data.data.length; i++) {
+                  res.data.data[i].license = this.tableQuery.license;
+                  res.data.data[
+                    i
+                  ].license_color = this.tableQuery.license_color;
                   data.push(res.data.data[i]);
                 }
                 this.$set(this.tableData, "data", Object.freeze(data));

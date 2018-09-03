@@ -1,5 +1,5 @@
 <template>
-  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+  <el-form status-icon :model="formData" size="small" ref="baseForm" class="msg-form">
     <template>
       <el-table :data="tableData.data" border style="width: 100%">
         <el-table-column label="状态" width="50">
@@ -17,21 +17,18 @@
   </el-form>
 </template>
 <script>
-import { rules } from "@/utils/rules.js";
 import { getUserChildrenList, getVehicleByPage } from "@/api/index.js";
 export default {
   data() {
     return {
       formData: {
-        license: "",
-        user_id: "",
-        device_id: ""
+        user_ids: ""
+      },
+      tableQuery: {
+        data: []
       },
       tableData: {
         data: []
-      },
-      rules: {
-        ...rules
       }
     };
   },
@@ -41,23 +38,20 @@ export default {
   },
   methods: {
     formSubmit() {
-      var arr = [];
       for (var i = 0; i < this.tableData.data.length; i++) {
         if (this.tableData.data[i].checked) {
-          arr.push(this.tableData.data[i]);
+          this.formData.user_ids =
+            this.formData.user_ids + this.tableData.data[i].user_id + ",";
         }
       }
-      this.$emit("button", arr);
-      for (var j = 0; j < arr.length; j++) {
-        this.formData.user_id = this.formData.user_id + arr[j].user_id + ",";
-      }
-      this.formData.user_id = this.formData.user_id.substring(
+      this.formData.user_ids = this.formData.user_ids.substring(
         0,
-        this.formData.user_id.lastIndexOf(",")
+        this.formData.user_ids.lastIndexOf(",")
       );
-      getVehicleByPage({ user_ids: this.formData.user_id }).then(res => {
+      getVehicleByPage(this.formData).then(res => {
         if (res.data.code == 0) {
-          this.$set(this.tableData, "data", res.data.data);
+          this.$set(this.tableQuery, "data", res.data.data);
+          this.$emit("button", this.tableQuery.data);
         } else {
           this.$message.error(res.data.msg);
         }

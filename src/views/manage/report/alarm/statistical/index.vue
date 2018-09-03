@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -23,17 +23,8 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-if="isCollapse">
-            <el-form-item label="限速速度">
-              <template>
-                <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"></el-input>
-              </template>
-            </el-form-item>
-          </el-col>
-          <el-col :span="isCollapse?24:6" style="text-align: right;">
+          <el-col :span="4" style="text-align: right;">
             <el-form-item>
-              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
-              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
@@ -44,7 +35,7 @@
       <div class="admin-table-actions">
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license+this.$dict.get_license_color(row.license_color)}"> </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
       </el-table>
@@ -207,18 +198,12 @@ export default {
           getAlarmSummaryByPage(query)
             .then(res => {
               if (res.data.code == 0) {
+                console.log(res.data.data);
                 var data = [];
-                for (var i = 0; i < res.data.data.length; i++) {
-                  res.data.data[i].license = this.tableQuery.license;
-                  res.data.data[
-                    i
-                  ].license_color = this.tableQuery.license_color;
-                  res.data.data[i].overspeed =
-                    res.data.data[i].stop_time - res.data.data[i].start_time;
-                  data.push(res.data.data[i]);
-                }
+                data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
+                console.log(this.tableData.data);
                 this.$emit("success");
                 this.$notify({
                   message: res.data.msg,

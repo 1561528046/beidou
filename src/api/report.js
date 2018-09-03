@@ -61,3 +61,45 @@ export const getMileageDetailByPage = query => {
     params: query
   });
 };
+// 故障报警统计表
+export const getFaultSummaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetFaultSummaryByPage", queryQS, {
+    params: query
+  });
+};
+// 故障报警明细表
+export const getFaultDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetFaultDetailByPage", queryQS, {
+    params: query
+  });
+};
+// ACC点火统计表
+export const getACCSumaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetACCSumaryByPage", queryQS, {
+    params: query
+  });
+};
+// ACC点火明细表
+export const getACCDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetACCDetailByPage", queryQS, {
+    params: query
+  });
+};
+// 围栏报警统计表
+export const getFenceSummaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetFenceSummaryByPage", queryQS, {
+    params: query
+  });
+};
+// 围栏报警明细表
+export const getFenceDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetFenceDetailByPage", queryQS, {
+    params: query
+  });
+};

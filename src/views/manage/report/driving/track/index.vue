@@ -26,7 +26,7 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
         <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
         <el-table-column prop="speed" label="速度(公里/时)"> </el-table-column>>
         <el-table-column prop="em_0x01" label="行驶里程"> </el-table-column>
@@ -141,7 +141,6 @@ export default {
       this.tableQuery.sim_id = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
-          console.log(this.tableQuery);
           var query = Object.assign({}, this.tableQuery);
           getReport(query)
             .then(res => {

@@ -1,112 +1,370 @@
 <template>
   <div style="padding:20px;">
-    <el-tabs type="border-card">
+    <el-tabs type="border-card" @tab-click="handleClick">
       <el-tab-pane label="全国联动车辆">
-
-        <el-form :model="tableQuery" label-width="80px" :label-position="isCollapse?'top':'left'" class="table-search" size="small">
+        <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
           <el-row :gutter="30">
             <el-col :span="6">
+              <el-form-item label-width="100px" label="故障提交时间">
+                <el-date-picker value-format="yyyyMMdd" v-model="tableQuery.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
               <el-form-item label="车牌号">
-                <el-input v-model="tableQuery.license" placeholder="车牌号"></el-input>
+                <el-input v-model="tableOrdinary.license"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="车架号">
-                <el-input v-model="tableQuery.vin" placeholder="车架号"></el-input>
+              <el-form-item label="用户名称">
+                <el-input v-model="tableQuery.real_name"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="6" v-show="isCollapse">
-              <el-form-item label="终端ID">
-                <el-input v-model="tableQuery.device_no" placeholder="终端ID"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="SIM ID">
-                <el-input v-model="tableQuery.sim_id" placeholder="SIM卡号"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6" v-show="isCollapse">
-              <el-form-item label="安装SIM卡号">
-                <el-input v-model="tableQuery.sim_no" placeholder="安装SIM卡号"></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6" v-show="isCollapse">
-              <el-form-item label="所属地区">
-                <select-city-input :area.sync="tableQuery.area" :select-all="true" style="width:100%;" clearable></select-city-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6" v-show="isCollapse">
-              <el-form-item label="业户">
-                <el-input v-model="tableQuery.owner" placeholder="业户"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6" v-show="isCollapse">
-              <el-form-item label="首次入网时间">
-                <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="tableQuery.first_online_time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6" v-show="isCollapse">
-              <el-form-item label="服务到期日期">
-                <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="tableQuery.contract_date_end" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6" v-show="isCollapse">
-              <el-form-item label="离线天数">
-                <el-select v-model="tableQuery.offline_days" placeholder="离线天数" style="width:100%;" clearable>
-                  <el-option label="7天" value="7"></el-option>
-                  <el-option label="30天" value="30"></el-option>
-                  <el-option label="90天" value="90"></el-option>
-                  <el-option label="180天" value="180"></el-option>
-                  <el-option label="360天" value="360"></el-option>
+            <el-col :span="6" v-if="isCollapse">
+              <el-form-item label="故障类型">
+                <el-select v-model="tableQuery.fault_type" style="width:100%;" :clearable="true">
+                  <el-option label="设备故障" value="1">设备故障</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-
+            <el-col :span="6" v-if="isCollapse">
+              <el-form-item label-width="100px" label="状态">
+                <el-select v-model="tableQuery.repair_state" style="width:100%;" :clearable="true">
+                  <el-option label="未处理" value="1">未处理</el-option>
+                  <el-option label="已修复" value="2">已修复</el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :span="isCollapse?24:6" style="text-align: right;">
               <el-form-item>
-                <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
-                <el-button type="primary" @click="getTable">查询</el-button>
+                <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+                <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+                <el-button type="primary">查询</el-button>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
-        <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-          <el-table-column prop="first_time" label="首次入网时间" :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"></el-table-column>
-          <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
-            <template slot-scope="scope">
-              <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style">{{scope.row.license}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="vin" label="车架号" :formatter="$utils.baseFormatter" show-overflow-tooltip> </el-table-column>
-          <el-table-column prop="device_no" label="终端ID" :formatter="$utils.baseFormatter"> </el-table-column>
-          <el-table-column prop="sim_id" label="SIM ID" :formatter="$utils.baseFormatter"> </el-table-column>
-          <el-table-column prop="owner" label="业户" :formatter="$utils.baseFormatter"> </el-table-column>
-          <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
-          <el-table-column prop="tel" label="电话" :formatter="$utils.baseFormatter"> </el-table-column>
-          <el-table-column prop="contract_date" label="到期日期" :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"> </el-table-column>
-          <el-table-column label="操作" width="350">
-            <template slot-scope="scope">
-              <el-button size="mini" type="primary" icon="el-icon-edit" @click="goEdit(scope)">编辑</el-button>
-              <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
-              <el-dropdown size="mini" split-button style="margin-left:10px;">
-                更多操作
-                <el-dropdown-menu slot="dropdown" class="vehicle-list-more">
-                  <el-dropdown-item>车辆位置</el-dropdown-item>
-                  <el-dropdown-item>更新定位</el-dropdown-item>
-                  <el-dropdown-item>平台续费</el-dropdown-item>
-                  <el-dropdown-item>厂商续费</el-dropdown-item>
-                  <el-dropdown-item>厂商激活</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-card shadow="always">
+          <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
+            <el-table-column prop="" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.last_backtime)}"> </el-table-column>
+            <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="联系方式" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="所属公司/用户" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="故障类型" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="" label="故障原因" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="状态" :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"> </el-table-column>
+            <el-table-column label="操作" width="400">
+              <template slot-scope="scope">
+                <el-button type="warning" @click="submit_repairend" size="small">故障排除</el-button>
+                <el-popover placement="left-end" width="800" trigger="click">
+                  <el-table>
+                    <el-table-column width="150" label="维修时间"></el-table-column>
+                    <el-table-column width="150" label="故障原因"></el-table-column>
+                    <el-table-column width="150" label="维修状态"></el-table-column>
+                    <el-table-column width="150" label="备注"></el-table-column>
+                    <el-table-column width="150" label="操作人"></el-table-column>
+                  </el-table>
+                  <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="admin-table-pager">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+            </el-pagination>
+          </div>
+        </el-card>
+        <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+          <label>备注：</label>
+          <el-input></el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="excluded()">确 定</el-button>
+            <el-button @click="addDialog = false">取 消</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog width="30%" title="" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+          <label>备注：</label>
+          <el-input></el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="replace()">确 定</el-button>
+            <el-button @click="delDialog = false">取 消</el-button>
+          </span>
+        </el-dialog>
       </el-tab-pane>
-      <el-tab-pane label="危险品车辆">危险品车辆</el-tab-pane>
-      <el-tab-pane label="客运车辆">客运车辆</el-tab-pane>
+      <el-tab-pane label="普通货车">
+        <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+          <el-row :gutter="30">
+            <el-col :span="6">
+              <el-form-item label-width="100px" label="故障提交时间">
+                <el-date-picker value-format="yyyyMMdd" v-model="tableQuery.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="车牌号">
+                <el-input v-model="tableOrdinary.license"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="用户名称">
+                <el-input v-model="tableQuery.real_name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" v-if="isCollapse">
+              <el-form-item label="故障类型">
+                <el-select v-model="tableQuery.fault_type" style="width:100%;" :clearable="true">
+                  <el-option label="设备故障" value="1">设备故障</el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" v-if="isCollapse">
+              <el-form-item label-width="100px" label="状态">
+                <el-select v-model="tableQuery.repair_state" style="width:100%;" :clearable="true">
+                  <el-option label="未处理" value="1">未处理</el-option>
+                  <el-option label="已修复" value="2">已修复</el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="isCollapse?24:6" style="text-align: right;">
+              <el-form-item>
+                <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+                <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+                <el-button type="primary">查询</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-card shadow="always">
+          <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
+            <el-table-column prop="" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.last_backtime)}"> </el-table-column>
+            <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="联系方式" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="所属公司/用户" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="故障类型" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="" label="故障原因" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="状态" :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"> </el-table-column>
+            <el-table-column label="操作" width="400">
+              <template slot-scope="scope">
+                <el-button type="warning" size="small">故障排除</el-button>
+                <el-popover placement="left-end" width="800" trigger="click">
+                  <el-table>
+                    <el-table-column width="150" label="维修时间"></el-table-column>
+                    <el-table-column width="150" label="故障原因"></el-table-column>
+                    <el-table-column width="150" label="维修状态"></el-table-column>
+                    <el-table-column width="150" label="备注"></el-table-column>
+                    <el-table-column width="150" label="操作人"></el-table-column>
+                  </el-table>
+                  <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="admin-table-pager">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+            </el-pagination>
+          </div>
+        </el-card>
+        <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+          <label>备注：</label>
+          <el-input></el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="excluded()">确 定</el-button>
+            <el-button @click="addDialog = false">取 消</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog width="30%" title="" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+          <label>备注：</label>
+          <el-input></el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="replace()">确 定</el-button>
+            <el-button @click="delDialog = false">取 消</el-button>
+          </span>
+        </el-dialog>
+      </el-tab-pane>
+      <el-tab-pane label="危险品车辆">
+        <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+          <el-row :gutter="30">
+            <el-col :span="6">
+              <el-form-item label-width="100px" label="故障提交时间">
+                <el-date-picker value-format="yyyyMMdd" v-model="tableQuery.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="车牌号">
+                <el-input v-model="tableOrdinary.license"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="用户名称">
+                <el-input v-model="tableQuery.real_name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" v-if="isCollapse">
+              <el-form-item label="故障类型">
+                <el-select v-model="tableQuery.fault_type" style="width:100%;" :clearable="true">
+                  <el-option label="设备故障" value="1">设备故障</el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" v-if="isCollapse">
+              <el-form-item label-width="100px" label="状态">
+                <el-select v-model="tableQuery.repair_state" style="width:100%;" :clearable="true">
+                  <el-option label="未处理" value="1">未处理</el-option>
+                  <el-option label="已修复" value="2">已修复</el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="isCollapse?24:6" style="text-align: right;">
+              <el-form-item>
+                <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+                <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+                <el-button type="primary">查询</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-card shadow="always">
+          <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
+            <el-table-column prop="" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.last_backtime)}"> </el-table-column>
+            <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="联系方式" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="所属公司/用户" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="故障类型" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="" label="故障原因" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="状态" :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"> </el-table-column>
+            <el-table-column label="操作" width="400">
+              <template slot-scope="scope">
+                <el-button type="warning" size="small">故障排除</el-button>
+                <el-popover placement="left-end" width="800" trigger="click">
+                  <el-table>
+                    <el-table-column width="150" label="维修时间"></el-table-column>
+                    <el-table-column width="150" label="故障原因"></el-table-column>
+                    <el-table-column width="150" label="维修状态"></el-table-column>
+                    <el-table-column width="150" label="备注"></el-table-column>
+                    <el-table-column width="150" label="操作人"></el-table-column>
+                  </el-table>
+                  <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="admin-table-pager">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+            </el-pagination>
+          </div>
+        </el-card>
+        <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+          <label>备注：</label>
+          <el-input></el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="excluded()">确 定</el-button>
+            <el-button @click="addDialog = false">取 消</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog width="30%" title="" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+          <label>备注：</label>
+          <el-input></el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="replace()">确 定</el-button>
+            <el-button @click="delDialog = false">取 消</el-button>
+          </span>
+        </el-dialog>
+      </el-tab-pane>
+      <el-tab-pane label="客运车辆">
+        <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+          <el-row :gutter="30">
+            <el-col :span="6">
+              <el-form-item label-width="100px" label="故障提交时间">
+                <el-date-picker value-format="yyyyMMdd" v-model="tableQuery.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="车牌号">
+                <el-input v-model="tableOrdinary.license"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="用户名称">
+                <el-input v-model="tableQuery.real_name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" v-if="isCollapse">
+              <el-form-item label="故障类型">
+                <el-select v-model="tableQuery.fault_type" style="width:100%;" :clearable="true">
+                  <el-option label="设备故障" value="1">设备故障</el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" v-if="isCollapse">
+              <el-form-item label-width="100px" label="状态">
+                <el-select v-model="tableQuery.repair_state" style="width:100%;" :clearable="true">
+                  <el-option label="未处理" value="1">未处理</el-option>
+                  <el-option label="已修复" value="2">已修复</el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="isCollapse?24:6" style="text-align: right;">
+              <el-form-item>
+                <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+                <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+                <el-button type="primary">查询</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-card shadow="always">
+          <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
+            <el-table-column prop="" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.last_backtime)}"> </el-table-column>
+            <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="联系方式" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="所属公司/用户" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="故障类型" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="" label="故障原因" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column prop="" label="状态" :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"> </el-table-column>
+            <el-table-column label="操作" width="400">
+              <template slot-scope="scope">
+                <el-button type="warning" size="small">故障排除</el-button>
+                <el-popover placement="left-end" width="800" trigger="click">
+                  <el-table>
+                    <el-table-column width="150" label="维修时间"></el-table-column>
+                    <el-table-column width="150" label="故障原因"></el-table-column>
+                    <el-table-column width="150" label="维修状态"></el-table-column>
+                    <el-table-column width="150" label="备注"></el-table-column>
+                    <el-table-column width="150" label="操作人"></el-table-column>
+                  </el-table>
+                  <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="admin-table-pager">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+            </el-pagination>
+          </div>
+        </el-card>
+        <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+          <label>备注：</label>
+          <el-input></el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="excluded()">确 定</el-button>
+            <el-button @click="addDialog = false">取 消</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog width="30%" title="" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+          <label>备注：</label>
+          <el-input></el-input>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="replace()">确 定</el-button>
+            <el-button @click="delDialog = false">取 消</el-button>
+          </span>
+        </el-dialog>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -124,6 +382,9 @@ export default {
   },
   data() {
     return {
+      addDialog: false,
+      delDialog: false,
+      addKey: 0,
       isCollapse: false,
       first_online_time: [], //首次入网 时间范围
       tableQuery: {
@@ -132,6 +393,15 @@ export default {
         user_id: 1,
         size: 10,
         page: 1
+      },
+      tableOrdinary: {
+        real_name: "",
+        license: "",
+        start_time: "",
+        stop_time: "",
+        time: [],
+        fault_type: "",
+        repair_state: ""
       },
       tableData: {
         area: [],
@@ -179,25 +449,33 @@ export default {
     }
   },
   methods: {
-    goEdit(scope) {
-      this.$router.push({
-        name: "gghypt_vehicle_edit",
-        query: { vehicle_id: scope.row.vehicle_id }
-      });
+    handleClick(tab) {
+      console.log(tab.label);
     },
-    handleSizeChange(val) {
-      //每页数量切换
-      this.tableQuery.page = 1;
-      this.tableQuery.size = val;
-      this.getTable();
+    // 故障排除
+    submit_repairend() {
+      this.addKey++;
+      this.addDialog = true;
     },
-    handleCurrentChange(val) {
-      //翻页
-      this.tableQuery.page = val;
-      this.getTable();
+    excluded() {},
+    // 设备更换
+    submit_devicechange() {
+      this.addKey++;
+      this.delDialog = true;
     },
+    replace() {},
+    // 查看维修明细
+    OperateLogList() {
+      // getOperateLogList({ device_id: scope.row.device_id }).then(res => {
+      //   if (res.data.code == 0) {
+      //     this.gridData = res.data.data;
+      //   } else {
+      //     this.$message.error(res.data.msg);
+      //   }
+      // });
+    },
+    //获取故障列表
     getTable() {
-      //获取列表
       this.tableLoading = true;
       var query = Object.assign({}, this.tableQuery, this.tableQuery.area);
       delete query.area;
@@ -212,6 +490,17 @@ export default {
           this.tableLoading = false;
         })
         .catch(() => {});
+    },
+    handleSizeChange(val) {
+      //每页数量切换
+      this.tableQuery.page = 1;
+      this.tableQuery.size = val;
+      this.getTable();
+    },
+    handleCurrentChange(val) {
+      //翻页
+      this.tableQuery.page = val;
+      this.getTable();
     }
   }
 };
