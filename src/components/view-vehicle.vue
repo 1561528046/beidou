@@ -1,6 +1,6 @@
 <template>
-  <div class="vehicle-form-view">
-    <el-alert title="自动已同步完成（如果处于列队中，给操作按钮，是否同步）" type="success" show-icon v-if="alertVisible"></el-alert>
+  <div class="vehicle-form-view" v-loading="loader">
+    <el-alert title="自动已同步完成（如果处于列队中，给操作按钮，是否同步）" type="success" show-icon v-if="syncMessageVisible"></el-alert>
     <el-form label-width="200px" :model="formData" size="small" ref="baseForm">
 
       <!-- 服务商信息 -->
@@ -340,7 +340,7 @@
   </div>
 </template>
 <script>
-import { getVehicle } from "@/api/index.js";
+import { getVehicle, syncVehicle } from "@/api/index.js";
 export default {
   props: {
     vehicle_id: String,
@@ -349,7 +349,9 @@ export default {
   },
   data() {
     return {
-      alertVisible: false,
+      loader: false,
+      syncMessageVisible: false,
+      syncMessage: "",
       insurance_types: [
         "交强险",
         "盗抢险",
@@ -425,34 +427,51 @@ export default {
     };
   },
   created() {
-    this.alertVisible = true;
-    setTimeout(() => {
-      this.alertVisible = false;
-    }, 3000);
-    getVehicle({ vehicle_id: this.$props.vehicle_id })
-      .then(res => {
-        if (res.data.code == 0 && res.data.data.length) {
-          Object.assign(this.formData, res.data.data[0]);
-          this.$nextTick(() => {
-            this.isInit = true;
-          });
-        } else {
+    this.loader = true;
+    if (this.$props.is_enter) {
+      syncVehicle({
+        vehicle_id: this.$props.vehicle_id
+      })
+        .then(() => {
+          this.syncMessageVisible = true;
+          this.getVehicle();
+        })
+        .catch(() => {
+          this.syncMessageVisible = true;
+          this.getVehicle();
+        });
+    } else {
+      this.getVehicle();
+    }
+  },
+  methods: {
+    getVehicle() {
+      getVehicle({ vehicle_id: this.$props.vehicle_id })
+        .then(res => {
+          this.loader = false;
+          if (res.data.code == 0 && res.data.data.length) {
+            Object.assign(this.formData, res.data.data[0]);
+            this.$nextTick(() => {
+              this.isInit = true;
+            });
+          } else {
+            this.$alert("没有对应数据， 或已经删除！", {
+              callback: () => {
+                this.$emit("error");
+              }
+            });
+          }
+        })
+        .catch(() => {
+          this.loader = false;
           this.$alert("没有对应数据， 或已经删除！", {
             callback: () => {
               this.$emit("error");
             }
           });
-        }
-      })
-      .catch(() => {
-        this.$alert("没有对应数据， 或已经删除！", {
-          callback: () => {
-            this.$emit("error");
-          }
         });
-      });
-  },
-  methods: {}
+    }
+  }
 };
 </script>
 <style lang="less">

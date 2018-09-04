@@ -1,5 +1,5 @@
 <template>
-  <div class="vehicle-form">
+  <div class="vehicle-form" v-loading.fullscreen.lock="loader">
     <el-form label-width="200px" :rules="rules" :model="formData" size="small" ref="baseForm">
       <!-- 服务商信息 -->
       <el-card shadow="hover">
@@ -34,7 +34,7 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="道路运输证号" prop="transport_no">
-              <el-input v-model="formData.transport_no"></el-input>
+              <el-input v-model="formData.transport_no" maxlength="30"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -53,7 +53,7 @@
               <el-row>
                 <el-col :span="11">
                   <el-form-item prop="license">
-                    <el-input v-model="formData.license"></el-input>
+                    <el-input v-model="formData.license" maxlength="20"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12" :offset="1">
@@ -94,17 +94,17 @@
 
           <el-col :span="8">
             <el-form-item label="业户/车主" prop="owner">
-              <el-input v-model="formData.owner"></el-input>
+              <el-input v-model="formData.owner" maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="联系人" prop="linkman">
-              <el-input v-model="formData.linkman"></el-input>
+              <el-input v-model="formData.linkman" maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="联系人手机" prop="tel">
-              <el-input v-model="formData.tel"></el-input>
+              <el-input v-model="formData.tel" maxlength="11"></el-input>
             </el-form-item>
           </el-col>
 
@@ -125,7 +125,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="车辆识别代码/车架号" prop="vin">
-              <el-input v-model="formData.vin"></el-input>
+              <el-input v-model="formData.vin" maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -145,58 +145,58 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="发动机号" prop="engine_no">
-              <el-input v-model="formData.engine_no"></el-input>
+              <el-input v-model="formData.engine_no" maxlength="30"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="发动机型号" prop="engine_type">
-              <el-input v-model="formData.engine_type"></el-input>
+              <el-input v-model="formData.engine_type" maxlength="30"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="总质量(kg)" prop="total_ton">
-              <el-input v-model="formData.total_ton"></el-input>
+              <el-input v-model="formData.total_ton" maxlength="8"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="核定载质量(kg)" prop="load_ton">
-              <el-input v-model="formData.load_ton"></el-input>
+              <el-input v-model="formData.load_ton" maxlength="8"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="准牵引总质量(kg)" prop="draw_ton" v-if="formData.license_color==1">
-              <el-input v-model="formData.draw_ton"></el-input>
+              <el-input v-model="formData.draw_ton" maxlength="8"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="外廓尺寸(mm)长" prop="length">
-              <el-input v-model="formData.length"></el-input>
+              <el-input v-model="formData.length" maxlength="8"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="宽" prop="width">
-              <el-input v-model="formData.width"></el-input>
+              <el-input v-model="formData.width" maxlength="8"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="高" prop="height">
-              <el-input v-model="formData.height"></el-input>
+              <el-input v-model="formData.height" maxlength="8"></el-input>
             </el-form-item>
           </el-col>
           <template v-if="$props.type!=2">
             <el-col :span="8">
               <el-form-item label="货厢内部尺寸(mm)长" prop="box_length">
-                <el-input v-model="formData.box_length"></el-input>
+                <el-input v-model="formData.box_length" maxlength="8"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="宽" prop="box_width">
-                <el-input v-model="formData.box_width"></el-input>
+                <el-input v-model="formData.box_width" maxlength="8"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="高" prop="box_height">
-                <el-input v-model="formData.box_height"></el-input>
+                <el-input v-model="formData.box_height" maxlength="8"></el-input>
               </el-form-item>
             </el-col>
           </template>
@@ -266,7 +266,7 @@
 
           <el-col :span="8">
             <el-form-item label="终端ID " prop="device_no">
-              <choose-device v-model="formData.device_no " :state="1" :sim_id.sync="formData.sim_id" :device_id.sync="formData.device_id " :company_name.sync="formData.company_name">
+              <choose-device v-model="formData.device_no" :state="1" :sim_id.sync="formData.sim_id" :device_id.sync="formData.device_id " :company_name.sync="formData.company_name">
               </choose-device>
             </el-form-item>
           </el-col>
@@ -300,32 +300,36 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="车身颜色 " prop="body_color">
-              <el-input v-model="formData.body_color"></el-input>
+              <el-input v-model="formData.body_color" maxlength="8"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="经营范围 " prop="business_scope">
-              <el-input v-model="formData.business_scope"></el-input>
+              <el-input v-model="formData.business_scope" maxlength="255"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="轮胎数 " prop="tyre">
-              <el-input v-model="formData.tyre"></el-input>
+              <el-input v-model="formData.tyre" maxlength="4"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="轮胎规格 " prop="tyre_size">
-              <el-input v-model="formData.tyre_size"></el-input>
+              <el-input v-model="formData.tyre_size" maxlength="50"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="道路运输经营许可证号 " prop="transport_license">
-              <el-input v-model="formData.transport_license"></el-input>
+              <el-input v-model="formData.transport_license" maxlength="30"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="车辆购置方式 " prop="purchase">
-              <el-input v-model="formData.purchase"></el-input>
+              <el-select v-model="formData.purchase">
+                <el-option value="">请选择</el-option>
+                <el-option value="1" label="分期"></el-option>
+                <el-option value="2" label="全款"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -347,7 +351,7 @@
               </el-checkbox-group>
             </el-form-item>
             <el-form-item v-if="checkedInsuranceTypes.indexOf(7)!=-1" prop="insurance_type_other">
-              <el-input v-model="formData.insurance_type_other"></el-input>
+              <el-input v-model="formData.insurance_type_other" maxlength="255"></el-input>
             </el-form-item>
           </el-col>
 
@@ -380,6 +384,7 @@ import { Rules } from "./rules.js";
 
 export default {
   components: {
+    loader: false,
     selectVehicleType,
     selectCity,
     selectFuelType,
@@ -396,6 +401,7 @@ export default {
   },
   data() {
     return {
+      loader: false,
       isInit: false,
       insurance_types: [
         "交强险",
@@ -498,14 +504,14 @@ export default {
             text: "一年后",
             onClick(picker) {
               const date = moment(new Date()).add(1, "year");
-              picker.$emit("pick", date);
+              picker.$emit("pick", date.format("YYYY-MM-DD"));
             }
           },
           {
             text: "两年后",
             onClick(picker) {
               const date = moment(new Date()).add(2, "year");
-              picker.$emit("pick", date);
+              picker.$emit("pick", date.format("YYYY-MM-DD"));
             }
           }
         ]
@@ -535,7 +541,6 @@ export default {
   watch: {
     "formData.model": function() {
       if (this.$props.is_edit && this.isInit == false) {
-        console.log(1);
         //编辑模式第一次不进行赋值
         return false;
       }
@@ -598,8 +603,10 @@ export default {
     );
     //编辑模式
     if (this.$props.is_edit) {
+      this.loader = true;
       getVehicle({ vehicle_id: this.$route.query.vehicle_id })
         .then(res => {
+          this.loader = false;
           if (res.data.code == 0 && res.data.data.length) {
             Object.assign(this.formData, res.data.data[0]);
             this.$nextTick(() => {
@@ -614,6 +621,7 @@ export default {
           }
         })
         .catch(() => {
+          this.loader = false;
           this.$alert("没有对应数据， 或已经删除！", {
             callback: () => {
               this.$router.go(-1);

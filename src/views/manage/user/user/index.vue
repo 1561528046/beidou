@@ -99,10 +99,10 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="admin-table-pager">
+      <!-- <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
         </el-pagination>
-      </div>
+      </div> -->
     </el-card>
     <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <add-components :user_type="$props.user_type" :parent_id="parent_id" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
@@ -169,8 +169,8 @@ export default {
         linkman: "",
         real_name: "",
         industry: "",
-        size: 10,
-        page: 1,
+        // size: 10,
+        // page: 1,
         user_type: this.$props.user_type,
         user_id: 1
       },
@@ -209,7 +209,9 @@ export default {
       //添加
       this.addKey++;
       this.addDialog = true;
-      this.parent_id = scope.row ? scope.row.user_id : 1;
+      this.parent_id = scope.row
+        ? scope.row.user_id
+        : this.$store.state.user.user_id;
     },
     updateForm(scope) {
       //编辑
@@ -217,15 +219,15 @@ export default {
       this.updateId = scope.row.user_id;
       this.addKey++;
     },
-    handleSizeChange(val) {
-      this.tableQuery.page = 1;
-      this.tableQuery.size = val;
-      this.getTable();
-    },
-    handleCurrentChange(val) {
-      this.tableQuery.page = val;
-      this.getTable();
-    },
+    // handleSizeChange(val) {
+    //   this.tableQuery.page = 1;
+    //   this.tableQuery.size = val;
+    //   this.getTable();
+    // },
+    // handleCurrentChange(val) {
+    //   this.tableQuery.page = val;
+    //   this.getTable();
+    // },
     getTable() {
       this.childrenList = [];
       this.tableLoading = true;
@@ -276,7 +278,10 @@ export default {
     getChildren(row) {
       this.childLoading = true;
       this.loadCurrent = row.user_id;
-      getUserChildren({ user_id: row.user_id })
+      getUserChildren({
+        user_id: row.user_id,
+        user_type: this.$props.user_type
+      })
         .then(res => {
           this.childLoading = false;
           this.loadCurrent = "";

@@ -22,10 +22,16 @@
       <div class="admin-header-right">
         <el-dropdown style="margin:20px 10px 0 0; cursor:pointer;">
           <span class="el-dropdown-link">
-            admin
+            {{real_name}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
+            <!-- <el-dropdown-item>
+              <a @click="loginOut"> 修改密码</a>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <a @click="loginOut"> 修改个人信息</a>
+            </el-dropdown-item> -->
             <el-dropdown-item>
               <a @click="loginOut"> 退出</a>
             </el-dropdown-item>
@@ -40,6 +46,9 @@
 <script>
 export default {
   computed: {
+    real_name() {
+      return this.$store.state.user.real_name;
+    },
     defaultActive() {
       if (this.$route.matched.length) {
         return this.$route.matched[0].path || "/";

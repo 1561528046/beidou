@@ -28,6 +28,9 @@ const user = {
     }
   },
   getters: {
+    user_id: state => {
+      return state.user_id;
+    },
     isLogin: state => {
       return !!state.token;
     }

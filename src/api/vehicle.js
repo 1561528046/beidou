@@ -31,10 +31,7 @@ export const getVehicle = query => {
 export const addVehicle = query => {
   var queryQS = qs.stringify(query);
   // return ajax.post("http://localhost:10462/api/vehicle/AddVehicle", query);
-  return ajax.post(
-    "http://192.168.88.88:10462/api/vehicle/AddVehicle",
-    queryQS
-  );
+  return ajax.post("/vehicle/AddVehicle", queryQS);
 };
 export const firstTimeVehicle = query => {
   //更新定位
@@ -43,10 +40,13 @@ export const firstTimeVehicle = query => {
 };
 export const updateVehicle = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post(
-    "http://192.168.88.88:10462/api/vehicle/UpdateVehicle",
-    queryQS
-  );
+  return ajax.post("/vehicle/UpdateVehicle", queryQS);
+};
+export const syncVehicle = query => {
+  console.log(query);
+  //同步车辆数据
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/SynVehicle", queryQS);
 };
 export const delVehicle = query => {
   var queryQS = qs.stringify(query);

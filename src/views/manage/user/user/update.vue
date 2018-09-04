@@ -9,7 +9,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="所属分组" prop="group_id">
-            <select-group :group_id.sync="formData.group_id" :useing="['add','edit','remove']"></select-group>
+            <select-group :group_id.sync="formData.group_id" :useing="['add','edit','remove']" :user_id="currentUserId"></select-group>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -98,6 +98,7 @@ export default {
   components: { selectCity, selectIndustry, selectGroup, selectRole },
   data() {
     return {
+      currentUserId: "",
       device_total_turn: false,
       expiry_time_turn: false,
       formData: {
@@ -176,6 +177,7 @@ export default {
   },
   props: ["user_type", "user_id"], //来自router的user_type 根据user_type 区分公司和个人
   created() {
+    this.currentUserId = this.$store.getters.user_id;
     this.formData.user_id = this.user_id;
     getUser({ user_id: this.formData.user_id }).then(res => {
       if (res.data.code == 0 && res.data.data.length) {

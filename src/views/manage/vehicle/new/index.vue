@@ -173,6 +173,23 @@
 
       </el-form>
     </el-dialog>
+    <el-dialog title="平台续费" :center="true" @closed="openCompanyClosed" :visible.sync="renew.platformVisible" :append-to-body="true" width="30%">
+      <el-form label-position="top" :model="openCompany.postData" size="small">
+        <el-row :gutter="30">
+          <el-col :span="24">
+            <el-form-item prop="plateformDate" label="服务到期日期">
+              <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="renew.plateformDate" type="date" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" style="text-align:center;">
+            <el-button @click="openCompanyClosed">取消</el-button>
+            <el-button type="primary">提交</el-button>
+          </el-col>
+        </el-row>
+
+      </el-form>
+    </el-dialog>
 
   </div>
 </template>
@@ -235,6 +252,12 @@ export default {
   },
   data() {
     return {
+      renew: {
+        plateformDate: "",
+        companyDate: "",
+        compaynVisible: false,
+        platformVisible: true
+      },
       openCompany: {
         postData: {
           img1: "",
@@ -324,13 +347,19 @@ export default {
     handleCommand(command) {
       console.log(command.command);
       switch (command.command) {
-        case "active-company":
+        case "active-company": //厂商激活
           this.openCompanyShow(command.data);
           break;
-        case "update-position":
+        case "update-position": //更新定位
           this.updatePosition(command.data);
           break;
+        case "renew-platform": //平台续费
+          this.renewPlatform(command.data);
+          break;
       }
+    },
+    renewPlatform(scope) {
+      this.renew.plateformDate = scope.row.contract_date;
     },
     updatePosition(scope) {
       firstTimeVehicle(scope.row).then(res => {

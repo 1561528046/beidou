@@ -54,13 +54,20 @@ export const existUserName = query => {
     params: query
   });
 };
+//登陆
+export const loginIn = query => {
+  return ajax.get("/user/Login", {
+    params: query
+  });
+};
+
 export const addUser = query => {
   query = qs.stringify(query);
-  return ajax.post("user/Add", query);
+  return ajax.post("/user/Add", query);
 };
 export const updateUser = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("user/Update", queryQS, {
+  return ajax.post("/user/Update", queryQS, {
     params: query
   });
 };
@@ -130,13 +137,6 @@ export const updateRole = query => {
 export const delRole = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/role/Delete", queryQS, {
-    params: query
-  });
-};
-
-//登陆
-export const loginIn = query => {
-  return ajax.get("/user/Login", {
     params: query
   });
 };

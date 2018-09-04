@@ -24,10 +24,6 @@ export const Rules = function(vm, type, is_enter) {
       license: [
         {
           required: true,
-          message: "必须填写车牌号",
-          trigger: "change"
-        },
-        {
           trigger: "change",
           validator: function(rule, value, callback) {
             if (value.length >= 8 && !/[\u4e00-\u9fa5]/.test(value[0])) {
@@ -98,7 +94,24 @@ export const Rules = function(vm, type, is_enter) {
         { min: 2, max: 20, message: "不能小于2个字符，不能大于20个字符" },
         baseRule.specialChineseChars
       ],
-      tel: [{ required: true, message: "必须输入联系电话" }],
+      tel: [
+        {
+          required: true,
+          trigger: "change",
+          validator: function(rule, value, callback) {
+            if (value == "") {
+              callback(new Error("必须输入联系人手机"));
+              return false;
+            }
+            var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
+            if (reg.test(value)) {
+              callback();
+            } else {
+              callback(new Error("手机号错误"));
+            }
+          }
+        }
+      ],
       area: [{ required: true, message: "必须选择地区" }],
       vin: [
         { required: true, message: "必须输入车辆识别代码/车架号" },
@@ -423,9 +436,7 @@ export const Rules = function(vm, type, is_enter) {
       ],
       issue_date: [{ required: true, message: "必须输入行驶证发证日期" }]
     };
-  }
-
-  if (type == 1) {
+  } else {
     return {
       license: [
         {
@@ -449,7 +460,24 @@ export const Rules = function(vm, type, is_enter) {
         { required: true, message: "必须输入联系人" },
         { min: 2, max: 20, message: "不能小于2个字符，不能大于20个字符" }
       ],
-      tel: [{ required: true, message: "必须输入联系电话" }],
+      tel: [
+        {
+          required: true,
+          trigger: "change",
+          validator: function(rule, value, callback) {
+            if (value == "") {
+              callback(new Error("必须输入联系人手机"));
+              return false;
+            }
+            var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
+            if (reg.test(value)) {
+              callback();
+            } else {
+              callback(new Error("手机号错误"));
+            }
+          }
+        }
+      ],
       area: [{ required: true, message: "必须选择地区" }],
       vin: [{ required: true, message: "必须输入车辆识别代码/车架号" }],
       issue_date: [{ required: true, message: "必须输入行驶证发证日期" }]

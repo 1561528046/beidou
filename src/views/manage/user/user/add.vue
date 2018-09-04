@@ -238,6 +238,7 @@ export default {
               }
             })
             .catch(() => {
+              console.log(arguments);
               this.$notify.error({
                 title: "失败",
                 message: "接口错误"
