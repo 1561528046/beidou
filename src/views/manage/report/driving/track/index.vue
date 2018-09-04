@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -28,8 +28,8 @@
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
         <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="speed" label="速度(公里/时)"> </el-table-column>>
-        <el-table-column prop="em_0x01" label="行驶里程"> </el-table-column>
+        <el-table-column prop="speed" label="速度(公里/时)" :formatter="$utils.baseFormatter "> </el-table-column>>
+        <el-table-column prop="em_0x01" label="行驶里程" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
@@ -123,6 +123,7 @@ export default {
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
+      console.log(value);
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;

@@ -11,16 +11,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="license" label="车辆" style="text-align:right">
-              <el-button :disabled="tableQuery.vehicle" style=" display:inline-block; width:100%;height:32px;" @click="selectvehicle">
-                <el-input :disabled="tableQuery.vehicle" type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
-              </el-button>
+              <el-input @focus="selectvehicle" :disabled="tableQuery.vehicle" clearable type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="real_name" label="用户">
-              <el-button :disabled="tableQuery.user" style=" display:inline-block; width:100%;height:32px;" @click="selectuser">
-                <el-input :disabled="tableQuery.user" type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
-              </el-button>
+              <el-input @focus="selectuser" :disabled="tableQuery.user" clearable type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
@@ -44,7 +40,7 @@
       <div class="admin-table-actions">
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <!-- <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return this.$dict.get_license_color(row.license_color)}"> </el-table-column> -->
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
         <el-table-column prop="overspeed_times" label="超速次数" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -87,6 +83,7 @@ export default {
         license: "",
         real_name: "",
         submit: [],
+        user_submit: [],
         size: 10,
         page: 1
       },
@@ -156,7 +153,9 @@ export default {
     },
     // 回来的数据
     xz(scope) {
+      console.log(scope);
       this.vehicleDialog = false;
+      this.tableQuery.submit = [];
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.submit.push({
           sim_id: scope[i].sim_id,
@@ -178,20 +177,57 @@ export default {
       );
     },
     user(scope) {
+      console.log(scope);
       this.userDialog = false;
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.real_name =
-          this.tableQuery.real_name + scope[i].real_name + ",";
+          this.tableQuery.real_name + scope[i].owner + ",";
       }
       this.tableQuery.real_name = this.tableQuery.real_name.substring(
         0,
         this.tableQuery.real_name.lastIndexOf(",")
       );
+      this.tableQuery.submit = [];
+      this.tableQuery.submit = [
+        {
+          sim_id: "",
+          license: "",
+          license_color: ""
+        }
+      ];
     },
     //查询产品列表
     getTable() {
+      if (this.tableQuery.time == "") {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      } else if (
+        this.tableQuery.license == "" &&
+        this.tableQuery.real_name == ""
+      ) {
+        return this.$notify({
+          message: "请选择车辆或用户",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.tableQuery.sim_ids = "064620623980,064620623981";
+      this.tableQuery.submit = [
+        {
+          sim_id: "064620623980",
+          license: "冀R123456",
+          license_color: "1"
+        },
+        {
+          sim_id: "064620623981",
+          license: "冀R56789",
+          license_color: "2"
+        }
+      ];
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
@@ -199,6 +235,14 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
+                var arr = {};
+                this.tableQuery.submit.map(item => {
+                  arr[item.sim_id] = item;
+                });
+                res.data.data.map(item => {
+                  item.license = arr[item.sim_id].license;
+                  item.license_color = arr[item.sim_id].license_color;
+                });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);

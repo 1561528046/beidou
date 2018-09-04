@@ -108,6 +108,7 @@ export default {
           if (res.data.code == 0) {
             this.addDialog = false;
             this.amount = "";
+            this.getTable();
             this.$message.success(res.data.msg);
           } else {
             this.$message.error(res.data.msg);

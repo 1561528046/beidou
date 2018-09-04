@@ -48,6 +48,13 @@ export default {
         0,
         this.formData.user_ids.lastIndexOf(",")
       );
+      if (this.formData.user_ids == "") {
+        return this.$notify({
+          message: "请选择信息",
+          title: "提示",
+          type: "error"
+        });
+      }
       getVehicleByPage(this.formData).then(res => {
         if (res.data.code == 0) {
           this.$set(this.tableQuery, "data", res.data.data);

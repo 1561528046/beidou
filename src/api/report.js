@@ -103,3 +103,24 @@ export const getFenceDetailByPage = query => {
     params: query
   });
 };
+// 在线时长统计
+export const getLoginSummaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetLoginSummaryByPage", queryQS, {
+    params: query
+  });
+};
+// 用户登录明细
+export const getLoginDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetLoginDetailByPage", queryQS, {
+    params: query
+  });
+};
+// 用户操作日志
+export const getUserOperateLogByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetUserOperateLogByPage", queryQS, {
+    params: query
+  });
+};

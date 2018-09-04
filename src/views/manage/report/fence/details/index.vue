@@ -31,21 +31,18 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$utils.get_license_color(row.license_color)}"> </el-table-column>
-        <el-table-column prop="" label="报警类型" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
+        <el-table-column prop="alarm_type" label="报警类型" :formatter="(row)=>{return this.$dict.get_fence_type(row.alarm_type)} "> </el-table-column>
         <el-table-column prop="" label="报警来源" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="区域名称" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="开始时间" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="结束时间" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
+        <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
         <el-table-column prop="" label="报警时长" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="开始速度(公里/时)" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="start_speed" label="开始速度" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="stop_speed" label="结束速度" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="报警信息" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="处理情况" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="处理用户" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="处理内容" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="处理时间" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="报警信息" :formatter="$utils.baseFormatter "> </el-table-column>>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>

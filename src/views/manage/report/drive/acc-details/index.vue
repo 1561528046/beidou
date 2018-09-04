@@ -26,11 +26,10 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$utils.get_license_color(row.license_color)}"> </el-table-column>
-        <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="" label="运行时长" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
+        <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
+        <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
+        <el-table-column prop="duration" label="运行时长" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
@@ -72,7 +71,7 @@ export default {
         time: "",
         license: "",
         license_color: "",
-        sim_id: "",
+        sim_ids: "",
         size: 10,
         page: 1
       },
@@ -140,7 +139,7 @@ export default {
     //查询列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.sim_id = "064620623980";
+      this.tableQuery.sim_ids = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
