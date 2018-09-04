@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item prop="time" label="时间">
-              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -57,6 +57,7 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import moment from "moment";
 import { getLoginSummaryByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox";
 import chooseUser from "@/components/choose-user";
@@ -143,11 +144,26 @@ export default {
   methods: {
     // 查询时间验证
     validateTime(rule, value, callback) {
+      var da = moment(value[0]).add(3, "days")._d;
+      var dat =
+        da.getFullYear() +
+        "-" +
+        (da.getMonth() + 1 < 10
+          ? "0" + (da.getMonth() + 1)
+          : da.getMonth() + 1) +
+        "-" +
+        (da.getDate() < 10 ? "0" + da.getDate() : da.getDate()) +
+        " " +
+        (da.getHours() < 10 ? "0" + da.getHours() : da.getHours()) +
+        ":" +
+        (da.getMinutes() < 10 ? "0" + da.getMinutes() : da.getMinutes()) +
+        ":" +
+        (da.getSeconds() < 10 ? "0" + da.getSeconds() : da.getSeconds());
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
-      } else if (parseInt(value[1]) - parseInt(value[0]) > 2000000) {
-        callback(new Error("选择时间不能大于3天!"));
+      } else if (!moment(value[1]).isBefore(dat)) {
+        callback(new Error("选择时间不能大于30天!"));
         return false;
       } else {
         this.tableQuery.start_time = value[0];

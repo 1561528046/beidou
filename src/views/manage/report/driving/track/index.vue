@@ -44,6 +44,7 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import moment from "moment";
 import { getReport } from "@/api/index.js";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
@@ -123,11 +124,23 @@ export default {
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
-      console.log(value);
+      var d = moment(value[0]).add(3, "days")._d;
+      var date =
+        d.getFullYear() +
+        "-" +
+        (d.getMonth() + 1 < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1) +
+        "-" +
+        (d.getDate() < 10 ? "0" + d.getDate() : d.getDate()) +
+        " " +
+        (d.getHours() < 10 ? "0" + d.getHours() : d.getHours()) +
+        ":" +
+        (d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()) +
+        ":" +
+        (d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds());
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
-      } else if (parseInt(value[1]) - parseInt(value[0]) > 2000000) {
+      } else if (!moment(value[1]).isBefore(date)) {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
