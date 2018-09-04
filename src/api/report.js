@@ -61,3 +61,66 @@ export const getMileageDetailByPage = query => {
     params: query
   });
 };
+// 故障报警统计表
+export const getFaultSummaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetFaultSummaryByPage", queryQS, {
+    params: query
+  });
+};
+// 故障报警明细表
+export const getFaultDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetFaultDetailByPage", queryQS, {
+    params: query
+  });
+};
+// ACC点火统计表
+export const getACCSumaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetACCSumaryByPage", queryQS, {
+    params: query
+  });
+};
+// ACC点火明细表
+export const getACCDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetACCDetailByPage", queryQS, {
+    params: query
+  });
+};
+// 围栏报警统计表
+export const getFenceSummaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetFenceSummaryByPage", queryQS, {
+    params: query
+  });
+};
+// 围栏报警明细表
+export const getFenceDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetFenceDetailByPage", queryQS, {
+    params: query
+  });
+};
+// 在线时长统计
+export const getLoginSummaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetLoginSummaryByPage", queryQS, {
+    params: query
+  });
+};
+// 用户登录明细
+export const getLoginDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetLoginDetailByPage", queryQS, {
+    params: query
+  });
+};
+// 用户操作日志
+export const getUserOperateLogByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetUserOperateLogByPage", queryQS, {
+    params: query
+  });
+};

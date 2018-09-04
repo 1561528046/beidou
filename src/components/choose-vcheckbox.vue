@@ -83,6 +83,13 @@ export default {
           arr.push(this.tableData.data[i]);
         }
       }
+      if (arr[0] == undefined) {
+        return this.$notify({
+          message: "请选择信息",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.$emit("button", arr);
     }
   },

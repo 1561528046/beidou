@@ -33,8 +33,7 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return this.$utils.get_license_color(row.license_color)}"> </el-table-column>
         <el-table-column prop="" label="报警类型" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="报警来源" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>

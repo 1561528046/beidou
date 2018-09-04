@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -26,10 +26,10 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
         <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="speed" label="速度(公里/时)"> </el-table-column>>
-        <el-table-column prop="em_0x01" label="行驶里程"> </el-table-column>
+        <el-table-column prop="speed" label="速度(公里/时)" :formatter="$utils.baseFormatter "> </el-table-column>>
+        <el-table-column prop="em_0x01" label="行驶里程" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
@@ -44,6 +44,7 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import moment from "moment";
 import { getReport } from "@/api/index.js";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
@@ -123,10 +124,23 @@ export default {
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
+      var d = moment(value[0]).add(3, "days")._d;
+      var date =
+        d.getFullYear() +
+        "-" +
+        (d.getMonth() + 1 < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1) +
+        "-" +
+        (d.getDate() < 10 ? "0" + d.getDate() : d.getDate()) +
+        " " +
+        (d.getHours() < 10 ? "0" + d.getHours() : d.getHours()) +
+        ":" +
+        (d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()) +
+        ":" +
+        (d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds());
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
-      } else if (parseInt(value[1]) - parseInt(value[0]) > 2000000) {
+      } else if (!moment(value[1]).isBefore(date)) {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
@@ -141,7 +155,6 @@ export default {
       this.tableQuery.sim_id = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
-          console.log(this.tableQuery);
           var query = Object.assign({}, this.tableQuery);
           getReport(query)
             .then(res => {

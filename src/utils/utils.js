@@ -60,6 +60,22 @@ export default {
     // }
     return date;
   },
+  formatDateUtc(date) {
+    var d = new Date(date);
+    return (
+      d.getFullYear() +
+      "-" +
+      (d.getMonth() + 1) +
+      "-" +
+      d.getDate() +
+      " " +
+      d.getHours() +
+      ":" +
+      d.getMinutes() +
+      ":" +
+      d.getSeconds()
+    );
+  },
   formatDate14(date, separator = "-") {
     if (!date) {
       return "--";

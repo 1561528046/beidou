@@ -1,31 +1,40 @@
 export const dict = {
   //全局字典
-  // BASE_URL: "http://192.168.88.100:725/",
-  // API_URL: "http://192.168.88.100:725/api",
-  BASE_URL: "http://192.168.88.88:10462/",
-  API_URL: "http://192.168.88.88:10462/api",
+  BASE_URL: "http://192.168.88.100:725/",
+  API_URL: "http://192.168.88.100:725/api",
+  // BASE_URL: "http://192.168.88.88:10462/",
+  // API_URL: "http://192.168.88.88:10462/api",
   license_color: {
     "1": {
-      backgroundColor: "#006DD9",
-      borderColor: "#0b64bd",
-      name: "蓝色",
-      style: "background:#006DD9;border:1px solid #0b64bd;color:#FFF;"
-    },
-    "2": {
       backgroundColor: "#ffbf00",
       borderColor: "#efb404",
       name: "黄色",
       style: "background:#ffbf00;border:1px solid #ffa500;color:#000;"
     },
+    "2": {
+      backgroundColor: "#006DD9",
+      borderColor: "#0b64bd",
+      name: "蓝色",
+      style: "background:#006DD9;border:1px solid #0b64bd;color:#FFF;"
+    },
     "3": {
-      backgroundColor: "#18ce65",
+      backgroundColor: "#fff",
+      borderColor: "#fff",
+      name: "白色",
+      style: "background:#fff;border:1px solid #fff;color:#000; "
+    },
+    "4": {
+      backgroundColor: "#000",
       borderColor: "#000",
-      name: "绿色",
-      style: "background:#18ce65;border:1px solid #000;color:#FFF; "
+      name: "黑色",
+      style: "background:#000;border:1px solid #000;color:#FFF; "
+    },
+    "5": {
+      name: "其它"
     }
   },
   get_license_color: function(key) {
-    return this.license_color[key] || {};
+    return "(" + this.license_color[key].name + ")" || {};
   },
   fuel_type: {
     "1": "柴油",
@@ -82,8 +91,25 @@ export const dict = {
     "1": "前装厂商",
     "2": "后装厂商"
   },
+  vehiclerepair_state: {
+    "1": "未处理",
+    "2": "已修复",
+    "3": "已更换"
+  },
+  get_vehiclerepair_state: function(key) {
+    return this.vehiclerepair_state[key] || "--";
+  },
   get_company_type: function(key) {
     return this.company_type[key] || "--";
+  },
+  fence_type: {
+    "1048576": "进出区域 ",
+    "2097152": "进出路线",
+    "4194304": "路段行驶时间不足/过长",
+    "8388608": "路线偏离"
+  },
+  get_fence_type: function(key) {
+    return this.fence_type[key] || "--";
   },
   alarm_type: {
     "1": "紧急报警",
@@ -105,6 +131,21 @@ export const dict = {
     "536870912": "碰撞预警",
     "1073741824": "侧翻预警",
     "2147483648": "非法开门报警"
+  },
+  fault_type: {
+    "16": "GNSS 模块发生故障",
+    "32": "GNSS 天线未接或被剪断",
+    "64": "GNSS 天线短路",
+    "128": "终端主电源欠压",
+    "256": "终端主电源掉电",
+    "512": "终端 LCD 或显示器故障",
+    "1024": "TTS 模块故障",
+    "2048": "摄像头故障",
+    "4096": "道路运输证 IC 卡模块故障",
+    "16777216": "车辆 VSS 故障"
+  },
+  get_fault_type: function(key) {
+    return this.fault_type[key] || "--";
   },
   get_alarm_type: function(key) {
     return this.alarm_type[key] || "--";
