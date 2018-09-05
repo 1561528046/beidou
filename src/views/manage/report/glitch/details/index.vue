@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -48,6 +48,7 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import moment from "moment";
 import { getFaultDetailByPage } from "@/api/index.js";
 import selectFaulttype from "@/components/select-faulttype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
@@ -137,15 +138,17 @@ export default {
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
+      var date = moment(value[0]).add(3, "days")._d;
+      date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
-      } else if (parseInt(value[1]) - parseInt(value[0]) > 2000000) {
+      } else if (!moment(value[1]).isBefore(date)) {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
-        this.tableQuery.start_time = value[0];
-        this.tableQuery.stop_time = value[1];
+        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.tableQuery.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
         callback();
       }
     },
@@ -230,12 +233,4 @@ export default {
   }
 };
 </script>
-<style>
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-</style>
+ 

@@ -1,3 +1,4 @@
+import moment from "moment";
 export default {
   /**
    *
@@ -96,6 +97,12 @@ export default {
       );
     }
     return date;
+  },
+  momentDate(date) {
+    if (date == "0001-01-01T00:00:00+08:00") {
+      return "--";
+    }
+    return moment(date).format("YYYY-MM-DD HH:mm:ss") || "--";
   },
   areaFormatter(row) {
     var area = [row.province_name, row.city_name, row.county_name];
