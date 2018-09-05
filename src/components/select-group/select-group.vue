@@ -1,9 +1,8 @@
 <template>
   <div>
     <el-popover placement="bottom" width="400" trigger="click" v-model="visible" v-if="!$props.static">
-
       <div slot="reference">
-        <el-input placeholder="点击选择" style="width:100%;" disabled :value="currentNodeData.group_name">
+        <el-input placeholder="点击选择" style="width:100%;vertical-align:top;" disabled :value="currentNodeData.group_name">
           <el-button slot="append" icon="el-icon-more" @click="visible = !visible"></el-button>
         </el-input>
       </div>
@@ -88,6 +87,7 @@ export default {
   props: {
     useing: [Array], //开启功能['add','remove','edit']
     group_id: [String],
+    user_id: String,
     static: Boolean //是否直接静态平铺
   },
   data() {
@@ -129,32 +129,45 @@ export default {
     filterText(val) {
       this.$refs.tree2.filter(val);
       this.checkEmpty();
+    },
+    user_id() {
+      this.visible = false;
+      this.filterText = "";
+      this.filterEmpty = false;
+      this.$set(this.$data, "currentNodeData", {});
+      this.$set(this.$data, "list", []);
+      this.$emit("input", "");
+      this.$emit("update:group_id", "");
+      this.$emit("update:parentid", "");
+      this.initData();
     }
   },
   created() {
     document.addEventListener("click", () => {
       this.visible = false;
     });
-    getUserGroup({ user_id: 1 }).then(res => {
-      if (res.data.code == 0) {
-        this.$set(this.$data, "list", res.data.data);
-        // console.log(this.$refs.tree2.getNode({ key: "3" }));
-        this.$nextTick(() => {
-          var currentNode = this.$refs.tree2.getNode(this.$props.group_id);
-          if (currentNode) {
-            this.nodeClick(currentNode.data, currentNode);
-          }
-        });
-      } else {
-        this.$notify({
-          type: "error",
-          title: "错误",
-          message: res.data.msg
-        });
-      }
-    });
+    this.initData();
   },
   methods: {
+    initData() {
+      getUserGroup({ user_id: this.$props.user_id }).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.$data, "list", res.data.data);
+          this.$nextTick(() => {
+            var currentNode = this.$refs.tree2.getNode(this.$props.group_id);
+            if (currentNode) {
+              this.nodeClick(currentNode.data, currentNode);
+            }
+          });
+        } else {
+          this.$notify({
+            type: "error",
+            title: "错误",
+            message: res.data.msg
+          });
+        }
+      });
+    },
     // eslint-disable-next-line
     nodeClick(data, node) {
       this.$set(this.$data, "currentNodeData", data);

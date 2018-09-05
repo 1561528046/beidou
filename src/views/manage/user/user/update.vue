@@ -2,31 +2,43 @@
   <div class="post-form">
     <el-form label-position="top" :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
       <el-row :gutter="30">
-        <el-col :span="12">
+        <el-col :span="5">
           <el-form-item label="登陆帐号" prop="user_name">
-            <el-input v-model="formData.user_name" disabled></el-input>
+            {{formData.user_name||"--"}}
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="所属分组" prop="group_id">
-            <select-group :group_id.sync="formData.group_id" :useing="['add','edit','remove']" :user_id="currentUserId"></select-group>
+        <el-col :span="5">
+          <el-form-item label-width="110px" label="个人/公司名称">
+            {{formData.user_type==1?"个人用户":"公司用户"}}
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="5">
+          <el-form-item label="所属用户" prop="parent_id">
+            {{formData.parent_real_name||"--"}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="5">
+          <el-form-item label="所属分组" prop="group_id" v-if="formData.parent_id">
+            {{formData.group_name||"--"}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="4">
           <el-form-item label="所属角色" prop="role_id">
-            <select-role v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;"></select-role>
+            {{formData.role_name||"--"}}
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="12">
+      </el-row>
+      <el-row :gutter="30">
+        <el-col :span="12">
           <el-form-item label="密码" prop="pass_word">
-            <el-input v-model="formData.pass_word" type="password"></el-input>
+            <el-input v-model="formData.pass_word" type="password" placeholder="********"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="确认密码" prop="re_pass_word">
-            <el-input v-model="formData.re_pass_word" type="password"></el-input>
+            <el-input v-model="formData.re_pass_word" type="password" placeholder="********"></el-input>
           </el-form-item>
-        </el-col> -->
+        </el-col>
 
         <el-col :span="12">
           <el-form-item label="公司/个人名称" prop="real_name">
@@ -88,14 +100,14 @@
   </div>
 </template>
 <script>
-import { rules } from "@/utils/rules.js";
 import selectCity from "@/components/select-city.vue";
 import { updateUser, getUser } from "@/api/index.js";
 import selectIndustry from "@/components/select-industry.vue";
-import selectGroup from "@/components/select-group/select-group.vue";
-import selectRole from "@/components/select-role.vue";
 export default {
-  components: { selectCity, selectIndustry, selectGroup, selectRole },
+  components: {
+    selectCity,
+    selectIndustry
+  },
   data() {
     return {
       currentUserId: "",
@@ -119,13 +131,9 @@ export default {
         role_id: "",
         expiry_time: "",
         group_id: "",
-        parent_id: this.$props.parent_id
+        parent_id: ""
       },
       rules: {
-        ...rules,
-        role_id: [
-          { required: true, message: "必须选择角色", trigger: "change" }
-        ],
         real_name: [
           {
             required: true,
@@ -133,14 +141,10 @@ export default {
             trigger: "change"
           }
         ],
-        user_name: [
-          { trigger: "blur", validator: this.validateUserName },
-          { required: true, message: "请输入用户名", trigger: "change" },
+        pass_word: [
           {
-            min: 3,
-            max: 20,
-            message: "长度在 3 到 20 个字符",
-            trigger: "change"
+            trigger: "blur",
+            validator: this.validatePassword
           }
         ],
         re_pass_word: [
@@ -148,20 +152,6 @@ export default {
             trigger: "blur",
             component: this,
             validator: this.validatePassword2
-          },
-          { required: true, message: "两次密码不一样", trigger: "blur" }
-        ],
-        group_id: [
-          { required: true, message: "必须选择用户分组", trigger: "change" }
-        ],
-        pass_word: [
-          {
-            required: true,
-            min: 3,
-            max: 20,
-            message: "长度在 3 到 20 个字符",
-            trigger: "change",
-            validator: this.validatePassword
           }
         ]
       }
@@ -175,14 +165,14 @@ export default {
       this.formData.expiry_time = "";
     }
   },
-  props: ["user_type", "user_id"], //来自router的user_type 根据user_type 区分公司和个人
+  props: ["user_id"],
   created() {
     this.currentUserId = this.$store.getters.user_id;
     this.formData.user_id = this.user_id;
     getUser({ user_id: this.formData.user_id }).then(res => {
       if (res.data.code == 0 && res.data.data.length) {
         var mixinData = Object.assign({}, this.formData, res.data.data[0]);
-        mixinData.re_pass_word = mixinData.pass_word;
+        mixinData.re_pass_word = mixinData.pass_word = "";
         mixinData.area = [
           mixinData.province_id,
           mixinData.city_id,
@@ -201,16 +191,26 @@ export default {
   },
   methods: {
     validatePassword(rule, value, callback) {
-      if (this.formData.pass_word) {
+      if (value.length) {
+        if (value.length < 3 || value.length > 20) {
+          callback(new Error("长度在 3 到 20 个字符"));
+          return false;
+        }
         if (this.formData.re_pass_word != "") {
           this.$refs.baseForm.validateField("re_pass_word");
         }
-        callback();
-      } else {
-        callback(new Error("请输入密码"));
       }
+      callback();
     },
     validatePassword2(rule, value, callback) {
+      if (!value.length) {
+        callback();
+        return false;
+      }
+      if (value.length < 3 || value.length > 20) {
+        callback(new Error("长度在 3 到 20 个字符"));
+        return false;
+      }
       if (this.formData.pass_word === this.formData.re_pass_word) {
         callback();
       } else {
@@ -224,7 +224,6 @@ export default {
           var postData = Object.assign({}, this.formData, areaObj);
           postData.device_total = postData.device_total || 0;
           postData.expiry_time = postData.expiry_time || 0;
-          postData.user_type = this.user_type;
           postData.pass_word = postData.pass_word.MD5(16);
           delete postData.re_pass_word;
           updateUser(postData)

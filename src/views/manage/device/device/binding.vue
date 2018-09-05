@@ -265,12 +265,12 @@ export default {
       }
       var postData = {
         user_id: this.currentUser.user_id,
-        device_nos: []
+        device_ids: []
       };
       items.map(item => {
-        postData.device_nos.push(item.device_no);
+        postData.device_ids.push(item.device_id);
       });
-      postData.device_nos = postData.device_nos.join(",");
+      postData.device_ids = postData.device_ids.join(",");
       addUserDevice(postData)
         .then(res => {
           if (res.data.code == 0) {
@@ -292,12 +292,12 @@ export default {
       //左到右
       var postData = {
         user_id: this.currentUser.user_id,
-        device_nos: []
+        device_ids: []
       };
       items.map(item => {
-        postData.device_nos.push(item.device_no);
+        postData.device_ids.push(item.device_id);
       });
-      postData.device_nos = postData.device_nos.join(",");
+      postData.device_ids = postData.device_ids.join(",");
       delUserDevice(postData)
         .then(res => {
           if (res.data.code == 0) {
