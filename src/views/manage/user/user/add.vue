@@ -8,8 +8,21 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="所属分组" prop="group_id">
-            <select-group v-model="formData.group_id" :useing="['add','edit','remove']"></select-group>
+          <el-form-item label="用户类型" prop="user_type">
+            <el-select v-model="formData.user_type" placeholder="请选择用户类型" style="width:100%;">
+              <el-option label="个人用户" value="1"></el-option>
+              <el-option label="公司用户" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="所属用户" prop="parent_id">
+            <select-user v-model="formData.parent_id"></select-user>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="所属分组" prop="group_id" v-if="formData.parent_id">
+            <select-group v-model="formData.group_id" :user_id="formData.parent_id" :useing="['add','edit','remove']"></select-group>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -88,19 +101,26 @@
   </div>
 </template>
 <script>
-import { rules } from "@/utils/rules.js";
 import selectCity from "@/components/select-city.vue";
 import { addUser, existUserName } from "@/api/index.js";
 import selectIndustry from "@/components/select-industry.vue";
 import selectGroup from "@/components/select-group/select-group.vue";
+import selectUser from "@/components/select-user.vue";
 import selectRole from "@/components/select-role.vue";
 export default {
-  components: { selectCity, selectIndustry, selectGroup, selectRole },
+  components: {
+    selectCity,
+    selectIndustry,
+    selectGroup,
+    selectRole,
+    selectUser
+  },
   data() {
     return {
       device_total_turn: false,
       expiry_time_turn: false,
       formData: {
+        user_type: "",
         area: [],
         user_name: "",
         pass_word: "",
@@ -118,10 +138,24 @@ export default {
         role_id: "",
         expiry_time: "",
         group_id: "",
-        parent_id: this.$props.parent_id
+        parent_id: ""
       },
       rules: {
-        ...rules,
+        area: [
+          {
+            required: true,
+            validator: function(rule, value, callback) {
+              if (value.length) {
+                callback();
+              } else {
+                callback(new Error("必须选择所属地区"));
+              }
+            }
+          }
+        ],
+        user_type: [
+          { required: true, message: "必须选择用户类型", trigger: "change" }
+        ],
         role_id: [
           { required: true, message: "必须选择角色", trigger: "change" }
         ],
@@ -131,6 +165,9 @@ export default {
             message: "必须填写公司/个人名称",
             trigger: "change"
           }
+        ],
+        parent_id: [
+          { required: true, message: "必须所属用户", trigger: "change" }
         ],
         user_name: [
           { trigger: "blur", validator: this.validateUserName },
@@ -174,7 +211,7 @@ export default {
       this.formData.expiry_time = "";
     }
   },
-  props: ["user_type", "parent_id"], //来自router的user_type 根据user_type 区分公司和个人
+  props: ["parent_id"],
   created() {},
   methods: {
     validateUserName(rule, value, callback) {
@@ -218,7 +255,6 @@ export default {
           var postData = Object.assign({}, this.formData, areaObj);
           postData.device_total = postData.device_total || 0;
           postData.expiry_time = postData.expiry_time || 0;
-          postData.user_type = this.user_type;
           postData.pass_word = postData.pass_word.MD5(16);
           delete postData.re_pass_word;
           addUser(postData)

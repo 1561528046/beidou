@@ -5,24 +5,21 @@ export default {
   component: () => import("@/views/manage/user/index.vue"),
   children: [
     {
-      path: "user_company",
-      name: "user_company",
-      meta: { name: "公司用户管理", icon: "iconfont icon-team" },
-      props: { user_type: 2 }, //根据user_type区分公司还是个人 1个人 2公司
+      path: "user_list",
+      name: "user_list",
+      meta: { name: "用户管理", icon: "iconfont icon-team" },
       component: () => import("@/views/manage/user/user/index.vue")
     },
     {
-      path: "user_company_add",
-      name: "user_company_add",
-      meta: { name: "添加公司用户", hidden: true },
-      props: { user_type: 2 }, //根据user_type区分公司还是个人 1个人 2公司
+      path: "user_add",
+      name: "user_add",
+      meta: { name: "添加用户", hidden: true },
       component: () => import("@/views/manage/user/user/add.vue")
     },
     {
-      path: "user_company_update/:user_id",
-      name: "user_company_update",
-      meta: { name: "编辑公司用户", hidden: true },
-      props: { user_type: 2 }, //根据user_type区分公司还是个人 1个人 2公司
+      path: "user_update/:user_id",
+      name: "user_update",
+      meta: { name: "编辑用户", hidden: true },
       component: () => import("@/views/manage/user/user/update.vue")
     },
     // {
