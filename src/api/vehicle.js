@@ -87,3 +87,22 @@ export const getVehicleDetails = query => {
     params: query
   });
 };
+// 车辆故障查询
+export const getRepairListByPage = query => {
+  return ajax.get("/vehicle/GetRepairListByPage", {
+    params: query
+  });
+};
+//车辆故障申报
+export const getUpdateVehicleState = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/UpdateVehicleState", queryQS, {
+    params: query
+  });
+};
+// 查看维修明细
+export const getVehicleOperateLog = query => {
+  return ajax.get("/vehicle/GetVehicleOperateLog", {
+    params: query
+  });
+};

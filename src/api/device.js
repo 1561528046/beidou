@@ -14,7 +14,16 @@ export const getDeviceAll = query => {
     params: query
   });
 };
-
+export const getDeviceUserList = query => {
+  return ajax.get("/device/GetUserList", {
+    params: query
+  });
+};
+export const getDeviceSimUserList = query => {
+  return ajax.get("/sim/GetUserList", {
+    params: query
+  });
+};
 export const getDeviceAllUnbind = query => {
   //获取所有没有绑定的设备
   query = Object.assign(

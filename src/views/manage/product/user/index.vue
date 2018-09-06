@@ -88,6 +88,14 @@ export default {
       state2: ""
     };
   },
+  watch: {
+    tableQuery: {
+      handler() {
+        console.log(this.tableQuery);
+      },
+      deep: true
+    }
+  },
   mounted() {},
   methods: {
     //查询用户列表

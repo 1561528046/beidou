@@ -48,7 +48,7 @@
       <choose-vcheckbox @button="xz" @success=" () => {this.getTable();this.vehicleDialog = false;}" :key="addKey"></choose-vcheckbox>
     </el-dialog>
     <el-dialog width="30%" title="选择信息" :visible.sync="userDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-user @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-user>
+      <choose-ucheckbox @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-ucheckbox>
     </el-dialog>
   </div>
 </template>
@@ -56,10 +56,10 @@
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getAlarmSummaryByPage } from "@/api/index.js";
-import chooseVcheckbox from "@/components/choose-vcheckbox";
-import chooseUser from "@/components/choose-user";
+import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
+import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
-  components: { chooseVcheckbox, chooseUser },
+  components: { chooseVcheckbox, chooseUcheckbox },
   created() {
     this.keyupSubmit();
   },

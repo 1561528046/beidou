@@ -150,9 +150,7 @@ export default {
           this.tableQuery.stop_time = moment(this.tableQuery.stop_time).format(
             "YYYYMMDDHHmmss"
           );
-          console.log(this.tableQuery);
           var query = Object.assign({}, this.tableQuery);
-          console.log(query);
           getReport(query)
             .then(res => {
               if (res.data.code == 0) {

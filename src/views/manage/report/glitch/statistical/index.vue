@@ -146,7 +146,6 @@ export default {
     },
     // 回来的数据
     xz(scope) {
-      console.log(scope);
       this.vehicleDialog = false;
       this.tableQuery.submit = [];
       for (var i = 0; i < scope.length; i++) {
@@ -170,7 +169,6 @@ export default {
       );
     },
     user(scope) {
-      console.log(scope);
       this.userDialog = false;
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.real_name =
@@ -239,7 +237,6 @@ export default {
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
-                console.log(this.tableData.data);
                 this.$emit("success");
                 this.$notify({
                   message: res.data.msg,

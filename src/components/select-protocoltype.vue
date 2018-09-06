@@ -5,25 +5,22 @@
     </el-select>
 </template>
 <script>
-    export default {
-        name: "select-protocoltype",
-        data() {
-            return {
-                protocol_type: "",
-                protocol_types: this.$dict.protocol_type
-            }
-        },
-        watch: {
-            protocol_type: function () {
-                this.$emit("input", this.protocol_type);
-            }
-        },
-        props: {
-            value: String
-        },
-        created() {
-            console.log(this.$dict.protocol_type)
-        },
-
+export default {
+  name: "select-protocoltype",
+  data() {
+    return {
+      protocol_type: "",
+      protocol_types: this.$dict.protocol_type
+    };
+  },
+  watch: {
+    protocol_type: function() {
+      this.$emit("input", this.protocol_type);
     }
+  },
+  props: {
+    value: String
+  },
+  created() {}
+};
 </script>

@@ -105,16 +105,9 @@ export default {
     },
     // 回来的数据
     user(scope) {
-      console.log(scope);
+      this.tableQuery.real_name = "";
       this.userDialog = false;
-      for (var i = 0; i < scope.length; i++) {
-        this.tableQuery.real_name =
-          this.tableQuery.real_name + scope[i].real_name + ",";
-      }
-      this.tableQuery.real_name = this.tableQuery.real_name.substring(
-        0,
-        this.tableQuery.real_name.lastIndexOf(",")
-      );
+      this.tableQuery.real_name = scope.row.real_name;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {

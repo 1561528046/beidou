@@ -51,7 +51,7 @@
       <choose-vcheckbox @button="xz" @success=" () => {this.getTable();this.vehicleDialog = false;}" :key="addKey"></choose-vcheckbox>
     </el-dialog>
     <el-dialog width="30%" title="选择信息" :visible.sync="userDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-user @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-user>
+      <choose-ucheckbox @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-ucheckbox>
     </el-dialog>
   </div>
 </template>
@@ -60,9 +60,9 @@ import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getUserOperateLogByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox";
-import chooseUser from "@/components/choose-user";
+import chooseUcheckbox from "@/components/choose-ucheckbox";
 export default {
-  components: { chooseVcheckbox, chooseUser },
+  components: { chooseVcheckbox, chooseUcheckbox },
   created() {
     this.keyupSubmit();
   },
@@ -75,6 +75,7 @@ export default {
         start_time: "",
         stop_time: "",
         time: "",
+        vehicle_ids: "",
         user_ids: "",
         license: "",
         real_name: "",
@@ -165,22 +166,26 @@ export default {
     selectvehicle() {
       this.addKey++;
       this.vehicleDialog = true;
+      this.tableQuery.license = "";
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
+      this.tableQuery.real_name = "";
     },
     // 回来的数据
     xz(scope) {
+      console.log(scope);
       this.vehicleDialog = false;
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.license =
           this.tableQuery.license + scope[i].license + ",";
-        this.tableQuery.user_ids = scope[i].user_id + ",";
+        this.tableQuery.vehicle_ids =
+          this.tableQuery.vehicle_ids + scope[i].vehicle_id + ",";
       }
-      this.tableQuery.user_ids = this.tableQuery.user_ids.substring(
+      this.tableQuery.vehicle_ids = this.tableQuery.vehicle_ids.substring(
         0,
-        this.tableQuery.user_ids.lastIndexOf(",")
+        this.tableQuery.vehicle_ids.lastIndexOf(",")
       );
       this.tableQuery.license = this.tableQuery.license.substring(
         0,
@@ -188,6 +193,7 @@ export default {
       );
     },
     user(scope) {
+      console.log(scope);
       this.userDialog = false;
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.real_name =
@@ -201,7 +207,10 @@ export default {
     //查询产品列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.user_ids = "67";
+      this.tableQuery.vehicle_ids = "";
+      if (this.tableQuery.vehicle_ids == "") {
+        this.tableQuery.user_ids = "65";
+      }
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
@@ -212,6 +221,7 @@ export default {
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
+                this.tableQuery.vehicle_ids = "";
                 this.$emit("success");
                 this.$notify({
                   message: res.data.msg,

@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -34,15 +34,15 @@
         <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
         <el-table-column prop="alarm_type" label="报警类型" :formatter="(row)=>{return this.$dict.get_fence_type(row.alarm_type)} "> </el-table-column>
         <el-table-column prop="" label="报警来源" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="报警信息" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="" label="报警时长" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="区域名称" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
-        <el-table-column prop="" label="报警时长" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="start_speed" label="开始速度" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="stop_speed" label="结束速度" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="报警信息" :formatter="$utils.baseFormatter "> </el-table-column>>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -147,8 +147,8 @@ export default {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
-        this.tableQuery.start_time = value[0];
-        this.tableQuery.stop_time = value[1];
+        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.tableQuery.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
         callback();
       }
     },
@@ -168,7 +168,7 @@ export default {
                   res.data.data[
                     i
                   ].license_color = this.tableQuery.license_color;
-                  res.data.data[i].overspeed =
+                  res.data.data[i].alertTime =
                     res.data.data[i].stop_time - res.data.data[i].start_time;
                   data.push(res.data.data[i]);
                 }

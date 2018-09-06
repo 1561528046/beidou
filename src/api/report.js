@@ -124,3 +124,24 @@ export const getUserOperateLogByPage = query => {
     params: query
   });
 };
+// 停车汇总表
+export const getStopSummaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetStopSummaryByPage", queryQS, {
+    params: query
+  });
+};
+// 停车明细表
+export const getStopDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetStopDetailByPage", queryQS, {
+    params: query
+  });
+};
+// 夜间行车汇总表
+export const getNightSummaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetNightSummaryByPage", queryQS, {
+    params: query
+  });
+};

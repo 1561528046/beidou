@@ -100,7 +100,7 @@
 <script>
 /* eslint-disable */
 import {
-  getUserList,
+  getDeviceSimUserList,
   getUserSim,
   getSimAllUnbind,
   addUserSim,
@@ -228,7 +228,7 @@ export default {
     },
     renderUser() {
       this.$set(this.$data, "userList", []);
-      getUserList(this.userTableQuery).then(res => {
+      getDeviceSimUserList(this.userTableQuery).then(res => {
         if (res.data.code == 0) {
           this.$set(this.$data, "userList", res.data.data);
           this.userTableQuery.total = res.data.total;

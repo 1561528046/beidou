@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item prop="time" label="时间">
-              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -22,7 +22,7 @@
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="限速速度">
               <template>
-                <el-input type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"></el-input>
+                <el-input v-model="tableQuery.speed_limit" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"></el-input>
               </template>
             </el-form-item>
           </el-col>
@@ -54,7 +54,7 @@
       <choose-vcheckbox @button="xz" @success=" () => {this.getTable();this.vehicleDialog = false;}" :key="addKey"></choose-vcheckbox>
     </el-dialog>
     <el-dialog width="30%" title="选择信息" :visible.sync="userDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-user @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-user>
+      <choose-ucheckbox @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-ucheckbox>
     </el-dialog>
   </div>
 </template>
@@ -63,9 +63,9 @@ import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getDrivingSummary } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox";
-import chooseUser from "@/components/choose-user";
+import chooseUcheckbox from "@/components/choose-ucheckbox";
 export default {
-  components: { chooseVcheckbox, chooseUser },
+  components: { chooseVcheckbox, chooseUcheckbox },
   created() {
     this.keyupSubmit();
   },
@@ -82,6 +82,7 @@ export default {
         time: "",
         sim_ids: "",
         license: "",
+        speed_limit: "",
         real_name: "",
         submit: [],
         user_submit: [],
@@ -141,8 +142,8 @@ export default {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
-        this.tableQuery.start_time = value[0];
-        this.tableQuery.stop_time = value[1];
+        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.tableQuery.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
         callback();
       }
     },
@@ -156,7 +157,6 @@ export default {
     },
     // 回来的数据
     xz(scope) {
-      console.log(scope);
       this.vehicleDialog = false;
       this.tableQuery.submit = [];
       for (var i = 0; i < scope.length; i++) {
@@ -180,7 +180,6 @@ export default {
       );
     },
     user(scope) {
-      console.log(scope);
       this.userDialog = false;
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.real_name =
@@ -249,7 +248,6 @@ export default {
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
-                console.log(this.tableData.data);
                 this.$emit("success");
                 this.$notify({
                   message: res.data.msg,

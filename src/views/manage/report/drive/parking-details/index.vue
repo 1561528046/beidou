@@ -1,22 +1,23 @@
-<template>
+
+ <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
       <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item prop="sim_id" label="选择车辆">
+            <el-form-item prop="license" label="选择车辆">
               <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
-                <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
+                <el-input type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
               </el-button>
             </el-form-item>
           </el-col>
-          <el-col :offset="isCollapse?0:6" :span="isCollapse?24:4" style="text-align: right;">
+          <el-col :span="10" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
@@ -26,12 +27,10 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return this.$utils.get_license_color(row.license_color)}"> </el-table-column>
-        <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="类型" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="" label="时长" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
+        <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
+        <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
+        <el-table-column prop="duration_ss" label="时长" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="停车位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
@@ -39,18 +38,19 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog width="30%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-car @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-car>
+    <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vehicle @button="vehicleCallback" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-vehicle>
     </el-dialog>
   </div>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import { getReport } from "@/api/index.js";
-import chooseCar from "@/components/choose-vehicle.vue";
+import { getStopDetailByPage } from "@/api/index.js";
+import selectAlarmtype from "@/components/select-alarmtype.vue";
+import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { chooseCar },
+  components: { chooseVehicle, selectAlarmtype },
   created() {
     this.keyupSubmit();
   },
@@ -68,20 +68,31 @@ export default {
       addKey: 0,
       isCollapse: false,
       tableQuery: {
-        begin_time: "",
-        end_time: "",
+        start_time: "",
+        stop_time: "",
         time: "",
-        sim_id: "",
+        license: "",
+        license_color: "",
+        speed_limit: "",
+        alarm_type: "",
+        sim_ids: "",
         size: 10,
         page: 1
       },
       rules: {
         ...rules,
-        sim_id: [
+        license: [
           {
             required: true,
             trigger: "change",
-            message: "请输入simid!"
+            message: "请输入车牌号"
+          }
+        ],
+        alarm_type: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请选择报警类型"
           }
         ],
         time: [
@@ -116,37 +127,46 @@ export default {
       this.dialog = true;
     },
     // 回来的数据
-    xz(scope) {
+    vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
-      this.tableQuery.sim_id = scope.row.license;
+      this.tableQuery.license = scope.row.license;
+      this.tableQuery.sim_ids = scope.row.sim_id;
+      this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
-      var date = moment(value[0]).add(3, "days")._d;
+      var date = moment(value[0]).add(30, "days")._d;
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
       } else if (!moment(value[1]).isBefore(date)) {
-        callback(new Error("选择时间不能大于3天!"));
+        callback(new Error("选择时间不能大于30天!"));
         return false;
       } else {
-        this.tableQuery.start_time = value[0];
-        this.tableQuery.stop_time = value[1];
+        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.tableQuery.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
         callback();
       }
     },
     //查询列表
     getTable() {
       this.tableLoading = true;
+      this.tableQuery.sim_ids = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
-          getReport(query)
+          getStopDetailByPage(query)
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
                 for (var i = 0; i < res.data.data.length; i++) {
+                  res.data.data[i].license = this.tableQuery.license;
+                  res.data.data[
+                    i
+                  ].license_color = this.tableQuery.license_color;
+                  res.data.data[i].alertTime =
+                    res.data.data[i].stop_time - res.data.data[i].start_time;
                   data.push(res.data.data[i]);
                 }
                 this.$set(this.tableData, "data", Object.freeze(data));
@@ -210,4 +230,12 @@ export default {
   }
 };
 </script>
- 
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+</style>

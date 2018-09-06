@@ -1,9 +1,9 @@
 export const dict = {
   //全局字典
-  // BASE_URL: "http://192.168.88.100:725/",
-  // API_URL: "http://192.168.88.100:725/api",
-  BASE_URL: "http://192.168.88.88:10462/",
-  API_URL: "http://192.168.88.88:10462/api",
+  BASE_URL: "http://192.168.88.100:725/",
+  API_URL: "http://192.168.88.100:725/api",
+  // BASE_URL: "http://192.168.88.88:10462/",
+  // API_URL: "http://192.168.88.88:10462/api",
   license_color: {
     "1": {
       backgroundColor: "#ffbf00",
@@ -146,6 +146,12 @@ export const dict = {
   },
   get_fault_type: function(key) {
     return this.fault_type[key] || "--";
+  },
+  vehiclefault_type: {
+    "1": "设备故障"
+  },
+  get_vehiclefault_type: function(key) {
+    return this.vehiclefault_type[key] || "--";
   },
   get_alarm_type: function(key) {
     return this.alarm_type[key] || "--";
