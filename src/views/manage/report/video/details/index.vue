@@ -60,6 +60,7 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import moment from "moment";
 import { getReport } from "@/api/index.js";
 import chooseCar from "@/components/choose-vehicle.vue";
 export default {
@@ -135,15 +136,17 @@ export default {
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
+      var date = moment(value[0]).add(3, "days")._d;
+      date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
-      } else if (parseInt(value[1]) - parseInt(value[0]) > 2000000) {
+      } else if (!moment(value[1]).isBefore(date)) {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
-        this.tableQuery.begin_time = value[0];
-        this.tableQuery.end_time = value[1];
+        this.tableQuery.start_time = value[0];
+        this.tableQuery.stop_time = value[1];
         callback();
       }
     },

@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -16,7 +16,7 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-col :offset="isCollapse?0:6" :span="isCollapse?24:4" style="text-align: right;">
+          <el-col :span="10" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
@@ -45,10 +45,12 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import moment from "moment";
 import { getACCDetailByPage } from "@/api/index.js";
+import selectAlarmtype from "@/components/select-alarmtype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { chooseVehicle },
+  components: { chooseVehicle, selectAlarmtype },
   created() {
     this.keyupSubmit();
   },
@@ -71,6 +73,8 @@ export default {
         time: "",
         license: "",
         license_color: "",
+        speed_limit: "",
+        alarm_type: "",
         sim_ids: "",
         size: 10,
         page: 1
@@ -82,6 +86,13 @@ export default {
             required: true,
             trigger: "change",
             message: "请输入车牌号"
+          }
+        ],
+        alarm_type: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请选择报警类型"
           }
         ],
         time: [
@@ -119,20 +130,22 @@ export default {
     vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
       this.tableQuery.license = scope.row.license;
-      this.tableQuery.sim_id = scope.row.sim_id;
+      this.tableQuery.sim_ids = scope.row.sim_id;
       this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
+      var date = moment(value[0]).add(30, "days")._d;
+      date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
-      } else if (parseInt(value[1]) - parseInt(value[0]) > 2000000) {
-        callback(new Error("选择时间不能大于3天!"));
+      } else if (!moment(value[1]).isBefore(date)) {
+        callback(new Error("选择时间不能大于30天!"));
         return false;
       } else {
-        this.tableQuery.start_time = value[0];
-        this.tableQuery.stop_time = value[1];
+        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.tableQuery.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
         callback();
       }
     },
@@ -152,6 +165,8 @@ export default {
                   res.data.data[
                     i
                   ].license_color = this.tableQuery.license_color;
+                  res.data.data[i].alertTime =
+                    res.data.data[i].stop_time - res.data.data[i].start_time;
                   data.push(res.data.data[i]);
                 }
                 this.$set(this.tableData, "data", Object.freeze(data));
@@ -215,4 +230,12 @@ export default {
   }
 };
 </script>
- 
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+</style>

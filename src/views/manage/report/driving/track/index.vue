@@ -124,19 +124,8 @@ export default {
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
-      var d = moment(value[0]).add(3, "days")._d;
-      var date =
-        d.getFullYear() +
-        "-" +
-        (d.getMonth() + 1 < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1) +
-        "-" +
-        (d.getDate() < 10 ? "0" + d.getDate() : d.getDate()) +
-        " " +
-        (d.getHours() < 10 ? "0" + d.getHours() : d.getHours()) +
-        ":" +
-        (d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()) +
-        ":" +
-        (d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds());
+      var date = moment(value[0]).add(3, "days")._d;
+      date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
@@ -155,7 +144,15 @@ export default {
       this.tableQuery.sim_id = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
+          this.tableQuery.start_time = moment(
+            this.tableQuery.start_time
+          ).format("YYYYMMDDHHmmss");
+          this.tableQuery.stop_time = moment(this.tableQuery.stop_time).format(
+            "YYYYMMDDHHmmss"
+          );
+          console.log(this.tableQuery);
           var query = Object.assign({}, this.tableQuery);
+          console.log(query);
           getReport(query)
             .then(res => {
               if (res.data.code == 0) {

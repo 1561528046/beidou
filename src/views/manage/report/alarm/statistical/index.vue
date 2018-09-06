@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item prop="time" label="时间">
-              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -54,6 +54,7 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
+import moment from "moment";
 import { getAlarmSummaryByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox";
 import chooseUser from "@/components/choose-user";
@@ -140,15 +141,17 @@ export default {
   methods: {
     // 查询时间验证
     validateTime(rule, value, callback) {
+      var date = moment(value[0]).add(3, "days")._d;
+      date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
-      } else if (parseInt(value[1]) - parseInt(value[0]) > 2000000) {
+      } else if (!moment(value[1]).isBefore(date)) {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
-        this.tableQuery.start_time = value[0];
-        this.tableQuery.stop_time = value[1];
+        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.tableQuery.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
         callback();
       }
     },
@@ -192,18 +195,36 @@ export default {
     getTable() {
       this.tableLoading = true;
       this.tableQuery.sim_ids = "064620623980";
+      this.tableQuery.submit = [
+        {
+          sim_id: "064620623980",
+          license: "冀R123456",
+          license_color: "1"
+        },
+        {
+          sim_id: "064620623981",
+          license: "冀R56789",
+          license_color: "2"
+        }
+      ];
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
           getAlarmSummaryByPage(query)
             .then(res => {
               if (res.data.code == 0) {
-                console.log(res.data.data);
                 var data = [];
+                var arr = {};
+                this.tableQuery.submit.map(item => {
+                  arr[item.sim_id] = item;
+                });
+                res.data.data.map(item => {
+                  item.license = arr[item.sim_id].license;
+                  item.license_color = arr[item.sim_id].license_color;
+                });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
-                console.log(this.tableData.data);
                 this.$emit("success");
                 this.$notify({
                   message: res.data.msg,

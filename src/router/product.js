@@ -55,7 +55,7 @@ export default {
     {
       path: "order",
       name: "order",
-      meta: { name: "订单管理", icon: "iconfont icon-dingdanguanli" },
+      meta: { name: "订单审核", icon: "iconfont icon-dingdanguanli" },
       component: () => import("@/views/manage/product/order/index.vue")
     }
   ]
