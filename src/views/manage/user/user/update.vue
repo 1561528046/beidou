@@ -1,97 +1,139 @@
 <template>
   <div class="post-form">
     <el-form label-position="top" :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
-      <el-row :gutter="30">
-        <el-col :span="5">
-          <el-form-item label="登陆帐号" prop="user_name">
-            {{formData.user_name||"--"}}
-          </el-form-item>
-        </el-col>
-        <el-col :span="5">
-          <el-form-item label-width="110px" label="个人/公司名称">
-            {{formData.user_type==1?"个人用户":"公司用户"}}
-          </el-form-item>
-        </el-col>
-        <el-col :span="5">
-          <el-form-item label="所属用户" prop="parent_id">
-            {{formData.parent_real_name||"--"}}
-          </el-form-item>
-        </el-col>
-        <el-col :span="5">
-          <el-form-item label="所属分组" prop="group_id" v-if="formData.parent_id">
-            {{formData.group_name||"--"}}
-          </el-form-item>
-        </el-col>
-        <el-col :span="4">
-          <el-form-item label="所属角色" prop="role_id">
-            {{formData.role_name||"--"}}
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="30">
-        <el-col :span="12">
-          <el-form-item label="密码" prop="pass_word">
-            <el-input v-model="formData.pass_word" type="password" placeholder="********"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="确认密码" prop="re_pass_word">
-            <el-input v-model="formData.re_pass_word" type="password" placeholder="********"></el-input>
-          </el-form-item>
-        </el-col>
 
-        <el-col :span="12">
-          <el-form-item label="公司/个人名称" prop="real_name">
-            <el-input v-model="formData.real_name" maxlength="255"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="所属地区">
-            <select-city v-model="formData.area" style="width:100%;"></select-city>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="所属行业" prop="industry">
-            <!-- <el-input v-model="formData.industry" maxlength="255"></el-input> -->
-            <select-industry v-model="formData.industry" style="width:100%;"></select-industry>
-          </el-form-item>
-        </el-col>
+      <el-collapse v-model="opened" class="user-collapse">
+        <el-collapse-item title="帐号登录信息" name="1">
+          <template slot="title">
+            <div class="user-form-header">
+              帐号登录信息
+            </div>
+          </template>
+          <div class="user-form-body">
 
-        <el-col :span="12">
-          <el-form-item label="联系人" prop="linkman">
-            <el-input v-model="formData.linkman" maxlength="20"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="联系电话" prop="tel">
-            <el-input v-model="formData.tel" maxlength="20"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="地址" prop="address">
-            <el-input v-model="formData.address"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="24">
-          <el-form-item label="授权终端数量">
-            <el-switch v-model="device_total_turn"> </el-switch>
-          </el-form-item>
-          <el-form-item label="" prop="device_total" v-if="device_total_turn" style="width:150px;">
-            <el-input-number :min="1" :precision="0" :step="1" type="number" v-model="formData.device_total" style="width:100%">
-              <template slot="append">台</template>
-            </el-input-number>
-          </el-form-item>
-        </el-col>
-        <el-col :span="24">
-          <el-form-item label="帐号到期时间">
-            <el-switch v-model="expiry_time_turn"> </el-switch>
-          </el-form-item>
-          <el-form-item label="" prop="expiry_time" v-if="expiry_time_turn" style="width:350px;">
-            <el-date-picker v-model="formData.expiry_time" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd" style="width:100%;">
-            </el-date-picker>
-          </el-form-item>
-        </el-col>
-      </el-row>
+            <el-row :gutter="30">
+              <el-col :span="6">
+                <el-form-item label="登陆帐号" prop="user_name">
+                  {{formData.user_name||"--"}}
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="所属用户" prop="parent_id">
+                  {{formData.parent_real_name||"--"}}
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="所属分组" prop="group_id" v-if="formData.parent_id">
+                  {{formData.group_name||"--"}}
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="所属角色" prop="role_id">
+                  {{formData.role_name||"--"}}
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="30">
+
+              <el-col :span="12">
+                <el-form-item label="密码" prop="pass_word">
+                  <el-input v-model="formData.pass_word" type="password" placeholder="******"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="确认密码" prop="re_pass_word">
+                  <el-input v-model="formData.re_pass_word" type="password" placeholder="******"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+
+        </el-collapse-item>
+        <el-collapse-item title="企业信息" name="2">
+          <template slot="title">
+            <div class="user-form-header">
+              企业信息
+            </div>
+          </template>
+          <div class="user-form-body">
+            <el-row :gutter="30">
+              <el-col :span="12">
+                <el-form-item label="企业名称" prop="real_name">
+                  <el-input v-model="formData.real_name" maxlength="255"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="所属地区">
+                  <select-city v-model="formData.area" style="width:100%;"></select-city>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="所属行业" prop="industry">
+                  <select-industry v-model="formData.industry" style="width:100%;"></select-industry>
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="12">
+                <el-form-item label="法人姓名" prop="corporation">
+                  <el-input v-model="formData.corporation" maxlength="30"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="营业执照号" prop="business_no">
+                  <el-input v-model="formData.business_no" maxlength="50"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="企业地址" prop="address">
+                  <el-input v-model="formData.address"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="联系人" prop="linkman">
+                  <el-input v-model="formData.linkman" maxlength="20"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="联系电话" prop="tel">
+                  <el-input v-model="formData.tel" maxlength="20"></el-input>
+                </el-form-item>
+              </el-col>
+
+            </el-row>
+          </div>
+
+        </el-collapse-item>
+        <el-collapse-item name="3">
+          <template slot="title">
+            <div class="user-form-header">
+              帐号授权信息
+            </div>
+          </template>
+          <div class="user-form-body">
+            <el-row :gutter="30">
+              <el-col :span="24">
+                <el-form-item label="授权终端数量">
+                  <el-switch v-model="device_total_turn"> </el-switch>
+                </el-form-item>
+                <el-form-item label="" prop="device_total" v-if="device_total_turn" style="width:150px;">
+                  <el-input-number :min="1" :precision="0" :step="1" type="number" v-model="formData.device_total" style="width:100%">
+                    <template slot="append">台</template>
+                  </el-input-number>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="帐号到期时间">
+                  <el-switch v-model="expiry_time_turn"> </el-switch>
+                </el-form-item>
+                <el-form-item label="" prop="expiry_time" v-if="expiry_time_turn" style="width:350px;">
+                  <el-date-picker v-model="formData.expiry_time" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd" style="width:100%;">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
 
       <el-form-item style="text-align:center; padding-top:20px;">
         <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
@@ -110,7 +152,7 @@ export default {
   },
   data() {
     return {
-      currentUserId: "",
+      opened: ["1", "2", "3"],
       device_total_turn: false,
       expiry_time_turn: false,
       formData: {
@@ -131,13 +173,15 @@ export default {
         role_id: "",
         expiry_time: "",
         group_id: "",
-        parent_id: ""
+        parent_id: "",
+        corporation: "",
+        business_no: ""
       },
       rules: {
         real_name: [
           {
             required: true,
-            message: "必须填写公司/个人名称",
+            message: "必须填写企业名称",
             trigger: "change"
           }
         ],
@@ -158,16 +202,19 @@ export default {
     };
   },
   watch: {
-    device_total_turn: function() {
-      this.formData.device_total = "";
+    device_total_turn: function(value) {
+      if (!value) {
+        this.formData.device_total = "";
+      }
     },
-    expiry_time_turn: function() {
-      this.formData.expiry_time = "";
+    expiry_time_turn: function(value) {
+      if (!value) {
+        this.formData.expiry_time = "";
+      }
     }
   },
   props: ["user_id"],
   created() {
-    this.currentUserId = this.$store.getters.user_id;
     this.formData.user_id = this.user_id;
     getUser({ user_id: this.formData.user_id }).then(res => {
       if (res.data.code == 0 && res.data.data.length) {
@@ -178,11 +225,11 @@ export default {
           mixinData.city_id,
           mixinData.county_id
         ];
-        if (mixinData.device_total == 0) {
-          this.device_total_turn = false;
+        if (mixinData.device_total) {
+          this.device_total_turn = true;
         }
-        if (mixinData.expiry_time == 0) {
-          this.expiry_time_turn = false;
+        if (mixinData.expiry_time) {
+          this.expiry_time_turn = true;
         }
 
         this.$set(this.$data, "formData", mixinData);

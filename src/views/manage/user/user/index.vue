@@ -8,21 +8,14 @@
               <el-input v-model="tableQuery.user_name " placeholder="登录账号"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label-width="110px" label="个人/公司名称">
-              <el-select v-model="tableQuery.user_type" placeholder="请选择用户类型" style="width:100%;">
-                <el-option label="个人用户" value="1"></el-option>
-                <el-option label="公司用户" value="2"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
+
           <el-col :span="6">
             <el-form-item label-width="110px" label="个人/公司名称">
               <el-input v-model=" tableQuery.real_name " placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="所属地区" v-if="isCollapse">
+            <el-form-item label="所属地区">
               <select-city-input :area.sync="tableQuery.area" :select-all="true" style="width:100%;" clearable></select-city-input>
             </el-form-item>
           </el-col>
@@ -48,9 +41,9 @@
         </el-button>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
-        <el-table-column prop="user_name" width="600" label="登陆帐号 " :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="user_name" label="登陆帐号 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="province_name" label="所属地区 " :formatter="$utils.areaFormatter"></el-table-column>
-        <el-table-column prop="real_name" label="公司/个人名称" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="real_name" label="企业名称" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -106,14 +99,13 @@ export default {
       updateId: "",
       isCollapse: false,
       tableQuery: {
-        area: [],
+        area: {},
         user_name: "",
         linkman: "",
         real_name: "",
         industry: "",
         size: 10,
         page: 1,
-        user_type: "",
         user_id: this.$store.state.user.user_id
       },
       tableData: {

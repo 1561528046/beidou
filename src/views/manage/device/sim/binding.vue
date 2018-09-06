@@ -9,24 +9,17 @@
           <div class="user-filter" :class="{active:userFilterOpen}">
             <el-form :model="userTableQuery" size="small">
               <el-form-item>
-                <el-input placeholder="公司/个人名称" size="small" v-model="userTableQuery.real_name">
+                <el-input placeholder="企业名称" size="small" v-model="userTableQuery.real_name">
                   <i slot="prefix" class="el-input__icon el-icon-search"></i>
                 </el-input>
               </el-form-item>
-              <el-form-item>
-                <el-select v-model="userTableQuery.user_type" style="width:100%;">
-                  <el-option value="1" label="个人用户"></el-option>
-                  <el-option value="2" label="企业用户"></el-option>
-                </el-select>
-              </el-form-item>
-
             </el-form>
 
-            <div class="user-load-more" @click="userFilterOpen=!userFilterOpen">
+            <!-- <div class="user-load-more" @click="userFilterOpen=!userFilterOpen">
               <i class="el-icon-caret-bottom" v-if="!userFilterOpen"></i>
               <i class="el-icon-caret-top" v-if="userFilterOpen"></i>
 
-            </div>
+            </div> -->
           </div>
           <ul class="user-list">
             <li v-for="user in userList" :key="user.user_id" @click="changeUser(user)" :class="{active:user.user_id==currentUser.user_id}"> {{user.real_name}}</li>
@@ -130,7 +123,6 @@ export default {
     return {
       userFilterOpen: false, //用户筛选展开关闭
       userTableQuery: {
-        user_type: "",
         real_name: "",
         size: 20,
         page: 1
@@ -174,7 +166,6 @@ export default {
       deep: true
     }
   },
-  props: ["user_type"], //来自router的user_type 根据user_type 区分公司和个人
   methods: {
     bindSizeChange(val) {
       this.bindTableQuery.page = 1;
@@ -473,8 +464,12 @@ export default {
     padding: 0 15px;
   }
   li.active {
-    color: #1890ff;
-    background: #fff;
+    color: #fff;
+    background-color: #1890ff !important;
+  }
+  li:hover {
+    background-color: #f5f7fa;
+    cursor: pointer;
   }
 }
 </style>

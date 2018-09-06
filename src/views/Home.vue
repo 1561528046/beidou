@@ -130,7 +130,6 @@ export default {
     function serialize(buffer) {
       var result = {};
       result.msgId = buffer.slice(1, 3);
-      console.log(result.msgId);
       result.msgId = (result.msgId[0] << 8) + result.msgId[1];
       if (result.msgId == 0x0200) {
         Object.assign(result, x0200(buffer));
@@ -144,7 +143,7 @@ export default {
       var result = {};
       result.sim_id = formatSim(buffer.slice(5, 11)); //终端手机号
       result.alarm = buffer.slice(13, 17); //报警标志
-      result.alarm = buffer.slice(17, 21); //状态
+      result.state = buffer.slice(17, 21); //状态
       result.lat = buffer.slice(21, 25); //纬度
       result.lng = buffer.slice(25, 29); //经度
       result.altitude = buffer.slice(29, 31); //高程
@@ -159,25 +158,25 @@ export default {
     function formatSim(buffer) {
       var code = [];
       buffer.map(item => {
-        code.push(num2binary8421(item));
+        code.push(item.toString(16));
       });
       return code.join("");
     }
-    function num2binary8421(num) {
-      var binary = num.toString(2);
-      binary = "0".repeat(8 - binary.length) + binary;
-      var binarys = [binary.slice(0, 4), binary.slice(4, 8)];
-      var result = "";
-      binarys.map(item => {
-        var bit = 0;
-        item.split("").map((x, index) => {
-          bit += x * [8, 4, 2, 1][index % 4];
-        });
-        result += bit.toString();
-      });
-      // console.log(result);
-      return result;
-    }
+    // function num2binary8421(num) {
+    //   var binary = num.toString(2);
+    //   binary = "0".repeat(8 - binary.length) + binary;
+    //   var binarys = [binary.slice(0, 4), binary.slice(4, 8)];
+    //   var result = "";
+    //   binarys.map(item => {
+    //     var bit = 0;
+    //     item.split("").map((x, index) => {
+    //       bit += x * [8, 4, 2, 1][index % 4];
+    //     });
+    //     result += bit.toString();
+    //   });
+    //   // console.log(result);
+    //   return result;
+    // }
 
     function concatBuffer(type, ...arrays) {
       //arrayBuffer拼装
