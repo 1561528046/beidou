@@ -64,8 +64,6 @@
     border-bottom: 1px dotted #ddd;
     margin-bottom: 15px;
   }
-  ._level_2-title {
-  }
   ._level_3 {
     padding: 3px 25px;
     .el-checkbox__label {

@@ -116,7 +116,6 @@ export default {
     return {
       userFilterOpen: false, //用户筛选展开关闭
       userTableQuery: {
-        user_type: "",
         title: "",
         size: 20,
         page: 1
@@ -163,7 +162,6 @@ export default {
       deep: true
     }
   },
-  props: ["user_type"], //来自router的user_type 根据user_type 区分公司和个人
   methods: {
     // 分页
     bindSizeChange(val) {

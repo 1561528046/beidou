@@ -28,7 +28,7 @@ export default {
     clearable: Boolean,
     placeholder: {
       type: [String],
-      default: "请输入公司/个人名称搜索"
+      default: "请输入企业名称搜索"
     }
   },
   created() {

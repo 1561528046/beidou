@@ -34,7 +34,7 @@ export const dict = {
     }
   },
   get_license_color: function(key) {
-    return "(" + this.license_color[key].name + ")" || {};
+    return this.license_color[key] || {};
   },
   fuel_type: {
     "1": "柴油",
