@@ -24,7 +24,7 @@
       </el-col>
     </el-row>
     <template>
-      <el-table :data="tableData.data" border style="width: 100%">
+      <el-table height="250" :data="tableData.data" border style="width: 100%">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter" width="260">
         </el-table-column>
         <el-table-column prop="owner" label="业户" :formatter="$utils.baseFormatter" width="260">
@@ -61,7 +61,9 @@ export default {
     };
   },
   watch: {},
-  created() {},
+  created() {
+    this.selectForm();
+  },
   methods: {
     selectForm() {
       getVehicleByPage(this.formData).then(res => {

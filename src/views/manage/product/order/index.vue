@@ -88,16 +88,15 @@
         <el-table-column prop="state" label="订单状态" :formatter="(row)=>{return this.$dict.get_order_state(row.state)}"> </el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " type="primary " icon="el-icon-success" @click="confirm" v-if="scope.row.state=='1'&&scope.row.has_review=='2'">确认开通</el-button>
-            <!-- <el-button size="small " icon="el-icon-error" @click="cancel" v-if="scope.row.has_cancel=='2'">取消订单</el-button> -->
-            <el-button size="small " icon="el-icon-setting" @click="review" v-if="scope.row.state=='5'&&scope.row.has_review=='2'">取消订单审核</el-button>
+            <el-button size="small " type="primary " icon="el-icon-success" @click="confirm(scope)" v-if="scope.row.state=='1'&&scope.row.has_review=='2'">确认开通</el-button>
+            <el-button size="small " icon="el-icon-setting" @click="review(scope)" v-if="scope.row.state=='5'&&scope.row.has_review=='2'">取消订单审核</el-button>
             <el-button size="small " type="primary" icon=" el-icon-document " @click="enquiry(scope)">查看资料</el-button>
             <el-dialog width="30%" title="" :visible.sync="confirmDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
               <label>备注：</label>
               <el-input v-model="tableConfirm.reason"></el-input>
               <span slot="footer" class="dialog-footer">
-                <el-button icon="el-icon-success" type="primary" @click="confirmOrder(scope,1)">通过</el-button>
-                <el-button icon="el-icon-error" type="danger" @click="confirmOrder(scope,2)">未通过</el-button>
+                <el-button icon="el-icon-success" type="primary" @click="confirmOrder(1)">通过</el-button>
+                <el-button icon="el-icon-error" type="danger" @click="confirmOrder(2)">未通过</el-button>
                 <el-button @click="confirmDialog = false">取 消</el-button>
               </span>
             </el-dialog>
@@ -105,16 +104,10 @@
               <label>备注：</label>
               <el-input v-model="tableConfirm.reason"></el-input>
               <span slot="footer" class="dialog-footer">
-                <el-button icon="el-icon-success" type="primary" @click="cancelAudit(scope,1)">通过</el-button>
-                <el-button icon="el-icon-error" type="danger" @click="cancelAudit(scope,2)">未通过</el-button>
+                <el-button icon="el-icon-success" type="primary" @click="cancelAudit(1)">通过</el-button>
+                <el-button icon="el-icon-error" type="danger" @click="cancelAudit(2)">未通过</el-button>
                 <el-button @click="auditDialog = false">取 消</el-button>
               </span>
-            </el-dialog>
-            <el-dialog width="20%" title="" :visible.sync="cancelDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-              <div style="width:154px;margin:0 auto;">
-                <el-button type="primary" @click="submit(scope)">确定</el-button>
-                <el-button @click="cancelDialog = false">取 消</el-button>
-              </div>
             </el-dialog>
           </template>
         </el-table-column>
@@ -167,7 +160,6 @@ export default {
       order_no: "",
       confirmDialog: false,
       auditDialog: false,
-      cancelDialog: false,
       addKey: 0,
       isCollapse: false,
       tableQuery: {
@@ -187,7 +179,6 @@ export default {
       },
       tableConfirm: {
         order_no: "",
-        orderno: "",
         reason: "",
         is_review: ""
       },
@@ -246,31 +237,33 @@ export default {
       this.order_no = scope.row.order_no;
     },
     // 确认订单
-    confirm() {
+    confirm(scope) {
       this.addKey++;
       this.confirmDialog = true;
+      this.tableConfirm.order_no = scope.row.order_no;
     },
     // 取消订单审核
-    review() {
+    review(scope) {
       this.addKey++;
       this.auditDialog = true;
-    },
-    confirmOrder(scope, state) {
       this.tableConfirm.order_no = scope.row.order_no;
+    },
+    confirmOrder(state) {
       this.tableConfirm.is_review = state;
       ReviewOrder(this.tableConfirm).then(res => {
         if (res.data.code == 0) {
+          this.confirmDialog = false;
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);
         }
       });
     },
-    cancelAudit(scope, state) {
-      this.tableConfirm.orderno = scope.row.order_no;
+    cancelAudit(state) {
       this.tableConfirm.is_review = state;
       ReviewCancel(this.tableConfirm).then(res => {
         if (res.data.code == 0) {
+          this.auditDialog = false;
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);

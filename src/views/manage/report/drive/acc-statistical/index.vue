@@ -58,8 +58,8 @@
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getACCSumaryByPage } from "@/api/index.js";
-import chooseVcheckbox from "@/components/choose-vcheckbox";
-import chooseUcheckbox from "@/components/choose-ucheckbox";
+import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
+import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
   components: { chooseVcheckbox, chooseUcheckbox },
   created() {
@@ -70,6 +70,7 @@ export default {
       vehicleDialog: false,
       userDialog: false,
       isCollapse: false,
+      vehicles: [],
       tableQuery: {
         start_time: "",
         stop_time: "",
@@ -77,18 +78,12 @@ export default {
         sim_ids: "",
         license: "",
         real_name: "",
+        submit: [],
         size: 10,
         page: 1
       },
       rules: {
         ...rules,
-        license: [
-          {
-            required: true,
-            trigger: "change",
-            message: "请输入车牌号"
-          }
-        ],
         time: [
           {
             required: true,
@@ -160,6 +155,7 @@ export default {
     selectvehicle() {
       this.addKey++;
       this.vehicleDialog = true;
+      this.tableQuery.license = "";
     },
     selectuser() {
       this.addKey++;
@@ -168,10 +164,17 @@ export default {
     // 回来的数据
     xz(scope) {
       this.vehicleDialog = false;
+      this.tableQuery.vehicles = [];
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.license =
           this.tableQuery.license + scope[i].license + ",";
-        this.tableQuery.sim_ids = scope[i].sim_id + ",";
+        this.tableQuery.sim_ids =
+          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+        this.vehicles.push({
+          license: scope[i].license,
+          license_color: scope[i].license_color,
+          sim_id: scope[i].sim_id
+        });
       }
       this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,
@@ -184,31 +187,24 @@ export default {
     },
     user(scope) {
       this.userDialog = false;
+      this.tableQuery.vehicles = [];
       for (var i = 0; i < scope.length; i++) {
-        this.tableQuery.real_name =
-          this.tableQuery.real_name + scope[i].real_name + ",";
+        this.tableQuery.sim_ids =
+          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+        this.vehicles.push({
+          license: scope[i].license,
+          license_color: scope[i].license_color,
+          sim_id: scope[i].sim_id
+        });
       }
-      this.tableQuery.real_name = this.tableQuery.real_name.substring(
+      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,
-        this.tableQuery.real_name.lastIndexOf(",")
+        this.tableQuery.sim_ids.lastIndexOf(",")
       );
     },
     //查询产品列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.sim_ids = "064620623980";
-      this.tableQuery.submit = [
-        {
-          sim_id: "064620623980",
-          license: "冀R123456",
-          license_color: "1"
-        },
-        {
-          sim_id: "064620623981",
-          license: "冀R56789",
-          license_color: "2"
-        }
-      ];
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
@@ -217,12 +213,18 @@ export default {
               if (res.data.code == 0) {
                 var data = [];
                 var arr = {};
-                this.tableQuery.submit.map(item => {
+                this.vehicles.map(item => {
                   arr[item.sim_id] = item;
                 });
                 res.data.data.map(item => {
-                  item.license = arr[item.sim_id].license;
-                  item.license_color = arr[item.sim_id].license_color;
+                  item.sim_id =
+                    item.sim_id[0] == "0" ? item.sim_id.slice(1) : item.sim_id;
+                  var obj = arr[item.sim_id];
+                  if (!obj) {
+                    return false;
+                  }
+                  item.license = obj.license;
+                  item.license_color = obj.license_color;
                 });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));

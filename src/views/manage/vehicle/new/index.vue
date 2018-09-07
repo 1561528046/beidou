@@ -128,6 +128,22 @@
                 <el-dropdown-item :command="{command:'active-company',data:scope}">厂商激活(2个图片，一个备注)</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
+            <el-dialog title="平台续费" :center="true" @closed="openCompanyClosed" :visible.sync="renew.platformVisible" :append-to-body="true" width="30%">
+              <el-form label-position="top" :model="openCompany.postData" size="small">
+                <el-row :gutter="30">
+                  <el-col :span="24">
+                    <el-form-item prop="plateformDate" label="服务到期日期">
+                      <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="renew.plateformDate" type="date" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="24" style="text-align:center;">
+                    <el-button @click="renew.platformVisible=false">取消</el-button>
+                    <el-button @click="upsubmit(scope)" type="primary">提交</el-button>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-dialog>
           </template>
         </el-table-column>
       </el-table>
@@ -167,24 +183,7 @@
           </el-col>
           <el-col :span="24" style="text-align:center;">
             <el-button @click="openCompanyClosed">取消</el-button>
-            <el-button type="primary">提交</el-button>
-          </el-col>
-        </el-row>
-
-      </el-form>
-    </el-dialog>
-    <el-dialog title="平台续费" :center="true" @closed="openCompanyClosed" :visible.sync="renew.platformVisible" :append-to-body="true" width="30%">
-      <el-form label-position="top" :model="openCompany.postData" size="small">
-        <el-row :gutter="30">
-          <el-col :span="24">
-            <el-form-item prop="plateformDate" label="服务到期日期">
-              <el-date-picker style="width:100%;" value-format="yyyyMMdd" v-model="renew.plateformDate" type="date" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" style="text-align:center;">
-            <el-button @click="openCompanyClosed">取消</el-button>
-            <el-button type="primary">提交</el-button>
+            <el-button @click="companySubmit" type="primary">提交</el-button>
           </el-col>
         </el-row>
 
@@ -237,7 +236,13 @@
 </style>
 <script>
 /* eslint-disable */
-import { getVehicleList, delVehicle, firstTimeVehicle } from "@/api/index.js";
+import moment from "moment";
+import {
+  getVehicleList,
+  delVehicle,
+  firstTimeVehicle,
+  AddFeeVehicle
+} from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import viewVehicle from "@/components/view-vehicle.vue";
 export default {
@@ -252,11 +257,12 @@ export default {
   },
   data() {
     return {
+      platformTime: "",
       renew: {
         plateformDate: "",
         companyDate: "",
         compaynVisible: false,
-        platformVisible: true
+        platformVisible: false
       },
       openCompany: {
         postData: {
@@ -329,9 +335,17 @@ export default {
       }
     };
   },
+  computed: {
+    pickerOptions2: function() {
+      return {
+        disabledDate: time => {
+          return time.getTime() < this.platformTime;
+        }
+      };
+    }
+  },
   watch: {
     contract_date: function(newVal) {
-      console.log(11);
       this.tableQuery.contract_startdate = newVal[0];
       this.tableQuery.contract_enddate = newVal[1];
     },
@@ -360,9 +374,36 @@ export default {
           break;
       }
     },
+    // 平台续费
     renewPlatform(scope) {
+      this.renew.platformVisible = true;
       this.renew.plateformDate = scope.row.contract_date;
+      this.renew.plateformDate = moment(this.renew.plateformDate).format(
+        "YYYY-MM-DD"
+      );
+      if (moment(this.renew.plateformDate).isBefore(new Date())) {
+        var currentTime = new Date();
+        this.platformTime = currentTime.getTime();
+        this.renew.plateformDate = scope.row.contract_date;
+      } else {
+        var date = new Date(this.renew.plateformDate);
+        this.platformTime = date.getTime();
+        this.renew.plateformDate = scope.row.contract_date;
+      }
     },
+    upsubmit(scope) {
+      scope.row.contract_date = this.renew.plateformDate;
+      AddFeeVehicle(scope.row).then(res => {
+        if (res.data.code == 0) {
+          this.$message.success(res.data.msg);
+          this.renew.platformVisible = false;
+          this.getTable();
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
+    // 平台续费结束
     updatePosition(scope) {
       firstTimeVehicle(scope.row).then(res => {
         if (res.data.code == 0) {
@@ -372,6 +413,14 @@ export default {
           this.$message.error(res.data.msg);
         }
       });
+    },
+    //厂商激活
+    openCompanyShow(scope) {
+      this.$set(this.openCompany, "vehicle", scope.row);
+      this.openCompany.visible = true;
+    },
+    companySubmit() {
+      console.log(this.openCompany);
     },
     openCompanyClosed() {
       //厂商开通关闭
@@ -384,11 +433,7 @@ export default {
       this.openCompany.visible = false;
       this.openCompany.addKey += 1;
     },
-    openCompanyShow(scope) {
-      //厂商开通弹出
-      this.$set(this.openCompany, "vehicle", scope.row);
-      this.openCompany.visible = true;
-    },
+    // 厂商激活结束
     clearShowDetails() {
       this.$set(this.$data, "showDetailsVehicle", {});
       this.detailsVisible = false;

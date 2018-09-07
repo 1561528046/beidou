@@ -1,7 +1,7 @@
 <template>
   <el-form status-icon :model="formData" size="small" ref="baseForm" class="msg-form">
     <template>
-      <el-table :data="tableData.data" border style="width: 100%">
+      <el-table height="250" :data="tableData.data" border style="width: 100%">
         <el-table-column label="状态" width="50">
           <template slot-scope="scope">
             <el-checkbox size="medium" v-model="scope.row.checked" style="margin-left:7px;"></el-checkbox>
@@ -48,6 +48,7 @@ export default {
         0,
         this.formData.user_ids.lastIndexOf(",")
       );
+      console.log(this.formData);
       if (this.formData.user_ids == "") {
         return this.$notify({
           message: "请选择信息",
@@ -55,13 +56,10 @@ export default {
           type: "error"
         });
       }
+      this.formData.user_ids = "1";
       getVehicleByPage(this.formData).then(res => {
         if (res.data.code == 0) {
           this.$set(this.tableQuery, "data", res.data.data);
-          this.tableQuery.data = [
-            { real_name: "个人" },
-            { real_name: "123xxx" }
-          ];
           this.$emit("button", this.tableQuery.data);
         } else {
           this.$message.error(res.data.msg);

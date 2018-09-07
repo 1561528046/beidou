@@ -68,6 +68,7 @@ export default {
       vehicleDialog: false,
       userDialog: false,
       isCollapse: false,
+      vehicles: [],
       tableQuery: {
         start_time: "",
         stop_time: "",
@@ -75,19 +76,11 @@ export default {
         sim_ids: "",
         license: "",
         real_name: "",
-        submit: [],
         size: 10,
         page: 1
       },
       rules: {
         ...rules,
-        license: [
-          {
-            required: true,
-            trigger: "change",
-            message: "请输入车牌号"
-          }
-        ],
         time: [
           {
             required: true,
@@ -167,12 +160,17 @@ export default {
     // 回来的数据
     xz(scope) {
       this.vehicleDialog = false;
-      this.tableQuery.submit;
+      this.vehicles = [];
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.license =
           this.tableQuery.license + scope[i].license + ",";
         this.tableQuery.sim_ids =
           this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+        this.vehicles.push({
+          license: scope[i].license,
+          license_color: scope[i].license_color,
+          sim_id: scope[i].sim_id
+        });
       }
       this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,
@@ -182,17 +180,22 @@ export default {
         0,
         this.tableQuery.license.lastIndexOf(",")
       );
-      this.tableQuery.submit = scope;
     },
     user(scope) {
       this.userDialog = false;
+      this.vehicles = [];
       for (var i = 0; i < scope.length; i++) {
-        this.tableQuery.real_name =
-          this.tableQuery.real_name + scope[i].real_name + ",";
+        this.tableQuery.sim_ids =
+          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+        this.vehicles.push({
+          license: scope[i].license,
+          license_color: scope[i].license_color,
+          sim_id: scope[i].sim_id
+        });
       }
-      this.tableQuery.real_name = this.tableQuery.real_name.substring(
+      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,
-        this.tableQuery.real_name.lastIndexOf(",")
+        this.tableQuery.sim_ids.lastIndexOf(",")
       );
     },
     //查询产品列表
@@ -206,7 +209,7 @@ export default {
               if (res.data.code == 0) {
                 var data = [];
                 var arr = {};
-                this.tableQuery.submit.map(item => {
+                this.vehicles.map(item => {
                   arr[item.sim_id] = item;
                 });
                 res.data.data.map(item => {

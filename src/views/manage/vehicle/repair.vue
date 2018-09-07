@@ -58,12 +58,21 @@
               <template slot-scope="scope">
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
-                  <el-table>
-                    <el-table-column width="150" label="维修时间"></el-table-column>
-                    <el-table-column width="150" label="故障原因"></el-table-column>
-                    <el-table-column width="150" label="维修状态"></el-table-column>
-                    <el-table-column width="150" label="备注"></el-table-column>
-                    <el-table-column width="150" label="操作人"></el-table-column>
+                  <el-table :data="gridData.data">
+                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
+                    <el-table-column width="150" label="维修状态" prop="RepairState">
+                      <template slot-scope="scope">
+                        <el-tag type="danger" v-if="scope.row.RepairState==1">
+                          未处理
+                        </el-tag>
+                        <el-tag type="success" v-if="scope.row.RepairState==2">
+                          已修复
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column width="150" label="操作人" prop="RealName"></el-table-column>
                   </el-table>
                   <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
                 </el-popover>
@@ -149,12 +158,21 @@
               <template slot-scope="scope">
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
-                  <el-table>
-                    <el-table-column width="150" label="维修时间"></el-table-column>
-                    <el-table-column width="150" label="故障原因"></el-table-column>
-                    <el-table-column width="150" label="维修状态"></el-table-column>
-                    <el-table-column width="150" label="备注"></el-table-column>
-                    <el-table-column width="150" label="操作人"></el-table-column>
+                  <el-table :data="gridData.data">
+                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
+                    <el-table-column width="150" label="维修状态" prop="RepairState">
+                      <template slot-scope="scope">
+                        <el-tag type="danger" v-if="scope.row.RepairState==1">
+                          未处理
+                        </el-tag>
+                        <el-tag type="success" v-if="scope.row.RepairState==2">
+                          已修复
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column width="150" label="操作人" prop="RealName"></el-table-column>
                   </el-table>
                   <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
                 </el-popover>
@@ -240,12 +258,21 @@
               <template slot-scope="scope">
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
-                  <el-table>
-                    <el-table-column width="150" label="维修时间"></el-table-column>
-                    <el-table-column width="150" label="故障原因"></el-table-column>
-                    <el-table-column width="150" label="维修状态"></el-table-column>
-                    <el-table-column width="150" label="备注"></el-table-column>
-                    <el-table-column width="150" label="操作人"></el-table-column>
+                  <el-table :data="gridData.data">
+                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
+                    <el-table-column width="150" label="维修状态" prop="RepairState">
+                      <template slot-scope="scope">
+                        <el-tag type="danger" v-if="scope.row.RepairState==1">
+                          未处理
+                        </el-tag>
+                        <el-tag type="success" v-if="scope.row.RepairState==2">
+                          已修复
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column width="150" label="操作人" prop="RealName"></el-table-column>
                   </el-table>
                   <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
                 </el-popover>
@@ -331,12 +358,21 @@
               <template slot-scope="scope">
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
-                  <el-table>
-                    <el-table-column width="150" label="维修时间"></el-table-column>
-                    <el-table-column width="150" label="故障原因"></el-table-column>
-                    <el-table-column width="150" label="维修状态"></el-table-column>
-                    <el-table-column width="150" label="备注"></el-table-column>
-                    <el-table-column width="150" label="操作人"></el-table-column>
+                  <el-table :data="gridData.data">
+                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
+                    <el-table-column width="150" label="维修状态" prop="RepairState">
+                      <template slot-scope="scope">
+                        <el-tag type="danger" v-if="scope.row.RepairState==1">
+                          未处理
+                        </el-tag>
+                        <el-tag type="success" v-if="scope.row.RepairState==2">
+                          已修复
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column width="150" label="操作人" prop="RealName"></el-table-column>
                   </el-table>
                   <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
                 </el-popover>
@@ -379,7 +415,6 @@ export default {
   components: { selectCityInput },
   created() {
     this.getTable();
-    this.OperateLogList();
   },
   props: {
     vehicle_type: Number, //vehicle_type区分普货和其他类型车辆
@@ -387,6 +422,9 @@ export default {
   },
   data() {
     return {
+      gridData: {
+        data: []
+      },
       addDialog: false,
       delDialog: false,
       addKey: 0,
@@ -518,8 +556,7 @@ export default {
     OperateLogList(scope) {
       getVehicleOperateLog({ vehicle_id: scope.row.vehicle_id }).then(res => {
         if (res.data.code == 0) {
-          console.log(res.data.data);
-          // this.gridData = res.data.data;
+          this.gridData.data = res.data.data;
         } else {
           this.$message.error(res.data.msg);
         }

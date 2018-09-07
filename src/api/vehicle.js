@@ -106,3 +106,10 @@ export const getVehicleOperateLog = query => {
     params: query
   });
 };
+// 车辆平台续费
+export const AddFeeVehicle = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/AddFeeVehicle", queryQS, {
+    params: query
+  });
+};

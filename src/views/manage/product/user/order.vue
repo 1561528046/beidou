@@ -111,7 +111,7 @@ import {
   getDeviceCompanyList,
   delCompany,
   getDeviceCompanyAll,
-  gettReviewOrderListByPage,
+  getUserOrderListByPage,
   ReviewOrder,
   CancelOrder,
   ReviewCancel
@@ -220,6 +220,7 @@ export default {
     submit(scope) {
       CancelOrder({ order_no: scope.row.order_no }).then(res => {
         if (res.data.code == 0) {
+          this.cancelDialog = false;
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);
@@ -233,7 +234,7 @@ export default {
         this.tableQuery.end_time = this.tableQuery.time[1];
       }
       var query = Object.assign({}, this.tableQuery);
-      gettReviewOrderListByPage(query)
+      getUserOrderListByPage(query)
         .then(res => {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);

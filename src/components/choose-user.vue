@@ -1,7 +1,7 @@
 <template>
   <el-form status-icon :model="formData" size="small" ref="baseForm" class="msg-form">
     <template>
-      <el-table :data="tableData.data" border style="width: 100%">
+      <el-table height="250" :data="tableData.data" border style="width: 100%">
         <el-table-column prop="real_name" label="用户">
         </el-table-column>
         <el-table-column label="操作" width="100">

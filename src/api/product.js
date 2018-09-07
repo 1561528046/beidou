@@ -172,8 +172,8 @@ export const getReviewOrderListByPage = query => {
   });
 };
 // 查询某个用户名下所有的订单
-export const gettReviewOrderListByPage = query => {
-  return ajax.get("/ordermanage/GetReviewOrderListByPage", {
+export const getUserOrderListByPage = query => {
+  return ajax.get("/ordermanage/GetUserOrderListByPage", {
     params: query
   });
 };

@@ -24,7 +24,7 @@
       </el-col>
     </el-row>
     <template>
-      <el-table :data="tableData.data" border style="width: 100%">
+      <el-table height="250" :data="tableData.data" border style="width: 100%">
         <el-table-column label="状态" width="50">
           <template slot-scope="scope">
             <el-checkbox size="medium" v-model="scope.row.checked" style="margin-left:7px;"></el-checkbox>
@@ -65,7 +65,9 @@ export default {
     };
   },
   watch: {},
-  created() {},
+  created() {
+    this.selectForm();
+  },
   methods: {
     selectForm() {
       getVehicleByPage(this.formData).then(res => {
