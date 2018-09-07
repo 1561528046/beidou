@@ -356,6 +356,8 @@ export default {
         case "renew-platform": //平台续费
           this.renewPlatform(command.data);
           break;
+        case "renew-company": //厂商续费
+          break;
       }
     },
     renewPlatform(scope) {

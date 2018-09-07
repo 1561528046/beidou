@@ -54,6 +54,20 @@ export default {
       // // 我们希望确保不会有两个客户使用相同的 email 地址，因此我们使用一个 unique 索引。
       // objectStore.createIndex("email", "email", { unique: true });
     };
+    setTimeout(() => {
+      if (db) {
+        var transaction = db.transaction(["positions"], "readwrite");
+        var objectStore = transaction.objectStore("positions");
+        // objectStore.add({ sim_id: "123" });
+        // objectStore.delete("123");
+        objectStore.get("1479242538").onsuccess = event => {
+          var a = event.target.result;
+          a.msgId = 11111;
+          objectStore.add(a);
+          console.log(objectStore.openCursor());
+        };
+      }
+    }, 100);
 
     window.dict = {};
     window.ll = [];
@@ -66,7 +80,7 @@ export default {
     };
     socketDataWorker.onmessage = event => {
       var msg = event.data;
-      if (db) {
+      if (db && msg.sim_id) {
         var transaction = db.transaction(["positions"], "readwrite");
         var objectStore = transaction.objectStore("positions");
         objectStore.add(msg);
