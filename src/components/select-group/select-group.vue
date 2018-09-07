@@ -1,10 +1,14 @@
 <template>
   <div>
     <el-popover placement="bottom" width="400" trigger="click" v-model="visible" v-if="!$props.static">
-      <div slot="reference">
-        <el-input placeholder="点击选择" style="width:100%;vertical-align:top;" disabled :value="currentNodeData.group_name">
-          <el-button slot="append" icon="el-icon-more" @click="visible = !visible"></el-button>
-        </el-input>
+      <div slot="reference" @click="visible = !visible">
+        <!-- <el-input placeholder="点击选择" style="width:100%;vertical-align:top;" disabled :value="currentNodeData.group_name">
+          
+        </el-input> -->
+        <div class="admin-input-style">
+          {{currentNodeData.group_name}}
+          <el-button icon="el-icon-more" class="group-select-btn"></el-button>
+        </div>
       </div>
       <div class="select-group-cotainer">
 
@@ -48,6 +52,27 @@
   </div>
 </template>
 <style lang="less">
+.admin-input-style {
+  height: 32px;
+  line-height: 32px;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
+  box-sizing: border-box;
+  color: #606266;
+  position: relative;
+  padding-left: 1em;
+  cursor: pointer;
+}
+.group-select-btn {
+  position: absolute;
+  right: 0;
+  top: -1px;
+  height: 32px;
+  line-height: 32px;
+  box-sizing: border-box;
+  padding: 0 20px;
+}
 .select-group-cotainer {
   margin: -12px;
   ._body {

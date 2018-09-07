@@ -2,7 +2,7 @@
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
 
-      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small" @submit.native.prevent>
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="添加时间">
@@ -43,7 +43,7 @@
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-              <el-button type="primary" @click="getTable">查询</el-button>
+              <el-button type="primary" native-type="submit" @click="getTable" :loading="tableLoading">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -162,7 +162,6 @@ export default {
   },
   created() {
     this.getTable();
-    this.keyupdown();
   },
   data() {
     return {
@@ -351,15 +350,6 @@ export default {
         return "primary";
       }
       return "info";
-    },
-    //回车事件
-    keyupdown() {
-      document.onkeydown = () => {
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
     },
     // 分页
     handleSizeChange(val) {

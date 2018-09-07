@@ -1,6 +1,6 @@
 <template>
   <div class="post-form">
-    <el-form label-position="top" :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+    <el-form label-position="top" :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form" @submit.native.prevent>
 
       <el-collapse v-model="opened" class="user-collapse">
         <el-collapse-item title="帐号登录信息" name="1">
@@ -136,7 +136,7 @@
       </el-collapse>
 
       <el-form-item style="text-align:center; padding-top:20px;">
-        <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
+        <el-button type="primary" @click="formSubmit" native-type="submit" size="large" :loading="postloading">提交</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -152,6 +152,7 @@ export default {
   },
   data() {
     return {
+      postloading: false,
       opened: ["1", "2", "3"],
       device_total_turn: false,
       expiry_time_turn: false,
@@ -265,6 +266,7 @@ export default {
       }
     },
     formSubmit() {
+      this.postloading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var areaObj = this.$utils.formatArea(this.formData.area);
@@ -275,6 +277,7 @@ export default {
           delete postData.re_pass_word;
           updateUser(postData)
             .then(res => {
+              this.postloading = false;
               if (res.data.code == 0) {
                 this.$emit("success");
                 this.$notify.success({
@@ -290,6 +293,7 @@ export default {
               }
             })
             .catch(() => {
+              this.postloading = false;
               this.$notify.error({
                 title: "失败",
                 message: "接口错误"
@@ -297,6 +301,7 @@ export default {
               this.$emit("error");
             });
         } else {
+          this.postloading = false;
           var errormsg = "";
           for (var key in errorItem) {
             errormsg += errorItem[key][0].message + "<br>";

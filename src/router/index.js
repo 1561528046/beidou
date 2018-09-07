@@ -13,6 +13,7 @@ NProgress.configure({ showSpinner: false }); // 隐藏右上loading图标
 Vue.use(Router);
 
 var router = new Router({
+  mode: "history",
   routes: [
     {
       path: "/",
@@ -44,8 +45,37 @@ var router = new Router({
         device,
         product,
         user,
+        {
+          path: "group_binding",
+          name: "group_binding",
+          meta: {
+            name: "车队分组/分车管理",
+            icon: "iconfont icon-orderedlist"
+          },
+          component: () => import("@/views/manage/group/binding.vue")
+        },
+        /**
+         * 司机信息
+         */
+        {
+          path: "driver",
+          name: "driver",
+          meta: { name: "司机信息管理", icon: "iconfont icon-driver" },
+          component: () => import("@/views/manage/driver/index.vue")
+        },
+        {
+          path: "driver_add",
+          name: "driver_add",
+          meta: { name: "添加司机", hidden: true },
+          component: () => import("@/views/manage/driver/add.vue")
+        },
+        {
+          path: "driver_update/:driver_card_id",
+          name: "driver_update",
+          meta: { name: "编辑司机", hidden: true },
+          component: () => import("@/views/manage/driver/update.vue")
+        },
         report,
-
         {
           path: "server-state",
           name: "server-state",

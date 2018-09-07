@@ -1,8 +1,8 @@
 <template>
-    <el-select v-model="user_id" :placeholder="placeholder" filterable remote :remote-method="remoteMethod" :loading="loading" style="width: 100%;" :clearable="clearable">
-        <el-option v-for="item in users" :key="item.user_id" :label="item.real_name" :value="item.user_id">
-        </el-option>
-    </el-select>
+  <el-select v-model="user_id" :placeholder="placeholder" filterable :loading="loading" style="width: 100%;" :clearable="clearable">
+    <el-option v-for="item in users" :key="item.user_id" :label="item.real_name" :value="item.user_id">
+    </el-option>
+  </el-select>
 </template>
 <script>
 import { getUserAll, getUser } from "@/api/index.js";
@@ -34,23 +34,21 @@ export default {
   },
   methods: {
     initData() {
-      if (!this.user_id) {
-        return false;
-      }
+      getUserAll({ real_name: "" }).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.$data, "users", res.data.data);
+        } else {
+          this.$set(this.$data, "users", []);
+          this.setUser();
+        }
+      });
+    },
+    setUser() {
       getUser({ user_id: this.user_id }).then(res => {
         if (res.data.code == 0) {
           this.$set(this.$data, "users", res.data.data);
         } else {
           this.user_id = "";
-        }
-      });
-    },
-    remoteMethod(query) {
-      getUserAll({ real_name: query }).then(res => {
-        if (res.data.code == 0) {
-          this.$set(this.$data, "users", res.data.data);
-        } else {
-          this.$set(this.$data, "users", []);
         }
       });
     }

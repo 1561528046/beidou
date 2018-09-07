@@ -174,30 +174,23 @@ export default {
       this.$set(this.$data, "rightsDict", this.rightsDict);
 
       //获取role，并设置对应值
-      var resData = {
-        code: 0,
-        data: [
-          {
-            role_name: "123",
-            rights:
-              "1-1-1,1-1-2,1-1-3,1-1-4,1-2-1,1-2-2,1-2-3,1-2-4,1-3-1,1-3-2,1-3-3,1-3-4,1-4-1,1-4-2,1-4-3,1-4-4,1-5-1,1-5-2,1-5-3,1-5-4,2-1-4,2-3-2,2-3-4"
-          }
-        ]
-      };
-      var defaultChecked = resData.data[0].rights.split(",");
-      defaultChecked.map(rights_id => {
-        var path = rights_id.split("-");
-        var level1 = this.rightsDict[path[0]];
-        var level2 = level1.children[path[1]];
-        var right = level2.children[path[2]];
-        right.checked = true;
-        this.rightChange(true, right, level2);
+
+      getRole({ role_id: this.$props.role_id }).then(res => {
+        if (res.data.code == 0) {
+          this.formData.role_name = res.data.data[0].role_name;
+          var defaultChecked = res.data.data[0].rights.split(",");
+          defaultChecked.map(rights_id => {
+            var path = rights_id.split("-");
+            var level1 = this.rightsDict[path[0]];
+            var level2 = level1.children[path[1]];
+            var right = level2.children[path[2]];
+            right.checked = true;
+            this.rightChange(true, right, level2);
+          });
+        } else {
+          this.$message.error(res.data.msg);
+        }
       });
-      // getRole({ role_id: this.$props.role_id }).then(res => {
-      //   if (res.code.data == 0) {
-      //   } else {
-      //   }
-      // });
     },
     rightsCheckAll(isChecked, level, levelObj) {
       //全选处理
