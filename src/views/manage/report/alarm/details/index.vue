@@ -31,7 +31,7 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license+this.$dict.get_license_color(row.license_color)}"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license+this.$dict.get_license_color(row.license_color).name}"> </el-table-column>
         <el-table-column prop="alarm_type" label="报警类型" :formatter="(row)=>{return this.$dict.get_alarm_type(row.alarm_type)}"> </el-table-column>
         <el-table-column prop="alertTime" label="报警时长" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
@@ -138,7 +138,7 @@ export default {
     vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
       this.tableQuery.license = scope.row.license;
-      this.tableQuery.sim_ids = scope.row.sim_id;
+      this.tableQuery.sim_ids = "0" + scope.row.sim_id;
       this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
@@ -160,7 +160,6 @@ export default {
     //查询列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.sim_ids = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
