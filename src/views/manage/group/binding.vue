@@ -31,10 +31,11 @@
             </el-input>
           </div>
         </div>
-        <div class="group-container">
-          <select-group :static="true" :user_id="currentUser.user_id" :group_id.sync="groupData.group_id" :parentid.sync="groupData.parent_id" style="width:300px;"></select-group>
-        </div>
-
+        <transition name="fade">
+          <div class="group-container" v-show="currentUser.user_id">
+            <select-group :static="true" :user_id="currentUser.user_id" :group_id.sync="groupData.group_id" :parentid.sync="groupData.parent_id" style="width:300px;height:100%;"></select-group>
+          </div>
+        </transition>
         <div class="transfer-container">
           <div class="transfer-filter">
             <div class="transfer-filter-item">
@@ -152,7 +153,7 @@ export default {
         total: 0
       },
       currentUser: {},
-      titles: ["请选择用户", "未绑定SIM卡"],
+      titles: ["已绑定车辆", "未绑定车辆"],
       userList: [],
       leftList: [],
       rightList: [],
@@ -317,18 +318,29 @@ export default {
         });
     },
     changeUser(user) {
-      this.titles[0] = user.real_name;
       this.currentUser = user;
-      this.renderBind();
-      this.renderUnbind();
     }
   }
 };
 </script>
 <style lang="less">
 .group-container {
+  box-shadow: inset 5px 0 15px #eef0f3;
   padding: 22px;
-  border: 1px solid #ebeef5;
+  border-right: 1px solid #eaecf1;
+  .select-group-cotainer {
+    height: 100%;
+    ._body {
+      height: 100%;
+    }
+    ._tree {
+      height: 100%;
+    }
+  }
+  .select-group-cotainer ._tree .is-current > .el-tree-node__content {
+    background: #1890ff;
+    color: #fff;
+  }
 }
 .full-box {
   height: 100%;

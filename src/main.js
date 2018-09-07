@@ -3,6 +3,7 @@ import App from "./App.vue";
 import ElementUI from "element-ui";
 import "normalize.css";
 import "element-ui/lib/theme-chalk/index.css";
+import "vue2-animate/dist/vue2-animate.min.css"; //demo:https://the-allstars.com/vue2-animate/
 import "@/style/index.less";
 import router from "./router/index.js";
 import ajax from "@/api/ajax.js";

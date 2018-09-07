@@ -46,7 +46,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" type="primary" icon="el-icon-edit">绑定车辆</el-button>
+            <el-button size="small" type="primary" icon="el-icon-edit" @click="openBindingVechile(scope)">绑定车辆</el-button>
             <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
           </template>
         </el-table-column>
@@ -56,6 +56,9 @@
         </el-pagination>
       </div>
     </el-card>
+    <el-dialog title="选择车辆" :visible.sync="bindingDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vehicle @button="bindingVehicle"></choose-vehicle>
+    </el-dialog>
     <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <add-components @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
     </el-dialog>
@@ -65,17 +68,20 @@
   </div>
 </template>
 <script>
-import { getDriverList, delDriver } from "@/api/index.js";
+import { getDriverList, delDriver, bindingVehicle } from "@/api/index.js";
 import addComponents from "./add.vue";
 import updateComponents from "./update.vue";
+import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { addComponents, updateComponents },
+  components: { addComponents, updateComponents, chooseVehicle },
   created() {
     this.getTable();
     this.keyupSubmit();
   },
   data() {
     return {
+      bindingDriver: {},
+      bindingDialog: false,
       addDialog: false,
       updateDialog: false,
       updateId: "",
@@ -96,6 +102,26 @@ export default {
     };
   },
   methods: {
+    openBindingVechile(scope) {
+      this.bindingDialog = true;
+      this.$set(this.$data, "bindingDriver", scope.row);
+    },
+    bindingVehicle(scope) {
+      bindingVehicle({
+        driver_card_id: this.bindingDriver.driver_card_id,
+        vehicle_ids: scope.row.vehicle_id
+      })
+        .then(res => {
+          if (res.data.code == 0) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .catch(() => {});
+      this.bindingDialog = false;
+      this.$set(this.$data, "bindingDriver", {});
+    },
     delRow(scope) {
       //删除
       this.$confirm("确认删除？")

@@ -1,7 +1,7 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" label-width="80px" :label-position="isCollapse?'top':'left'" class="table-search" size="small">
+      <el-form :model="tableQuery" label-width="80px" :label-position="isCollapse?'top':'left'" class="table-search" size="small" @submit.native.prevent>
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="车牌号">
@@ -66,7 +66,7 @@
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
-              <el-button type="primary" @click="getTable" :loading="tableQueryLoading">查询</el-button>
+              <el-button type="primary" @click="getTable" :loading="tableLoading" native-type="submit">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -269,7 +269,6 @@ export default {
       },
       showDetailsVehicle: {}, //正在显示的车辆
       detailsVisible: false, //查看详情显示隐藏
-      tableQueryLoading: false, //大列表查询
       isCollapse: false,
       first_online_time: [], //首次入网 时间范围
       contract_date: [],

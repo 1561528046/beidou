@@ -1,6 +1,6 @@
 <template>
   <div class="login-form">
-    <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
+    <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" @submit.native.prevent>
       <el-form-item label="登陆帐号" prop="user_name">
         <el-input v-model="formData.user_name"></el-input>
       </el-form-item>
@@ -9,7 +9,7 @@
       </el-form-item>
 
       <el-form-item style="text-align:center; padding-top:20px;">
-        <el-button type="primary" @click="formSubmit" size="large">登陆</el-button>
+        <el-button type="primary" :loading="loading" native-type="submit" @click="formSubmit" size="large">登陆</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -27,6 +27,7 @@ import { loginIn } from "@/api/index.js";
 export default {
   data() {
     return {
+      loading: false,
       formData: {
         user_name: "",
         pass_word: ""
@@ -56,22 +57,28 @@ export default {
         if (isVaildate) {
           var postData = Object.assign({}, this.formData);
           postData.pass_word = postData.pass_word.MD5(16);
+          this.loading = true;
           loginIn(postData)
             .then(res => {
+              this.loading = false;
               if (res.data.code == 0) {
                 this.$message.success("登陆成功！");
                 this.$store.commit(
                   "loginIn",
                   Object.assign({ token: res.data.token }, res.data.data[0])
                 );
-                this.$router.replace("/");
-                location.reload();
+                if (document.referrer) {
+                  location.href = document.referrer;
+                } else {
+                  this.$router.replace("/");
+                  location.reload();
+                }
               } else {
                 this.$message.error(res.data.msg);
               }
             })
-            .catch(err => {
-              console.log(err);
+            .catch(() => {
+              this.loading = false;
               this.$message.error("接口错误");
             });
         }

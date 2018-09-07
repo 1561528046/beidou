@@ -1,4 +1,5 @@
 export * from "./user.js";
+export * from "./driver.js";
 export * from "./device.js";
 export * from "./base.js";
 export * from "./vehicle.js";

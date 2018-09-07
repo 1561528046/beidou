@@ -1,7 +1,7 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" label-width="82px" label-position="left" class="table-search" size="small">
+      <el-form :model="tableQuery" label-width="82px" label-position="left" class="table-search" size="small" @submit.native.prevent>
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="登录账号">
@@ -28,7 +28,7 @@
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
-              <el-button type="primary" @click="getTable">查询</el-button>
+              <el-button type="primary" native-type="submit" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
