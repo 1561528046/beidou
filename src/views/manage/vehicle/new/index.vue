@@ -256,7 +256,7 @@ export default {
         plateformDate: "",
         companyDate: "",
         compaynVisible: false,
-        platformVisible: true
+        platformVisible: false
       },
       openCompany: {
         postData: {

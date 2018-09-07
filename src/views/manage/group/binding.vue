@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="group-container">
-          <select-group :static="true" :group_id.sync="groupData.group_id" :parentid.sync="groupData.parent_id" style="width:300px;"></select-group>
+          <select-group :static="true" :user_id="currentUser.user_id" :group_id.sync="groupData.group_id" :parentid.sync="groupData.parent_id" style="width:300px;"></select-group>
         </div>
 
         <div class="transfer-container">
@@ -40,12 +40,12 @@
             <div class="transfer-filter-item">
               <el-form :inline="true" :model="userTableQuery" size="mini">
                 <el-form-item>
-                  <el-input placeholder="SIM卡号段开始" v-model="bindTableQuery.sim_no_begin">
+                  <el-input placeholder="车牌号" v-model="bindTableQuery.license">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-input placeholder="SIM卡号段结束" v-model="bindTableQuery.sim_no_end">
+                  <el-input placeholder="业户/车主" v-model="bindTableQuery.owner">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
@@ -58,12 +58,12 @@
             <div class="transfer-filter-item">
               <el-form :inline="true" :model="userTableQuery" size="mini">
                 <el-form-item>
-                  <el-input placeholder="SIM卡号段开始" v-model="unbindTableQuery.sim_no_begin">
+                  <el-input placeholder="车牌号" v-model="bindTableQuery.license">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-input placeholder="SIM卡号段结束" v-model="unbindTableQuery.sim_no_end">
+                  <el-input placeholder="业户/车主" v-model="bindTableQuery.owner">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
@@ -138,15 +138,15 @@ export default {
         page: 1
       },
       bindTableQuery: {
-        sim_no_begin: "",
-        sim_no_end: "",
+        license: "",
+        owner: "",
         size: 20,
         page: 1,
         total: 0
       },
       unbindTableQuery: {
-        sim_no_begin: "",
-        sim_no_end: "",
+        license: "",
+        owner: "",
         size: 20,
         page: 1,
         total: 0
@@ -169,6 +169,10 @@ export default {
     };
   },
   watch: {
+    "groupData.group_id": function() {
+      this.renderBind();
+      this.renderUnbind();
+    },
     userTableQuery: {
       handler: function() {
         this.renderUser();
@@ -200,6 +204,7 @@ export default {
       if (this.currentUser.user_id) {
         var postData = Object.assign({}, this.bindTableQuery);
         postData.user_id = this.currentUser.user_id;
+        postData.group_id = this.groupData.group_id;
         getUserSim(postData).then(res => {
           this.rightValues = [];
           if (res.data.code == 0) {
