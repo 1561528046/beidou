@@ -177,3 +177,10 @@ export const getUserOrderListByPage = query => {
     params: query
   });
 };
+// 添加订单
+export const AddOrder = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/ordermanage/AddOrder", queryQS, {
+    params: query
+  });
+};

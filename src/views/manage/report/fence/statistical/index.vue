@@ -11,16 +11,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="license" label="车辆">
-              <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectvehicle">
-                <el-input type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
-              </el-button>
+              <el-input :disabled="vehicleAlert" @focus="selectvehicle" type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="real_name" label="用户">
-              <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectuser">
-                <el-input type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
-              </el-button>
+              <el-input :disabled="userAlert" @focus="selectuser" type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4" style="text-align: right;">
@@ -35,7 +31,7 @@
       <div class="admin-table-actions">
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color).name}"> </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
         <el-table-column prop="" label="进出区域" :formatter="$utils.baseFormatter "> </el-table-column>
@@ -60,8 +56,8 @@
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getFenceSummaryByPage } from "@/api/index.js";
-import chooseVcheckbox from "@/components/choose-vcheckbox";
-import chooseUcheckbox from "@/components/choose-ucheckbox";
+import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
+import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
   components: { chooseVcheckbox, chooseUcheckbox },
   created() {
@@ -72,6 +68,9 @@ export default {
       vehicleDialog: false,
       userDialog: false,
       isCollapse: false,
+      vehicleAlert: false,
+      userAlert: false,
+      vehicles: [],
       tableQuery: {
         start_time: "",
         stop_time: "",
@@ -84,13 +83,6 @@ export default {
       },
       rules: {
         ...rules,
-        license: [
-          {
-            required: true,
-            trigger: "change",
-            message: "请输入车牌号"
-          }
-        ],
         time: [
           {
             required: true,
@@ -142,6 +134,18 @@ export default {
     };
   },
   mounted() {},
+  watch: {
+    vehicleAlert: function() {
+      if (this.tableQuery.license == "") {
+        this.userAlert = false;
+      }
+    },
+    userAlert: function() {
+      if (this.tableQuery.real_name == "") {
+        this.vehicleAlert = false;
+      }
+    }
+  },
   methods: {
     // 查询时间验证
     validateTime(rule, value, callback) {
@@ -162,18 +166,34 @@ export default {
     selectvehicle() {
       this.addKey++;
       this.vehicleDialog = true;
+      this.tableQuery.license = "";
+      this.tableQuery.sim_ids = "";
+      this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
+      this.tableQuery.real_name = "";
+      this.tableQuery.sim_ids = "";
+      this.vehicleAlert = false;
     },
     // 回来的数据
     xz(scope) {
       this.vehicleDialog = false;
+      if (!scope.length == 0) {
+        this.userAlert = true;
+      }
+      this.vehicles = [];
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.license =
           this.tableQuery.license + scope[i].license + ",";
-        this.tableQuery.sim_ids = scope[i].sim_id + ",";
+        this.tableQuery.sim_ids =
+          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+        this.vehicles.push({
+          license: scope[i].license,
+          license_color: scope[i].license_color,
+          sim_id: scope[i].sim_id
+        });
       }
       this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,
@@ -186,10 +206,27 @@ export default {
     },
     user(scope) {
       this.userDialog = false;
-      for (var i = 0; i < scope.length; i++) {
-        this.tableQuery.real_name =
-          this.tableQuery.real_name + scope[i].real_name + ",";
+      if (!scope.vehicle.length == 0) {
+        this.vehicleAlert = true;
       }
+      this.vehicles = [];
+      for (var j = 0; j < scope.vehicle.length; j++) {
+        this.vehicles.push({
+          license: scope.vehicle[j].license,
+          license_color: scope.vehicle[j].license_color,
+          sim_id: scope.vehicle[j].sim_id
+        });
+        this.tableQuery.sim_ids =
+          this.tableQuery.sim_ids + ("0" + scope.vehicle[j].sim_id) + ",";
+      }
+      for (var s = 0; s < scope.user.length; s++) {
+        this.tableQuery.real_name =
+          this.tableQuery.real_name + scope.user[s].real_name + ",";
+      }
+      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
+        0,
+        this.tableQuery.sim_ids.lastIndexOf(",")
+      );
       this.tableQuery.real_name = this.tableQuery.real_name.substring(
         0,
         this.tableQuery.real_name.lastIndexOf(",")
@@ -198,19 +235,6 @@ export default {
     //查询产品列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.sim_ids = "064620623980";
-      this.tableQuery.submit = [
-        {
-          sim_id: "064620623980",
-          license: "冀R123456",
-          license_color: "1"
-        },
-        {
-          sim_id: "064620623981",
-          license: "冀R56789",
-          license_color: "2"
-        }
-      ];
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
@@ -219,12 +243,18 @@ export default {
               if (res.data.code == 0) {
                 var data = [];
                 var arr = {};
-                this.tableQuery.submit.map(item => {
+                this.vehicles.map(item => {
                   arr[item.sim_id] = item;
                 });
                 res.data.data.map(item => {
-                  item.license = arr[item.sim_id].license;
-                  item.license_color = arr[item.sim_id].license_color;
+                  item.sim_id =
+                    item.sim_id[0] == "0" ? item.sim_id.slice(1) : item.sim_id;
+                  var obj = arr[item.sim_id];
+                  if (!obj) {
+                    return false;
+                  }
+                  item.license = obj.license;
+                  item.license_color = obj.license_color;
                 });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));

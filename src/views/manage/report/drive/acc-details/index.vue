@@ -16,7 +16,7 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-col :span="10" style="text-align: right;">
+          <el-col :span="3" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
@@ -130,7 +130,7 @@ export default {
     vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
       this.tableQuery.license = scope.row.license;
-      this.tableQuery.sim_ids = scope.row.sim_id;
+      this.tableQuery.sim_ids = "0" + scope.row.sim_id;
       this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
@@ -152,7 +152,6 @@ export default {
     //查询列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.sim_ids = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);

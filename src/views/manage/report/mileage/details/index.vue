@@ -5,16 +5,18 @@
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
-              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item prop="license" label="车辆" style="text-align:right">
-              <el-input @focus="selectvehicle" :disabled="tableQuery.vehicle" clearable type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
+            <el-form-item prop="license" label="选择车辆">
+              <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
+                <el-input type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
+              </el-button>
             </el-form-item>
           </el-col>
-          <el-col :span="9" style="text-align: right;">
+          <el-col :span="3" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
@@ -23,10 +25,8 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
-      <div class="admin-table-actions">
-      </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color).name}"> </el-table-column>
         <el-table-column prop="mileage" label="行驶里程" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
@@ -40,11 +40,8 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog width="50%" title="选择信息" :visible.sync="vehicleDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-vcheckbox @button="xz" @success=" () => {this.getTable();this.vehicleDialog = false;}" :key="addKey"></choose-vcheckbox>
-    </el-dialog>
-    <el-dialog width="30%" title="选择信息" :visible.sync="userDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-ucheckbox @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-ucheckbox>
+    <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vehicle @button="vehicleCallback" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-vehicle>
     </el-dialog>
   </div>
 </template>
@@ -52,34 +49,54 @@
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getMileageDetailByPage } from "@/api/index.js";
-import chooseVcheckbox from "@/components/choose-vcheckbox";
-import chooseUcheckbox from "@/components/choose-ucheckbox";
+import selectAlarmtype from "@/components/select-alarmtype.vue";
+import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { chooseVcheckbox, chooseUcheckbox },
+  components: { chooseVehicle, selectAlarmtype },
   created() {
     this.keyupSubmit();
   },
+  computed: {
+    list: function() {
+      return this.tableData.data.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
+  },
   data() {
     return {
-      vehicleDialog: false,
-      userDialog: false,
+      addDialog: false,
+      addKey: 0,
       isCollapse: false,
       tableQuery: {
-        vehicle: false,
-        user: false,
         start_time: "",
         stop_time: "",
         time: "",
-        sim_ids: "",
         license: "",
-        real_name: "",
-        submit: [],
-        user_submit: [],
+        license_color: "",
+        speed_limit: "",
+        alarm_type: "",
+        sim_ids: "",
         size: 10,
         page: 1
       },
       rules: {
         ...rules,
+        license: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请输入车牌号"
+          }
+        ],
+        alarm_type: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请选择报警类型"
+          }
+        ],
         time: [
           {
             required: true,
@@ -95,40 +112,38 @@ export default {
         data: []
       },
       tableLoading: false,
-      addKey: 0,
-      userdetailShow: false
+      userdetailShow: false,
+      dialog: true
     };
   },
   watch: {
-    "tableQuery.license": {
-      handler: function() {
-        this.detectionInput();
-      }
+    dialog: function() {
+      this.addDialog = this.dialog;
     }
   },
-  mounted() {},
   methods: {
-    detectionInput() {
-      if (this.tableQuery.license == "") {
-        this.tableQuery.user = false;
-      } else {
-        this.tableQuery.user = true;
-      }
-      if (this.tableQuery.real_name == "") {
-        this.tableQuery.vehicle = false;
-      } else {
-        this.tableQuery.vehicle = true;
-      }
+    // 选择查询方式
+    addFrom() {
+      this.addKey++;
+      this.addDialog = true;
+      this.dialog = true;
+    },
+    // 回来的数据
+    vehicleCallback(scope) {
+      this.dialog = scope.row.dialog;
+      this.tableQuery.license = scope.row.license;
+      this.tableQuery.sim_ids = "0" + scope.row.sim_id;
+      this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
-      var date = moment(value[0]).add(3, "days")._d;
+      var date = moment(value[0]).add(30, "days")._d;
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
       } else if (!moment(value[1]).isBefore(date)) {
-        callback(new Error("选择时间不能大于3天!"));
+        callback(new Error("选择时间不能大于30天!"));
         return false;
       } else {
         this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
@@ -136,89 +151,9 @@ export default {
         callback();
       }
     },
-    selectvehicle() {
-      this.addKey++;
-      this.vehicleDialog = true;
-    },
-    selectuser() {
-      this.addKey++;
-      this.userDialog = true;
-    },
-    // 回来的数据
-    xz(scope) {
-      this.vehicleDialog = false;
-      this.tableQuery.submit = [];
-      for (var i = 0; i < scope.length; i++) {
-        this.tableQuery.submit.push({
-          sim_id: scope[i].sim_id,
-          license: scope[i].license,
-          license_color: scope[i].license_color
-        });
-        this.tableQuery.license =
-          this.tableQuery.license + scope[i].license + ",";
-        this.tableQuery.sim_ids =
-          this.tableQuery.sim_ids + scope[i].sim_id + ",";
-      }
-      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
-        0,
-        this.tableQuery.sim_ids.lastIndexOf(",")
-      );
-      this.tableQuery.license = this.tableQuery.license.substring(
-        0,
-        this.tableQuery.license.lastIndexOf(",")
-      );
-    },
-    user(scope) {
-      this.userDialog = false;
-      for (var i = 0; i < scope.length; i++) {
-        this.tableQuery.real_name =
-          this.tableQuery.real_name + scope[i].owner + ",";
-      }
-      this.tableQuery.real_name = this.tableQuery.real_name.substring(
-        0,
-        this.tableQuery.real_name.lastIndexOf(",")
-      );
-      this.tableQuery.submit = [];
-      this.tableQuery.submit = [
-        {
-          sim_id: "",
-          license: "",
-          license_color: ""
-        }
-      ];
-    },
-    //查询产品列表
+    //查询列表
     getTable() {
-      if (this.tableQuery.time == "") {
-        return this.$notify({
-          message: "请选择时间",
-          title: "提示",
-          type: "error"
-        });
-      } else if (
-        this.tableQuery.license == "" &&
-        this.tableQuery.real_name == ""
-      ) {
-        return this.$notify({
-          message: "请选择车辆或用户",
-          title: "提示",
-          type: "error"
-        });
-      }
       this.tableLoading = true;
-      this.tableQuery.sim_ids = "064620623980,064620623981";
-      this.tableQuery.submit = [
-        {
-          sim_id: "064620623980",
-          license: "冀R123456",
-          license_color: "1"
-        },
-        {
-          sim_id: "064620623981",
-          license: "冀R56789",
-          license_color: "2"
-        }
-      ];
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
@@ -226,20 +161,15 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
-                var arr = {};
-                this.tableQuery.submit.map(item => {
-                  arr[item.sim_id] = item;
-                });
-                res.data.data.map(item => {
-                  item.license = arr[item.sim_id].license;
-                  item.license_color = arr[item.sim_id].license_color;
-                });
                 for (var i = 0; i < res.data.data.length; i++) {
-                  res.data.data[i].mileage =
-                    res.data.data[i].stop_mileage -
-                    res.data.data[i].start_mileage;
+                  res.data.data[i].license = this.tableQuery.license;
+                  res.data.data[
+                    i
+                  ].license_color = this.tableQuery.license_color;
+                  res.data.data[i].alertTime =
+                    res.data.data[i].stop_time - res.data.data[i].start_time;
+                  data.push(res.data.data[i]);
                 }
-                data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
                 this.$emit("success");

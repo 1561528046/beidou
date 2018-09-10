@@ -17,8 +17,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item label="报警类型">
-              <select-fencetype v-model="tableQuery.alarm_type" style="width:100%;"></select-fencetype>
+            <el-form-item prop="alarm_type" label="报警类型">
+              <select-fencetype style="width:100%;" v-model="tableQuery.alarm_type"></select-fencetype>
             </el-form-item>
           </el-col>
           <el-col :span="3" style="text-align: right;">
@@ -84,6 +84,7 @@ export default {
         time: "",
         license: "",
         license_color: "",
+        speed_limit: "",
         alarm_type: "",
         sim_ids: "",
         size: 10,
@@ -96,6 +97,13 @@ export default {
             required: true,
             trigger: "change",
             message: "请输入车牌号"
+          }
+        ],
+        alarm_type: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请选择报警类型"
           }
         ],
         time: [
@@ -133,18 +141,18 @@ export default {
     vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
       this.tableQuery.license = scope.row.license;
-      this.tableQuery.sim_ids = scope.row.sim_id;
+      this.tableQuery.sim_ids = "0" + scope.row.sim_id;
       this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
-      var date = moment(value[0]).add(3, "days")._d;
+      var date = moment(value[0]).add(30, "days")._d;
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
       } else if (!moment(value[1]).isBefore(date)) {
-        callback(new Error("选择时间不能大于3天!"));
+        callback(new Error("选择时间不能大于30天!"));
         return false;
       } else {
         this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
@@ -155,7 +163,6 @@ export default {
     //查询列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.sim_ids = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);

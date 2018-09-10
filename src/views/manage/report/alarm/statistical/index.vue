@@ -11,16 +11,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="license" label="车辆">
-              <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectvehicle">
-                <el-input type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
-              </el-button>
+              <el-input :disabled="vehicleAlert" @focus="selectvehicle" type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="real_name" label="用户">
-              <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectuser">
-                <el-input type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
-              </el-button>
+              <el-input :disabled="userAlert" @focus="selectuser" type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4" style="text-align: right;">
@@ -68,6 +64,8 @@ export default {
       vehicleDialog: false,
       userDialog: false,
       isCollapse: false,
+      vehicleAlert: false,
+      userAlert: false,
       vehicles: [],
       tableQuery: {
         start_time: "",
@@ -132,6 +130,18 @@ export default {
     };
   },
   mounted() {},
+  watch: {
+    vehicleAlert: function() {
+      if (this.tableQuery.license == "") {
+        this.userAlert = false;
+      }
+    },
+    userAlert: function() {
+      if (this.tableQuery.real_name == "") {
+        this.vehicleAlert = false;
+      }
+    }
+  },
   methods: {
     // 查询时间验证
     validateTime(rule, value, callback) {
@@ -152,14 +162,21 @@ export default {
     selectvehicle() {
       this.addKey++;
       this.vehicleDialog = true;
+      this.tableQuery.license = "";
+      this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
+      this.tableQuery.real_name = "";
+      this.vehicleAlert = false;
     },
     // 回来的数据
     xz(scope) {
       this.vehicleDialog = false;
+      if (!scope.length == 0) {
+        this.userAlert = true;
+      }
       this.vehicles = [];
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.license =
@@ -183,19 +200,30 @@ export default {
     },
     user(scope) {
       this.userDialog = false;
+      if (!scope.vehicle.length == 0) {
+        this.vehicleAlert = true;
+      }
       this.vehicles = [];
-      for (var i = 0; i < scope.length; i++) {
-        this.tableQuery.sim_ids =
-          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+      for (var j = 0; j < scope.vehicle.length; j++) {
         this.vehicles.push({
-          license: scope[i].license,
-          license_color: scope[i].license_color,
-          sim_id: scope[i].sim_id
+          license: scope.vehicle[j].license,
+          license_color: scope.vehicle[j].license_color,
+          sim_id: scope.vehicle[j].sim_id
         });
+        this.tableQuery.sim_ids =
+          this.tableQuery.sim_ids + ("0" + scope.vehicle[j].sim_id) + ",";
+      }
+      for (var s = 0; s < scope.user.length; s++) {
+        this.tableQuery.real_name =
+          this.tableQuery.real_name + scope.user[s].real_name + ",";
       }
       this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,
         this.tableQuery.sim_ids.lastIndexOf(",")
+      );
+      this.tableQuery.real_name = this.tableQuery.real_name.substring(
+        0,
+        this.tableQuery.real_name.lastIndexOf(",")
       );
     },
     //查询产品列表

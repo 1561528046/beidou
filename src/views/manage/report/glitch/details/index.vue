@@ -133,18 +133,18 @@ export default {
     vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
       this.tableQuery.license = scope.row.license;
-      this.tableQuery.sim_ids = scope.row.sim_id;
+      this.tableQuery.sim_ids = "0" + scope.row.sim_id;
       this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
-      var date = moment(value[0]).add(3, "days")._d;
+      var date = moment(value[0]).add(30, "days")._d;
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
       } else if (!moment(value[1]).isBefore(date)) {
-        callback(new Error("选择时间不能大于3天!"));
+        callback(new Error("选择时间不能大于30天!"));
         return false;
       } else {
         this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
@@ -155,7 +155,6 @@ export default {
     //查询列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.sim_ids = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
@@ -233,4 +232,12 @@ export default {
   }
 };
 </script>
- 
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+</style>

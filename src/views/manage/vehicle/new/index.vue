@@ -144,6 +144,38 @@
                 </el-row>
               </el-form>
             </el-dialog>
+            <el-dialog title="厂商开通" :center="true" @closed="openCompanyClosed" :visible.sync="openCompany.visible" :append-to-body="true">
+              <el-form label-position="top" :model="openCompany.postData" size="small" ref="baseForm">
+                <el-row :gutter="30">
+                  <el-col :span="12">
+                    <el-form-item prop="img1" label="图片1" style="text-align:center;">
+                      <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/ordermanage/AddSubmission'" :show-file-list="false">
+                        <img v-if="openCompany.postData.img1 " :src="$dict.BASE_URL+openCompany.postData.img1 " class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                      </el-upload>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item prop="img2" label="图片2" style="text-align:center;">
+                      <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/ordermanage/AddSubmission'" :show-file-list="false">
+                        <img v-if="openCompany.postData.img2 " :src="$dict.BASE_URL+openCompany.postData.img2 " class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                      </el-upload>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="24">
+                    <el-form-item prop="note" label="备注">
+                      <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="openCompany.postData.note">
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="24" style="text-align:center;">
+                    <el-button @click="openCompanyClosed">取消</el-button>
+                    <el-button @click="companySubmit" type="primary">提交</el-button>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-dialog>
           </template>
         </el-table-column>
       </el-table>
@@ -155,39 +187,6 @@
     <!-- 车辆详情查看 -->
     <el-dialog title="车辆详情" :center="true" @closed="clearShowDetails" :visible.sync="detailsVisible" width="75%" :append-to-body="true">
       <view-vehicle :type="$props.type" :is_enter="$props.is_enter" @error="clearShowDetails" :vehicle_id="showDetailsVehicle.vehicle_id" v-if="detailsVisible"></view-vehicle>
-    </el-dialog>
-    <el-dialog title="厂商开通" :center="true" @closed="openCompanyClosed" :visible.sync="openCompany.visible" :append-to-body="true">
-      <el-form label-position="top" :model="openCompany.postData" size="small" ref="baseForm">
-        <el-row :gutter="30">
-          <el-col :span="12">
-            <el-form-item prop="img1" label="图片1" style="text-align:center;">
-              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false">
-                <img v-if="openCompany.postData.img1 " :src="$dict.BASE_URL+openCompany.postData.img1 " class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="img2" label="图片2" style="text-align:center;">
-              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false">
-                <img v-if="openCompany.postData.img2 " :src="$dict.BASE_URL+openCompany.postData.img2 " class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item prop="note" label="备注">
-              <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="openCompany.postData.note">
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" style="text-align:center;">
-            <el-button @click="openCompanyClosed">取消</el-button>
-            <el-button @click="companySubmit" type="primary">提交</el-button>
-          </el-col>
-        </el-row>
-
-      </el-form>
     </el-dialog>
 
   </div>
@@ -241,7 +240,8 @@ import {
   getVehicleList,
   delVehicle,
   firstTimeVehicle,
-  AddFeeVehicle
+  AddFeeVehicle,
+  AddOrder
 } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import viewVehicle from "@/components/view-vehicle.vue";
@@ -418,8 +418,19 @@ export default {
       this.$set(this.openCompany, "vehicle", scope.row);
       this.openCompany.visible = true;
     },
+    // 添加厂商激活订单
     companySubmit() {
-      console.log(this.openCompany);
+      console.log(this.openCompany.vehicle.operate_type);
+      console.log(this.openCompany.vehicle.vehicle_id);
+      console.log(this.openCompany.vehicle.license);
+      console.log(this.openCompany.vehicle.car_type);
+      console.log(this.openCompany.vehicle.device_type);
+      console.log(this.openCompany.vehicle.sim_no);
+      console.log(this.openCompany.vehicle.belong);
+      console.log(this.openCompany.vehicle.company_id);
+      console.log(this.openCompany.vehicle.content);
+      console.log(this.openCompany.vehicle.imgfile);
+      // AddOrder(){}
     },
     openCompanyClosed() {
       //厂商开通关闭
