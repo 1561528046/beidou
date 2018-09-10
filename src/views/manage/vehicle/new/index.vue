@@ -169,7 +169,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item prop="note" label="备注">
+            <el-form-item prop="note" label="备 注">
               <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="openCompany.postData.note">
               </el-input>
             </el-form-item>
