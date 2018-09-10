@@ -4,6 +4,83 @@
 //A B1,B2
 //A1,A2 B
 //AB,CD
+var DICT = {
+  ALARM: {
+    "1": "紧急报警",
+    "2": "超速报警",
+    "4": "疲劳驾驶",
+    "8": "危险预警",
+    "16": "GNSS 模块发生故障",
+    "32": "GNSS 天线未接或被剪断",
+    "64": "GNSS 天线短路",
+    "128": "终端主电源欠压",
+    "256": "终端主电源掉电",
+    "512": "终端 LCD 或显示器故障",
+    "1024": "TTS 模块故障",
+    "2048": "摄像头故障",
+    "4096": "IC 卡模块故障",
+    "8192": "超速预警",
+    "16384": "疲劳驾驶预警",
+    "262144": "当天累计驾驶超时",
+    "524288": "超时停车",
+    "1048576": "进出区域",
+    "2097152": "进出路线",
+    "4194304": "路段行驶时间不足/过长",
+    "8388608": "路线偏离报警",
+    "16777216": "车辆 VSS 故障",
+    "33554432": "车辆油量异常",
+    "67108864": "车辆被盗",
+    "134217728": "车辆非法点火",
+    "268435456": "车辆非法位移",
+    "536870912": "碰撞预警",
+    "1073741824": "侧翻预警",
+    "2147483648": "非法开门报警"
+  },
+  getx30: function(sign) {
+    var xh = "弱";
+    if (sign > 10 && sign < 21) {
+      xh = "中";
+    }
+    if (sign > 20) {
+      xh = "强";
+    }
+    return xh;
+  },
+  getStatus: function(num) {
+    num = Number(num);
+    if (num) {
+      var binary = num.toString(2).split("");
+      var state1 = binary.pop(); //二进制第一位（数组中最后一位）
+      var state2 = binary.pop(); //二进制第二位（数组中倒数第二位）
+      var result = "";
+      if (state1 == "0") {
+        result += "ACC 关 ";
+      } else {
+        result += "ACC 开 ";
+      }
+
+      if (state2 == "0") {
+        result += " 未定位";
+      } else {
+        result += " 定位";
+      }
+      return result;
+    }
+    return "";
+  },
+  getAlarm: function(codes) {
+    var num = buffer2number(codes);
+    console.log(num);
+    var str = [];
+    for (var key in DICT.ALARM) {
+      if ((num & key) == key) {
+        str.push(DICT.ALARM[key]);
+      }
+    }
+    return str.join(",");
+  }
+};
+
 self.onmessage = function(e) {
   format(e.data).map(item => {
     self.postMessage(serialize(item));
@@ -127,10 +204,22 @@ function serialize(buffer) {
   }
   return result;
 }
+
+//ArrayBuffer转10进制
+function buffer2number(typedBuffer) {
+  var totalLength = typedBuffer.length;
+  return typedBuffer.reduceRight((total, num, index) => {
+    if (index == totalLength - 1) {
+      return num << ((totalLength - index - 1) * 8);
+    }
+    return total + (num << ((totalLength - index - 1) * 8));
+  }, 0);
+}
+//0200定位数据
 function x0200(buffer) {
   var result = {};
   result.sim_id = formatSim(buffer.slice(5, 11)); //终端手机号
-  result.alarm = buffer.slice(13, 17); //报警标志
+  result.alarm = DICT.getAlarm(buffer.slice(13, 17)); //报警标志
   result.state = buffer.slice(17, 21); //状态
   result.lat = buffer.slice(21, 25); //纬度
   result.lng = buffer.slice(25, 29); //经度
