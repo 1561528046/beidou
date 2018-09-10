@@ -62,7 +62,6 @@
               </el-select>
             </el-form-item>
           </el-col>
-
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
@@ -77,12 +76,6 @@
         <router-link :to="{path:'new/add'}" v-if="$props.state==1">
           <el-button type="primary" size="small">
             <i class="el-icon-plus"></i> 添加
-          </el-button>
-        </router-link>
-        &nbsp;
-        <router-link :to="{path:'new/binding'}" v-if="$props.state==1">
-          <el-button type="primary" size="small">
-            <i class="el-icon-plus"></i> 绑定管理
           </el-button>
         </router-link>
         &nbsp;
@@ -188,6 +181,39 @@
     <el-dialog title="车辆详情" :center="true" @closed="clearShowDetails" :visible.sync="detailsVisible" width="75%" :append-to-body="true">
       <view-vehicle :type="$props.type" :is_enter="$props.is_enter" @error="clearShowDetails" :vehicle_id="showDetailsVehicle.vehicle_id" v-if="detailsVisible"></view-vehicle>
     </el-dialog>
+    <el-dialog title="厂商开通" :center="true" @closed="openCompanyClosed" :visible.sync="openCompany.visible" :append-to-body="true">
+      <el-form label-position="top" :model="openCompany.postData" size="small" ref="baseForm">
+        <el-row :gutter="30">
+          <el-col :span="12">
+            <el-form-item prop="img1" label="图片1" style="text-align:center;">
+              <el-upload class="avatar-uploader" accept="image/jpeg" action="" :http-request="(file)=>{compaynSelectImg(1,file.file)}" :show-file-list="false">
+                <img v-if="openCompany.postData.img1 " :src="openCompany.postData.img1 " class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item prop="img2" label="图片2" style="text-align:center;">
+              <el-upload class="avatar-uploader" accept="image/jpeg" action="" :http-request="(file)=>{compaynSelectImg(2,file.file)}" :show-file-list="false">
+                <img v-if="openCompany.postData.img2 " :src="openCompany.postData.img2 " class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item prop="note" label="备注">
+              <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="openCompany.postData.note">
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" style="text-align:center;">
+            <el-button @click="openCompanyClosed">取消</el-button>
+            <el-button @click="companySubmit" type="primary">提交</el-button>
+          </el-col>
+        </el-row>
+
+      </el-form>
+    </el-dialog>
 
   </div>
 </template>
@@ -266,11 +292,13 @@ export default {
       },
       openCompany: {
         postData: {
+          img1File: "",
+          img2File: "",
           img1: "",
           img2: "",
           note: ""
         },
-        visible: false,
+        visible: true,
         vehicle: {} //厂商开通车辆
       },
       showDetailsVehicle: {}, //正在显示的车辆
@@ -357,6 +385,10 @@ export default {
     }
   },
   methods: {
+    compaynSelectImg(index, file) {
+      this.openCompany.postData["img" + index] = URL.createObjectURL(file);
+      this.openCompany.postData["img" + index + "File"] = file;
+    },
     handleCommand(command) {
       console.log(command.command);
       switch (command.command) {
@@ -420,17 +452,14 @@ export default {
     },
     // 添加厂商激活订单
     companySubmit() {
-      console.log(this.openCompany.vehicle.operate_type);
-      console.log(this.openCompany.vehicle.vehicle_id);
-      console.log(this.openCompany.vehicle.license);
-      console.log(this.openCompany.vehicle.car_type);
-      console.log(this.openCompany.vehicle.device_type);
-      console.log(this.openCompany.vehicle.sim_no);
-      console.log(this.openCompany.vehicle.belong);
-      console.log(this.openCompany.vehicle.company_id);
-      console.log(this.openCompany.vehicle.content);
-      console.log(this.openCompany.vehicle.imgfile);
-      // AddOrder(){}
+      console.log(this.openCompany.postData);
+      var postData = new FormData();
+      postData.append("imgfile1", this.openCompany.postData.img1File);
+      postData.append("imgfile2", this.openCompany.postData.img2File);
+      postData.append("asdf", "asdf");
+      this.$ajax.post(this.$dict.API_URL + "/ordermanage/AddOrder", postData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
     },
     openCompanyClosed() {
       //厂商开通关闭

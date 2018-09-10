@@ -113,3 +113,48 @@ export const AddFeeVehicle = query => {
     params: query
   });
 };
+
+// 获取已绑定车辆
+export const getVehicleBinding = query => {
+  query = Object.assign(
+    {
+      page: 1,
+      size: 10,
+      group_id: "",
+      level: "",
+      license: "",
+      owner: ""
+    },
+    query
+  );
+  return ajax.get("/vehicle/GetVehicleBindByPage", {
+    params: query
+  });
+};
+
+// 获取未绑定车辆
+export const getVehicleUnBinding = query => {
+  query = Object.assign(
+    {
+      page: 1,
+      size: 10,
+      license: "",
+      owner: ""
+    },
+    query
+  );
+  return ajax.get("/vehicle/GetVehicleUnBindByPage", {
+    params: query
+  });
+};
+
+// 车辆绑定到组
+export const bindingGroup = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/BindVehicle", queryQS);
+};
+// 车辆解绑
+export const unBindingGroup = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/UnBindVehicle", queryQS);
+};
