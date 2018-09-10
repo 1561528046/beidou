@@ -32,14 +32,14 @@
           </div>
         </div>
         <transition name="fade">
-          <div class="group-container" v-show="currentUser.user_id">
-            <select-group :static="true" :user_id="currentUser.user_id" :group_id.sync="groupData.group_id" :parentid.sync="groupData.parent_id" style="width:300px;height:100%;"></select-group>
+          <div class="group-container" v-if="currentUser.user_id">
+            <select-group :static="true" :useing="['add','edit','remove']" :user_id="currentUser.user_id" :level.sync="groupData.level" :group_id.sync="groupData.group_id" :parentid.sync="groupData.parent_id" style="width:300px;height:100%;"></select-group>
           </div>
         </transition>
         <div class="transfer-container">
           <div class="transfer-filter">
             <div class="transfer-filter-item">
-              <el-form :inline="true" :model="userTableQuery" size="mini">
+              <el-form :inline="true" :model="bindTableQuery" size="mini">
                 <el-form-item>
                   <el-input placeholder="车牌号" v-model="bindTableQuery.license">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
@@ -57,14 +57,14 @@
             </div>
             <div style="width:100px;"></div>
             <div class="transfer-filter-item">
-              <el-form :inline="true" :model="userTableQuery" size="mini">
+              <el-form :inline="true" :model="unbindTableQuery" size="mini">
                 <el-form-item>
-                  <el-input placeholder="车牌号" v-model="bindTableQuery.license">
+                  <el-input placeholder="车牌号" v-model="unbindTableQuery.license">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-input placeholder="业户/车主" v-model="bindTableQuery.owner">
+                  <el-input placeholder="业户/车主" v-model="unbindTableQuery.owner">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
@@ -99,10 +99,10 @@
 /* eslint-disable */
 import {
   getUserList,
-  getUserSim,
-  getSimAllUnbind,
-  addUserSim,
-  delUserSim
+  getVehicleBinding,
+  getVehicleUnBinding,
+  bindingGroup,
+  unBindingGroup
 } from "@/api/index.js";
 import adminTransfer from "@/components/transfer.vue";
 import selectGroup from "@/components/select-group/select-group.vue";
@@ -130,7 +130,8 @@ export default {
     return {
       groupData: {
         parent_id: "",
-        group_id: ""
+        group_id: "",
+        level: ""
       },
       userFilterOpen: false, //用户筛选展开关闭
       userTableQuery: {
@@ -158,14 +159,14 @@ export default {
       leftList: [],
       rightList: [],
       leftCol: [
-        { prop: "sim_no", label: "SIM卡号" },
-        { prop: "icc_id", label: "ICCID" },
-        { prop: "belong", label: "所属运营商" }
+        { prop: "license", label: "车牌号" },
+        { prop: "sim_id", label: "SIM ID" },
+        { prop: "owner", label: "业户/车主" }
       ],
       rightCol: [
-        { prop: "sim_no", label: "SIM卡号" },
-        { prop: "icc_id", label: "ICCID" },
-        { prop: "belong", label: "所属运营商" }
+        { prop: "license", label: "车牌号" },
+        { prop: "sim_id", label: "SIM ID" },
+        { prop: "owner", label: "业户/车主" }
       ]
     };
   },
@@ -202,11 +203,12 @@ export default {
     },
     renderBind() {
       this.$set(this.$data, "leftList", []);
-      if (this.currentUser.user_id) {
+
+      if (this.groupData.group_id) {
         var postData = Object.assign({}, this.bindTableQuery);
-        postData.user_id = this.currentUser.user_id;
         postData.group_id = this.groupData.group_id;
-        getUserSim(postData).then(res => {
+        postData.level = this.groupData.level;
+        getVehicleBinding(postData).then(res => {
           this.rightValues = [];
           if (res.data.code == 0) {
             var arr = res.data.data.map(item => {
@@ -214,7 +216,7 @@ export default {
               return item;
             });
             this.$set(this.$data, "leftList", arr);
-            this.bindTableQuery.total = res.data.total;
+            this.bindTableQuery.total = res.data.data.total;
           } else {
             this.bindTableQuery.total = 0;
           }
@@ -222,16 +224,19 @@ export default {
       }
     },
     renderUnbind() {
-      getSimAllUnbind(this.unbindTableQuery).then(res => {
-        if (res.data.code == 0) {
-          var arr = res.data.data.map(item => {
-            item.parent = "right";
-            return item;
-          });
-          this.$set(this.$data, "rightList", arr);
-          this.unbindTableQuery.total = res.data.total;
-        }
-      });
+      this.$set(this.$data, "rightList", []);
+      if (this.groupData.group_id) {
+        getVehicleUnBinding(this.unbindTableQuery).then(res => {
+          if (res.data.code == 0) {
+            var arr = res.data.data.map(item => {
+              item.parent = "right";
+              return item;
+            });
+            this.$set(this.$data, "rightList", arr);
+            this.unbindTableQuery.total = res.data.total;
+          }
+        });
+      }
     },
     renderUser() {
       this.$set(this.$data, "userList", []);
@@ -268,14 +273,15 @@ export default {
         return false;
       }
       var postData = {
-        user_id: this.currentUser.user_id,
-        sim_nos: []
+        group_id: this.groupData.group_id,
+        level: this.groupData.level,
+        vehicle_ids: []
       };
       items.map(item => {
-        postData.sim_nos.push(item.sim_no);
+        postData.vehicle_ids.push(item.vehicle_id);
       });
-      postData.sim_nos = postData.sim_nos.join(",");
-      addUserSim(postData)
+      postData.vehicle_ids = postData.vehicle_ids.join(",");
+      bindingGroup(postData)
         .then(res => {
           if (res.data.code == 0) {
             next(true);
@@ -295,14 +301,15 @@ export default {
     onright(items, next) {
       //左到右
       var postData = {
-        user_id: this.currentUser.user_id,
-        sim_nos: []
+        group_id: this.groupData.group_id,
+        level: this.groupData.level,
+        vehicle_ids: []
       };
       items.map(item => {
-        postData.sim_nos.push(item.sim_no);
+        postData.vehicle_ids.push(item.vehicle_id);
       });
-      postData.sim_nos = postData.sim_nos.join(",");
-      delUserSim(postData)
+      postData.vehicle_ids = postData.vehicle_ids.join(",");
+      unBindingGroup(postData)
         .then(res => {
           if (res.data.code == 0) {
             next(true);

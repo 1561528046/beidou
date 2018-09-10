@@ -46,7 +46,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" type="primary" icon="el-icon-edit" @click="openBindingVechile(scope)">绑定车辆</el-button>
+            <!-- <el-button size="small" type="primary" icon="el-icon-edit" @click="openBindingVechile(scope)">绑定车辆</el-button> -->
             <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
           </template>
         </el-table-column>
@@ -56,9 +56,9 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog title="选择车辆" :visible.sync="bindingDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <!-- <el-dialog title="选择车辆" :visible.sync="bindingDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <choose-vehicle @button="bindingVehicle"></choose-vehicle>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <add-components @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
     </el-dialog>

@@ -98,6 +98,9 @@
       background-color: #f5f7fa;
     }
   }
+  .el-tree-node > .el-tree-node__children {
+    overflow: visible;
+  }
 }
 </style>
 <script>
@@ -164,6 +167,7 @@ export default {
       this.$emit("input", "");
       this.$emit("update:group_id", "");
       this.$emit("update:parentid", "");
+      this.$emit("update:level", "");
       this.initData();
     }
   },
@@ -200,6 +204,7 @@ export default {
       this.$emit("input", this.currentNodeData.group_id);
       this.$emit("update:group_id", this.currentNodeData.group_id);
       this.$emit("update:parentid", node.parent.data.group_id || 0);
+      this.$emit("update:level", this.currentNodeData.level);
     },
     checkEmpty() {
       if (this.$refs.tree2) {
@@ -255,6 +260,7 @@ export default {
         if (res.data.code == 0) {
           nodeData.group_name = newNodeData.group_name;
           nodeData.group_id = res.data.data[0].group_id;
+          nodeData.level = parseInt(node.parent.data.level) + 1;
           delete nodeData.isAdd;
           delete nodeData.status;
           next(true);
@@ -273,7 +279,8 @@ export default {
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.group_id === nodeData.group_id);
       if (newNodeData.isAdd) {
-        children.splice(index, 1);
+        children.splice(index, 1); //删除data中的数据
+        parent.childNodes.splice(index, 1); //删除node中的数据
         return false;
       }
       delGroup({
@@ -284,7 +291,8 @@ export default {
           this.currentNodeData = null;
         }
         if (res.data.code == 0) {
-          children.splice(index, 1);
+          children.splice(index, 1); //删除data中的数据
+          parent.childNodes.splice(index, 1); //删除node中的数据
         } else {
           this.$notify({
             type: "error",
