@@ -285,7 +285,7 @@ export default {
       }
       delGroup({
         group_id: nodeData.group_id,
-        level: node.parent.data.level || 0
+        level: node.data.level || 0
       }).then(res => {
         if (this.currentNodeData == nodeData) {
           this.currentNodeData = null;

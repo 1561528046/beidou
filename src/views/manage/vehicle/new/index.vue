@@ -80,12 +80,6 @@
           </el-button>
         </router-link>
         &nbsp;
-        <router-link :to="{path:'new/binding'}" v-if="$props.state==1">
-          <el-button type="primary" size="small">
-            <i class="el-icon-plus"></i> 绑定管理
-          </el-button>
-        </router-link>
-        &nbsp;
         <!-- <el-button type="primary" size="small" v-if="$props.state==2">
           <i class="el-icon-tickets"></i> 单车导入
         </el-button>
