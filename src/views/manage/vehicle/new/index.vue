@@ -154,16 +154,16 @@
         <el-row :gutter="30">
           <el-col :span="12">
             <el-form-item prop="img1" label="图片1" style="text-align:center;">
-              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false">
-                <img v-if="openCompany.postData.img1 " :src="$dict.BASE_URL+openCompany.postData.img1 " class="avatar">
+              <el-upload class="avatar-uploader" accept="image/jpeg" action="" :http-request="(file)=>{compaynSelectImg(1,file.file)}" :show-file-list="false">
+                <img v-if="openCompany.postData.img1 " :src="openCompany.postData.img1 " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item prop="img2" label="图片2" style="text-align:center;">
-              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false">
-                <img v-if="openCompany.postData.img2 " :src="$dict.BASE_URL+openCompany.postData.img2 " class="avatar">
+              <el-upload class="avatar-uploader" accept="image/jpeg" action="" :http-request="(file)=>{compaynSelectImg(2,file.file)}" :show-file-list="false">
+                <img v-if="openCompany.postData.img2 " :src="openCompany.postData.img2 " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
             </el-form-item>
@@ -259,11 +259,13 @@ export default {
       },
       openCompany: {
         postData: {
+          img1File: "",
+          img2File: "",
           img1: "",
           img2: "",
           note: ""
         },
-        visible: false,
+        visible: true,
         vehicle: {} //厂商开通车辆
       },
       showDetailsVehicle: {}, //正在显示的车辆
@@ -350,6 +352,10 @@ export default {
     }
   },
   methods: {
+    compaynSelectImg(index, file) {
+      this.openCompany.postData["img" + index] = URL.createObjectURL(file);
+      this.openCompany.postData["img" + index + "File"] = file;
+    },
     handleCommand(command) {
       console.log(command.command);
       switch (command.command) {
@@ -412,7 +418,14 @@ export default {
       this.openCompany.visible = true;
     },
     companySubmit() {
-      console.log(this.openCompany);
+      console.log(this.openCompany.postData);
+      var postData = new FormData();
+      postData.append("imgfile1", this.openCompany.postData.img1File);
+      postData.append("imgfile2", this.openCompany.postData.img2File);
+      postData.append("asdf", "asdf");
+      this.$ajax.post(this.$dict.API_URL + "/ordermanage/AddOrder", postData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
     },
     openCompanyClosed() {
       //厂商开通关闭
