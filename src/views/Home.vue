@@ -78,7 +78,10 @@ export default {
     ws.onmessage = msg => {
       socketDataWorker.postMessage(new Uint8Array(msg.data));
     };
+    socketDataWorker.postMessage(new Uint8Array(uint8array));
+    socketDataWorker.postMessage(new Uint8Array(uint8array1));
     socketDataWorker.onmessage = event => {
+      console.log(event.data);
       var msg = event.data;
       if (db && msg.sim_id) {
         var transaction = db.transaction(["positions"], "readwrite");
