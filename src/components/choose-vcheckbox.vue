@@ -24,7 +24,7 @@
       </el-col>
     </el-row>
     <template>
-      <el-table height="250" :data="tableData.data" border style="width: 100%">
+      <el-table height="250" :data="list" border style="width: 100%">
         <el-table-column label="状态" width="50">
           <template slot-scope="scope">
             <el-checkbox size="medium" v-model="scope.row.checked" style="margin-left:7px;"></el-checkbox>
@@ -54,7 +54,9 @@ export default {
       formData: {
         license: "",
         owner: "",
-        device_no: ""
+        device_no: "",
+        page: 1,
+        size: 10
       },
       tableData: {
         data: []
@@ -68,6 +70,14 @@ export default {
   created() {
     this.selectForm();
   },
+  computed: {
+    list: function() {
+      return this.tableData.data.slice(
+        (this.formData.page - 1) * this.formData.size,
+        this.formData.page * this.formData.size
+      );
+    }
+  },
   methods: {
     selectForm() {
       getVehicleByPage(this.formData).then(res => {
@@ -77,6 +87,9 @@ export default {
           this.$message.error(res.data.msg);
         }
       });
+      for (var j = 0; j < this.tableData.data.length; j++) {
+        this.tableData.data[j].checked = false;
+      }
     },
     formSubmit() {
       var arr = [];

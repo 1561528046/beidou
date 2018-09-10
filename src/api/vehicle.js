@@ -158,3 +158,9 @@ export const unBindingGroup = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/vehicle/UnBindVehicle", queryQS);
 };
+// 判断当前车辆是否有开通厂商的权限
+export const CheckUserIsOpenCompany = query => {
+  return ajax.get("/vehicle/CheckUserIsOpenCompany", {
+    params: query
+  });
+};

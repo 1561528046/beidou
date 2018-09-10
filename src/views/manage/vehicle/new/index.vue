@@ -93,7 +93,6 @@
         <el-table-column prop="first_time" label="首次入网时间" :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"></el-table-column>
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
-
             <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
           </template>
         </el-table-column>
@@ -109,7 +108,7 @@
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="goEdit(scope)">编辑</el-button>
             <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
             <el-dropdown size="mini" style="margin-left:10px;" @command="handleCommand" trigger="click">
-              <el-button size="mini">
+              <el-button size="mini" @click="more(scope)">
                 更多菜单
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
@@ -133,38 +132,6 @@
                   <el-col :span="24" style="text-align:center;">
                     <el-button @click="renew.platformVisible=false">取消</el-button>
                     <el-button @click="upsubmit(scope)" type="primary">提交</el-button>
-                  </el-col>
-                </el-row>
-              </el-form>
-            </el-dialog>
-            <el-dialog title="厂商开通" :center="true" @closed="openCompanyClosed" :visible.sync="openCompany.visible" :append-to-body="true">
-              <el-form label-position="top" :model="openCompany.postData" size="small" ref="baseForm">
-                <el-row :gutter="30">
-                  <el-col :span="12">
-                    <el-form-item prop="img1" label="图片1" style="text-align:center;">
-                      <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/ordermanage/AddSubmission'" :show-file-list="false">
-                        <img v-if="openCompany.postData.img1 " :src="$dict.BASE_URL+openCompany.postData.img1 " class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                      </el-upload>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item prop="img2" label="图片2" style="text-align:center;">
-                      <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/ordermanage/AddSubmission'" :show-file-list="false">
-                        <img v-if="openCompany.postData.img2 " :src="$dict.BASE_URL+openCompany.postData.img2 " class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                      </el-upload>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="24">
-                    <el-form-item prop="note" label="备注">
-                      <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="openCompany.postData.note">
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="24" style="text-align:center;">
-                    <el-button @click="openCompanyClosed">取消</el-button>
-                    <el-button @click="companySubmit" type="primary">提交</el-button>
                   </el-col>
                 </el-row>
               </el-form>
@@ -211,10 +178,18 @@
             <el-button @click="companySubmit" type="primary">提交</el-button>
           </el-col>
         </el-row>
-
       </el-form>
     </el-dialog>
-
+    <el-dialog title="厂商续费" width="20%" :center="true" @closed="openCompanyClosed" :visible.sync="openCompany.company_renewal" :append-to-body="true">
+      <el-form label-position="top" size="small" ref="baseForm">
+        <el-row :gutter="30">
+          <el-col :span="24" style="text-align:center;">
+            <el-button @click="openCompany.company_renewal=false">取消</el-button>
+            <el-button @click="companyRenewal" type="primary">确定</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <style lang="less">
@@ -267,7 +242,8 @@ import {
   delVehicle,
   firstTimeVehicle,
   AddFeeVehicle,
-  AddOrder
+  AddOrder,
+  CheckUserIsOpenCompany
 } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import viewVehicle from "@/components/view-vehicle.vue";
@@ -298,8 +274,10 @@ export default {
           img2: "",
           note: ""
         },
-        visible: true,
-        vehicle: {} //厂商开通车辆
+        visible: false,
+        company_renewal: false,
+        vehicle: {}, //厂商开通车辆
+        company: {} //厂商续费
       },
       showDetailsVehicle: {}, //正在显示的车辆
       detailsVisible: false, //查看详情显示隐藏
@@ -385,6 +363,13 @@ export default {
     }
   },
   methods: {
+    more(scope) {
+      CheckUserIsOpenCompany({ vehicle_id: scope.row.vehicle_id }).then(res => {
+        if (res.data.code == 0) {
+          console.log(res.data.data);
+        }
+      });
+    },
     compaynSelectImg(index, file) {
       this.openCompany.postData["img" + index] = URL.createObjectURL(file);
       this.openCompany.postData["img" + index + "File"] = file;
@@ -402,6 +387,7 @@ export default {
           this.renewPlatform(command.data);
           break;
         case "renew-company": //厂商续费
+          this.renewCompany(command.data);
           break;
       }
     },
@@ -434,7 +420,6 @@ export default {
         }
       });
     },
-    // 平台续费结束
     updatePosition(scope) {
       firstTimeVehicle(scope.row).then(res => {
         if (res.data.code == 0) {
@@ -447,16 +432,23 @@ export default {
     },
     //厂商激活
     openCompanyShow(scope) {
+      console.log(scope.row);
       this.$set(this.openCompany, "vehicle", scope.row);
       this.openCompany.visible = true;
     },
     // 添加厂商激活订单
     companySubmit() {
-      console.log(this.openCompany.postData);
       var postData = new FormData();
+      postData.append("operate_type", 4);
+      postData.append("vehicle_id", this.openCompany.vehicle.vehicle_id);
+      postData.append("license", this.openCompany.vehicle.license);
+      postData.append("car_type", this.openCompany.vehicle.type);
+      postData.append("device_id", this.openCompany.vehicle.device_id);
+      postData.append("sim_no", this.openCompany.vehicle.sim_no);
+      postData.append("company_id", this.openCompany.vehicle.company_id);
+      postData.append("content", this.openCompany.postData.node);
       postData.append("imgfile1", this.openCompany.postData.img1File);
       postData.append("imgfile2", this.openCompany.postData.img2File);
-      postData.append("asdf", "asdf");
       this.$ajax.post(this.$dict.API_URL + "/ordermanage/AddOrder", postData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
@@ -472,7 +464,24 @@ export default {
       this.openCompany.visible = false;
       this.openCompany.addKey += 1;
     },
-    // 厂商激活结束
+    // 厂商续费
+    renewCompany(scope) {
+      this.$set(this.openCompany, "company", scope.row);
+      this.openCompany.company_renewal = true;
+    },
+    companyRenewal() {
+      this.openCompany.company.operate_type = 5;
+      this.openCompany.company.car_type = this.openCompany.company.type;
+      AddOrder(this.openCompany.company).then(res => {
+        if (res.data.code == 0) {
+          this.openCompany.company_renewal = false;
+          this.$message.success(res.data.msg);
+          this.getTable();
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
     clearShowDetails() {
       this.$set(this.$data, "showDetailsVehicle", {});
       this.detailsVisible = false;
