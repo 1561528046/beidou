@@ -62,7 +62,6 @@
               </el-select>
             </el-form-item>
           </el-col>
-
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
