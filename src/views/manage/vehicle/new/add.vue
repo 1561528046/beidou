@@ -167,6 +167,8 @@
             <el-form-item label="准牵引总质量(kg)" prop="draw_ton" v-if="formData.license_color==1">
               <el-input v-model="formData.draw_ton" maxlength="8"></el-input>
             </el-form-item>
+            <el-form-item style="height:32px;" v-if="formData.license_color!=1">
+            </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="外廓尺寸(mm)长" prop="length">

@@ -1,10 +1,11 @@
 export const dict = {
   //全局字典
-  MAP_KEY: "1effb3317ab25b91eb7b163d5febd226",
-  // BASE_URL: "http://192.168.88.100:725/",
-  // API_URL: "http://192.168.88.100:725/api",
-  BASE_URL: "http://192.168.88.88:10462/",
-  API_URL: "http://192.168.88.88:10462/api",
+  AMAP_KEY: "1effb3317ab25b91eb7b163d5febd226", //高德key
+  BMAP_KEY: "E6CTjsauEoavEzCYG4WM1zt0S5OB6dAf", //百度key
+  BASE_URL: "http://192.168.88.100:725/",
+  API_URL: "http://192.168.88.100:725/api",
+  // BASE_URL: "http://192.168.88.88:10462/",
+  // API_URL: "http://192.168.88.88:10462/api",
   license_color: {
     "1": {
       backgroundColor: "#ffbf00",
