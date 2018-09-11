@@ -25,6 +25,11 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
@@ -34,7 +39,11 @@
         <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
         <el-table-column prop="speed" label="速度(公里/时)" :formatter="$utils.baseFormatter "> </el-table-column>>
         <el-table-column prop="em_0x01" label="行驶里程" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="start_address" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <<<<<<< HEAD <el-table-column prop="start_address" label="当时位置" :formatter="$utils.baseFormatter ">
+          </el-table-column>
+          =======
+          <el-table-column prop="address" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
+          >>>>>>> f0064e9a2c296367bb2fb852b96b73b0e4908d0f
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -53,11 +62,10 @@ import { getReport } from "@/api/index.js";
 import selectAlarmtype from "@/components/select-alarmtype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 import { location2address, gps2amap } from "@/utils/map-tools.js";
+import XLSX from "xlsx";
 export default {
   components: { chooseVehicle, selectAlarmtype },
-  created() {
-    this.keyupSubmit();
-  },
+  created() {},
   computed: {
     list: function() {
       return this.tableData.data.slice(
@@ -125,6 +133,26 @@ export default {
   },
   methods: {
     // 选择查询方式
+    exportExcel() {
+      // var ws = XLSX.utils.json_to_sheet(
+      //   [
+      //     { A: "S", B: "h", C: "e", D: "e", E: "t", F: "J", G: "S" },
+      //     { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7 },
+      //     { A: 2, B: 3, C: 4, D: 5, E: 6, F: 7, G: 8 }
+      //   ],
+      //   { header: ["A", "B", "C", "D", "E", "F", "G"], skipHeader: true }
+      // );
+      var ws = XLSX.utils.json_to_sheet(this.tableData.data, {
+        header: ["A", "B", "C", "D", "E", "F", "G"],
+        skipHeader: true
+      });
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "测试导出");
+      XLSX.writeFile(wb, "测试导出.xlsx");
+      // var file = XLSX.write(ws, { Props: { Author: "SheetJS" } });
+
+      console.log(ws);
+    },
     addFrom() {
       this.addKey++;
       this.addDialog = true;
@@ -161,6 +189,7 @@ export default {
           var query = Object.assign({}, this.tableQuery);
           getReport(query)
             .then(res => {
+              this.tableLoading = false;
               if (res.data.code == 0) {
                 var data = [];
                 for (var i = 0; i < 2; i++) {
@@ -172,50 +201,52 @@ export default {
                     res.data.data[i].stop_time - res.data.data[i].start_time;
                   data.push(res.data.data[i]);
                 }
+
                 //1、gps坐标转高德坐标
                 //2、高德坐标转成地址
-                Promise.all([
-                  gps2amap({
-                    data: data,
-                    longKey: "longitude",
-                    latKey: "latitude"
-                  }),
-                  gps2amap({
-                    data: data,
-                    longKey: "longitude",
-                    latKey: "latitude"
-                  })
-                ])
+
+                var loader = this.$loading({
+                  text: "正在转换坐标"
+                });
+                gps2amap({
+                  data: data,
+                  longKey: "longitude",
+                  latKey: "latitude"
+                })
                   .then(res => {
                     data.map((item, index) => {
-                      item.longitude = res[0][index].split(",")[0];
-                      item.latitude = res[0][index].split(",")[1];
+                      item.amap_longitude = res[index].split(",")[0];
+                      item.amap_latitude = res[index].split(",")[1];
                     });
                   })
+                  .catch(() => {
+                    loader.close();
+                  })
                   .then(() => {
-                    Promise.all([
-                      location2address({
-                        data: data,
-                        longKey: "longitude",
-                        latKey: "latitude"
-                      }),
-                      location2address({
-                        data: data,
-                        longKey: "longitude",
-                        latKey: "latitude"
-                      })
-                    ]).then(addressArr => {
-                      data.map((item, index) => {
-                        item.start_address = addressArr[0][index];
-                        item.stop_address = addressArr[1][index];
-                      });
-                      this.$set(this.tableData, "data", Object.freeze(data));
-                      this.$set(
-                        this.tableData,
-                        "total",
-                        this.tableData.data.length
-                      );
+                    loader.close();
+                    loader = this.$loading({
+                      text: "正在转换地址"
                     });
+                    location2address({
+                      data: data,
+                      longKey: "amap_longitude",
+                      latKey: "amap_latitude"
+                    })
+                      .then(addressArr => {
+                        loader.close();
+                        data.map((item, index) => {
+                          item.address = addressArr[index];
+                        });
+                        this.$set(this.tableData, "data", Object.freeze(data));
+                        this.$set(
+                          this.tableData,
+                          "total",
+                          this.tableData.data.length
+                        );
+                      })
+                      .catch(() => {
+                        loader.close();
+                      });
                   });
               } else {
                 this.$set(this.$data, "tableData", []);
@@ -245,27 +276,14 @@ export default {
           });
         }
       });
-      this.tableLoading = false;
-    },
-    //回车事件
-    keyupSubmit() {
-      document.onkeydown = e => {
-        console.log(e);
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
     },
     // 分页
     handleSizeChange(val) {
       this.tableQuery.page = 1;
       this.tableQuery.size = val;
-      this.getTable();
     },
     handleCurrentChange(val) {
       this.tableQuery.page = val;
-      this.getTable();
     }
   }
 };
