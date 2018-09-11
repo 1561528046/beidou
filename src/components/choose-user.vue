@@ -39,7 +39,7 @@ export default {
       this.$emit("button", scope);
     },
     getTable() {
-      getUserChildrenList({ user_id: 1 }).then(res => {
+      getUserChildrenList().then(res => {
         if (res.data.code == 0) {
           this.$set(this.tableData, "data", res.data.data);
         }

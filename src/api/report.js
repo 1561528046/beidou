@@ -153,4 +153,16 @@ export const getNightDetailByPage = query => {
   });
 };
 // 车辆维护记录
+export const getVehicleLogByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetVehicleLogByPage", queryQS, {
+    params: query
+  });
+};
 // 视频变更报表
+export const getDeviceLogByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetDeviceLogByPage", queryQS, {
+    params: query
+  });
+};

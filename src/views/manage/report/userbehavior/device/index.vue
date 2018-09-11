@@ -10,7 +10,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item prop="sim_id" label="选择车辆">
+            <el-form-item prop="device_no" label="选择设备">
               <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
                 <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
               </el-button>
@@ -40,7 +40,6 @@
       </div>
     </el-card>
     <el-dialog width="30%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-car @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-car>
     </el-dialog>
   </div>
 </template>

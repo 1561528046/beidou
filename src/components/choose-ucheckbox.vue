@@ -58,7 +58,8 @@ export default {
           type: "error"
         });
       }
-      getVehicleByPage(this.formData).then(res => {
+
+      getVehicleByPage({ user_ids: this.formData.user_ids }).then(res => {
         if (res.data.code == 0) {
           this.$set(this.tableQuery, "data", res.data.data);
           if (this.tableQuery.data.length == 0) {
@@ -79,7 +80,7 @@ export default {
       });
     },
     getTable() {
-      getUserChildrenList({ user_id: 1 }).then(res => {
+      getUserChildrenList().then(res => {
         if (res.data.code == 0) {
           this.$set(this.tableData, "data", res.data.data);
         }

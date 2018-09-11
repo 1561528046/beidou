@@ -177,6 +177,7 @@ export default {
     },
     // 回来的数据
     xz(scope) {
+      this.tableQuery.sim_ids = "";
       this.vehicleDialog = false;
       if (!scope.length == 0) {
         this.userAlert = true;
@@ -203,6 +204,7 @@ export default {
       );
     },
     user(scope) {
+      this.tableQuery.sim_ids = "";
       this.userDialog = false;
       if (!scope.vehicle.length == 0) {
         this.vehicleAlert = true;
@@ -232,6 +234,19 @@ export default {
     },
     //查询产品列表
     getTable() {
+      if (this.tableQuery.real_name == "" && this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆或用户",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

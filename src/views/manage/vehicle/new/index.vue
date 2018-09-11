@@ -117,7 +117,7 @@
                 <el-dropdown-item v-if="$props.state==1" :command="{command:'update-position',data:scope}">更新定位</el-dropdown-item>
                 <el-dropdown-item v-if="$props.state!=1" :command="{command:'renew-platform',data:scope}">平台续费</el-dropdown-item>
                 <el-dropdown-item v-if="$props.state!=1" :command="{command:'renew-company',data:scope}">厂商续费</el-dropdown-item>
-                <el-dropdown-item :command="{command:'active-company',data:scope}">厂商激活(2个图片，一个备注)</el-dropdown-item>
+                <el-dropdown-item v-if="this.company_open" :command="{command:'active-company',data:scope}">厂商激活(2个图片，一个备注)</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dialog title="平台续费" :center="true" @closed="openCompanyClosed" :visible.sync="renew.platformVisible" :append-to-body="true" width="30%">
@@ -259,6 +259,7 @@ export default {
   },
   data() {
     return {
+      company_open: "",
       platformTime: "",
       renew: {
         plateformDate: "",
@@ -364,9 +365,13 @@ export default {
   },
   methods: {
     more(scope) {
-      CheckUserIsOpenCompany({ vehicle_id: scope.row.vehicle_id }).then(
-        () => {}
-      );
+      CheckUserIsOpenCompany({ vehicle_id: scope.row.vehicle_id }).then(res => {
+        if (res.data) {
+          this.company_open = res.data;
+        } else {
+          this.company_open = res.data;
+        }
+      });
     },
     compaynSelectImg(index, file) {
       this.openCompany.postData["img" + index] = URL.createObjectURL(file);
