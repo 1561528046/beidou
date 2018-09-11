@@ -34,7 +34,7 @@
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
         <el-table-column prop="duration_ss" label="时长" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="停车位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="start_address" label="停车位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -52,6 +52,7 @@ import moment from "moment";
 import { getStopDetailByPage } from "@/api/index.js";
 import selectAlarmtype from "@/components/select-alarmtype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
+import { location2address, gps2amap } from "@/utils/map-tools.js";
 export default {
   components: { chooseVehicle, selectAlarmtype },
   created() {
@@ -171,14 +172,51 @@ export default {
                     res.data.data[i].stop_time - res.data.data[i].start_time;
                   data.push(res.data.data[i]);
                 }
-                this.$set(this.tableData, "data", Object.freeze(data));
-                this.$set(this.tableData, "total", this.tableData.data.length);
-                this.$emit("success");
-                this.$notify({
-                  message: res.data.msg,
-                  title: "提示",
-                  type: "success"
-                });
+                //1、gps坐标转高德坐标
+                //2、高德坐标转成地址
+                Promise.all([
+                  gps2amap({
+                    data: data,
+                    longKey: "longitude",
+                    latKey: "latitude"
+                  }),
+                  gps2amap({
+                    data: data,
+                    longKey: "longitude",
+                    latKey: "latitude"
+                  })
+                ])
+                  .then(res => {
+                    data.map((item, index) => {
+                      item.longitude = res[0][index].split(",")[0];
+                      item.latitude = res[0][index].split(",")[1];
+                    });
+                  })
+                  .then(() => {
+                    Promise.all([
+                      location2address({
+                        data: data,
+                        longKey: "longitude",
+                        latKey: "latitude"
+                      }),
+                      location2address({
+                        data: data,
+                        longKey: "longitude",
+                        latKey: "latitude"
+                      })
+                    ]).then(addressArr => {
+                      data.map((item, index) => {
+                        item.start_address = addressArr[0][index];
+                        item.stop_address = addressArr[1][index];
+                      });
+                      this.$set(this.tableData, "data", Object.freeze(data));
+                      this.$set(
+                        this.tableData,
+                        "total",
+                        this.tableData.data.length
+                      );
+                    });
+                  });
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

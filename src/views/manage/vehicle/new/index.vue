@@ -117,7 +117,7 @@
                 <el-dropdown-item v-if="$props.state==1" :command="{command:'update-position',data:scope}">更新定位</el-dropdown-item>
                 <el-dropdown-item v-if="$props.state!=1" :command="{command:'renew-platform',data:scope}">平台续费</el-dropdown-item>
                 <el-dropdown-item v-if="$props.state!=1" :command="{command:'renew-company',data:scope}">厂商续费</el-dropdown-item>
-                <el-dropdown-item v-if="this.company_open" :command="{command:'active-company',data:scope}">厂商激活(2个图片，一个备注)</el-dropdown-item>
+                <el-dropdown-item v-if="company_open=='1'" :command="{command:'active-company',data:scope}">厂商激活(2个图片，一个备注)</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dialog title="平台续费" :center="true" @closed="openCompanyClosed" :visible.sync="renew.platformVisible" :append-to-body="true" width="30%">
@@ -366,10 +366,10 @@ export default {
   methods: {
     more(scope) {
       CheckUserIsOpenCompany({ vehicle_id: scope.row.vehicle_id }).then(res => {
-        if (res.data) {
-          this.company_open = res.data;
+        if (res.data.code == 0) {
+          this.company_open = res.data.data[0].bool;
         } else {
-          this.company_open = res.data;
+          this.company_open = res.data.data[0].bool;
         }
       });
     },
@@ -451,9 +451,15 @@ export default {
       postData.append("content", this.openCompany.postData.node);
       postData.append("imgfile1", this.openCompany.postData.img1File);
       postData.append("imgfile2", this.openCompany.postData.img2File);
-      this.$ajax.post(this.$dict.API_URL + "/ordermanage/AddOrder", postData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
+      this.$ajax
+        .post(this.$dict.API_URL + "/ordermanage/AddOrder", postData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(res => {
+          if (res.data.code == 0) {
+            this.openCompany.visible = false;
+          }
+        });
     },
     openCompanyClosed() {
       //厂商开通关闭

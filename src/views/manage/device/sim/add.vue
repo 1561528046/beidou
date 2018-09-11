@@ -21,6 +21,11 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
+          <el-form-item prop="flow" label="流量">
+            <el-input v-model="formData.flow"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
           <el-form-item prop="note" label="备注">
             <el-input v-model="formData.note"></el-input>
           </el-form-item>
@@ -47,7 +52,8 @@ export default {
         icc_id: "",
         belong: "",
         user_id: "",
-        note: ""
+        note: "",
+        flow: ""
       },
       rules: {
         ...rules,

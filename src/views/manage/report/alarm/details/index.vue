@@ -30,7 +30,7 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+      <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
             <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
@@ -42,8 +42,8 @@
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
         <el-table-column prop="start_speed" label="开始速度" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="stop_speed" label="结束速度" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="start_address" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="stop_address" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -61,6 +61,7 @@ import moment from "moment";
 import { getAlarmDetailByPage } from "@/api/index.js";
 import selectAlarmtype from "@/components/select-alarmtype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
+import { location2address, gps2amap } from "@/utils/map-tools.js";
 export default {
   components: { chooseVehicle, selectAlarmtype },
   created() {
@@ -180,14 +181,51 @@ export default {
                     res.data.data[i].stop_time - res.data.data[i].start_time;
                   data.push(res.data.data[i]);
                 }
-                this.$set(this.tableData, "data", Object.freeze(data));
-                this.$set(this.tableData, "total", this.tableData.data.length);
-                this.$emit("success");
-                this.$notify({
-                  message: res.data.msg,
-                  title: "提示",
-                  type: "success"
-                });
+                Promise.all([
+                  gps2amap({
+                    data: data,
+                    longKey: "start_longitude",
+                    latKey: "start_latitude"
+                  }),
+                  gps2amap({
+                    data: data,
+                    longKey: "stop_longitude",
+                    latKey: "stop_latitude"
+                  })
+                ])
+                  .then(res => {
+                    data.map((item, index) => {
+                      item.start_longitude = res[0][index].split(",")[0];
+                      item.start_latitude = res[0][index].split(",")[1];
+                      item.stop_longitude = res[1][index].split(",")[0];
+                      item.stop_latitude = res[1][index].split(",")[1];
+                    });
+                  })
+                  .then(() => {
+                    Promise.all([
+                      location2address({
+                        data: data,
+                        longKey: "start_longitude",
+                        latKey: "start_latitude"
+                      }),
+                      location2address({
+                        data: data,
+                        longKey: "stop_longitude",
+                        latKey: "stop_latitude"
+                      })
+                    ]).then(addressArr => {
+                      data.map((item, index) => {
+                        item.start_address = addressArr[0][index];
+                        item.stop_address = addressArr[1][index];
+                      });
+                      this.$set(this.tableData, "data", Object.freeze(data));
+                      this.$set(
+                        this.tableData,
+                        "total",
+                        this.tableData.data.length
+                      );
+                    });
+                  });
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

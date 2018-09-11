@@ -30,7 +30,7 @@
     <el-card shadow="always">
       <div class="admin-table-actions">
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+      <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="user_real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="operate_type_name" label="类型" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter "> </el-table-column>
@@ -61,6 +61,14 @@ export default {
   components: { chooseVcheckbox, chooseUcheckbox },
   created() {
     this.keyupSubmit();
+  },
+  computed: {
+    list: function() {
+      return this.tableData.data.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
   },
   data() {
     return {

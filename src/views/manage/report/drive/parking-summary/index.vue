@@ -177,12 +177,14 @@ export default {
       this.addKey++;
       this.vehicleDialog = true;
       this.tableQuery.license = "";
+      this.tableQuery.sim_ids = "";
       this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
       this.tableQuery.real_name = "";
+      this.tableQuery.sim_ids = "";
       this.vehicleAlert = false;
     },
     // 回来的数据

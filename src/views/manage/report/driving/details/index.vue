@@ -83,7 +83,7 @@ export default {
       tableQuery: {
         start_time: "",
         stop_time: "",
-        time: ["2018-08-22 00:00:00", "2018-08-23 23:59:00"],
+        time: [],
         license: "",
         license_color: "",
         speed_limit: "",

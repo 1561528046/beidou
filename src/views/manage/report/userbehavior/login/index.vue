@@ -25,7 +25,7 @@
     <el-card shadow="always">
       <div class="admin-table-actions">
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+      <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="user_name" label="登录账号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="login_time" label="开始时间" :formatter="(row)=>{return this.$utils.momentDate(row.login_time)}"> </el-table-column>
@@ -55,6 +55,14 @@ export default {
   components: { chooseVcheckbox, chooseUcheckbox },
   created() {
     this.keyupSubmit();
+  },
+  computed: {
+    list: function() {
+      return this.tableData.data.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
   },
   data() {
     return {

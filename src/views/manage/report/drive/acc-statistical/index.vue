@@ -30,7 +30,7 @@
     <el-card shadow="always">
       <div class="admin-table-actions">
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+      <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
             <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
@@ -64,6 +64,14 @@ export default {
   components: { chooseVcheckbox, chooseUcheckbox },
   created() {
     this.keyupSubmit();
+  },
+  computed: {
+    list: function() {
+      return this.tableData.data.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
   },
   data() {
     return {
@@ -169,12 +177,14 @@ export default {
       this.addKey++;
       this.vehicleDialog = true;
       this.tableQuery.license = "";
+      this.tableQuery.sim_ids = "";
       this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
       this.tableQuery.real_name = "";
+      this.tableQuery.sim_ids = "";
       this.vehicleAlert = false;
     },
     // 回来的数据

@@ -62,16 +62,14 @@
       <el-form-item v-show="formData.detail_type==4">
         <template slot-scope="scope">
           <label style="float:left;">运营商</label>
-          <el-select v-model="formData.detail_name" style="width: 100%;">
-            <el-option v-for="belongItem in belongSelect" :key="belongItem" :label="belongItem" :value="belongItem"></el-option>
-          </el-select>
+          <select-group style="width:100%;" v-model="formData.detail_name"></select-group>
           <label style="float:left;">计费方式</label>
           <el-select v-model="formData.pay_type" style="width:100%;">
             <el-option label="计费" value="1">计费</el-option>
             <el-option label="充值" value="2">充值</el-option>
           </el-select>
-          <label style="float:left;">使用流量/M</label>
-          <el-input v-model="formData.count" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+          <label style="float:left;">收费单项(使用流量/M)</label>
+          <select-flow style="width:100%;" v-model="formData.count"></select-flow>
           <label style="float:left;">单价</label>
           <el-input v-model="formData.original_price" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
         </template>
@@ -101,11 +99,14 @@ import { rules } from "@/utils/rules.js";
 import selectCompany from "@/components/select-company.vue";
 import selectIndustry from "@/components/select-industry.vue";
 import selectDeviceType from "@/components/select-devicetype.vue";
+import selectFlow from "@/components/select-flow.vue";
+import selectGroup from "@/components/select-group.vue";
 import { addProductDetail } from "@/api/index.js";
 import addProduct from "@/components/product/product-manage.vue";
 export default {
   data() {
     return {
+      flow: [],
       belongSelect: ["中国移动", "中国联通", "中国电信"],
       industrys: this.$dict.industry,
       button_type: true,
@@ -130,6 +131,14 @@ export default {
         ...rules
       }
     };
+  },
+  components: {
+    selectCompany,
+    addProduct,
+    selectDeviceType,
+    selectIndustry,
+    selectFlow,
+    selectGroup
   },
   props: {
     parent_id: String,
@@ -229,8 +238,7 @@ export default {
     // notify: function() {
     //   this.$refs.child.parentMsg(this.msg);
     // }
-  },
-  components: { selectCompany, addProduct, selectDeviceType, selectIndustry }
+  }
 };
 </script>
 <style>

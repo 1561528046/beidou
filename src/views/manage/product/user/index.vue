@@ -6,7 +6,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="用户名称">
-              <el-input></el-input>
+              <el-input v-model="tableQuery.real_name"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -16,7 +16,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="产品名称">
-              <el-input></el-input>
+              <el-input v-model="tableQuery.package_title"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -30,7 +30,7 @@
     <el-card shadow="always">
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="order_no" label="所属地区" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="province_name" label="所属地区" :formatter="$utils.areaFormatter"> </el-table-column>
         <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="tel" label="联系电话" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="title" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -71,6 +71,11 @@ export default {
       isCollapse: false,
       tableQuery: {
         area: [],
+        provice_id: "",
+        city_id: "",
+        county_id: "",
+        package_title: "",
+        real_name: "",
         size: 10,
         page: 1
       },
@@ -88,18 +93,20 @@ export default {
       state2: ""
     };
   },
-  watch: {
-    tableQuery: {
-      handler() {
-        console.log(this.tableQuery);
-      },
-      deep: true
-    }
-  },
+  watch: {},
   mounted() {},
   methods: {
     //查询用户列表
     getTable() {
+      this.tableQuery.city_id = this.tableQuery.area.city_id
+        ? this.tableQuery.area.city_id
+        : "";
+      this.tableQuery.county_id = this.tableQuery.area.county_id
+        ? this.tableQuery.area.county_id
+        : "";
+      this.tableQuery.provice_id = this.tableQuery.area.province_id
+        ? this.tableQuery.area.province_id
+        : "";
       var query = Object.assign({}, this.tableQuery);
       getBindFeesPackageUsers(query)
         .then(res => {

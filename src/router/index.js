@@ -83,6 +83,18 @@ var router = new Router({
             name: "服务器状态",
             icon: "iconfont icon-fuwuqi1"
           }
+        },
+        {
+          path: "agreement-808",
+          name: "agreement-808",
+          meta: { name: "808", icon: "iconfont icon-boxplot-fill" },
+          component: () => import("@/views/manage/device/device/index.vue")
+        },
+        {
+          path: "agreement-809",
+          name: "agreement-809",
+          meta: { name: "808", icon: "iconfont icon-boxplot-fill" },
+          component: () => import("@/views/manage/device/device/index.vue")
         }
       ]
     },

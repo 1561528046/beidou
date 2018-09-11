@@ -223,6 +223,7 @@ export default {
       CancelOrder({ order_no: this.order_no }).then(res => {
         if (res.data.code == 0) {
           this.cancelDialog = false;
+          this.getTable();
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);
