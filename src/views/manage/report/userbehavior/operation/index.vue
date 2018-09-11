@@ -11,16 +11,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="license" label="车辆">
-              <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectvehicle">
-                <el-input type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
-              </el-button>
+              <el-input :disabled="vehicleAlert" @focus="selectvehicle" type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="real_name" label="用户">
-              <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectuser">
-                <el-input type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
-              </el-button>
+              <el-input :disabled="userAlert" @focus="selectuser" type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4" style="text-align: right;">
@@ -59,8 +55,8 @@
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getUserOperateLogByPage } from "@/api/index.js";
-import chooseVcheckbox from "@/components/choose-vcheckbox";
-import chooseUcheckbox from "@/components/choose-ucheckbox";
+import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
+import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
   components: { chooseVcheckbox, chooseUcheckbox },
   created() {
@@ -71,11 +67,14 @@ export default {
       vehicleDialog: false,
       userDialog: false,
       isCollapse: false,
+      vehicleAlert: false,
+      userAlert: false,
+      vehicles: [],
       tableQuery: {
         start_time: "",
         stop_time: "",
         time: "",
-        vehicle_ids: "",
+        sim_ids: "",
         user_ids: "",
         license: "",
         real_name: "",
@@ -84,13 +83,6 @@ export default {
       },
       rules: {
         ...rules,
-        license: [
-          {
-            required: true,
-            trigger: "change",
-            message: "请输入车牌号"
-          }
-        ],
         time: [
           {
             required: true,
@@ -142,20 +134,28 @@ export default {
     };
   },
   mounted() {},
+  watch: {
+    vehicleAlert: function() {
+      if (this.tableQuery.license == "") {
+        this.userAlert = false;
+      }
+    },
+    userAlert: function() {
+      if (this.tableQuery.real_name == "") {
+        this.vehicleAlert = false;
+      }
+    }
+  },
   methods: {
     // 查询时间验证
     validateTime(rule, value, callback) {
-      var date = moment(value[0]).add(30, "days")._d;
+      var date = moment(value[0]).add(3, "days")._d;
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
       } else if (!moment(value[1]).isBefore(date)) {
-        callback(
-          new Error(
-            "选择时间不能大于30天!                                                 "
-          )
-        );
+        callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
         this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
@@ -167,25 +167,36 @@ export default {
       this.addKey++;
       this.vehicleDialog = true;
       this.tableQuery.license = "";
+      this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
       this.tableQuery.real_name = "";
+      this.vehicleAlert = false;
     },
     // 回来的数据
     xz(scope) {
       console.log(scope);
       this.vehicleDialog = false;
+      if (!scope.length == 0) {
+        this.userAlert = true;
+      }
+      this.vehicles = [];
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.license =
           this.tableQuery.license + scope[i].license + ",";
-        this.tableQuery.vehicle_ids =
-          this.tableQuery.vehicle_ids + scope[i].vehicle_id + ",";
+        this.tableQuery.sim_ids =
+          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+        this.vehicles.push({
+          license: scope[i].license,
+          license_color: scope[i].license_color,
+          sim_id: scope[i].sim_id
+        });
       }
-      this.tableQuery.vehicle_ids = this.tableQuery.vehicle_ids.substring(
+      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,
-        this.tableQuery.vehicle_ids.lastIndexOf(",")
+        this.tableQuery.sim_ids.lastIndexOf(",")
       );
       this.tableQuery.license = this.tableQuery.license.substring(
         0,
@@ -193,12 +204,20 @@ export default {
       );
     },
     user(scope) {
-      console.log(scope);
       this.userDialog = false;
-      for (var i = 0; i < scope.length; i++) {
-        this.tableQuery.real_name =
-          this.tableQuery.real_name + scope[i].real_name + ",";
+      if (!scope.vehicle.length == 0) {
+        this.vehicleAlert = true;
       }
+      for (var s = 0; s < scope.user.length; s++) {
+        this.tableQuery.real_name =
+          this.tableQuery.real_name + scope.user[s].real_name + ",";
+        this.tableQuery.user_ids =
+          this.tableQuery.user_ids + scope.user[s].user_id + ",";
+      }
+      this.tableQuery.user_ids = this.tableQuery.user_ids.substring(
+        0,
+        this.tableQuery.user_ids.lastIndexOf(",")
+      );
       this.tableQuery.real_name = this.tableQuery.real_name.substring(
         0,
         this.tableQuery.real_name.lastIndexOf(",")
@@ -207,10 +226,6 @@ export default {
     //查询产品列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.vehicle_ids = "";
-      if (this.tableQuery.vehicle_ids == "") {
-        this.tableQuery.user_ids = "65";
-      }
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
@@ -218,10 +233,23 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
+                var arr = {};
+                this.vehicles.map(item => {
+                  arr[item.sim_id] = item;
+                });
+                res.data.data.map(item => {
+                  item.sim_id =
+                    item.sim_id[0] == "0" ? item.sim_id.slice(1) : item.sim_id;
+                  var obj = arr[item.sim_id];
+                  if (!obj) {
+                    return false;
+                  }
+                  item.license = obj.license;
+                  item.license_color = obj.license_color;
+                });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
-                this.tableQuery.vehicle_ids = "";
                 this.$emit("success");
                 this.$notify({
                   message: res.data.msg,
@@ -281,12 +309,45 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="less">
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 input[type="number"] {
   -moz-appearance: textfield;
+}
+.license-card {
+  padding: 0 5px;
+  border-radius: 4px;
+  width: 9em;
+  overflow: hidden;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
+  position: relative;
+  font-weight: bold;
+  &:before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
+  &:after {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
 }
 </style>

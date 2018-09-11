@@ -31,7 +31,11 @@
       <div class="admin-table-actions">
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color).name}"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
+          <template slot-scope="scope">
+            <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="mileage" label="行驶里程" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
@@ -317,12 +321,45 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="less">
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 input[type="number"] {
   -moz-appearance: textfield;
+}
+.license-card {
+  padding: 0 5px;
+  border-radius: 4px;
+  width: 9em;
+  overflow: hidden;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
+  position: relative;
+  font-weight: bold;
+  &:before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
+  &:after {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
 }
 </style>

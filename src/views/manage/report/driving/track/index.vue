@@ -16,7 +16,7 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-col :offset="isCollapse?0:6" :span="isCollapse?24:4" style="text-align: right;">
+          <el-col :span="10" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
@@ -26,7 +26,11 @@
     </el-card>
     <el-card shadow="always">
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
+          <template slot-scope="scope">
+            <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
         <el-table-column prop="speed" label="速度(公里/时)" :formatter="$utils.baseFormatter "> </el-table-column>>
         <el-table-column prop="em_0x01" label="行驶里程" :formatter="$utils.baseFormatter "> </el-table-column>
@@ -46,9 +50,10 @@
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getReport } from "@/api/index.js";
+import selectAlarmtype from "@/components/select-alarmtype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { chooseVehicle },
+  components: { chooseVehicle, selectAlarmtype },
   created() {
     this.keyupSubmit();
   },
@@ -71,6 +76,8 @@ export default {
         time: "",
         license: "",
         license_color: "",
+        speed_limit: "",
+        alarm_type: "",
         sim_id: "",
         size: 10,
         page: 1
@@ -82,6 +89,13 @@ export default {
             required: true,
             trigger: "change",
             message: "请输入车牌号"
+          }
+        ],
+        alarm_type: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请选择报警类型"
           }
         ],
         time: [
@@ -119,37 +133,30 @@ export default {
     vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
       this.tableQuery.license = scope.row.license;
-      this.tableQuery.sim_id = scope.row.sim_id;
+      this.tableQuery.sim_id = "0" + scope.row.sim_id;
       this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
-      var date = moment(value[0]).add(3, "days")._d;
+      var date = moment(value[0]).add(30, "days")._d;
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
       } else if (!moment(value[1]).isBefore(date)) {
-        callback(new Error("选择时间不能大于3天!"));
+        callback(new Error("选择时间不能大于30天!"));
         return false;
       } else {
-        this.tableQuery.start_time = value[0];
-        this.tableQuery.stop_time = value[1];
+        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.tableQuery.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
         callback();
       }
     },
     //查询列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.sim_id = "064620623980";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
-          this.tableQuery.start_time = moment(
-            this.tableQuery.start_time
-          ).format("YYYYMMDDHHmmss");
-          this.tableQuery.stop_time = moment(this.tableQuery.stop_time).format(
-            "YYYYMMDDHHmmss"
-          );
           var query = Object.assign({}, this.tableQuery);
           getReport(query)
             .then(res => {
@@ -160,6 +167,8 @@ export default {
                   res.data.data[
                     i
                   ].license_color = this.tableQuery.license_color;
+                  res.data.data[i].alertTime =
+                    res.data.data[i].stop_time - res.data.data[i].start_time;
                   data.push(res.data.data[i]);
                 }
                 this.$set(this.tableData, "data", Object.freeze(data));
@@ -223,4 +232,45 @@ export default {
   }
 };
 </script>
- 
+<style lang="less">
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+.license-card {
+  padding: 0 5px;
+  border-radius: 4px;
+  width: 9em;
+  overflow: hidden;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
+  position: relative;
+  font-weight: bold;
+  &:before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
+  &:after {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
+}
+</style>

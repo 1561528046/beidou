@@ -30,8 +30,12 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
-      <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return row.license + this.$dict.get_license_color(row.license_color)}"> </el-table-column>
+      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
+          <template slot-scope="scope">
+            <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="alarm_type" label="报警类型" :formatter="(row)=>{return this.$dict.get_fence_type(row.alarm_type)} "> </el-table-column>
         <el-table-column prop="" label="报警来源" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="报警信息" :formatter="$utils.baseFormatter "> </el-table-column>
@@ -57,7 +61,7 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import { getFenceDetailByPage } from "@/api/index.js";
+import { getAlarmDetailByPage } from "@/api/index.js";
 import selectFencetype from "@/components/select-fencetype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
@@ -166,7 +170,7 @@ export default {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
-          getFenceDetailByPage(query)
+          getAlarmDetailByPage(query)
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
@@ -240,12 +244,45 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="less">
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 input[type="number"] {
   -moz-appearance: textfield;
+}
+.license-card {
+  padding: 0 5px;
+  border-radius: 4px;
+  width: 9em;
+  overflow: hidden;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
+  position: relative;
+  font-weight: bold;
+  &:before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
+  &:after {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
 }
 </style>

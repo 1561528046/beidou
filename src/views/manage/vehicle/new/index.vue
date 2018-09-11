@@ -364,11 +364,9 @@ export default {
   },
   methods: {
     more(scope) {
-      CheckUserIsOpenCompany({ vehicle_id: scope.row.vehicle_id }).then(res => {
-        if (res.data.code == 0) {
-          console.log(res.data.data);
-        }
-      });
+      CheckUserIsOpenCompany({ vehicle_id: scope.row.vehicle_id }).then(
+        () => {}
+      );
     },
     compaynSelectImg(index, file) {
       this.openCompany.postData["img" + index] = URL.createObjectURL(file);
@@ -432,7 +430,6 @@ export default {
     },
     //厂商激活
     openCompanyShow(scope) {
-      console.log(scope.row);
       this.$set(this.openCompany, "vehicle", scope.row);
       this.openCompany.visible = true;
     },

@@ -145,3 +145,12 @@ export const getNightSummaryByPage = query => {
     params: query
   });
 };
+// 夜间行车明细表
+export const getNightDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/Report/GetNightDetailByPage", queryQS, {
+    params: query
+  });
+};
+// 车辆维护记录
+// 视频变更报表

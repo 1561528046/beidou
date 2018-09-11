@@ -82,14 +82,14 @@ export default {
     selectForm() {
       getVehicleByPage(this.formData).then(res => {
         if (res.data.code == 0) {
+          for (var j = 0; j < res.data.data.length; j++) {
+            res.data.data[j].checked = false;
+          }
           this.$set(this.tableData, "data", res.data.data);
         } else {
           this.$message.error(res.data.msg);
         }
       });
-      for (var j = 0; j < this.tableData.data.length; j++) {
-        this.tableData.data[j].checked = false;
-      }
     },
     formSubmit() {
       var arr = [];

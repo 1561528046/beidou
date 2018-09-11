@@ -1,5 +1,4 @@
-
- <template>
+<template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
       <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
@@ -12,9 +11,7 @@
           </el-col>
           <el-col :span="7">
             <el-form-item prop="real_name" label="用户">
-              <el-button style=" display:inline-block; width:100%;height:32px;" @click="selectuser">
-                <el-input type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
-              </el-button>
+              <el-input :disabled="userAlert" @focus="selectuser" type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="10" style="text-align: right;">
@@ -26,6 +23,8 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+      </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="user_name" label="登录账号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -38,8 +37,11 @@
         </el-pagination>
       </div>
     </el-card>
+    <el-dialog width="50%" title="选择信息" :visible.sync="vehicleDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vcheckbox @button="xz" @success=" () => {this.getTable();this.vehicleDialog = false;}" :key="addKey"></choose-vcheckbox>
+    </el-dialog>
     <el-dialog width="30%" title="选择信息" :visible.sync="userDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-user @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-user>
+      <choose-ucheckbox @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-ucheckbox>
     </el-dialog>
   </div>
 </template>
@@ -47,31 +49,28 @@
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getLoginDetailByPage } from "@/api/index.js";
-import chooseUser from "@/components/choose-user";
+import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
+import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
-  components: { chooseUser },
+  components: { chooseVcheckbox, chooseUcheckbox },
   created() {
     this.keyupSubmit();
   },
-  computed: {
-    list: function() {
-      return this.tableData.data.slice(
-        (this.tableQuery.page - 1) * this.tableQuery.size,
-        this.tableQuery.page * this.tableQuery.size
-      );
-    }
-  },
   data() {
     return {
+      vehicleDialog: false,
       userDialog: false,
-      addKey: 0,
       isCollapse: false,
+      vehicleAlert: false,
+      userAlert: false,
+      vehicles: [],
       tableQuery: {
         start_time: "",
         stop_time: "",
         time: "",
-        real_name: "",
         user_ids: "",
+        license: "",
+        real_name: "",
         size: 10,
         page: 1
       },
@@ -91,24 +90,56 @@ export default {
         total: 0,
         data: []
       },
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
       tableLoading: false,
-      userdetailShow: false,
-      dialog: true
+      addKey: 0,
+      userdetailShow: false
     };
   },
-  watch: {},
+  mounted() {},
+  watch: {
+    vehicleAlert: function() {
+      if (this.tableQuery.license == "") {
+        this.userAlert = false;
+      }
+    },
+    userAlert: function() {
+      if (this.tableQuery.real_name == "") {
+        this.vehicleAlert = false;
+      }
+    }
+  },
   methods: {
-    // 选择查询方式
-    selectuser() {
-      this.addKey++;
-      this.userDialog = true;
-    },
-    // 回来的数据
-    user(scope) {
-      this.tableQuery.real_name = "";
-      this.userDialog = false;
-      this.tableQuery.real_name = scope.row.real_name;
-    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(30, "days")._d;
@@ -125,10 +156,68 @@ export default {
         callback();
       }
     },
-    //查询列表
+    selectvehicle() {
+      this.addKey++;
+      this.vehicleDialog = true;
+      this.tableQuery.license = "";
+      this.userAlert = false;
+    },
+    selectuser() {
+      this.addKey++;
+      this.userDialog = true;
+      this.tableQuery.real_name = "";
+      this.vehicleAlert = false;
+    },
+    // 回来的数据
+    xz(scope) {
+      this.vehicleDialog = false;
+      if (!scope.length == 0) {
+        this.userAlert = true;
+      }
+      this.vehicles = [];
+      for (var i = 0; i < scope.length; i++) {
+        this.tableQuery.license =
+          this.tableQuery.license + scope[i].license + ",";
+        this.tableQuery.sim_ids =
+          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+        this.vehicles.push({
+          license: scope[i].license,
+          license_color: scope[i].license_color,
+          sim_id: scope[i].sim_id
+        });
+      }
+      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
+        0,
+        this.tableQuery.sim_ids.lastIndexOf(",")
+      );
+      this.tableQuery.license = this.tableQuery.license.substring(
+        0,
+        this.tableQuery.license.lastIndexOf(",")
+      );
+    },
+    user(scope) {
+      this.userDialog = false;
+      if (!scope.vehicle.length == 0) {
+        this.vehicleAlert = true;
+      }
+      for (var s = 0; s < scope.user.length; s++) {
+        this.tableQuery.real_name =
+          this.tableQuery.real_name + scope.user[s].real_name + ",";
+        this.tableQuery.user_ids =
+          this.tableQuery.user_ids + scope.user[s].user_id + ",";
+      }
+      this.tableQuery.real_name = this.tableQuery.real_name.substring(
+        0,
+        this.tableQuery.real_name.lastIndexOf(",")
+      );
+      this.tableQuery.user_ids = this.tableQuery.user_ids.substring(
+        0,
+        this.tableQuery.user_ids.lastIndexOf(",")
+      );
+    },
+    //查询产品列表
     getTable() {
       this.tableLoading = true;
-      this.tableQuery.user_ids = "64,65,66,67,68";
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
@@ -136,15 +225,21 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
-                for (var i = 0; i < res.data.data.length; i++) {
-                  res.data.data[i].license = this.tableQuery.license;
-                  res.data.data[
-                    i
-                  ].license_color = this.tableQuery.license_color;
-                  res.data.data[i].overspeed =
-                    res.data.data[i].stop_time - res.data.data[i].start_time;
-                  data.push(res.data.data[i]);
-                }
+                var arr = {};
+                this.vehicles.map(item => {
+                  arr[item.sim_id] = item;
+                });
+                res.data.data.map(item => {
+                  item.sim_id =
+                    item.sim_id[0] == "0" ? item.sim_id.slice(1) : item.sim_id;
+                  var obj = arr[item.sim_id];
+                  if (!obj) {
+                    return false;
+                  }
+                  item.license = obj.license;
+                  item.license_color = obj.license_color;
+                });
+                data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
                 this.$emit("success");
@@ -206,12 +301,45 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="less">
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 input[type="number"] {
   -moz-appearance: textfield;
+}
+.license-card {
+  padding: 0 5px;
+  border-radius: 4px;
+  width: 9em;
+  overflow: hidden;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
+  position: relative;
+  font-weight: bold;
+  &:before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
+  &:after {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
 }
 </style>
