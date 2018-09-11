@@ -214,7 +214,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="register_no1" class="vehicle-upload-img" label-width="0px">
-              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('register_no1',res,file)}" :before-upload="uploadBefore">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :headers="uploadHeaders" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('register_no1',res,file)}" :before-upload="uploadBefore">
                 <img v-if="formData.register_no1 " :src="$dict.BASE_URL+formData.register_no1 " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
@@ -223,7 +223,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="register_no2" class="vehicle-upload-img" label-width="0px">
-              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('register_no2',res,file)}" :before-upload="uploadBefore">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :headers="uploadHeaders" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('register_no2',res,file)}" :before-upload="uploadBefore">
                 <img v-if="formData.register_no2 " :src="$dict.BASE_URL+formData.register_no2 " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
@@ -232,7 +232,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="driver_no" class="vehicle-upload-img" label-width="0px">
-              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('driver_no',res,file)}" :before-upload="uploadBefore">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :headers="uploadHeaders" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('driver_no',res,file)}" :before-upload="uploadBefore">
                 <img v-if="formData.driver_no " :src="$dict.BASE_URL+formData.driver_no " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
@@ -241,7 +241,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="img" class="vehicle-upload-img" label-width="0px">
-              <el-upload class="avatar-uploader" accept="image/jpeg" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('img',res,file)}" :before-upload="uploadBefore">
+              <el-upload class="avatar-uploader" accept="image/jpeg" :headers="uploadHeaders" :action="$dict.API_URL+'/vehicle/UploadImgLocal/'" :show-file-list="false" :on-success="(res,file)=>{uploadSuccess('img',res,file)}" :before-upload="uploadBefore">
                 <img v-if="formData.img " :src="$dict.BASE_URL+formData.img " class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
@@ -401,6 +401,9 @@ export default {
   },
   data() {
     return {
+      uploadHeaders: {
+        Authorization: this.$store.state.user.token
+      },
       loader: false,
       isInit: false,
       insurance_types: [
