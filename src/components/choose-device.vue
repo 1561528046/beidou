@@ -4,7 +4,7 @@
       <el-button slot="append" icon="el-icon-error" @click="clearChoose">清空</el-button>
       <el-button slot="append" type="primary" icon="el-icon-more" @click="dialogTableVisible = true">选择</el-button>
     </el-input>
-    <el-dialog title="收货地址" :visible.sync="dialogTableVisible" width="75%" :append-to-body="true">
+    <el-dialog title="选择设备" :visible.sync="dialogTableVisible" width="75%" :append-to-body="true">
       <el-form :model="tableQuery" label-width="100px" size="small" :label-position="isCollapse?'top':'left'">
         <el-row :gutter="30">
           <el-col :span="6">
@@ -153,6 +153,11 @@ export default {
     };
   },
   watch: {
+    dateRange: function(value) {
+      value = value || ["", ""];
+      this.tableQuery.start_date = value[0];
+      this.tableQuery.end_date = value[1];
+    },
     value: function() {
       this.device_no = this.$props.value;
     }
@@ -188,11 +193,6 @@ export default {
         });
       // 调用 callback 返回建议列表的数据
     },
-    realNameHandleSelect(item) {
-      this.$nextTick(() => {
-        this.tableQuery.user_id = item.user_id || "";
-      });
-    },
     choose(scope) {
       this.device_no = scope.row.device_no;
       this.$emit("input", scope.row.device_no);
@@ -210,9 +210,6 @@ export default {
     },
     getTable() {
       this.tableLoading = true;
-      if (this.tableQuery.real_name == "") {
-        this.tableQuery.user_id = "";
-      }
       var getDevice = getDeviceList;
       if (this.$props.filter == "uninstall") {
         getDevice = getDeviceALlUninstall;
