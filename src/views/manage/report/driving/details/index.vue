@@ -32,6 +32,11 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
@@ -46,7 +51,7 @@
         <el-table-column prop="stop_speed" label="结束速度" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="start_mileage" label="开始里程" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="stop_mileage" label="结束里程" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="overspeed_times" label="超速时长" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="overspeed_duration" label="超速时长" :formatter="$utils.baseFormatter"> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -132,6 +137,46 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "开始时间",
+          C: "结束时间",
+          D: "开始位置",
+          E: "结束位置",
+          F: "开始速度",
+          G: "结束速度",
+          H: "开始里程",
+          I: "结束里程",
+          J: "超速时长",
+          K: "开始位置经纬度",
+          L: "结束位置经纬度"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(data.start_time),
+          C: this.$utils.formatDate14(data.stop_time),
+          D: data.start_address,
+          E: data.stop_address,
+          F: data.start_speed,
+          G: data.stop_speed,
+          H: data.start_mileage,
+          I: data.stop_mileage,
+          J: data.overspeed_duration,
+          K: data.start_longitude + "," + data.start_latitude,
+          L: data.stop_longitude + "," + data.stop_latitude
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "轨迹超速汇总",
+        fileName: "轨迹超速汇总.xlsx"
+      });
+    },
     // 选择查询方式
     addFrom() {
       this.addKey++;

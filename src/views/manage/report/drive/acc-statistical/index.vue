@@ -29,6 +29,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
@@ -38,8 +41,8 @@
         </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
-        <el-table-column prop="duration" label="ACC点火次数" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="times" label="总时长" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="times" label="ACC点火次数" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="duration" label="总时长" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -157,6 +160,32 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "开始时间",
+          C: "结束时间",
+          D: "ACC点火次数",
+          E: "总时长"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(data.start_time),
+          C: this.$utils.formatDate14(data.stop_time),
+          D: data.times,
+          E: data.duration
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "ACC点火统计表",
+        fileName: "ACC点火统计表.xlsx"
+      });
+    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(3, "days")._d;

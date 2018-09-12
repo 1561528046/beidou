@@ -34,7 +34,7 @@
             <el-popover placement="left-end" width="450" trigger="click">
               <el-table :data="gridData">
                 <el-table-column width="150" label="时间" property="cdate" :formatter="formatChildTime"></el-table-column>
-                <el-table-column width="150" label="充值数量" property="change_money"></el-table-column>
+                <el-table-column width="150" label="充值金额(元)" property="change_money"></el-table-column>
               </el-table>
               <el-button size="small " type="primary " icon="el-icon-tickets" slot="reference" @click="OperateLogList(scope)">充值明细</el-button>
             </el-popover>

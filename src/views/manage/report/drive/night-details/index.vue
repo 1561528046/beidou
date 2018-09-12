@@ -25,6 +25,11 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
@@ -128,6 +133,40 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "开始时间",
+          C: "结束时间",
+          D: "开始速度",
+          E: "结束速度",
+          F: "开始位置",
+          G: "结束位置",
+          H: "开始位置经纬度",
+          I: "结束位置经纬度"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(data.start_time),
+          C: this.$utils.formatDate14(data.stop_time),
+          D: data.start_speed,
+          E: data.stop_speed,
+          F: data.start_address,
+          G: data.stop_address,
+          H: data.start_longitude + "," + data.start_latitude,
+          I: data.stop_longitude + "," + data.stop_latitude
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "夜间行车明细表",
+        fileName: "夜间行车明细表.xlsx"
+      });
+    },
     // 选择查询方式
     addFrom() {
       this.addKey++;

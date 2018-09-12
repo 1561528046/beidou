@@ -37,6 +37,9 @@
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="分配用户">
               <select-user v-model="tableQuery.user_id" style="width:100%;" :clearable="true"></select-user>
+              <!-- <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.real_name" :fetch-suggestions="querySearch"
+                placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
+              </el-autocomplete> -->
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -74,13 +77,17 @@
   </div>
 </template>
 <script>
-import { getDeviceList, getUserAll } from "@/api/index.js";
+import {
+  getDeviceList,
+  getUserAll,
+  getDeviceALlUninstall
+} from "@/api/index.js";
 import selectCompany from "@/components/select-company.vue";
 import selectUser from "@/components/select-user.vue";
 import selectDevicetype from "@/components/select-devicetype.vue";
 import selectDevice from "@/components/select-device.vue";
 export default {
-  component: {
+  components: {
     selectCompany,
     selectUser,
     selectDevicetype,
@@ -187,7 +194,6 @@ export default {
       });
     },
     choose(scope) {
-      console.log(scope);
       this.device_no = scope.row.device_no;
       this.$emit("input", scope.row.device_no);
       this.$emit("update:device_id", scope.row.device_id);
@@ -207,8 +213,12 @@ export default {
       if (this.tableQuery.real_name == "") {
         this.tableQuery.user_id = "";
       }
+      var getDevice = getDeviceList;
+      if (this.$props.filter == "uninstall") {
+        getDevice = getDeviceALlUninstall;
+      }
       var query = Object.assign({}, this.tableQuery);
-      getDeviceList(query)
+      getDevice(query)
         .then(res => {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);

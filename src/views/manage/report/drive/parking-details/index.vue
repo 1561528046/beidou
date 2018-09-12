@@ -25,6 +25,11 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
@@ -34,7 +39,7 @@
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
         <el-table-column prop="duration_ss" label="时长" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="start_address" label="停车位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="address" label="停车位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -124,6 +129,34 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "开始时间",
+          C: "结束时间",
+          D: "时长",
+          E: "停车位置",
+          F: "GPS经纬度"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(data.start_time),
+          C: this.$utils.formatDate14(data.stop_time),
+          D: data.duration_ss,
+          E: data.address,
+          F: data.longitude + "," + data.latitude
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "停车明细表",
+        fileName: "停车明细表.xlsx"
+      });
+    },
     // 选择查询方式
     addFrom() {
       this.addKey++;
@@ -172,50 +205,48 @@ export default {
                     res.data.data[i].stop_time - res.data.data[i].start_time;
                   data.push(res.data.data[i]);
                 }
-                //1、gps坐标转高德坐标
-                //2、高德坐标转成地址
-                Promise.all([
-                  gps2amap({
-                    data: data,
-                    longKey: "longitude",
-                    latKey: "latitude"
-                  }),
-                  gps2amap({
-                    data: data,
-                    longKey: "longitude",
-                    latKey: "latitude"
-                  })
-                ])
+                var loader = this.$loading({
+                  text: "正在转换坐标"
+                });
+                gps2amap({
+                  data: data,
+                  longKey: "longitude",
+                  latKey: "latitude"
+                })
                   .then(res => {
                     data.map((item, index) => {
-                      item.longitude = res[0][index].split(",")[0];
-                      item.latitude = res[0][index].split(",")[1];
+                      item.amap_longitude = res[index].split(",")[0];
+                      item.amap_latitude = res[index].split(",")[1];
                     });
                   })
+                  .catch(() => {
+                    loader.close();
+                  })
                   .then(() => {
-                    Promise.all([
-                      location2address({
-                        data: data,
-                        longKey: "longitude",
-                        latKey: "latitude"
-                      }),
-                      location2address({
-                        data: data,
-                        longKey: "longitude",
-                        latKey: "latitude"
-                      })
-                    ]).then(addressArr => {
-                      data.map((item, index) => {
-                        item.start_address = addressArr[0][index];
-                        item.stop_address = addressArr[1][index];
-                      });
-                      this.$set(this.tableData, "data", Object.freeze(data));
-                      this.$set(
-                        this.tableData,
-                        "total",
-                        this.tableData.data.length
-                      );
+                    loader.close();
+                    loader = this.$loading({
+                      text: "正在转换地址"
                     });
+                    location2address({
+                      data: data,
+                      longKey: "amap_longitude",
+                      latKey: "amap_latitude"
+                    })
+                      .then(addressArr => {
+                        loader.close();
+                        data.map((item, index) => {
+                          item.address = addressArr[index];
+                        });
+                        this.$set(this.tableData, "data", Object.freeze(data));
+                        this.$set(
+                          this.tableData,
+                          "total",
+                          this.tableData.data.length
+                        );
+                      })
+                      .catch(() => {
+                        loader.close();
+                      });
                   });
               } else {
                 this.$set(this.$data, "tableData", []);

@@ -38,6 +38,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
@@ -165,6 +168,30 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "开始时间",
+          C: "结束时间",
+          D: "超速次数"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(data.start_time),
+          C: this.$utils.formatDate14(data.stop_time),
+          D: data.overspeed_times
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "轨迹超速汇总",
+        fileName: "轨迹超速汇总.xlsx"
+      });
+    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(3, "days")._d;

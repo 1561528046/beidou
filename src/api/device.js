@@ -274,3 +274,33 @@ export const existDeviceSimId = query => {
     params: query
   });
 };
+
+//获取未安装的SIM卡
+export const getSimALlUninstall = query => {
+  query = Object.assign(
+    {
+      page: 1,
+      size: 10,
+      start_sim_no: "",
+      end_sim_no: ""
+    },
+    query
+  );
+  return ajax.get("/sim/GetNotInstallUnboundListByPage", {
+    params: query
+  });
+};
+
+//获取未安装的设备
+export const getDeviceALlUninstall = query => {
+  query = Object.assign(
+    {
+      page: 1,
+      size: 10
+    },
+    query
+  );
+  return ajax.get("/sim/GetNotInstallUnboundListByPage", {
+    params: query
+  });
+};

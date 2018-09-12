@@ -268,20 +268,19 @@
 
           <el-col :span="8">
             <el-form-item label="终端ID " prop="device_no">
-              <choose-device v-model="formData.device_no" :state="1" :sim_id.sync="formData.sim_id" :device_id.sync="formData.device_id " :company_name.sync="formData.company_name">
+              <choose-device filter="uninstall" v-model="formData.device_no" :state="1" :sim_id.sync="formData.sim_id" :device_id.sync="formData.device_id " :company_name.sync="formData.company_name">
               </choose-device>
             </el-form-item>
           </el-col>
 
           <el-col :span="8">
             <el-form-item label="SIM ID " prop="sim_id">
-              <!-- <select-sim :state="1 " v-model="formData.sim_id"></select-sim> -->
               {{formData.sim_id}}
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="安装SIM卡号 " prop="sim_no">
-              <choose-sim v-model="formData.sim_no"></choose-sim>
+              <choose-sim filter="uninstall" v-model="formData.sim_no"></choose-sim>
             </el-form-item>
           </el-col>
         </el-row>

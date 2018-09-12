@@ -66,7 +66,7 @@
   </div>
 </template>
 <script>
-import { getSimList, getUserAll } from "@/api/index.js";
+import { getSimList, getSimALlUninstall, getUserAll } from "@/api/index.js";
 export default {
   data() {
     return {
@@ -143,7 +143,8 @@ export default {
     placeholder: {
       type: [String],
       default: "请选择SIM卡号"
-    }
+    },
+    filter: String
   },
   created() {
     this.sim_no = this.value;
@@ -187,7 +188,11 @@ export default {
       if (this.tableQuery.real_name == "") {
         this.tableQuery.user_id = "";
       }
-      getSimList(this.tableQuery)
+      var getSim = getSimList;
+      if (this.$props.filter == "uninstall") {
+        getSim = getSimALlUninstall;
+      }
+      getSim(this.tableQuery)
         .then(res => {
           if (res.data.code == 0) {
             this.$set(this.$data, "tableData", res.data);

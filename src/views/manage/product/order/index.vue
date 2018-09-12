@@ -80,6 +80,7 @@
         <el-table-column prop="order_no" label="订单号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="fees_detail_type" label="订单类型" :formatter="(row)=>{return this.$dict.get_order_detailtype(row.fees_detail_type)}"> </el-table-column>
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="fees_detail_name" label="收费单项" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="car_type" label="车辆类型" :formatter="(row)=>{return this.$dict.get_vehicle_type(row.car_type)}"> </el-table-column>
         <el-table-column prop="fees_detail_company_name" label="终端厂商" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="fees_detail_device_type" label="终端类型" :formatter="(row)=>{return this.$dict.get_device_type(row.fees_detail_device_type)}"> </el-table-column>

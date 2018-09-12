@@ -90,7 +90,7 @@
         </el-button>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="first_time" label="首次入网时间" :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"></el-table-column>
+        <el-table-column prop="first_time" label="首次入网时间" :formatter="(row)=>{return $utils.formatDate(row.first_time)}"></el-table-column>
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
             <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
@@ -102,7 +102,7 @@
         <el-table-column prop="owner" label="业户" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="tel" label="电话" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="contract_date" label="到期日期" :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"> </el-table-column>
+        <el-table-column prop="contract_date" label="到期日期" :formatter="(row)=>{return $utils.formatDate(row.contract_date)}"> </el-table-column>
         <el-table-column label="操作" width="350">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="goEdit(scope)">编辑</el-button>
@@ -458,7 +458,7 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             this.openCompany.visible = false;
-            this.$message.success(res.data.msg);
+            this.$message.success("操作成功");
           } else {
             this.$message.error(res.data.msg);
           }

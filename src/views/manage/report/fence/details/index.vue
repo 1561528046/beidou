@@ -30,6 +30,11 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
@@ -136,6 +141,46 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "报警类型",
+          C: "报警来源",
+          D: "报警信息",
+          E: "报警时长",
+          F: "开始时间",
+          G: "结束时间",
+          H: "开始速度",
+          I: "结束速度",
+          J: "开始位置",
+          K: "结束位置",
+          L: "开始位置经纬度",
+          M: "结束位置经纬度"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$dict.get_alarm_type(data.alarm_type),
+          C: data.stop_time - data.start_time,
+          D: this.$utils.formatDate14(data.start_time),
+          E: this.$utils.formatDate14(data.stop_time),
+          F: data.start_speed,
+          G: data.stop_speed,
+          H: data.start_address,
+          I: data.stop_address,
+          J: data.start_longitude + "," + data.start_latitude,
+          K: data.stop_longitude + "," + data.stop_latitude
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "报警明细表",
+        fileName: "报警明细表.xlsx"
+      });
+    },
     // 选择查询方式
     addFrom() {
       this.addKey++;
