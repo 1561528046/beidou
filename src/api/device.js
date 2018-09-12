@@ -131,6 +131,23 @@ export const getSimAll = query => {
     params: query
   });
 };
+
+//获取未安装的SIM卡
+export const getSimALlUninstall = query => {
+  query = Object.assign(
+    {
+      page: 1,
+      size: 10,
+      start_sim_no: "",
+      end_sim_no: ""
+    },
+    query
+  );
+  return ajax.get("/sim/GetNotInstallUnboundListByPage", {
+    params: query
+  });
+};
+
 //获取所有没有绑定的SIM卡
 export const getSimAllUnbind = query => {
   query = Object.assign(
