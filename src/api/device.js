@@ -132,22 +132,6 @@ export const getSimAll = query => {
   });
 };
 
-//获取未安装的SIM卡
-export const getSimALlUninstall = query => {
-  query = Object.assign(
-    {
-      page: 1,
-      size: 10,
-      start_sim_no: "",
-      end_sim_no: ""
-    },
-    query
-  );
-  return ajax.get("/sim/GetNotInstallUnboundListByPage", {
-    params: query
-  });
-};
-
 //获取所有没有绑定的SIM卡
 export const getSimAllUnbind = query => {
   query = Object.assign(
@@ -276,6 +260,36 @@ export const existDeviceSimId = query => {
   //设备管理-验证sim_id是否重复
   query = Object.assign({ sim_id: "" }, query);
   return ajax.get("/device/exists_sim_id", {
+    params: query
+  });
+};
+
+//获取未安装的SIM卡
+export const getSimALlUninstall = query => {
+  query = Object.assign(
+    {
+      page: 1,
+      size: 10,
+      start_sim_no: "",
+      end_sim_no: ""
+    },
+    query
+  );
+  return ajax.get("/sim/GetNotInstallUnboundListByPage", {
+    params: query
+  });
+};
+
+//获取未安装的设备
+export const getDeviceALlUninstall = query => {
+  query = Object.assign(
+    {
+      page: 1,
+      size: 10
+    },
+    query
+  );
+  return ajax.get("/sim/GetNotInstallUnboundListByPage", {
     params: query
   });
 };

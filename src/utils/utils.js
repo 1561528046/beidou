@@ -1,4 +1,5 @@
 import moment from "moment";
+import XLSX from "xlsx";
 export default {
   /**
    *
@@ -32,6 +33,7 @@ export default {
    * 除监控外，其他时间不包括时分秒，监控方法另外重写！
    */
   formatDate(date, separator = "-") {
+    date = date.toString();
     if (!date) {
       return "--";
     }
@@ -78,11 +80,12 @@ export default {
     );
   },
   formatDate14(date, separator = "-") {
+    date = date.toString();
     if (!date) {
       return "--";
     }
     if (date.length == 14) {
-      return (
+      var result =
         date.substring(0, 4) +
         separator +
         date.substring(4, 6) +
@@ -93,8 +96,8 @@ export default {
         ":" +
         date.substring(10, 12) +
         ":" +
-        date.substring(12, 14)
-      );
+        date.substring(12, 14);
+      return result;
     }
     return date;
   },
@@ -110,5 +113,11 @@ export default {
       return item;
     });
     return result.join("-") || "--";
+  },
+  exportExcel({ data, sheetName, fileName }) {
+    var ws = XLSX.utils.json_to_sheet(data, { skipHeader: true });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    XLSX.writeFile(wb, fileName);
   }
 };

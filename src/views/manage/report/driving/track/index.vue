@@ -1,7 +1,7 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small" @submit.native.prevent>
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
@@ -18,7 +18,7 @@
           </el-col>
           <el-col :span="10" style="text-align: right;">
             <el-form-item>
-              <el-button type="primary" @click="getTable">查询</el-button>
+              <el-button type="primary" native-type="submit" :loading="tableLoading" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -52,13 +52,11 @@
   </div>
 </template>
 <script>
-import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { getReport } from "@/api/index.js";
 import selectAlarmtype from "@/components/select-alarmtype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 import { location2address, gps2amap } from "@/utils/map-tools.js";
-import XLSX from "xlsx";
 export default {
   components: { chooseVehicle, selectAlarmtype },
   created() {},
@@ -88,7 +86,6 @@ export default {
         page: 1
       },
       rules: {
-        ...rules,
         license: [
           {
             required: true,
@@ -128,26 +125,45 @@ export default {
     }
   },
   methods: {
-    // 选择查询方式
     exportExcel() {
-      // var ws = XLSX.utils.json_to_sheet(
-      //   [
-      //     { A: "S", B: "h", C: "e", D: "e", E: "t", F: "J", G: "S" },
-      //     { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7 },
-      //     { A: 2, B: 3, C: 4, D: 5, E: 6, F: 7, G: 8 }
-      //   ],
-      //   { header: ["A", "B", "C", "D", "E", "F", "G"], skipHeader: true }
-      // );
-      var ws = XLSX.utils.json_to_sheet(this.tableData.data, {
-        header: ["A", "B", "C", "D", "E", "F", "G"],
-        skipHeader: true
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "时间",
+          C: "速度",
+          D: "里程",
+          E: "位置",
+          F: "GPS经纬度"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(data.time),
+          C: data.speed,
+          D: data.em_0x01,
+          E: data.address,
+          F: data.longitude + "," + data.latitude
+        });
       });
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "测试导出");
-      XLSX.writeFile(wb, "测试导出.xlsx");
-      // var file = XLSX.write(ws, { Props: { Author: "SheetJS" } });
-
-      console.log(ws);
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "行驶轨迹明细",
+        fileName: "行驶轨迹明细.xlsx"
+      });
+      // // var ws = XLSX.utils.json_to_sheet(
+      // //   [
+      // //     { A: "S", B: "h", C: "e", D: "e", E: "t", F: "J", G: "S" },
+      // //     { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7 },
+      // //     { A: 2, B: 3, C: 4, D: 5, E: 6, F: 7, G: 8 }
+      // //   ],
+      // //   { header: ["A", "B", "C", "D", "E", "F", "G"], skipHeader: true }
+      // // );
+      // var ws = XLSX.utils.json_to_sheet(wsCol);
+      // const wb = XLSX.utils.book_new();
+      // XLSX.utils.book_append_sheet(wb, ws, "行驶轨迹明细");
+      // XLSX.writeFile(wb, "行驶轨迹明细.xlsx");
     },
     addFrom() {
       this.addKey++;
@@ -179,9 +195,9 @@ export default {
     },
     //查询列表
     getTable() {
-      this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
+          this.tableLoading = true;
           var query = Object.assign({}, this.tableQuery);
           getReport(query)
             .then(res => {
