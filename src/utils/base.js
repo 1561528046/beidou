@@ -8,31 +8,35 @@ export const dict = {
   // API_URL: "http://192.168.88.88:10462/api",
   license_color: {
     "1": {
-      backgroundColor: "#ffbf00",
-      borderColor: "#efb404",
-      name: "黄色",
-      style: "background:#ffbf00;border:1px solid #ffa500;color:#000;"
-    },
-    "2": {
       backgroundColor: "#006DD9",
       borderColor: "#0b64bd",
       name: "蓝色",
       style: "background:#006DD9;border:1px solid #0b64bd;color:#FFF;"
     },
-    "3": {
-      backgroundColor: "#fff",
-      borderColor: "#fff",
-      name: "白色",
-      style: "background:#fff;border:1px solid #fff;color:#000; "
+    "2": {
+      backgroundColor: "#ffbf00",
+      borderColor: "#efb404",
+      name: "黄色",
+      style: "background:#ffbf00;border:1px solid #ffa500;color:#000;"
     },
-    "4": {
-      backgroundColor: "#000",
-      borderColor: "#000",
-      name: "黑色",
-      style: "background:#000;border:1px solid #000;color:#FFF; "
-    },
+
+    // "3": {
+    //   backgroundColor: "#fff",
+    //   borderColor: "#fff",
+    //   name: "白色",
+    //   style: "background:#fff;border:1px solid #fff;color:#000; "
+    // },
+    // "4": {
+    //   backgroundColor: "#000",
+    //   borderColor: "#000",
+    //   name: "黑色",
+    //   style: "background:#000;border:1px solid #000;color:#FFF; "
+    // },
     "5": {
-      name: "其它"
+      backgroundColor: "#79bb0f",
+      borderColor: "#669e0b",
+      name: "黄绿色",
+      style: "background:#79bb0f;border:1px solid #669e0b;color:#000;"
     }
   },
   get_license_color: function(key) {

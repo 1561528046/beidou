@@ -4,7 +4,7 @@
       <el-button slot="append" icon="el-icon-error" @click="clearChoose">清空</el-button>
       <el-button slot="append" type="primary" icon="el-icon-more" @click="dialogTableVisible = true">选择</el-button>
     </el-input>
-    <el-dialog title="收货地址" :visible.sync="dialogTableVisible" width="75%" :append-to-body="true">
+    <el-dialog title="选择SIM卡" :visible.sync="dialogTableVisible" width="75%" :append-to-body="true">
       <el-form :model="tableQuery" label-width="100px" size="small" :label-position="isCollapse?'top':'left'">
         <el-row :gutter="30">
           <el-col :span="6">
@@ -30,8 +30,7 @@
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="分配用户">
-              <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.real_name" :fetch-suggestions="realNameQuerySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="realNameHandleSelect">
-              </el-autocomplete>
+              <select-user v-model="tableQuery.user_id" style="width:100%;" :clearable="true"></select-user>
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -67,7 +66,9 @@
 </template>
 <script>
 import { getSimList, getSimALlUninstall, getUserAll } from "@/api/index.js";
+import selectUser from "@/components/select-user.vue";
 export default {
+  components: { selectUser },
   data() {
     return {
       dialogTableVisible: false,
@@ -81,8 +82,8 @@ export default {
         belong: "",
         icc_id: "",
         user_id: "",
-        startDate: "",
-        endDate: "",
+        start_date: "",
+        end_date: "",
         size: 10,
         real_name: "",
         page: 1
@@ -129,9 +130,10 @@ export default {
     sim_no: function() {
       this.$emit("input", this.sim_no);
     },
-    dateRange: function() {
-      this.tableQuery.startDate = this.dateRange[0];
-      this.tableQuery.endData = this.dateRange[1];
+    dateRange: function(value) {
+      value = value || ["", ""];
+      this.tableQuery.start_date = value[0];
+      this.tableQuery.end_data = value[1];
     },
     value: function() {
       this.sim_no = this.$props.value;
@@ -169,11 +171,6 @@ export default {
         });
       // 调用 callback 返回建议列表的数据
     },
-    realNameHandleSelect(item) {
-      this.$nextTick(() => {
-        this.tableQuery.user_id = item.user_id || "";
-      });
-    },
     choose(scope) {
       this.sim_no = scope.row.sim_no;
       this.$emit("input", scope.row.sim_no);
@@ -185,9 +182,6 @@ export default {
     },
     getTable() {
       this.tableLoading = true;
-      if (this.tableQuery.real_name == "") {
-        this.tableQuery.user_id = "";
-      }
       var getSim = getSimList;
       if (this.$props.filter == "uninstall") {
         getSim = getSimALlUninstall;
