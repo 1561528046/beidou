@@ -31,9 +31,13 @@
       <div class="admin-table-actions">
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
+          <template slot-scope="scope">
+            <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="user_real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="operate_type_name" label="类型" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="device_no" label="设备号" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="log_time" label="时间" :formatter="(row)=>{this.$utils.formatDate14(JSON.stringify(row.log_time))}"> </el-table-column>
         <el-table-column prop="desc" label="描述" :formatter="$utils.baseFormatter "> </el-table-column>
@@ -84,6 +88,7 @@ export default {
         time: "",
         sim_ids: "",
         user_ids: "",
+        vehicle_ids: "",
         license: "",
         real_name: "",
         size: 10,
@@ -175,17 +180,22 @@ export default {
       this.addKey++;
       this.vehicleDialog = true;
       this.tableQuery.license = "";
+      this.tableQuery.sim_ids = "";
+      this.tableQuery.user_ids = "";
+      this.tableQuery.vehicle_ids = "";
       this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
       this.tableQuery.real_name = "";
+      this.tableQuery.sim_ids = "";
+      this.tableQuery.user_ids = "";
+      this.tableQuery.vehicle_ids = "";
       this.vehicleAlert = false;
     },
     // 回来的数据
     xz(scope) {
-      console.log(scope);
       this.vehicleDialog = false;
       if (!scope.length == 0) {
         this.userAlert = true;
@@ -194,17 +204,17 @@ export default {
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.license =
           this.tableQuery.license + scope[i].license + ",";
-        this.tableQuery.sim_ids =
-          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+        this.tableQuery.vehicle_ids =
+          this.tableQuery.vehicle_ids + scope[i].vehicle_id + ",";
         this.vehicles.push({
           license: scope[i].license,
           license_color: scope[i].license_color,
           sim_id: scope[i].sim_id
         });
       }
-      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
+      this.tableQuery.vehicle_ids = this.tableQuery.vehicle_ids.substring(
         0,
-        this.tableQuery.sim_ids.lastIndexOf(",")
+        this.tableQuery.vehicle_ids.lastIndexOf(",")
       );
       this.tableQuery.license = this.tableQuery.license.substring(
         0,
@@ -215,6 +225,14 @@ export default {
       this.userDialog = false;
       if (!scope.vehicle.length == 0) {
         this.vehicleAlert = true;
+      }
+      this.vehicles = [];
+      for (var j = 0; j < scope.vehicle.length; j++) {
+        this.vehicles.push({
+          license: scope.vehicle[j].license,
+          license_color: scope.vehicle[j].license_color,
+          sim_id: scope.vehicle[j].sim_id
+        });
       }
       for (var s = 0; s < scope.user.length; s++) {
         this.tableQuery.real_name =
@@ -233,6 +251,19 @@ export default {
     },
     //查询产品列表
     getTable() {
+      if (this.tableQuery.real_name == "" && this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆或用户",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

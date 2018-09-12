@@ -234,7 +234,7 @@ export default {
     enquiry(scope) {
       this.addKey++;
       this.lookDialog = true;
-      this.order_no = scope.row.order_no;
+      this.order_no = scope.row.sub_id;
     },
     // 确认订单
     confirm(scope) {
@@ -248,22 +248,26 @@ export default {
       this.auditDialog = true;
       this.tableConfirm.order_no = scope.row.order_no;
     },
+    // 确认订单审核通过/未通过
     confirmOrder(state) {
       this.tableConfirm.is_review = state;
       ReviewOrder(this.tableConfirm).then(res => {
         if (res.data.code == 0) {
           this.confirmDialog = false;
+          this.getTable();
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);
         }
       });
     },
+    //取消订单审核通过/未通过
     cancelAudit(state) {
       this.tableConfirm.is_review = state;
       ReviewCancel(this.tableConfirm).then(res => {
         if (res.data.code == 0) {
           this.auditDialog = false;
+          this.getTable();
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);

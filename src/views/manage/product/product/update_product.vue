@@ -16,11 +16,6 @@
             <el-option value="续费">续费</el-option>
             <el-option value="转网">转网</el-option>
           </el-select>
-          <label style="float:left;">计费方式</label>
-          <el-select v-model="formData.pay_type" style="width:100%;">
-            <el-option label="计费" value="1">计费</el-option>
-            <el-option label="充值" value="2">充值</el-option>
-          </el-select>
           <label style="float:left;">单价</label>
           <el-input v-model="formData.original_price" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
         </template>
@@ -190,6 +185,8 @@ export default {
     formSubmit() {
       if (!this.formData.detail_type == 1) {
         this.formData.device_type = "";
+      } else {
+        this.formData.pay_type = "1";
       }
       if (this.formData.detail_type == 3) {
         this.formData.detail_name = "短信";

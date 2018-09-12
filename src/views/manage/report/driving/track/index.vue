@@ -39,11 +39,7 @@
         <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
         <el-table-column prop="speed" label="速度(公里/时)" :formatter="$utils.baseFormatter "> </el-table-column>>
         <el-table-column prop="em_0x01" label="行驶里程" :formatter="$utils.baseFormatter "> </el-table-column>
-        <<<<<<< HEAD <el-table-column prop="start_address" label="当时位置" :formatter="$utils.baseFormatter ">
-          </el-table-column>
-          =======
-          <el-table-column prop="address" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
-          >>>>>>> f0064e9a2c296367bb2fb852b96b73b0e4908d0f
+        <el-table-column prop="address" label="当时位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>

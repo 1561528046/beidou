@@ -3,18 +3,18 @@
     <el-card shadow="always" class="admin-table-search">
       <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
-          <el-col :span="7">
+          <el-col :span="6">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="6">
             <el-form-item prop="real_name" label="用户">
               <el-input :disabled="userAlert" @focus="selectuser" type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10" style="text-align: right;">
+          <el-col :span="4" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
@@ -78,6 +78,7 @@ export default {
         stop_time: "",
         time: "",
         user_ids: "",
+        sim_ids: "",
         license: "",
         real_name: "",
         size: 10,
@@ -169,12 +170,14 @@ export default {
       this.addKey++;
       this.vehicleDialog = true;
       this.tableQuery.license = "";
+      this.tableQuery.sim_ids = "";
       this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
       this.tableQuery.real_name = "";
+      this.tableQuery.sim_ids = "";
       this.vehicleAlert = false;
     },
     // 回来的数据
@@ -215,17 +218,30 @@ export default {
         this.tableQuery.user_ids =
           this.tableQuery.user_ids + scope.user[s].user_id + ",";
       }
-      this.tableQuery.real_name = this.tableQuery.real_name.substring(
-        0,
-        this.tableQuery.real_name.lastIndexOf(",")
-      );
       this.tableQuery.user_ids = this.tableQuery.user_ids.substring(
         0,
         this.tableQuery.user_ids.lastIndexOf(",")
       );
+      this.tableQuery.real_name = this.tableQuery.real_name.substring(
+        0,
+        this.tableQuery.real_name.lastIndexOf(",")
+      );
     },
     //查询产品列表
     getTable() {
+      if (this.tableQuery.real_name == "" && this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆或用户",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
@@ -236,12 +252,14 @@ export default {
                 var data = [];
                 var arr = {};
                 this.vehicles.map(item => {
-                  arr[item.sim_id] = item;
+                  arr[item.user_id] = item;
                 });
                 res.data.data.map(item => {
-                  item.sim_id =
-                    item.sim_id[0] == "0" ? item.sim_id.slice(1) : item.sim_id;
-                  var obj = arr[item.sim_id];
+                  item.user_id =
+                    item.user_id[0] == "0"
+                      ? item.user_id.slice(1)
+                      : item.user_id;
+                  var obj = arr[item.user_id];
                   if (!obj) {
                     return false;
                   }

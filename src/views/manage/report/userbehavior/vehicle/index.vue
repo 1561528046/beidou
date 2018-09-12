@@ -89,6 +89,7 @@ export default {
         time: "",
         sim_ids: "",
         user_ids: "",
+        vehicle_ids: "",
         license: "",
         real_name: "",
         size: 10,
@@ -180,12 +181,18 @@ export default {
       this.addKey++;
       this.vehicleDialog = true;
       this.tableQuery.license = "";
+      this.tableQuery.sim_ids = "";
+      this.tableQuery.user_ids = "";
+      this.tableQuery.vehicle_ids = "";
       this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
       this.tableQuery.real_name = "";
+      this.tableQuery.sim_ids = "";
+      this.tableQuery.user_ids = "";
+      this.tableQuery.vehicle_ids = "";
       this.vehicleAlert = false;
     },
     // 回来的数据
@@ -198,22 +205,23 @@ export default {
       for (var i = 0; i < scope.length; i++) {
         this.tableQuery.license =
           this.tableQuery.license + scope[i].license + ",";
-        this.tableQuery.sim_ids =
-          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+        this.tableQuery.vehicle_ids =
+          this.tableQuery.vehicle_ids + scope[i].vehicle_id + ",";
         this.vehicles.push({
           license: scope[i].license,
           license_color: scope[i].license_color,
           sim_id: scope[i].sim_id
         });
       }
-      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
+      this.tableQuery.vehicle_ids = this.tableQuery.vehicle_ids.substring(
         0,
-        this.tableQuery.sim_ids.lastIndexOf(",")
+        this.tableQuery.vehicle_ids.lastIndexOf(",")
       );
       this.tableQuery.license = this.tableQuery.license.substring(
         0,
         this.tableQuery.license.lastIndexOf(",")
       );
+      this.tableQuery.vehicle_ids = "1";
     },
     user(scope) {
       this.userDialog = false;

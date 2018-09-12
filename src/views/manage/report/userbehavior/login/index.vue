@@ -76,6 +76,7 @@ export default {
         start_time: "",
         stop_time: "",
         time: "",
+        sim_ids: "",
         user_ids: "",
         license: "",
         real_name: "",
@@ -168,12 +169,14 @@ export default {
       this.addKey++;
       this.vehicleDialog = true;
       this.tableQuery.license = "";
+      this.tableQuery.sim_ids = "";
       this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
       this.tableQuery.real_name = "";
+      this.tableQuery.sim_ids = "";
       this.vehicleAlert = false;
     },
     // 回来的数据
@@ -214,13 +217,13 @@ export default {
         this.tableQuery.user_ids =
           this.tableQuery.user_ids + scope.user[s].user_id + ",";
       }
-      this.tableQuery.real_name = this.tableQuery.real_name.substring(
-        0,
-        this.tableQuery.real_name.lastIndexOf(",")
-      );
       this.tableQuery.user_ids = this.tableQuery.user_ids.substring(
         0,
         this.tableQuery.user_ids.lastIndexOf(",")
+      );
+      this.tableQuery.real_name = this.tableQuery.real_name.substring(
+        0,
+        this.tableQuery.real_name.lastIndexOf(",")
       );
     },
     //查询产品列表
@@ -235,12 +238,14 @@ export default {
                 var data = [];
                 var arr = {};
                 this.vehicles.map(item => {
-                  arr[item.sim_id] = item;
+                  arr[item.user_id] = item;
                 });
                 res.data.data.map(item => {
-                  item.sim_id =
-                    item.sim_id[0] == "0" ? item.sim_id.slice(1) : item.sim_id;
-                  var obj = arr[item.sim_id];
+                  item.user_id =
+                    item.user_id[0] == "0"
+                      ? item.user_id.slice(1)
+                      : item.user_id;
+                  var obj = arr[item.user_id];
                   if (!obj) {
                     return false;
                   }
@@ -250,12 +255,6 @@ export default {
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
-                this.$emit("success");
-                this.$notify({
-                  message: res.data.msg,
-                  title: "提示",
-                  type: "success"
-                });
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

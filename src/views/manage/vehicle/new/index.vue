@@ -448,7 +448,7 @@ export default {
       postData.append("device_id", this.openCompany.vehicle.device_id);
       postData.append("sim_no", this.openCompany.vehicle.sim_no);
       postData.append("company_id", this.openCompany.vehicle.company_id);
-      postData.append("content", this.openCompany.postData.node);
+      postData.append("content", this.openCompany.postData.note);
       postData.append("imgfile1", this.openCompany.postData.img1File);
       postData.append("imgfile2", this.openCompany.postData.img2File);
       this.$ajax
@@ -458,6 +458,9 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             this.openCompany.visible = false;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
           }
         });
     },

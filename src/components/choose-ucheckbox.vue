@@ -82,6 +82,9 @@ export default {
     getTable() {
       getUserChildrenList().then(res => {
         if (res.data.code == 0) {
+          for (var i = 0; i < res.data.data.length; i++) {
+            res.data.data[i].checked = false;
+          }
           this.$set(this.tableData, "data", res.data.data);
         }
       });
