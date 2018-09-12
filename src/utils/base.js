@@ -1,11 +1,7 @@
 export const dict = {
   //全局字典
-<<<<<<< HEAD
-  MAP_KEY: "1effb3317ab25b91eb7b163d5febd226",
-=======
   AMAP_KEY: "1effb3317ab25b91eb7b163d5febd226", //高德key
   BMAP_KEY: "E6CTjsauEoavEzCYG4WM1zt0S5OB6dAf", //百度key
->>>>>>> f0064e9a2c296367bb2fb852b96b73b0e4908d0f
   BASE_URL: "http://192.168.88.100:725/",
   API_URL: "http://192.168.88.100:725/api",
   // BASE_URL: "http://192.168.88.88:10462/",
