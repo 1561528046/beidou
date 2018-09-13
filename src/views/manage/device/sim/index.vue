@@ -42,15 +42,15 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <el-button type="primary" size="small" @click="addFrom">
+        <el-button type="primary" size="small" @click="addFrom" v-rights="2-3-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
-        <router-link :to="{name:'sim-binding'}" style="margin-left: 15px;">
+        <router-link :to="{name:'sim-binding'}" style="margin-left: 15px;" v-rights="2-3-8">
           <el-button type="primary" size="small">
             <i class="el-icon-upload el-icon--right"></i> SIM卡绑定管理
           </el-button>
         </router-link>
-        <el-dropdown>
+        <el-dropdown v-rights="2-3-6">
           <el-button size="small" style="margin-left: 15px;" type="primary">
             批量上传
             <i class="el-icon-arrow-down el-icon--right"></i>
@@ -84,8 +84,8 @@
         <el-table-column prop="state" label="当前状态" :formatter="(row)=>{return this.$dict.get_sim_state(row.state)}"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
+            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit" v-rights="2-3-3">编辑</el-button>
+            <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="2-3-2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

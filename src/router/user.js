@@ -1,13 +1,13 @@
 export default {
   path: "user",
   name: "user",
-  meta: { name: "用户管理", icon: "iconfont icon-team" },
+  meta: { name: "用户管理", icon: "iconfont icon-team", p: "4-1-4,4-2-4" },
   component: () => import("@/views/manage/user/index.vue"),
   children: [
     {
       path: "user_list",
       name: "user_list",
-      meta: { name: "企业管理", icon: "iconfont icon-team" },
+      meta: { name: "企业管理", icon: "iconfont icon-team", p: "4-1-4" },
       component: () => import("@/views/manage/user/user/index.vue")
     },
     {
@@ -29,7 +29,7 @@ export default {
     {
       path: "role",
       name: "role",
-      meta: { name: "角色管理", icon: "iconfont icon-jiaose" },
+      meta: { name: "角色管理", icon: "iconfont icon-jiaose", p: "4-2-4" },
       component: () => import("@/views/manage/user/role/index.vue")
     },
     {

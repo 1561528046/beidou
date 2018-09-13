@@ -51,15 +51,15 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <el-button type="primary" size="small" @click="addFrom">
+        <el-button type="primary" size="small" @click="addFrom" v-rights="2-1-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
-        <router-link :to="{name:'device-binding'}" style="margin-left: 15px;">
+        <router-link :to="{name:'device-binding'}" style="margin-left: 15px;" v-rights="2-1-7">
           <el-button type="primary" size="small">
             <i class="el-icon-upload el-icon--right"></i> 设备绑定管理
           </el-button>
         </router-link>
-        <el-dropdown>
+        <el-dropdown v-rights="2-1-5">
           <el-button size="small" style="margin-left: 15px;" type="primary">
             批量上传
             <i class="el-icon-arrow-down el-icon--right"></i>
@@ -94,11 +94,11 @@
         <el-table-column prop="state" label="状态" :formatter="(row)=>{return this.$dict.get_device_state(row.state)}"></el-table-column>
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
-            <el-button size="small" type="primary" :disabled="scope.row.editDisabled" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
+            <el-button size="small" type="primary" :disabled="scope.row.editDisabled" @click="updateForm(scope)" icon="el-icon-edit" v-rights="2-1-3">编辑</el-button>
             <!-- <el-button size="small" :disabled="scope.row.disabled" :type="buttontype(scope)" @click="repair_addFrom(scope)">
               <i class="el-icon-upload el-icon--right"></i>设备维修</el-button> -->
             <el-dropdown>
-              <el-button :disabled="scope.row.deviceDisabled" size="small" style="margin-left: 15px;margin-right:15px;" type="primary">
+              <el-button :disabled="scope.row.deviceDisabled" size="small" style="margin-left: 15px;margin-right:15px;" type="primary" v-rights="2-2-1">
                 设备管理
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
@@ -111,7 +111,7 @@
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <el-button size="small" @click="delRow(scope)" icon="el-icon-delete" :disabled="scope.row.delDisabled">删除</el-button>
+            <el-button size="small" @click="delRow(scope)" icon="el-icon-delete" :disabled="scope.row.delDisabled" v-rights="2-1-2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

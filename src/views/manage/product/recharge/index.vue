@@ -29,7 +29,7 @@
         <el-table-column prop="balance" label="余额" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column width="300" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " type="primary " icon="el-icon-edit" @click="topup" style="margin-right:10px;">充值</el-button>
+            <el-button size="small " type="primary " icon="el-icon-edit" @click="topup" style="margin-right:10px;" v-rights="3-3-1">充值</el-button>
             <!-- <el-button size="small " type="primary " icon="el-icon-menu" >二维码生成</el-button> -->
             <el-popover placement="left-end" width="450" trigger="click">
               <el-table :data="gridData">

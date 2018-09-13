@@ -7,7 +7,11 @@ export default {
     {
       path: "device",
       name: "device-device",
-      meta: { name: "终端管理", icon: "iconfont icon-boxplot-fill" },
+      meta: {
+        name: "终端管理",
+        icon: "iconfont icon-boxplot-fill",
+        p: "2-1-4"
+      },
       component: () => import("@/views/manage/device/device/index.vue")
     },
     {
@@ -33,7 +37,8 @@ export default {
       name: "device-repair",
       meta: {
         name: "维修设备管理",
-        icon: "iconfont icon-wrench-fill"
+        icon: "iconfont icon-wrench-fill",
+        p: "2-2-3"
       },
       component: () => import("@/views/manage/device/repair/index.vue")
     },
@@ -42,7 +47,8 @@ export default {
       name: "sim",
       meta: {
         name: "SIM卡管理",
-        icon: "iconfont icon-sim"
+        icon: "iconfont icon-sim",
+        p: "2-3-4"
       },
       component: () => import("@/views/manage/device/sim/index.vue")
     },
@@ -69,7 +75,8 @@ export default {
       name: "device-company",
       meta: {
         name: "终端厂商管理",
-        icon: "iconfont icon-company"
+        icon: "iconfont icon-company",
+        p: "2-4-4"
       },
       component: () => import("@/views/manage/device/company/index.vue")
     },

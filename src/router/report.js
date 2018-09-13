@@ -1,14 +1,18 @@
 export default {
   path: "report",
   name: "report",
-  meta: { name: "报表", icon: "iconfont icon-fl-baobiao" },
+  meta: {
+    name: "报表",
+    icon: "iconfont icon-fl-baobiao",
+    p: "7-1-1,7-1-2,7-1-3,7-1-4,7-1-5,7-1-6,7-1-7,7-1-8,7-1-9,7-1-10"
+  },
   component: () => import("@/views/manage/report/index.vue"),
   children: [
     // 报警报表
     {
       path: "alarm",
       name: "report-alarm",
-      meta: { name: "报警报表", icon: "iconfont icon-baojing" },
+      meta: { name: "报警报表", icon: "iconfont icon-baojing", p: "7-1-1" },
       component: () => import("@/views/manage/report/alarm/index.vue"),
       children: [
         {
@@ -34,7 +38,7 @@ export default {
     {
       path: "drive",
       name: "report-drive",
-      meta: { name: "行车报表", icon: "iconfont icon-my-" },
+      meta: { name: "行车报表", icon: "iconfont icon-my-", p: "7-1-2" },
       component: () => import("@/views/manage/report/drive/index.vue"),
       children: [
         {
@@ -88,7 +92,7 @@ export default {
     {
       path: "driving",
       name: "report-driving",
-      meta: { name: "驾驶行为分析", icon: "iconfont icon-jiashi" },
+      meta: { name: "驾驶行为分析", icon: "iconfont icon-jiashi", p: "7-1-3" },
       component: () => import("@/views/manage/report/driving/index.vue"),
       children: [
         {
@@ -121,7 +125,11 @@ export default {
     {
       path: "fence",
       name: "report-fence",
-      meta: { name: "电子围栏报表", icon: "iconfont icon-dianziweilan" },
+      meta: {
+        name: "电子围栏报表",
+        icon: "iconfont icon-dianziweilan",
+        p: "7-1-4"
+      },
       component: () => import("@/views/manage/report/fence/index.vue"),
       children: [
         {
@@ -147,7 +155,11 @@ export default {
     {
       path: "glitch",
       name: "report-glitch",
-      meta: { name: "故障报警报表", icon: "iconfont icon-guzhangbaojing" },
+      meta: {
+        name: "故障报警报表",
+        icon: "iconfont icon-guzhangbaojing",
+        p: "7-1-5"
+      },
       component: () => import("@/views/manage/report/glitch/index.vue"),
       children: [
         {
@@ -173,7 +185,7 @@ export default {
     {
       path: "mileage",
       name: "report-mileage",
-      meta: { name: "里程报表", icon: "iconfont icon-licheng" },
+      meta: { name: "里程报表", icon: "iconfont icon-licheng", p: "7-1-6" },
       component: () => import("@/views/manage/report/mileage/index.vue"),
       children: [
         {
@@ -199,7 +211,7 @@ export default {
     {
       path: "selectdata",
       name: "report-selectdata",
-      meta: { name: "数据查询", icon: "iconfont icon-shujuchaxun" },
+      meta: { name: "数据查询", icon: "iconfont icon-shujuchaxun", p: "7-1-7" },
       component: () => import("@/views/manage/report/selectdata/index.vue"),
       children: [
         {
@@ -227,7 +239,8 @@ export default {
       name: "report-userbehavior",
       meta: {
         name: "用户行为分析表",
-        icon: "iconfont icon-yonghuhangweifenxi"
+        icon: "iconfont icon-yonghuhangweifenxi",
+        p: "7-1-8"
       },
       component: () => import("@/views/manage/report/userbehavior/index.vue"),
       children: [
@@ -290,7 +303,8 @@ export default {
       name: "report-vehiclelink",
       meta: {
         name: "车辆连接统计表",
-        icon: "iconfont icon-vehicle_connection"
+        icon: "iconfont icon-vehicle_connection",
+        p: "7-1-9"
       },
       component: () => import("@/views/manage/report/vehiclelink/index.vue"),
       children: [
@@ -317,7 +331,11 @@ export default {
     {
       path: "video",
       name: "report-video",
-      meta: { name: "视频报警报表", icon: "iconfont icon-shipinbaojing" },
+      meta: {
+        name: "视频报警报表",
+        icon: "iconfont icon-shipinbaojing",
+        p: "7-1-10"
+      },
       component: () => import("@/views/manage/report/video/index.vue"),
       children: [
         {

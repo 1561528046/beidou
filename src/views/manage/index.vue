@@ -29,7 +29,7 @@ export default {
       var routes = window.routerDict[this.$route.name];
       if (routes.children) {
         return routes.children.filter(route => {
-          return !route.meta.hidden;
+          return !route.meta.hidden && route.meta.visible != "hidden";
         });
       } else {
         return [];

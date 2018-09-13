@@ -1,6 +1,6 @@
 <template>
   <div class="routeing">
-    <router-link class="routeing-item" :to="{name:route.name}" v-for="route in routes" :key="route.path">
+    <router-link class="routeing-item" :to="{name:route.name}" v-for="route in routes" :key="route.path" v-if="route.meta.hasRights">
       <span class="icon" :class="route.meta.icon"></span>
       <span class="name">{{route.meta.name}}</span>
     </router-link>

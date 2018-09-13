@@ -12,93 +12,127 @@ import "nprogress/nprogress.css";
 NProgress.configure({ showSpinner: false }); // 隐藏右上loading图标
 Vue.use(Router);
 
+var routers = [
+  {
+    path: "/",
+    name: "home",
+    component: () => import("@/views/home.vue"),
+    meta: { name: "首页" }
+  },
+  {
+    path: "/monitor",
+    name: "monitor",
+    component: () => import("@/views/monitor/index.vue"),
+    meta: { name: "地图监控" },
+    children: [
+      {
+        path: "map",
+        name: "map",
+        meta: { name: "地图" }
+        //component:()=>import('@/views/Map.vue')
+      }
+    ]
+  },
+  {
+    path: "/manage",
+    name: "manage",
+    meta: { name: "运营管理" },
+    component: () => import("@/views/manage/index.vue"),
+    children: [
+      vehicle,
+      device,
+      product,
+      user,
+      {
+        path: "group_binding",
+        name: "group_binding",
+        meta: {
+          p: "5-1-4,5-1-5",
+          name: "车队分组/分车管理",
+          icon: "iconfont icon-orderedlist"
+        },
+        component: () => import("@/views/manage/group/binding.vue")
+      },
+      /**
+       * 司机信息
+       */
+      {
+        path: "driver",
+        name: "driver",
+        meta: {
+          p: "6-1-4",
+          name: "司机信息管理",
+          icon: "iconfont icon-driver"
+        },
+        component: () => import("@/views/manage/driver/index.vue")
+      },
+      {
+        path: "driver_add",
+        name: "driver_add",
+        meta: { name: "添加司机", hidden: true },
+        component: () => import("@/views/manage/driver/add.vue")
+      },
+      {
+        path: "driver_update/:driver_card_id",
+        name: "driver_update",
+        meta: { name: "编辑司机", hidden: true },
+        component: () => import("@/views/manage/driver/update.vue")
+      },
+      report,
+      {
+        path: "server-state",
+        name: "server-state",
+        meta: {
+          name: "服务器状态",
+          icon: "iconfont icon-fuwuqi1"
+        }
+      }
+    ]
+  },
+  {
+    path: "/login",
+    name: "login",
+    meta: { name: "登陆", hidden: true, fullscreen: true },
+    component: () => import("@/views/login.vue")
+  },
+  {
+    path: "/404",
+    meta: { hidden: true },
+    component: () => import("@/views/404.vue")
+  },
+  { path: "*", redirect: "/404", meta: { hidden: true, fullscreen: true } }
+];
+permissions(routers);
+function permissions(routers) {
+  var userRights = store.state.user.rights;
+  routers.map(router => {
+    if (router.children) {
+      permissions(router.children);
+    }
+    if (store.state.user.user_id == 1) {
+      //管理员都为true
+      router.meta.hasRights = true;
+      return false;
+    }
+    var routerRights = router.meta.p;
+    if (routerRights) {
+      routerRights = routerRights.split(",");
+    } else {
+      router.meta.hasRights = true;
+      return false;
+    }
+    router.meta.hasRights = false;
+    routerRights.map(rights => {
+      if (userRights.indexOf(rights) != -1) {
+        router.meta.hasRights = true;
+      }
+    });
+  });
+}
+
 var router = new Router({
   mode: "history",
-  routes: [
-    {
-      path: "/",
-      name: "home",
-      component: () => import("@/views/home.vue"),
-      meta: { name: "首页" }
-    },
-    {
-      path: "/monitor",
-      name: "monitor",
-      component: () => import("@/views/monitor/index.vue"),
-      meta: { name: "地图监控" },
-      children: [
-        {
-          path: "map",
-          name: "map",
-          meta: { name: "地图" }
-          //component:()=>import('@/views/Map.vue')
-        }
-      ]
-    },
-    {
-      path: "/manage",
-      name: "manage",
-      meta: { name: "运营管理" },
-      component: () => import("@/views/manage/index.vue"),
-      children: [
-        vehicle,
-        device,
-        product,
-        user,
-        {
-          path: "group_binding",
-          name: "group_binding",
-          meta: {
-            name: "车队分组/分车管理",
-            icon: "iconfont icon-orderedlist"
-          },
-          component: () => import("@/views/manage/group/binding.vue")
-        },
-        /**
-         * 司机信息
-         */
-        {
-          path: "driver",
-          name: "driver",
-          meta: { name: "司机信息管理", icon: "iconfont icon-driver" },
-          component: () => import("@/views/manage/driver/index.vue")
-        },
-        {
-          path: "driver_add",
-          name: "driver_add",
-          meta: { name: "添加司机", hidden: true },
-          component: () => import("@/views/manage/driver/add.vue")
-        },
-        {
-          path: "driver_update/:driver_card_id",
-          name: "driver_update",
-          meta: { name: "编辑司机", hidden: true },
-          component: () => import("@/views/manage/driver/update.vue")
-        },
-        report,
-        {
-          path: "server-state",
-          name: "server-state",
-          meta: {
-            name: "服务器状态",
-            icon: "iconfont icon-fuwuqi1"
-          }
-        }
-      ]
-    },
-    {
-      path: "/login",
-      name: "login",
-      meta: { name: "登陆", hidden: true, fullscreen: true },
-      component: () => import("@/views/login.vue")
-    },
-    {
-      path: "/404",
-      meta: { hidden: true },
-      component: () => import("@/views/404.vue")
-    },
-    { path: "*", redirect: "/404", meta: { hidden: true, fullscreen: true } }
-  ]
+  routes: routers
 });
 router.beforeEach((to, from, next) => {
   NProgress.inc();
