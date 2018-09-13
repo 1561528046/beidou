@@ -159,10 +159,28 @@ export const getVehicleLogByPage = query => {
     params: query
   });
 };
-// 视频变更报表
+// 设备变更报表
 export const getDeviceLogByPage = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/Report/GetDeviceLogByPage", queryQS, {
+    params: query
+  });
+};
+// 导出在线时长统计
+export const exportLoginSummaryByPage = query => {
+  return ajax.get("/Report/ExportLoginSummaryByPage", {
+    params: query
+  });
+};
+// 导出用户登录明细
+export const exportLoginDetailByPage = query => {
+  return ajax.get("/Report/ExportLoginDetailByPage", {
+    params: query
+  });
+};
+// 导出用户操作日志
+export const exportUserOperateLogByPage = query => {
+  return ajax.get("/Report/ExportUserOperateLogByPage", {
     params: query
   });
 };

@@ -164,21 +164,23 @@ export default {
         wsCol.push({
           A: data.license,
           B: this.$dict.get_alarm_type(data.alarm_type),
-          C: data.stop_time - data.start_time,
-          D: this.$utils.formatDate14(data.start_time),
-          E: this.$utils.formatDate14(data.stop_time),
-          F: data.start_speed,
-          G: data.stop_speed,
-          H: data.start_address,
-          I: data.stop_address,
-          J: data.start_longitude + "," + data.start_latitude,
-          K: data.stop_longitude + "," + data.stop_latitude
+          C: "",
+          D: "",
+          E: "",
+          F: this.$utils.formatDate14(data.start_time),
+          G: this.$utils.formatDate14(data.stop_time),
+          H: data.start_speed,
+          I: data.stop_speed,
+          J: data.start_address,
+          K: data.stop_address,
+          L: data.start_longitude + "," + data.start_latitude,
+          M: data.stop_longitude + "," + data.stop_latitude
         });
       });
       this.$utils.exportExcel({
         data: wsCol,
-        sheetName: "报警明细表",
-        fileName: "报警明细表.xlsx"
+        sheetName: "电子围栏明细表",
+        fileName: "电子围栏明细表.xlsx"
       });
     },
     // 选择查询方式
@@ -212,6 +214,19 @@ export default {
     },
     //查询列表
     getTable() {
+      if (this.tableQuery.alarm_type == "" && this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆和报警类型",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

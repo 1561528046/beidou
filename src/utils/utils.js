@@ -32,6 +32,20 @@ export default {
    *  20170808010101 = 2017-08-08 01:01:01
    * 除监控外，其他时间不包括时分秒，监控方法另外重写！
    */
+  DateTime(date) {
+    var day = parseInt(date / 86400000); //天
+    var time = date % 86400000; //余数
+    var datetime = moment.duration(time, "milliseconds");
+    var hours = datetime.get("hours");
+    var minutes = datetime.get("minutes");
+    var seconds = datetime.get("seconds");
+    day = day == "0" ? "" : day + "天";
+    hours = hours == "0" ? "" : hours + "小时";
+    minutes = minutes == "0" ? "" : minutes + "分钟";
+    seconds = seconds == "0" ? "" : seconds + "秒";
+    // 00天00小时00分钟30秒
+    return day + hours + minutes + seconds;
+  },
   formatDate(date, separator = "-") {
     date = date.toString();
     if (!date) {

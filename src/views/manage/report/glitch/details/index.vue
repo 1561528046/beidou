@@ -17,7 +17,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item prop="alarm_type" label="报警类型">
+            <el-form-item prop="fault_type" label="报警类型">
               <select-faulttype style="width:100%;" v-model="tableQuery.fault_type"></select-faulttype>
             </el-form-item>
           </el-col>
@@ -30,6 +30,11 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
@@ -128,6 +133,30 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "开始时间",
+          C: "结束时间",
+          D: "报警类型"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(data.start_time),
+          C: this.$utils.formatDate14(data.stop_time),
+          D: this.$dict.get_fault_type(data.alarm_type)
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "故障报警明细表",
+        fileName: "故障报警明细表.xlsx"
+      });
+    },
     // 选择查询方式
     addFrom() {
       this.addKey++;
@@ -159,6 +188,19 @@ export default {
     },
     //查询列表
     getTable() {
+      if (this.tableQuery.fault_type == "" && this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆和报警类型",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
@@ -178,12 +220,6 @@ export default {
                 }
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
-                this.$emit("success");
-                this.$notify({
-                  message: res.data.msg,
-                  title: "提示",
-                  type: "success"
-                });
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

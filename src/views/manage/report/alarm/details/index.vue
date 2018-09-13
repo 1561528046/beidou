@@ -159,7 +159,7 @@ export default {
         wsCol.push({
           A: data.license,
           B: this.$dict.get_alarm_type(data.alarm_type),
-          C: data.stop_time - data.start_time,
+          C: data.alertTime,
           D: this.$utils.formatDate14(data.start_time),
           E: this.$utils.formatDate14(data.stop_time),
           F: data.start_speed,
@@ -207,6 +207,19 @@ export default {
     },
     //查询列表
     getTable() {
+      if (this.tableQuery.alarm_type == "" && this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆和报警类型",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
@@ -221,7 +234,19 @@ export default {
                     i
                   ].license_color = this.tableQuery.license_color;
                   res.data.data[i].alertTime =
-                    res.data.data[i].stop_time - res.data.data[i].start_time;
+                    new Date(
+                      this.$utils.formatDate14(
+                        JSON.stringify(res.data.data[i].stop_time)
+                      )
+                    ).getTime() -
+                    new Date(
+                      this.$utils.formatDate14(
+                        JSON.stringify(res.data.data[i].start_time)
+                      )
+                    ).getTime();
+                  res.data.data[i].alertTime = this.$utils.DateTime(
+                    res.data.data[i].alertTime
+                  );
                   data.push(res.data.data[i]);
                 }
                 Promise.all([

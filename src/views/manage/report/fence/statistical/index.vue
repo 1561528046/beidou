@@ -29,6 +29,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
@@ -38,10 +41,10 @@
         </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
-        <el-table-column prop="" label="进出区域" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="进出线路" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="路段行驶时间不足或过长" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="路线偏离" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="jinchuquyu" label="进出区域" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="jinchuluxian" label="进出线路" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="luduanshijian" label="路段行驶时间不足或过长" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="luxianpianli" label="路线偏离" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -159,6 +162,36 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "开始时间",
+          C: "结束时间",
+          D: "进出区域",
+          E: "进出线路",
+          F: "路段行驶时间不足或过长",
+          G: "路线偏离"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(data.start_time),
+          C: this.$utils.formatDate14(data.stop_time),
+          D: data.jinchuquyu,
+          E: data.jinchuluxian,
+          F: data.luduanshijian,
+          G: data.luxianpianli
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "电子围栏统计表",
+        fileName: "电子围栏统计表.xlsx"
+      });
+    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(3, "days")._d;
@@ -246,6 +279,19 @@ export default {
     },
     //查询产品列表
     getTable() {
+      if (this.tableQuery.real_name == "" && this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆或用户",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
@@ -271,12 +317,6 @@ export default {
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
-                this.$emit("success");
-                this.$notify({
-                  message: res.data.msg,
-                  title: "提示",
-                  type: "success"
-                });
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

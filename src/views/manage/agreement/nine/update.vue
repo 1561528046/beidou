@@ -75,11 +75,12 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
-import { AddServer809 } from "@/api/index.js";
+import { GetServerById, UpdateServer808 } from "@/api/index.js";
 export default {
   data() {
     return {
       formData: {
+        server_id: this.$props.server_id,
         title: "",
         remote_ip: "",
         remote_port: "",
@@ -98,11 +99,19 @@ export default {
       },
       rules: {
         ...rules
+      },
+      tableData: {
+        data: []
       }
     };
   },
   watch: {},
-  created() {},
+  props: {
+    server_id: String
+  },
+  created() {
+    this.getTable();
+  },
   methods: {
     formSubmit() {
       if (this.formData.enable_type) {
@@ -110,28 +119,17 @@ export default {
       } else {
         this.formData.enable = 2;
       }
+      if (this.formData.is_encryption_type) {
+        this.formData.is_encryption = 1;
+      } else {
+        this.formData.is_encryption = 2;
+      }
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var postData = Object.assign({}, this.formData);
-          AddServer809(postData)
+          UpdateServer808(postData)
             .then(res => {
               if (res.data.code == 0) {
-                this.formData.title = "";
-                this.formData.remote_ip = "";
-                this.formData.remote_port = "";
-                this.formData.user_name = "";
-                this.formData.password = "";
-                this.formData.access_code = "";
-                this.formData.local_port = "";
-                this.formData.M1 = "";
-                this.formData.IA1 = "";
-                this.formData.IC1 = "";
-                this.formData.keys = "";
-                this.formData.M1 = "";
-                this.formData.is_encryption_type = false;
-                this.formData.is_encryption = 2;
-                this.formData.enable_type = true;
-                this.formData.enable = 1;
                 this.$emit("success");
                 this.$notify({
                   message: res.data.msg,
@@ -165,6 +163,18 @@ export default {
           });
         }
       });
+    },
+    getTable() {
+      GetServerById({ server_id: this.formData.server_id, flag: 809 }).then(
+        res => {
+          if (res.data.code == 0) {
+            var mixinData = Object.assign({}, this.formData, res.data.data[0]);
+            this.$set(this.$data, "formData", mixinData);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        }
+      );
     }
   },
   components: {}

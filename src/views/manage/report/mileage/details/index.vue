@@ -25,6 +25,11 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
@@ -127,10 +132,48 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "行驶里程",
+          C: "开始时间",
+          D: "结束时间",
+          E: "开始里程",
+          F: "结束里程",
+          G: "开始位置",
+          H: "结束位置",
+          I: "开始位置经纬度",
+          J: "结束位置经纬度"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: data.mileage,
+          C: this.$utils.formatDate14(data.start_time),
+          D: this.$utils.formatDate14(data.stop_time),
+          E: data.start_mileage,
+          F: data.stop_mileage,
+          G: data.start_address,
+          H: data.stop_address,
+          I: data.start_longitude + "," + data.start_latitude,
+          J: data.stop_longitude + "," + data.stop_latitude
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "里程明细表",
+        fileName: "里程明细表.xlsx"
+      });
+    },
     // 选择查询方式
     addFrom() {
       this.addKey++;
       this.addDialog = true;
+      this.tableQuery.license = "";
+      this.tableQuery.sim_ids = "";
       this.dialog = true;
     },
     // 回来的数据
@@ -158,6 +201,19 @@ export default {
     },
     //查询列表
     getTable() {
+      if (this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
@@ -171,8 +227,9 @@ export default {
                   res.data.data[
                     i
                   ].license_color = this.tableQuery.license_color;
-                  res.data.data[i].alertTime =
-                    res.data.data[i].stop_time - res.data.data[i].start_time;
+                  res.data.data[i].mileage =
+                    res.data.data[i].stop_mileage -
+                    res.data.data[i].start_mileage;
                   data.push(res.data.data[i]);
                 }
                 Promise.all([

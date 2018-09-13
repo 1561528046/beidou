@@ -39,7 +39,7 @@
         <el-table-column prop="user_real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="operate_type_name" label="类型" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="device_no" label="设备号" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="log_time" label="时间" :formatter="(row)=>{this.$utils.formatDate14(JSON.stringify(row.log_time))}"> </el-table-column>
+        <el-table-column prop="log_time" label="时间" :formatter="(row)=>{ return this.$utils.formatDate14(JSON.stringify(row.log_time))}"> </el-table-column>
         <el-table-column prop="desc" label="描述" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
@@ -274,12 +274,14 @@ export default {
                 var data = [];
                 var arr = {};
                 this.vehicles.map(item => {
-                  arr[item.sim_id] = item;
+                  arr[item.user_id] = item;
                 });
                 res.data.data.map(item => {
-                  item.sim_id =
-                    item.sim_id[0] == "0" ? item.sim_id.slice(1) : item.sim_id;
-                  var obj = arr[item.sim_id];
+                  item.user_id =
+                    item.user_id[0] == "0"
+                      ? item.user_id.slice(1)
+                      : item.user_id;
+                  var obj = arr[item.user_id];
                   if (!obj) {
                     return false;
                   }
@@ -289,12 +291,6 @@ export default {
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
-                this.$emit("success");
-                this.$notify({
-                  message: res.data.msg,
-                  title: "提示",
-                  type: "success"
-                });
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

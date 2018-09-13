@@ -173,8 +173,8 @@ export default {
       });
       this.$utils.exportExcel({
         data: wsCol,
-        sheetName: "轨迹超速汇总",
-        fileName: "轨迹超速汇总.xlsx"
+        sheetName: "轨迹超速明细表",
+        fileName: "轨迹超速明细表.xlsx"
       });
     },
     // 选择查询方式
@@ -208,6 +208,19 @@ export default {
     },
     //查询列表
     getTable() {
+      if (this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆或用户",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

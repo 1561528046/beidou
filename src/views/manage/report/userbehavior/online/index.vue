@@ -24,6 +24,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="user_name" label="登录账号" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -49,7 +52,10 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import { getLoginSummaryByPage } from "@/api/index.js";
+import {
+  getLoginSummaryByPage
+  // exportLoginSummaryByPage
+} from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
@@ -67,6 +73,7 @@ export default {
   },
   data() {
     return {
+      count: "",
       vehicleDialog: false,
       userDialog: false,
       isCollapse: false,
@@ -150,6 +157,20 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      // var sub = {
+      //   page: 1,
+      //   size: this.count,
+      //   start_time: this.tableQuery.start_time,
+      //   stop_time: this.tableQuery.stop_time,
+      //   user_ids: this.tableQuery.user_ids
+      // };
+      // exportLoginSummaryByPage(sub).then(res => {
+      //   if (res.data.code == 0) {
+      //     console.log(res);
+      //   }
+      // });
+    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(30, "days")._d;
@@ -229,9 +250,9 @@ export default {
     },
     //查询产品列表
     getTable() {
-      if (this.tableQuery.real_name == "" && this.tableQuery.license == "") {
+      if (this.tableQuery.real_name == "") {
         return this.$notify({
-          message: "请选择车辆或用户",
+          message: "请选择用户",
           title: "提示",
           type: "error"
         });
@@ -255,6 +276,9 @@ export default {
                   arr[item.user_id] = item;
                 });
                 res.data.data.map(item => {
+                  item.total_duration = this.$utils.DateTime(
+                    item.total_duration
+                  );
                   item.user_id =
                     item.user_id[0] == "0"
                       ? item.user_id.slice(1)
@@ -269,12 +293,7 @@ export default {
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
                 this.$set(this.tableData, "total", this.tableData.data.length);
-                this.$emit("success");
-                this.$notify({
-                  message: res.data.msg,
-                  title: "提示",
-                  type: "success"
-                });
+                this.$set(this.$data, "count", res.data.count);
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

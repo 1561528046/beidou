@@ -29,6 +29,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
@@ -161,6 +164,42 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "行驶里程",
+          C: "开始时间",
+          D: "结束时间",
+          E: "开始里程",
+          F: "结束里程",
+          G: "开始位置",
+          H: "结束位置",
+          I: "开始位置经纬度",
+          J: "结束位置经纬度"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: data.mileage,
+          C: this.$utils.formatDate14(data.start_time),
+          D: this.$utils.formatDate14(data.stop_time),
+          E: data.start_mileage,
+          F: data.stop_mileage,
+          G: data.start_address,
+          H: data.stop_address,
+          I: data.start_longitude + "," + data.start_latitude,
+          J: data.stop_longitude + "," + data.stop_latitude
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "里程汇总表",
+        fileName: "里程汇总表.xlsx"
+      });
+    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(3, "days")._d;
@@ -248,6 +287,19 @@ export default {
     },
     //查询产品列表
     getTable() {
+      if (this.tableQuery.real_name == "" && this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆或用户",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

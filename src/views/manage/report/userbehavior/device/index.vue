@@ -47,7 +47,7 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import { getLoginDetailByPage } from "@/api/index.js";
+import { getDeviceLogByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 import selectDeviceno from "@/components/select-deviceno.vue";
@@ -189,16 +189,31 @@ export default {
     },
     //查询产品列表
     getTable() {
+      if (this.tableQuery.device_no == "") {
+        return this.$notify({
+          message: "请选择设备",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
-          getLoginDetailByPage(query)
+          getDeviceLogByPage(query)
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
                 var arr = {};
                 this.vehicles.map(item => {
+                  console.log(arr);
+                  console.log(item);
                   arr[item.device_id] = item;
                 });
                 res.data.data.map(item => {

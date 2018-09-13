@@ -7,7 +7,7 @@
             <el-checkbox size="medium" v-model="scope.row.checked" style="margin-left:7px;"></el-checkbox>
           </template>
         </el-table-column>
-        <el-table-column prop="real_name" label="用户">
+        <el-table-column prop="real_name" :formatter="$utils.baseFormatter" label="用户">
         </el-table-column>
       </el-table>
     </template>

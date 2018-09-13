@@ -59,7 +59,7 @@
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="180" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
                     <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
                     <el-table-column width="150" label="维修状态" prop="RepairState">
                       <template slot-scope="scope">
@@ -159,7 +159,7 @@
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
                     <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
                     <el-table-column width="150" label="维修状态" prop="RepairState">
                       <template slot-scope="scope">
@@ -259,7 +259,7 @@
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
                     <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
                     <el-table-column width="150" label="维修状态" prop="RepairState">
                       <template slot-scope="scope">
@@ -359,7 +359,7 @@
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
                     <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
                     <el-table-column width="150" label="维修状态" prop="RepairState">
                       <template slot-scope="scope">
@@ -497,6 +497,9 @@ export default {
     }
   },
   methods: {
+    repairtime(row) {
+      return this.$utils.formatDate14(row.RepairTime);
+    },
     // type值
     handleClick(tab) {
       this.tableRepair.type = "";
