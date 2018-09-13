@@ -300,7 +300,7 @@ export const getDeviceALlUninstall = query => {
     },
     query
   );
-  return ajax.get("/sim/GetNotInstallUnboundListByPage", {
+  return ajax.get("/device/GetNotInstallUnboundListByPage", {
     params: query
   });
 };
