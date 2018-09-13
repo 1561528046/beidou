@@ -195,6 +195,20 @@ export default {
     },
     //查询列表
     getTable() {
+      if (this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
+      this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           this.tableLoading = true;

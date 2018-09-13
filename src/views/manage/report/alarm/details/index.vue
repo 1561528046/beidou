@@ -30,7 +30,12 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+      <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
+      <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
             <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
@@ -42,8 +47,8 @@
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
         <el-table-column prop="start_speed" label="开始速度" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="stop_speed" label="结束速度" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="start_address" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="stop_address" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -61,6 +66,7 @@ import moment from "moment";
 import { getAlarmDetailByPage } from "@/api/index.js";
 import selectAlarmtype from "@/components/select-alarmtype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
+import { location2address, gps2amap } from "@/utils/map-tools.js";
 export default {
   components: { chooseVehicle, selectAlarmtype },
   created() {
@@ -132,6 +138,44 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "报警类型",
+          C: "报警时长",
+          D: "开始时间",
+          E: "结束时间",
+          F: "开始速度",
+          G: "结束速度",
+          H: "开始位置",
+          I: "结束位置",
+          J: "开始位置经纬度",
+          K: "结束位置经纬度"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$dict.get_alarm_type(data.alarm_type),
+          C: data.alertTime,
+          D: this.$utils.formatDate14(data.start_time),
+          E: this.$utils.formatDate14(data.stop_time),
+          F: data.start_speed,
+          G: data.stop_speed,
+          H: data.start_address,
+          I: data.stop_address,
+          J: data.start_longitude + "," + data.start_latitude,
+          K: data.stop_longitude + "," + data.stop_latitude
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "报警明细表",
+        fileName: "报警明细表.xlsx"
+      });
+    },
     // 选择查询方式
     addFrom() {
       this.addKey++;
@@ -163,6 +207,19 @@ export default {
     },
     //查询列表
     getTable() {
+      if (this.tableQuery.alarm_type == "" && this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆和报警类型",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
@@ -177,17 +234,66 @@ export default {
                     i
                   ].license_color = this.tableQuery.license_color;
                   res.data.data[i].alertTime =
-                    res.data.data[i].stop_time - res.data.data[i].start_time;
+                    new Date(
+                      this.$utils.formatDate14(
+                        JSON.stringify(res.data.data[i].stop_time)
+                      )
+                    ).getTime() -
+                    new Date(
+                      this.$utils.formatDate14(
+                        JSON.stringify(res.data.data[i].start_time)
+                      )
+                    ).getTime();
+                  res.data.data[i].alertTime = this.$utils.DateTime(
+                    res.data.data[i].alertTime
+                  );
                   data.push(res.data.data[i]);
                 }
-                this.$set(this.tableData, "data", Object.freeze(data));
-                this.$set(this.tableData, "total", this.tableData.data.length);
-                this.$emit("success");
-                this.$notify({
-                  message: res.data.msg,
-                  title: "提示",
-                  type: "success"
-                });
+                Promise.all([
+                  gps2amap({
+                    data: data,
+                    longKey: "start_longitude",
+                    latKey: "start_latitude"
+                  }),
+                  gps2amap({
+                    data: data,
+                    longKey: "stop_longitude",
+                    latKey: "stop_latitude"
+                  })
+                ])
+                  .then(res => {
+                    data.map((item, index) => {
+                      item.start_longitude = res[0][index].split(",")[0];
+                      item.start_latitude = res[0][index].split(",")[1];
+                      item.stop_longitude = res[1][index].split(",")[0];
+                      item.stop_latitude = res[1][index].split(",")[1];
+                    });
+                  })
+                  .then(() => {
+                    Promise.all([
+                      location2address({
+                        data: data,
+                        longKey: "start_longitude",
+                        latKey: "start_latitude"
+                      }),
+                      location2address({
+                        data: data,
+                        longKey: "stop_longitude",
+                        latKey: "stop_latitude"
+                      })
+                    ]).then(addressArr => {
+                      data.map((item, index) => {
+                        item.start_address = addressArr[0][index];
+                        item.stop_address = addressArr[1][index];
+                      });
+                      this.$set(this.tableData, "data", Object.freeze(data));
+                      this.$set(
+                        this.tableData,
+                        "total",
+                        this.tableData.data.length
+                      );
+                    });
+                  });
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

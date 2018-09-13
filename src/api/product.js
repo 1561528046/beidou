@@ -115,7 +115,7 @@ export const getUserOrderList = query => {
 
 // 根据单号查询资料
 export const getEnquiry = query => {
-  return ajax.get("/ordermanage/GetByOrder_No", {
+  return ajax.get("/ordermanage/GetBySubId", {
     params: query
   });
 };

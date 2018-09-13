@@ -80,6 +80,7 @@
         <el-table-column prop="order_no" label="订单号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="fees_detail_type" label="订单类型" :formatter="(row)=>{return this.$dict.get_order_detailtype(row.fees_detail_type)}"> </el-table-column>
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="fees_detail_name" label="收费单项" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="car_type" label="车辆类型" :formatter="(row)=>{return this.$dict.get_vehicle_type(row.car_type)}"> </el-table-column>
         <el-table-column prop="fees_detail_company_name" label="终端厂商" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="fees_detail_device_type" label="终端类型" :formatter="(row)=>{return this.$dict.get_device_type(row.fees_detail_device_type)}"> </el-table-column>
@@ -234,7 +235,7 @@ export default {
     enquiry(scope) {
       this.addKey++;
       this.lookDialog = true;
-      this.order_no = scope.row.order_no;
+      this.order_no = scope.row.sub_id;
     },
     // 确认订单
     confirm(scope) {
@@ -248,22 +249,26 @@ export default {
       this.auditDialog = true;
       this.tableConfirm.order_no = scope.row.order_no;
     },
+    // 确认订单审核通过/未通过
     confirmOrder(state) {
       this.tableConfirm.is_review = state;
       ReviewOrder(this.tableConfirm).then(res => {
         if (res.data.code == 0) {
           this.confirmDialog = false;
+          this.getTable();
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);
         }
       });
     },
+    //取消订单审核通过/未通过
     cancelAudit(state) {
       this.tableConfirm.is_review = state;
       ReviewCancel(this.tableConfirm).then(res => {
         if (res.data.code == 0) {
           this.auditDialog = false;
+          this.getTable();
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);

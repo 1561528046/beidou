@@ -131,7 +131,18 @@ export const getSimAll = query => {
     params: query
   });
 };
-
+// 获取流量分组
+export const getGroupByFlow = query => {
+  return ajax.get("/sim/GetGroupByFlow", {
+    params: query
+  });
+};
+// 获取运营商分组
+export const getGroupByBelong = query => {
+  return ajax.get("/sim/GetGroupByBelong", {
+    params: query
+  });
+};
 //获取所有没有绑定的SIM卡
 export const getSimAllUnbind = query => {
   query = Object.assign(

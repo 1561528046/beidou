@@ -7,7 +7,7 @@
             <el-checkbox size="medium" v-model="scope.row.checked" style="margin-left:7px;"></el-checkbox>
           </template>
         </el-table-column>
-        <el-table-column prop="real_name" label="用户">
+        <el-table-column prop="real_name" :formatter="$utils.baseFormatter" label="用户">
         </el-table-column>
       </el-table>
     </template>
@@ -58,7 +58,8 @@ export default {
           type: "error"
         });
       }
-      getVehicleByPage(this.formData).then(res => {
+
+      getVehicleByPage({ user_ids: this.formData.user_ids }).then(res => {
         if (res.data.code == 0) {
           this.$set(this.tableQuery, "data", res.data.data);
           if (this.tableQuery.data.length == 0) {
@@ -79,8 +80,11 @@ export default {
       });
     },
     getTable() {
-      getUserChildrenList({ user_id: 1 }).then(res => {
+      getUserChildrenList().then(res => {
         if (res.data.code == 0) {
+          for (var i = 0; i < res.data.data.length; i++) {
+            res.data.data[i].checked = false;
+          }
           this.$set(this.tableData, "data", res.data.data);
         }
       });

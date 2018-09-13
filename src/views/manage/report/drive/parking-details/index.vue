@@ -25,6 +25,11 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
@@ -34,7 +39,7 @@
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
         <el-table-column prop="duration_ss" label="时长" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="停车位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="address" label="停车位置" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -52,6 +57,7 @@ import moment from "moment";
 import { getStopDetailByPage } from "@/api/index.js";
 import selectAlarmtype from "@/components/select-alarmtype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
+import { location2address, gps2amap } from "@/utils/map-tools.js";
 export default {
   components: { chooseVehicle, selectAlarmtype },
   created() {
@@ -123,6 +129,34 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "开始时间",
+          C: "结束时间",
+          D: "时长",
+          E: "停车位置",
+          F: "GPS经纬度"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(data.start_time),
+          C: this.$utils.formatDate14(data.stop_time),
+          D: data.duration_ss,
+          E: data.address,
+          F: data.longitude + "," + data.latitude
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "停车明细表",
+        fileName: "停车明细表.xlsx"
+      });
+    },
     // 选择查询方式
     addFrom() {
       this.addKey++;
@@ -154,6 +188,19 @@ export default {
     },
     //查询列表
     getTable() {
+      if (this.tableQuery.license == "") {
+        return this.$notify({
+          message: "请选择车辆",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
@@ -167,18 +214,54 @@ export default {
                   res.data.data[
                     i
                   ].license_color = this.tableQuery.license_color;
-                  res.data.data[i].alertTime =
-                    res.data.data[i].stop_time - res.data.data[i].start_time;
+                  res.data.data[i].duration_ss = this.$utils.DateTime(
+                    res.data.data[i].duration_ss
+                  );
                   data.push(res.data.data[i]);
                 }
-                this.$set(this.tableData, "data", Object.freeze(data));
-                this.$set(this.tableData, "total", this.tableData.data.length);
-                this.$emit("success");
-                this.$notify({
-                  message: res.data.msg,
-                  title: "提示",
-                  type: "success"
+                var loader = this.$loading({
+                  text: "正在转换坐标"
                 });
+                gps2amap({
+                  data: data,
+                  longKey: "longitude",
+                  latKey: "latitude"
+                })
+                  .then(res => {
+                    data.map((item, index) => {
+                      item.amap_longitude = res[index].split(",")[0];
+                      item.amap_latitude = res[index].split(",")[1];
+                    });
+                  })
+                  .catch(() => {
+                    loader.close();
+                  })
+                  .then(() => {
+                    loader.close();
+                    loader = this.$loading({
+                      text: "正在转换地址"
+                    });
+                    location2address({
+                      data: data,
+                      longKey: "amap_longitude",
+                      latKey: "amap_latitude"
+                    })
+                      .then(addressArr => {
+                        loader.close();
+                        data.map((item, index) => {
+                          item.address = addressArr[index];
+                        });
+                        this.$set(this.tableData, "data", Object.freeze(data));
+                        this.$set(
+                          this.tableData,
+                          "total",
+                          this.tableData.data.length
+                        );
+                      })
+                      .catch(() => {
+                        loader.close();
+                      });
+                  });
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

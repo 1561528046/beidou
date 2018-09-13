@@ -30,11 +30,11 @@
             <el-checkbox size="medium" v-model="scope.row.checked" style="margin-left:7px;"></el-checkbox>
           </template>
         </el-table-column>
-        <el-table-column prop="license" label="车牌号">
+        <el-table-column prop="license" :formatter="$utils.baseFormatter" label="车牌号">
         </el-table-column>
-        <el-table-column prop="owner" label="业户">
+        <el-table-column prop="owner" :formatter="$utils.baseFormatter" label="业户">
         </el-table-column>
-        <el-table-column prop="device_no" label="终端ID">
+        <el-table-column prop="device_no" :formatter="$utils.baseFormatter" label="终端ID">
         </el-table-column>
       </el-table>
     </template>

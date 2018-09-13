@@ -86,6 +86,18 @@ var routers = [
           name: "服务器状态",
           icon: "iconfont icon-fuwuqi1"
         }
+      },
+      {
+        path: "agreement-808",
+        name: "agreement-808",
+        meta: { name: "808", icon: "iconfont icon-xieyi" },
+        component: () => import("@/views/manage/agreement/eight/index.vue")
+      },
+      {
+        path: "agreement-809",
+        name: "agreement-809",
+        meta: { name: "809", icon: "iconfont icon-xieyi" },
+        component: () => import("@/views/manage/agreement/nine/index.vue")
       }
     ]
   },

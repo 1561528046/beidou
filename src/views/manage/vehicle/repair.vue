@@ -59,7 +59,7 @@
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="180" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
                     <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
                     <el-table-column width="150" label="维修状态" prop="RepairState">
                       <template slot-scope="scope">
@@ -102,11 +102,11 @@
         </el-dialog>
       </el-tab-pane>
       <el-tab-pane label="普通货车">
-        <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+        <el-form :model="tableRepair" label-width="80px" label-position="left" class="table-search" size="small">
           <el-row :gutter="30">
             <el-col :span="6">
               <el-form-item label-width="100px" label="故障提交时间">
-                <el-date-picker value-format="yyyyMMdd" v-model="tableQuery.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                <el-date-picker value-format="yyyyMMdd" v-model="tableRepair.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -117,19 +117,19 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="用户名称">
-                <el-input v-model="tableQuery.real_name"></el-input>
+                <el-input v-model="tableRepair.owner"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6" v-if="isCollapse">
               <el-form-item label="故障类型">
-                <el-select v-model="tableQuery.fault_type" style="width:100%;" :clearable="true">
+                <el-select v-model="tableRepair.fault_type" style="width:100%;" :clearable="true">
                   <el-option label="设备故障" value="1">设备故障</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="6" v-if="isCollapse">
               <el-form-item label-width="100px" label="状态">
-                <el-select v-model="tableQuery.repair_state" style="width:100%;" :clearable="true">
+                <el-select v-model="tableRepair.repair_state" style="width:100%;" :clearable="true">
                   <el-option label="未处理" value="1">未处理</el-option>
                   <el-option label="已修复" value="2">已修复</el-option>
                 </el-select>
@@ -139,7 +139,7 @@
               <el-form-item>
                 <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
                 <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
-                <el-button type="primary">查询</el-button>
+                <el-button type="primary" @click="getTable">查询</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -159,7 +159,7 @@
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
                     <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
                     <el-table-column width="150" label="维修状态" prop="RepairState">
                       <template slot-scope="scope">
@@ -202,11 +202,11 @@
         </el-dialog>
       </el-tab-pane>
       <el-tab-pane label="危险品车辆">
-        <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+        <el-form :model="tableRepair" label-width="80px" label-position="left" class="table-search" size="small">
           <el-row :gutter="30">
             <el-col :span="6">
               <el-form-item label-width="100px" label="故障提交时间">
-                <el-date-picker value-format="yyyyMMdd" v-model="tableQuery.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                <el-date-picker value-format="yyyyMMdd" v-model="tableRepair.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -217,19 +217,19 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="用户名称">
-                <el-input v-model="tableQuery.real_name"></el-input>
+                <el-input v-model="tableRepair.owner"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6" v-if="isCollapse">
               <el-form-item label="故障类型">
-                <el-select v-model="tableQuery.fault_type" style="width:100%;" :clearable="true">
+                <el-select v-model="tableRepair.fault_type" style="width:100%;" :clearable="true">
                   <el-option label="设备故障" value="1">设备故障</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="6" v-if="isCollapse">
               <el-form-item label-width="100px" label="状态">
-                <el-select v-model="tableQuery.repair_state" style="width:100%;" :clearable="true">
+                <el-select v-model="tableRepair.repair_state" style="width:100%;" :clearable="true">
                   <el-option label="未处理" value="1">未处理</el-option>
                   <el-option label="已修复" value="2">已修复</el-option>
                 </el-select>
@@ -239,7 +239,7 @@
               <el-form-item>
                 <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
                 <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
-                <el-button type="primary">查询</el-button>
+                <el-button type="primary" @click="getTable">查询</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -259,7 +259,7 @@
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
                     <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
                     <el-table-column width="150" label="维修状态" prop="RepairState">
                       <template slot-scope="scope">
@@ -302,11 +302,11 @@
         </el-dialog>
       </el-tab-pane>
       <el-tab-pane label="客运车辆">
-        <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+        <el-form :model="tableRepair" label-width="80px" label-position="left" class="table-search" size="small">
           <el-row :gutter="30">
             <el-col :span="6">
               <el-form-item label-width="100px" label="故障提交时间">
-                <el-date-picker value-format="yyyyMMdd" v-model="tableQuery.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                <el-date-picker value-format="yyyyMMdd" v-model="tableRepair.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -317,19 +317,19 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="用户名称">
-                <el-input v-model="tableQuery.real_name"></el-input>
+                <el-input v-model="tableRepair.owner"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6" v-if="isCollapse">
               <el-form-item label="故障类型">
-                <el-select v-model="tableQuery.fault_type" style="width:100%;" :clearable="true">
+                <el-select v-model="tableRepair.fault_type" style="width:100%;" :clearable="true">
                   <el-option label="设备故障" value="1">设备故障</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="6" v-if="isCollapse">
               <el-form-item label-width="100px" label="状态">
-                <el-select v-model="tableQuery.repair_state" style="width:100%;" :clearable="true">
+                <el-select v-model="tableRepair.repair_state" style="width:100%;" :clearable="true">
                   <el-option label="未处理" value="1">未处理</el-option>
                   <el-option label="已修复" value="2">已修复</el-option>
                 </el-select>
@@ -339,7 +339,7 @@
               <el-form-item>
                 <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
                 <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
-                <el-button type="primary">查询</el-button>
+                <el-button type="primary" @click="getTable">查询</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -359,7 +359,7 @@
                 <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime"></el-table-column>
+                    <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
                     <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
                     <el-table-column width="150" label="维修状态" prop="RepairState">
                       <template slot-scope="scope">
@@ -497,8 +497,21 @@ export default {
     }
   },
   methods: {
+    repairtime(row) {
+      return this.$utils.formatDate14(row.RepairTime);
+    },
     // type值
     handleClick(tab) {
+      this.tableRepair.type = "";
+      this.tableRepair.time = [];
+      this.tableRepair.start_time = "";
+      this.tableRepair.end_time = "";
+      this.tableRepair.license = "";
+      this.tableRepair.owner = "";
+      this.tableRepair.fault_type = "";
+      this.tableRepair.repair_state = "";
+      this.tableRepair.is_enter = "";
+      this.tableRepair.desc = "";
       if (tab.label == "全国联动车辆") {
         this.tableRepair.is_enter = 1;
         this.tableRepair.type = 1;
@@ -565,7 +578,7 @@ export default {
     //获取故障列表
     getTable() {
       this.tableRepair.start_time = this.tableRepair.time[0];
-      this.tableRepair.stop_time = this.tableRepair.time[1];
+      this.tableRepair.end_time = this.tableRepair.time[1];
       this.tableLoading = true;
       var query = Object.assign({}, this.tableRepair);
       getRepairListByPage(query)
