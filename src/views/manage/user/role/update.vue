@@ -74,7 +74,6 @@
 }
 </style>
 <script>
-// eslint-disable-next-line
 import { updateRole, getRightsAll, getRole } from "@/api/index.js";
 import { rightsDict, rightsRelation } from "@/utils/rights.js";
 export default {
@@ -184,8 +183,10 @@ export default {
             var level1 = this.rightsDict[path[0]];
             var level2 = level1.children[path[1]];
             var right = level2.children[path[2]];
-            right.checked = true;
-            this.rightChange(true, right, level2);
+            if (!right.checked) {
+              right.checked = true;
+              this.rightChange(true, right, level2);
+            }
           });
         } else {
           this.$message.error(res.data.msg);

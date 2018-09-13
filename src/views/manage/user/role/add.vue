@@ -29,7 +29,7 @@
                     <el-checkbox :indeterminate="level_2.indeterminate" v-model="level_2.checked" @change="(val)=>{ rightsCheckAll(val,'2',level_2)}" style="font-weight:bold;">{{level_2.name}}</el-checkbox>
                   </div>
                   <div class="_level_3">
-                    <el-checkbox :disabled="right.disabled" @change="(val)=>{rightChange(val,right,level_2)}" v-for="right in level_2.children" :label="right.name" v-model="right.checked" :key="right.rights_id">
+                    <el-checkbox class="_level_3_label" :disabled="right.disabled" @change="(val)=>{rightChange(val,right,level_2)}" v-for="right in level_2.children" :label="right.name" v-model="right.checked" :key="right.rights_id">
                       {{right.name}}
                       <el-tooltip effect="dark" :content="right.relation+'个权限依赖此项，不能操作！'" placement="right" v-if="right.relation>0">
                         <i class="el-icon-info"></i>
@@ -68,6 +68,11 @@
     padding: 3px 25px;
     .el-checkbox__label {
       color: #888;
+    }
+    ._level_3_label {
+      width: 163px;
+      margin: 0;
+      padding-bottom: 5px;
     }
   }
 }
@@ -136,7 +141,10 @@ export default {
           //relation 引用次数，用于解决一个权限 用于 多个依赖，引用次数为0的时候，即可清空选项
           return {
             rights_id: key,
-            name: formatData[key],
+            name:
+              formatData[key].split("-").length > 1
+                ? formatData[key].split("-")[1]
+                : formatData[key],
             checked: false,
             relation: 0
           };

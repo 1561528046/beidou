@@ -168,7 +168,8 @@ export default {
     placeholder: {
       type: [String],
       default: "请选择SIM卡号"
-    }
+    },
+    filter: String
   },
   created() {
     this.sim_id = this.value;
