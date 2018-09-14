@@ -36,7 +36,7 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <el-button type="primary" size="small" @click="addFrom">
+        <el-button type="primary" size="small" @click="addFrom" v-rights="4-1-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
       </div>
@@ -49,8 +49,8 @@
         <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
-            <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
+            <el-button type="primary" size="mini" @click="updateForm(scope)" icon="el-icon-edit" v-rights="4-1-3">编辑</el-button>
+            <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)" v-rights="4-1-2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

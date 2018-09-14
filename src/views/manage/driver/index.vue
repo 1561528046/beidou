@@ -32,7 +32,7 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <el-button type="primary" size="small" @click="addFrom">
+        <el-button type="primary" size="small" @click="addFrom" v-rights="6-1-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
       </div>
@@ -45,9 +45,9 @@
         <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
+            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit" v-rights="6-1-3">编辑</el-button>
             <!-- <el-button size="small" type="primary" icon="el-icon-edit" @click="openBindingVechile(scope)">绑定车辆</el-button> -->
-            <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
+            <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="6-1-2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

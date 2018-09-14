@@ -6,7 +6,7 @@ Vue.directive("rights", {
   inserted: function(el, options) {
     if (store.state.user.user_id == 1) {
       //如果是管理员
-      // return false;
+      return false;
     }
     var domRights = options.expression;
     domRights = domRights.split(",");

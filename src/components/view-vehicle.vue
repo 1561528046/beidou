@@ -428,7 +428,7 @@ export default {
   },
   created() {
     this.loader = true;
-    if (this.$props.is_enter) {
+    if (this.$props.is_enter == 1) {
       syncVehicle({
         vehicle_id: this.$props.vehicle_id
       })
