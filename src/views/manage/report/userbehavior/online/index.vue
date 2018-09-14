@@ -52,10 +52,8 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import {
-  getLoginSummaryByPage
-  // exportLoginSummaryByPage
-} from "@/api/index.js";
+import qs from "qs";
+import { getLoginSummaryByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
@@ -158,18 +156,15 @@ export default {
   },
   methods: {
     exportExcel() {
-      // var sub = {
-      //   page: 1,
-      //   size: this.count,
-      //   start_time: this.tableQuery.start_time,
-      //   stop_time: this.tableQuery.stop_time,
-      //   user_ids: this.tableQuery.user_ids
-      // };
-      // exportLoginSummaryByPage(sub).then(res => {
-      //   if (res.data.code == 0) {
-      //     console.log(res);
-      //   }
-      // });
+      var str = qs.stringify({
+        page: 1,
+        size: this.count,
+        start_time: this.tableQuery.start_time,
+        stop_time: this.tableQuery.stop_time,
+        user_ids: this.tableQuery.user_ids
+      });
+      var url = this.$dict.API_URL + "/Report/ExportLoginSummaryByPage?" + str;
+      this.$utils.downloadFile("在线时长统计表", url);
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
