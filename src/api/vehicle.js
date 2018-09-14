@@ -164,3 +164,9 @@ export const CheckUserIsOpenCompany = query => {
     params: query
   });
 };
+// 验证车辆是否允许激活厂商，厂商续费，平台续费
+export const checkUserRenewAndActive = query => {
+  return ajax.get("/ordermanage/CheckUserRenewAndActive", {
+    params: query
+  });
+};

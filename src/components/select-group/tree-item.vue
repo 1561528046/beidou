@@ -10,9 +10,9 @@
       </div>
     </div>
     <div class="_tool" v-if="nodeData.status!=0" @click.stop>
-      <i class="el-icon-circle-plus-outline" @click="append" v-if="useing.indexOf('add')!=-1"></i>
-      <i class="el-icon-edit" @click="openEdit" v-if="useing.indexOf('edit')!=-1"></i>
-      <i class="el-icon-delete" @click="remove" v-if="useing.indexOf('remove')!=-1"></i>
+      <i class="el-icon-circle-plus-outline" @click="append" v-if="useing.indexOf('add')!=-1" v-rights="5-1-1"></i>
+      <i class="el-icon-edit" @click="openEdit" v-if="useing.indexOf('edit')!=-1" v-rights="5-1-3"></i>
+      <i class="el-icon-delete" @click="remove" v-if="useing.indexOf('remove')!=-1" v-rights="5-1-2"></i>
     </div>
 
   </div>
