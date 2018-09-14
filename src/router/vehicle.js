@@ -61,7 +61,7 @@ export default {
     {
       path: "other_vehicle",
       name: "other_vehicle",
-      meta: { name: "其他车辆", icon: "iconfont  icon-car-fill", p: "1-1-4" },
+      meta: { name: "车辆管理", icon: "iconfont  icon-car-fill", p: "1-1-4" },
       component: () => import("@/views/manage/vehicle/index.vue"),
       children: [
         {
