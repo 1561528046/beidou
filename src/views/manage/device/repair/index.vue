@@ -67,8 +67,8 @@
         </el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
-            <el-button :type="repaired_button_type(scope)" size="small" @click="repaired(scope,4)" :disabled="repaired_buttontype(scope)">已修复</el-button>
-            <el-button :type="scrap_button_type(scope)" size="small" @click="scrap(scope,5)" :disabled="scrap_buttontype(scope)">报废</el-button>
+            <el-button :type="repaired_button_type(scope)" size="small" @click="repaired(scope,4)" :disabled="repaired_buttontype(scope)" v-rights="2-2-2">已修复</el-button>
+            <el-button :type="scrap_button_type(scope)" size="small" @click="scrap(scope,5)" :disabled="scrap_buttontype(scope)" v-rights="2-2-2">报废</el-button>
             <el-popover placement="left-end" width="600" trigger="click">
               <el-table :data="gridData">
                 <el-table-column width="150" label="操作时间" property="time" :formatter="formatChildTime"></el-table-column>

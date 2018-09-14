@@ -21,7 +21,7 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <el-button type="primary" size="small" @click="addFrom">
+        <el-button type="primary" size="small" @click="addFrom" v-rights="2-4-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
       </div>
@@ -29,8 +29,8 @@
         <el-table-column prop="company_name" label="终端厂商名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column width="300" label="操作">
           <template slot-scope="scope">
-            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="small" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
+            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit" v-rights="2-4-3">编辑</el-button>
+            <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="2-4-2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

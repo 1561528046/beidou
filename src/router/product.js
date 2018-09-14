@@ -1,13 +1,17 @@
 export default {
   path: "product",
   name: "product",
-  meta: { name: "订单管理", icon: "iconfont icon-dd" },
+  meta: {
+    name: "订单管理",
+    icon: "iconfont icon-dd",
+    p: "3-1-4,3-2-2,3-3-2,3-4-2"
+  },
   component: () => import("@/views/manage/product/index.vue"),
   children: [
     {
       path: "product",
       name: "product-product",
-      meta: { name: "产品管理", icon: "iconfont icon-chanpin" },
+      meta: { name: "产品管理", icon: "iconfont icon-chanpin", p: "3-1-4" },
       component: () => import("@/views/manage/product/product/index.vue")
     },
     {
@@ -33,7 +37,8 @@ export default {
       name: "order-select",
       meta: {
         name: "订单查询",
-        icon: "iconfont icon-dingdanchaxun"
+        icon: "iconfont icon-dingdanchaxun",
+        p: "3-2-2"
       },
       component: () => import("@/views/manage/product/user/index.vue")
     },
@@ -49,13 +54,17 @@ export default {
     {
       path: "recharge",
       name: "recharge",
-      meta: { name: "充值管理", icon: "iconfont icon-chongzhi" },
+      meta: { name: "充值管理", icon: "iconfont icon-chongzhi", p: "3-3-2" },
       component: () => import("@/views/manage/product/recharge/index.vue")
     },
     {
       path: "order",
       name: "order",
-      meta: { name: "订单审核", icon: "iconfont icon-dingdanguanli" },
+      meta: {
+        name: "订单审核",
+        icon: "iconfont icon-dingdanguanli",
+        p: "3-4-2"
+      },
       component: () => import("@/views/manage/product/order/index.vue")
     }
   ]

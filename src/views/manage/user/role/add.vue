@@ -238,6 +238,9 @@ export default {
       if (relation) {
         //如果有依赖，就处理
         if (right.checked) {
+          if (right.resolvedRealtion) {
+            return false; //如果已经处理过依赖、就不再进行处理
+          }
           //处理选中
           this.rightsAll.map(item => {
             if (relation.indexOf(item.rights_id) != -1) {
@@ -252,6 +255,7 @@ export default {
               this.rightChange(true, item, levelObj);
             }
           });
+          right.resolvedRealtion = true;
         } else {
           this.rightsAll.map(item => {
             if (relation.indexOf(item.rights_id) != -1) {
@@ -261,6 +265,7 @@ export default {
                 return false;
               } else {
                 item.disabled = false;
+                right.resolvedRealtion = false;
               }
             }
           });

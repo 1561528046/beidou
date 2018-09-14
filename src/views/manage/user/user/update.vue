@@ -273,7 +273,11 @@ export default {
           var postData = Object.assign({}, this.formData, areaObj);
           postData.device_total = postData.device_total || 0;
           postData.expiry_time = postData.expiry_time || 0;
-          postData.pass_word = postData.pass_word.MD5(16);
+          if (postData.pass_word != "") {
+            postData.pass_word = postData.pass_word.MD5(16);
+          } else {
+            postData.pass_word == "";
+          }
           delete postData.re_pass_word;
           updateUser(postData)
             .then(res => {

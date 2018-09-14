@@ -10,7 +10,11 @@ export default {
     {
       path: "gghypt_vehicle",
       name: "gghypt_vehicle",
-      meta: { name: "全国联动车辆管理", icon: "iconfont icon-guohui" },
+      meta: {
+        name: "全国联动车辆管理",
+        icon: "iconfont icon-guohui",
+        p: "1-1-4"
+      },
       props: { is_enter: 1 },
       component: () => import("@/views/manage/vehicle/index.vue"),
       children: [
@@ -57,7 +61,7 @@ export default {
     {
       path: "other_vehicle",
       name: "other_vehicle",
-      meta: { name: "其他车辆", icon: "iconfont icon-weihuo" },
+      meta: { name: "其他车辆", icon: "iconfont icon-weihuo", p: "1-1-4" },
       component: () => import("@/views/manage/vehicle/index.vue"),
       children: [
         {
@@ -104,7 +108,11 @@ export default {
     {
       path: "vehicle-repair",
       name: "vehicle-repair",
-      meta: { name: "维修车辆管理", icon: "iconfont icon-wrench-fill" },
+      meta: {
+        name: "维修车辆管理",
+        icon: "iconfont icon-wrench-fill",
+        p: "1-2-3"
+      },
       component: () => import("@/views/manage/vehicle/repair.vue")
     },
     {
