@@ -21,7 +21,7 @@ export default {
       component: () => import("@/views/manage/product/product/add.vue")
     },
     {
-      path: "product-update/:id",
+      path: "product/:id",
       name: "product-update",
       meta: { name: "产品管理-编辑", hidden: true },
       component: () => import("@/views/manage/product/product/update.vue")
@@ -43,7 +43,7 @@ export default {
       component: () => import("@/views/manage/product/user/index.vue")
     },
     {
-      path: "order-order/:id",
+      path: "order-select/:id",
       name: "order-order",
       meta: {
         name: "订单查询-查询",
