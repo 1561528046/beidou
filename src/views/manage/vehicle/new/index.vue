@@ -73,7 +73,7 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <router-link :to="{path:'new/add'}" v-if="$props.state==1">
+        <router-link :to="{path:'new/add'}" v-if="$props.state==1" v-rights="1-1-1">
           <el-button type="primary" size="small">
             <i class="el-icon-plus"></i> 添加
           </el-button>
@@ -85,7 +85,7 @@
         <el-button type="primary" size="small" v-if="$props.state==2">
           <i class="el-icon-upload2"></i> 批量导入
         </el-button> -->
-        <el-button type="primary" size="small">
+        <el-button type="primary" size="small" v-rights="1-1-5">
           <i class="el-icon-download"></i> 导出
         </el-button>
       </div>
@@ -108,16 +108,16 @@
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="goEdit(scope)">编辑</el-button>
             <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
             <el-dropdown size="mini" style="margin-left:10px;" @command="handleCommand" trigger="click">
-              <el-button size="mini" @click="more(scope)">
+              <el-button size="mini">
                 更多菜单
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown" class="vehicle-list-more">
-                <el-dropdown-item v-if="$props.state!=1" :command="{command:'view-position',data:scope}">车辆位置</el-dropdown-item>
-                <el-dropdown-item v-if="$props.state==1 && $props.is_enter==1" :command="{command:'update-position',data:scope}">更新定位</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state!=1" :command="{command:'view-position',data:scope}" v-rights="1-1-7">车辆位置</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state==1 && $props.is_enter==1" :command="{command:'update-position',data:scope}" v-rights="1-1-3">更新定位</el-dropdown-item>
                 <el-dropdown-item :command="{command:'renew-platform',data:scope}">平台续费</el-dropdown-item>
                 <el-dropdown-item :command="{command:'renew-company',data:scope}">厂商续费</el-dropdown-item>
-                <el-dropdown-item v-if="company_open=='1'" :command="{command:'active-company',data:scope}">厂商激活</el-dropdown-item>
+                <el-dropdown-item :command="{command:'active-company',data:scope}">厂商激活</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dialog title="平台续费" :center="true" @closed="openCompanyClosed" :visible.sync="renew.platformVisible" :append-to-body="true" width="30%">
@@ -251,6 +251,7 @@ export default {
   components: { selectCityInput, viewVehicle },
   created() {
     this.getTable();
+    this.checkOrderRights();
   },
   props: {
     type: Number, //type 接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
@@ -259,7 +260,9 @@ export default {
   },
   data() {
     return {
-      company_open: "",
+      renew_platform: "",
+      renew_company: "",
+      active_company: "",
       platformTime: "",
       renew: {
         plateformDate: "",
@@ -364,14 +367,10 @@ export default {
     }
   },
   methods: {
-    more(scope) {
-      CheckUserIsOpenCompany({ vehicle_id: scope.row.vehicle_id }).then(res => {
-        if (res.data.code == 0) {
-          this.company_open = res.data.data[0].bool;
-        } else {
-          this.company_open = res.data.data[0].bool;
-        }
-      });
+    checkOrderRights() {
+      this.renew_platform = "";
+      this.renew_company = "";
+      this.active_company = "";
     },
     compaynSelectImg(index, file) {
       this.openCompany.postData["img" + index] = URL.createObjectURL(file);
