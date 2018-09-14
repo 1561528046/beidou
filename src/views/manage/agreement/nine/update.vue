@@ -75,7 +75,7 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
-import { GetServerById, UpdateServer808 } from "@/api/index.js";
+import { GetServerById, UpdateServer809 } from "@/api/index.js";
 export default {
   data() {
     return {
@@ -127,7 +127,7 @@ export default {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var postData = Object.assign({}, this.formData);
-          UpdateServer808(postData)
+          UpdateServer809(postData)
             .then(res => {
               if (res.data.code == 0) {
                 this.$emit("success");
