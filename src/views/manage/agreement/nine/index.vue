@@ -19,9 +19,12 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <el-button type="primary" size="small" @click="addForm">
+        <el-button type="primary" size="small" style="margin-right:10px;" @click="addForm">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
+        <router-link :to="{name:'agreement-809vehicle'}">
+          <el-button size="small" type="primary" icon="el-icon-edit">分车</el-button>
+        </router-link>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="title" label="标注"></el-table-column>
@@ -43,7 +46,6 @@
         </el-table-column>
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
-            <el-button size="small" type="primary" icon="el-icon-edit">分车</el-button>
             <el-button size="small" type="primary" @click="updateForm(scope)" icon="el-icon-edit">编辑</el-button>
             <el-button size="small" @click="delForm(scope)" icon="el-icon-delete">删除</el-button>
             <el-dialog title="编辑" width="50%" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">

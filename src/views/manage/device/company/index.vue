@@ -163,15 +163,6 @@ export default {
       this.tableQuery.page = val;
       this.getTable();
     },
-    //回车事件
-    keyupSubmit() {
-      document.onkeydown = e => {
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
-    },
     querySearch(queryString, cb) {
       var restaurants = this.restaurants;
       var results = queryString

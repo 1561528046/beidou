@@ -249,6 +249,7 @@ export default {
     //分页左右箭头结束
     // 左右穿梭箭头
     onleft(items, next) {
+      console.log(this.currentUser);
       //右到左
       if (!this.currentUser.package_id) {
         this.$message.warning("请选择一个用户！");

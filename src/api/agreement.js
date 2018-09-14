@@ -52,3 +52,29 @@ export const GetServerByPage = query => {
     params: query
   });
 };
+// 808或809已绑定车辆分页查询
+export const GetServerBindByPage = query => {
+  return ajax.get("/vehicle/GetServerBindByPage", {
+    params: query
+  });
+};
+// 808或809未绑定车辆分页查询
+export const GetServerUnBindByPage = query => {
+  return ajax.get("/vehicle/GetServerUnBindByPage", {
+    params: query
+  });
+};
+// 808或809绑定车辆
+export const ServerBindVehicle = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/ServerBindVehicle", queryQS, {
+    params: query
+  });
+};
+// 808或808解绑车辆
+export const ServerUnBindVehicle = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/ServerUnBindVehicle", queryQS, {
+    params: query
+  });
+};

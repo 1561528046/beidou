@@ -143,7 +143,7 @@ export default {
       agreement: {
         page: 1,
         size: 10,
-        flag: 808,
+        flag: 809,
         title: ""
       },
       // 已绑定查询
@@ -151,7 +151,7 @@ export default {
         page: 1,
         size: 10,
         server_id: "",
-        flag: 808,
+        flag: 809,
         license: "",
         real_name: ""
       },
@@ -160,14 +160,14 @@ export default {
         page: 1,
         size: 10,
         server_id: "",
-        flag: 808,
+        flag: 809,
         license: "",
         real_name: ""
       },
       groupData: {
         vehicle_ids: "",
         server_id: "",
-        flag: 808
+        flag: 809
       },
       userTableQuery: {
         real_name: "",
