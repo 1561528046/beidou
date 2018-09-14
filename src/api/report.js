@@ -169,8 +169,3 @@ export const getDeviceLogByPage = query => {
 // 导出在线时长统计
 // 导出用户登录明细
 // 导出用户操作日志
-export const exportUserOperateLogByPage = query => {
-  return ajax.get("/Report/ExportUserOperateLogByPage", {
-    params: query
-  });
-};

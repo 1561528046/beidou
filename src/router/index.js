@@ -5,6 +5,7 @@ import vehicle from "@/router/vehicle.js";
 import device from "@/router/device.js";
 import product from "@/router/product.js";
 import report from "@/router/report.js";
+import agreement from "@/router/agreement.js";
 import store from "@/store";
 import NProgress from "nprogress"; // progress bar
 import { Message } from "element-ui";
@@ -43,6 +44,7 @@ var routers = [
       device,
       product,
       user,
+      agreement,
       {
         path: "group_binding",
         name: "group_binding",
@@ -86,18 +88,6 @@ var routers = [
           name: "服务器状态",
           icon: "iconfont icon-fuwuqi1"
         }
-      },
-      {
-        path: "agreement-808",
-        name: "agreement-808",
-        meta: { name: "808", icon: "iconfont icon-xieyi" },
-        component: () => import("@/views/manage/agreement/eight/index.vue")
-      },
-      {
-        path: "agreement-809",
-        name: "agreement-809",
-        meta: { name: "809", icon: "iconfont icon-xieyi" },
-        component: () => import("@/views/manage/agreement/nine/index.vue")
       }
     ]
   },

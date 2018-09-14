@@ -24,8 +24,11 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
-      <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="user_name" label="登录账号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="login_time" label="开始时间" :formatter="(row)=>{return this.$utils.momentDate(row.login_time)}"> </el-table-column>
@@ -48,6 +51,7 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
+import qs from "qs";
 import { getLoginDetailByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
@@ -66,6 +70,7 @@ export default {
   },
   data() {
     return {
+      count: "",
       vehicleDialog: false,
       userDialog: false,
       isCollapse: false,
@@ -149,6 +154,17 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      var str = qs.stringify({
+        page: 1,
+        size: this.count,
+        start_time: this.tableQuery.start_time,
+        stop_time: this.tableQuery.stop_time,
+        user_ids: this.tableQuery.user_ids
+      });
+      var url = this.$dict.API_URL + "/Report/ExportLoginDetailByPage?" + str;
+      this.$utils.downloadFile("用户登录明细表", url);
+    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(30, "days")._d;
@@ -241,6 +257,16 @@ export default {
                   arr[item.user_id] = item;
                 });
                 res.data.data.map(item => {
+                  if (!item.duration == 0) {
+                    item.duration =
+                      new Date(
+                        moment(item.logout_time).format("YYYY-MM-DD HH:mm:ss")
+                      ).getTime() -
+                      new Date(
+                        moment(item.login_time).format("YYYY-MM-DD HH:mm:ss")
+                      ).getTime();
+                    item.duration = this.$utils.DateTime(item.duration);
+                  }
                   item.user_id =
                     item.user_id[0] == "0"
                       ? item.user_id.slice(1)
@@ -254,7 +280,8 @@ export default {
                 });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
-                this.$set(this.tableData, "total", this.tableData.data.length);
+                this.$set(this.tableData, "total", res.data.count);
+                this.$set(this.$data, "count", res.data.count);
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

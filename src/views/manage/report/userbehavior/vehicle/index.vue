@@ -29,6 +29,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
@@ -39,7 +42,7 @@
         <el-table-column prop="device_no" label="所属公司" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="device_no" label="设备号" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="reason" label="变更内容" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="log_time" label="变更时间" :formatter="(row)=>{this.$utils.formatDate14(JSON.stringify(row.log_time))}"> </el-table-column>
+        <el-table-column prop="log_time" label="变更时间" :formatter="(row)=>{ return this.$utils.formatDate14(JSON.stringify(row.log_time))}"> </el-table-column>
         <el-table-column prop="desc" label="变更人" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="desc" label="变更详情" :formatter="$utils.baseFormatter "> </el-table-column>
       </el-table>
@@ -59,6 +62,7 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
+import qs from "qs";
 import { getVehicleLogByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
@@ -77,6 +81,7 @@ export default {
   },
   data() {
     return {
+      count: "",
       vehicleDialog: false,
       userDialog: false,
       isCollapse: false,
@@ -161,6 +166,18 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      var str = qs.stringify({
+        page: 1,
+        size: this.count,
+        start_time: this.tableQuery.start_time,
+        stop_time: this.tableQuery.stop_time,
+        user_ids: this.tableQuery.user_ids,
+        vehicle_ids: this.tableQuery.vehicle_ids
+      });
+      var url = this.$dict.API_URL + "/Report/ExportVehicleLogByPage?" + str;
+      this.$utils.downloadFile("车辆维护记录", url);
+    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(30, "days")._d;
@@ -255,12 +272,14 @@ export default {
                 var data = [];
                 var arr = {};
                 this.vehicles.map(item => {
-                  arr[item.sim_id] = item;
+                  arr[item.user_id] = item;
                 });
                 res.data.data.map(item => {
-                  item.sim_id =
-                    item.sim_id[0] == "0" ? item.sim_id.slice(1) : item.sim_id;
-                  var obj = arr[item.sim_id];
+                  item.user_id =
+                    item.user_id[0] == "0"
+                      ? item.user_id.slice(1)
+                      : item.user_id;
+                  var obj = arr[item.user_id];
                   if (!obj) {
                     return false;
                   }
@@ -269,7 +288,8 @@ export default {
                 });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
-                this.$set(this.tableData, "total", this.tableData.data.length);
+                this.$set(this.tableData, "total", res.data.count);
+                this.$set(this.$data, "count", res.data.count);
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

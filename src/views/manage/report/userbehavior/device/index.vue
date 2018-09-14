@@ -24,6 +24,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="" label="设备号" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -47,6 +50,7 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
+import qs from "qs";
 import { getDeviceLogByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
@@ -66,6 +70,7 @@ export default {
   },
   data() {
     return {
+      count: "",
       vehicleDialog: false,
       userDialog: false,
       deviceDialog: false,
@@ -148,6 +153,17 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      var str = qs.stringify({
+        page: 1,
+        size: this.count,
+        start_time: this.tableQuery.start_time,
+        stop_time: this.tableQuery.stop_time,
+        device_ids: this.tableQuery.device_ids
+      });
+      var url = this.$dict.API_URL + "/Report/GetDeviceLogByPage?" + str;
+      this.$utils.downloadFile("设备更新报表", url);
+    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(30, "days")._d;
@@ -212,8 +228,6 @@ export default {
                 var data = [];
                 var arr = {};
                 this.vehicles.map(item => {
-                  console.log(arr);
-                  console.log(item);
                   arr[item.device_id] = item;
                 });
                 res.data.data.map(item => {
@@ -230,7 +244,8 @@ export default {
                 });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
-                this.$set(this.tableData, "total", this.tableData.data.length);
+                this.$set(this.tableData, "total", res.data.count);
+                this.$set(this.$data, "count", res.data.count);
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");

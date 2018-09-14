@@ -287,7 +287,7 @@ export default {
                 });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));
-                this.$set(this.tableData, "total", this.tableData.data.length);
+                this.$set(this.tableData, "total", res.data.count);
                 this.$set(this.$data, "count", res.data.count);
               } else {
                 this.$set(this.$data, "tableData", []);
