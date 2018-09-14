@@ -111,7 +111,7 @@
         </el-row>
       </el-card>
 
-      <el-card shadow="hover" v-if="formData.type==1">
+      <el-card shadow="hover">
         <div slot="header" class="clearfix">
           <span>普通货运车辆 </span>
         </div>
@@ -185,7 +185,7 @@
               <el-input v-model="formData.height" maxlength="8"></el-input>
             </el-form-item>
           </el-col>
-          <template v-if="$props.type!=2">
+          <template v-if="formData.type!=3">
             <el-col :span="8">
               <el-form-item label="货厢内部尺寸(mm)长" prop="box_length">
                 <el-input v-model="formData.box_length" maxlength="8"></el-input>
@@ -543,6 +543,13 @@ export default {
     }
   },
   watch: {
+    "formData.type": function(value) {
+      if (value != "3") {
+        this.formData.box_length = "";
+        this.formData.box_height = "";
+        this.formData.box_width = "";
+      }
+    },
     "formData.model": function() {
       if (this.$props.is_edit && this.isInit == false) {
         //编辑模式第一次不进行赋值

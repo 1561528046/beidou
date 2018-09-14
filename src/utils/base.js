@@ -1,9 +1,15 @@
+var BASE_URL = "http://192.168.88.100:725/";
+var API_URL = "http://192.168.88.100:725/api";
+if (process.env.NODE_ENV == "production") {
+  BASE_URL = "http://192.168.88.6:827/";
+  API_URL = "http://192.168.88.6:827/api";
+}
 export const dict = {
   //全局字典
   AMAP_KEY: "1effb3317ab25b91eb7b163d5febd226", //高德key
   BMAP_KEY: "E6CTjsauEoavEzCYG4WM1zt0S5OB6dAf", //百度key
-  BASE_URL: "http://192.168.88.100:725/",
-  API_URL: "http://192.168.88.100:725/api",
+  BASE_URL: BASE_URL,
+  API_URL: API_URL,
   // BASE_URL: "http://192.168.88.88:10462/",
   // API_URL: "http://192.168.88.88:10462/api",
   license_color: {
@@ -216,14 +222,14 @@ export const dict = {
   vehicle_type: {
     "1": "物流运输（普货）",
     "2": "危险品车辆",
-    "3": "长途客运、班线车辆",
-    "4": "出租车",
-    "5": "私家车",
-    "6": "校车",
-    "7": "城市公共交通车辆",
-    "8": "网约车",
-    "9": "警务车辆",
-    "10": "其他车辆"
+    "3": "长途客运、班线车辆"
+    // "4": "出租车",
+    // "5": "私家车",
+    // "6": "校车",
+    // "7": "城市公共交通车辆",
+    // "8": "网约车",
+    // "9": "警务车辆",
+    // "10": "其他车辆"
   },
   get_vehicle_type: function(key) {
     return this.vehicle_type[key] || "--";
