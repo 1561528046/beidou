@@ -64,7 +64,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="所属地区">
-                  <select-city v-model="formData.area" style="width:100%;"></select-city>
+                  <select-city v-model="formData.area" style="width:100%;" :clearable="true"></select-city>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -152,6 +152,7 @@ export default {
   },
   data() {
     return {
+      isInit: false,
       postloading: false,
       opened: ["1", "2", "3"],
       device_total_turn: false,
@@ -209,7 +210,7 @@ export default {
       }
     },
     expiry_time_turn: function(value) {
-      if (!value) {
+      if (!value && this.isInit) {
         this.formData.expiry_time = "";
       }
     }
@@ -221,19 +222,30 @@ export default {
       if (res.data.code == 0 && res.data.data.length) {
         var mixinData = Object.assign({}, this.formData, res.data.data[0]);
         mixinData.re_pass_word = mixinData.pass_word = "";
-        mixinData.area = [
-          mixinData.province_id,
-          mixinData.city_id,
-          mixinData.county_id
-        ];
+        mixinData.area = [];
+        if (mixinData.province_id) {
+          mixinData.area.push(mixinData.province_id);
+        }
+        if (mixinData.city_id) {
+          mixinData.area.push(mixinData.city_id);
+        }
+        if (mixinData.county_id) {
+          mixinData.area.push(mixinData.county_id);
+        }
         if (mixinData.device_total) {
           this.device_total_turn = true;
         }
+        mixinData.expiry_time =
+          mixinData.expiry_time == "0" ? "" : mixinData.expiry_time;
         if (mixinData.expiry_time) {
+          mixinData.expiry_time = this.$utils.formatDate(mixinData.expiry_time);
           this.expiry_time_turn = true;
         }
 
         this.$set(this.$data, "formData", mixinData);
+        this.$nextTick(() => {
+          this.isInit = true;
+        });
       }
     });
   },
@@ -271,8 +283,9 @@ export default {
         if (isVaildate) {
           var areaObj = this.$utils.formatArea(this.formData.area);
           var postData = Object.assign({}, this.formData, areaObj);
-          postData.device_total = postData.device_total || 0;
-          postData.expiry_time = postData.expiry_time || 0;
+          postData.device_total = postData.device_total || "";
+          postData.expiry_time = postData.expiry_time || "";
+          postData.expiry_time = postData.expiry_time.replace(/-/g, "");
           if (postData.pass_word != "") {
             postData.pass_word = postData.pass_word.MD5(16);
           } else {

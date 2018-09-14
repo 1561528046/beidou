@@ -306,8 +306,8 @@ export default {
         if (isVaildate) {
           var areaObj = this.$utils.formatArea(this.formData.area);
           var postData = Object.assign({}, this.formData, areaObj);
-          postData.device_total = postData.device_total || 0;
-          postData.expiry_time = postData.expiry_time || 0;
+          postData.device_total = postData.device_total || "";
+          postData.expiry_time = postData.expiry_time || "";
           postData.pass_word = postData.pass_word.MD5(16);
           delete postData.re_pass_word;
           addUser(postData)

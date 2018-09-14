@@ -109,15 +109,15 @@
             <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)">删除</el-button>
             <el-dropdown size="mini" style="margin-left:10px;" @command="handleCommand" trigger="click">
               <el-button size="mini">
-                更多菜单
+                更多操作
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown" class="vehicle-list-more">
                 <el-dropdown-item v-if="$props.state!=1" :command="{command:'view-position',data:scope}" v-rights="1-1-7">车辆位置</el-dropdown-item>
                 <el-dropdown-item v-if="$props.state==1 && $props.is_enter==1" :command="{command:'update-position',data:scope}" v-rights="1-1-3">更新定位</el-dropdown-item>
-                <el-dropdown-item :command="{command:'renew-platform',data:scope}">平台续费</el-dropdown-item>
-                <el-dropdown-item :command="{command:'renew-company',data:scope}">厂商续费</el-dropdown-item>
-                <el-dropdown-item :command="{command:'active-company',data:scope}">厂商激活</el-dropdown-item>
+                <el-dropdown-item v-if="renew_platform" :command="{command:'renew-platform',data:scope}">平台续费</el-dropdown-item>
+                <el-dropdown-item v-if="renew_company" :command="{command:'renew-company',data:scope}">厂商续费</el-dropdown-item>
+                <el-dropdown-item v-if="active_company" :command="{command:'active-company',data:scope}">厂商激活</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dialog title="平台续费" :center="true" @closed="openCompanyClosed" :visible.sync="renew.platformVisible" :append-to-body="true" width="30%">
@@ -243,7 +243,7 @@ import {
   firstTimeVehicle,
   AddFeeVehicle,
   AddOrder,
-  CheckUserIsOpenCompany
+  checkUserRenewAndActive
 } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import viewVehicle from "@/components/view-vehicle.vue";
@@ -260,9 +260,9 @@ export default {
   },
   data() {
     return {
-      renew_platform: "",
-      renew_company: "",
-      active_company: "",
+      renew_platform: false,
+      renew_company: false,
+      active_company: false,
       platformTime: "",
       renew: {
         plateformDate: "",
@@ -368,9 +368,21 @@ export default {
   },
   methods: {
     checkOrderRights() {
-      this.renew_platform = "";
-      this.renew_company = "";
-      this.active_company = "";
+      if (this.$store.state.user.user_id == 1) {
+        this.renew_platform = true;
+        this.renew_company = true;
+        this.active_company = true;
+        return false;
+      }
+      checkUserRenewAndActive().then(res => {
+        console.log(res);
+        if (res.data.code == 0) {
+          var data = res.data.data[0];
+          this.renew_platform = data.renew_platform == "False" ? false : true;
+          this.renew_company = data.renew_platform == "False" ? false : true;
+          this.active_company = data.renew_platform == "False" ? false : true;
+        }
+      });
     },
     compaynSelectImg(index, file) {
       this.openCompany.postData["img" + index] = URL.createObjectURL(file);
