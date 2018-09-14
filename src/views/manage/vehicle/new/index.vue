@@ -114,10 +114,10 @@
               </el-button>
               <el-dropdown-menu slot="dropdown" class="vehicle-list-more">
                 <el-dropdown-item v-if="$props.state!=1" :command="{command:'view-position',data:scope}">车辆位置</el-dropdown-item>
-                <el-dropdown-item v-if="$props.state==1" :command="{command:'update-position',data:scope}">更新定位</el-dropdown-item>
-                <el-dropdown-item v-if="$props.state!=1" :command="{command:'renew-platform',data:scope}">平台续费</el-dropdown-item>
-                <el-dropdown-item v-if="$props.state!=1" :command="{command:'renew-company',data:scope}">厂商续费</el-dropdown-item>
-                <el-dropdown-item v-if="company_open=='1'" :command="{command:'active-company',data:scope}">厂商激活(2个图片，一个备注)</el-dropdown-item>
+                <el-dropdown-item v-if="$props.state==1 && $props.is_enter==1" :command="{command:'update-position',data:scope}">更新定位</el-dropdown-item>
+                <el-dropdown-item :command="{command:'renew-platform',data:scope}">平台续费</el-dropdown-item>
+                <el-dropdown-item :command="{command:'renew-company',data:scope}">厂商续费</el-dropdown-item>
+                <el-dropdown-item v-if="company_open=='1'" :command="{command:'active-company',data:scope}">厂商激活</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-dialog title="平台续费" :center="true" @closed="openCompanyClosed" :visible.sync="renew.platformVisible" :append-to-body="true" width="30%">

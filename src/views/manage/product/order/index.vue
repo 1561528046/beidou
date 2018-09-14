@@ -89,8 +89,8 @@
         <el-table-column prop="state" label="订单状态" :formatter="(row)=>{return this.$dict.get_order_state(row.state)}"> </el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " type="primary " icon="el-icon-success" @click="confirm(scope)" v-if="scope.row.state=='1'&&scope.row.has_review=='2'">确认开通</el-button>
-            <el-button size="small " icon="el-icon-setting" @click="review(scope)" v-if="scope.row.state=='5'&&scope.row.has_review=='2'">审核</el-button>
+            <el-button size="small " type="primary " icon="el-icon-success" @click="confirm(scope)" v-if="scope.row.state=='1'&&scope.row.has_review=='2'" v-rights="3-4-1">确认开通</el-button>
+            <el-button size="small " icon="el-icon-setting" @click="review(scope)" v-if="scope.row.state=='5'&&scope.row.has_review=='2'" v-rights="3-4-3">审核</el-button>
             <el-button size="small " type="primary" icon=" el-icon-document" v-if="scope.row.fees_detail_name=='开通'" @click="enquiry(scope)">查看资料</el-button>
             <el-dialog width="30%" title="" :visible.sync="confirmDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
               <label>备注：</label>
