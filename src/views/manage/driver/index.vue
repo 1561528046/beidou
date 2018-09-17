@@ -1,20 +1,20 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" label-width="150px" label-position="left" class="table-search" size="small">
+      <el-form :model="tableQuery" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
           <el-col :span="6">
-            <el-form-item label="司机身份识别卡编号">
+            <el-form-item label-width="150px" label="司机身份识别卡编号">
               <el-input v-model="tableQuery.driver_card_id" maxlength="10"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="司机姓名">
+            <el-form-item label-width="100px" label="司机姓名">
               <el-input v-model="tableQuery.driver_name" placeholder="司机姓名"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="身份证号">
+            <el-form-item label-width="100px" label="身份证号">
               <el-input v-model="tableQuery.identity_id" placeholder="身份证号"></el-input>
             </el-form-item>
           </el-col>
@@ -62,7 +62,7 @@
     <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <add-components @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
     </el-dialog>
-    <el-dialog title="编辑" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog width="44%" title="编辑" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <update-components :driver_card_id="updateId" @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-components>
     </el-dialog>
   </div>

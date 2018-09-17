@@ -244,6 +244,19 @@ export default {
     },
     //查询产品列表
     getTable() {
+      if (this.tableQuery.real_name == "") {
+        return this.$notify({
+          message: "请选择用户",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.tableQuery.time == []) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

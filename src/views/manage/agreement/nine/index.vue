@@ -51,7 +51,7 @@
             <el-dialog title="编辑" width="50%" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
               <update-agreement :server_id="updateId" @success="success" :key="addKey"></update-agreement>
             </el-dialog>
-            <el-dialog title="删除" width="20%" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+            <el-dialog title="确认删除？" width="20%" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
               <template>
                 <div style="width: 50%; margin: 0 auto;">
                   <el-button @click="delConfirm" type="primary">确定</el-button>

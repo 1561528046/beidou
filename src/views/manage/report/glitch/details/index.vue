@@ -172,13 +172,13 @@ export default {
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
-      var date = moment(value[0]).add(30, "days")._d;
+      var date = moment(value[0]).add(3, "days")._d;
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
         return false;
       } else if (!moment(value[1]).isBefore(date)) {
-        callback(new Error("选择时间不能大于30天!"));
+        callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
         this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
