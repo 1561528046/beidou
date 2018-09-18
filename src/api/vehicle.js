@@ -22,6 +22,11 @@ export const getVehicleList = query => {
     params: query
   });
 };
+export const getVehicleAll = query => {
+  return ajax.get("/vehicle/GetVehicleByPage", {
+    params: query
+  });
+};
 export const getVehicle = query => {
   return ajax.get("/vehicle/GetVehicleByID", {
     params: query

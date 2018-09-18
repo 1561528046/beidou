@@ -424,6 +424,7 @@ export default {
       }
     },
     upsubmit() {
+      this.renew.renew.contract_date = this.renew.plateformDate;
       AddFeeVehicle(this.renew.renew).then(res => {
         if (res.data.code == 0) {
           this.$message.success(res.data.msg);

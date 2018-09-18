@@ -5,78 +5,135 @@
                 <el-tabs style=" width: 100%;position: relative; background-color:#fff;" type="border-card" @tab-click="handleClick">
                     <el-tab-pane label="通讯设置">
                         <template>
-                            <el-button type="primary" size="small">选择车辆</el-button>
+                            <div style="margin-bottom:15px;">
+                                <el-button type="primary" size="small" @click="vehicleClick" style="margin-right:10px;">选择车辆</el-button>
+                                <label>已选择车辆{{length}}条</label>
+                                <el-dialog width="60%" title="车辆信息" :visible.sync="vehicleDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
+                                    <choose-parameter :selected="selectedVehicles" @choose="vehicleArr"></choose-parameter>
+                                </el-dialog>
+                            </div>
                         </template>
+                        <hr/>
+                        <el-table :data="communication.data" style="width: 100%" class="admin-table-list">
+                            <el-table-column fixed prop="license" label="车牌号" width="100" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column fixed label="操作状态"></el-table-column>
+                            <el-table-column width="180" prop="" label="TCP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="TCP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="UDP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="UDP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="SMS消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="SMS消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="主服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="备份服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="主服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="备份服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="服务器TCP端口" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="服务器UDP端口" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="位置汇报策略" :formatter="$utils.baseFormatter"> </el-table-column>
+                            <el-table-column width="180" prop="" label="位置汇报方案" :formatter="$utils.baseFormatter"> </el-table-column>
+                        </el-table>
                         <el-form label-width="165px" label-position="left" class="table-search" size="small">
                             <el-row :gutter="30">
+                                <!-- <div style="padding-left: 15px; padding-right: 15px;  ">
+                                    <label style="width:100%;float:left; font-size:18px;">TCP</label>
+                
+                                </div> -->
                                 <el-col :span="8">
                                     <el-form-item label="TCP消息应答超时时间">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>秒(s)
+                                        <el-button>采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="TCP消息重传次数">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="UDP消息应答超时时间">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>秒(s)
+                                        <el-button>采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="UDP消息重传次数">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="SMS消息应答超时时间">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>秒(s)
+                                        <el-button>采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="SMS消息重传次数">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="主服务器APN">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="备份服务器APN">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="主服务器地址IP或域名">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="备份服务器地址IP或域名">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="服务器TCP端口">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="服务器UDP端口">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="位置汇报策略">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="位置汇报方案">
-                                        <el-input></el-input>
+                                        <el-input style="width:60%"></el-input>
+                                        <el-button style="margin-left:31px">采集</el-button>
+                                        <el-button>设置</el-button>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -313,8 +370,9 @@
     </div>
 </template>
 <script>
+import chooseParameter from "@/components/choose-parameter.vue";
 export default {
-  components: {},
+  components: { chooseParameter },
   created() {},
   props: {
     vehicle_type: Number, //vehicle_type区分普货和其他类型车辆
@@ -322,43 +380,30 @@ export default {
   },
   data() {
     return {
+      selectedVehicles: [],
+      length: 0,
+      vehicleDialog: false,
+      communication: {
+        TCPtime: "",
+        TCPtimes: "",
+        UDPtime: "",
+        UDPtimes: "",
+        SMStime: "",
+        SMStimes: "",
+        masterAPN: "",
+        backupAPN: "",
+        data: []
+      },
       tableQuery: {
         license: "",
         user_name: "",
         type: 1
       },
-      tableLoading: true,
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
-          }
-        ]
-      }
+      tableData: {
+        total: 0,
+        data: []
+      },
+      tableLoading: true
     };
   },
   watch: {
@@ -376,15 +421,15 @@ export default {
     }
   },
   methods: {
-    tabsClick(tab) {
-      if (tab.label == "车牌号") {
-        this.tableQuery.type = 1;
-      }
-      if (tab.label == "用户名") {
-        this.tableQuery.type = 2;
-      }
+    vehicleArr(scope) {
+      this.vehicleDialog = false;
+      this.length = scope.length;
+      this.$set(this.communication, "data", scope);
     },
     handleClick() {},
+    vehicleClick() {
+      this.vehicleDialog = true;
+    },
     getTable() {
       console.log(this.tableQuery);
     },
@@ -461,5 +506,8 @@ li:hover {
 }
 .el-card__body {
   height: 100%;
+}
+.el-form-item--small.el-form-item {
+  margin-bottom: 50px;
 }
 </style>

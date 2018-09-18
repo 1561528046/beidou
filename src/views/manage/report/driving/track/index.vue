@@ -213,6 +213,7 @@ export default {
         if (isVaildate) {
           this.tableLoading = true;
           var query = Object.assign({}, this.tableQuery);
+          console.log(query);
           getReport(query)
             .then(res => {
               this.tableLoading = false;
