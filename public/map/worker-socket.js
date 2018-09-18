@@ -46,31 +46,9 @@ var DICT = {
     }
     return xh;
   },
-  getStatus: function(num) {
-    num = Number(num);
-    if (num) {
-      var binary = num.toString(2).split("");
-      var state1 = binary.pop(); //二进制第一位（数组中最后一位）
-      var state2 = binary.pop(); //二进制第二位（数组中倒数第二位）
-      var result = "";
-      if (state1 == "0") {
-        result += "ACC 关 ";
-      } else {
-        result += "ACC 开 ";
-      }
-
-      if (state2 == "0") {
-        result += " 未定位";
-      } else {
-        result += " 定位";
-      }
-      return result;
-    }
-    return "";
-  },
   getAlarm: function(codes) {
     var num = buffer2number(codes);
-    console.log(num);
+    // console.log(num);
     var str = [];
     for (var key in DICT.ALARM) {
       if ((num & key) == key) {
@@ -220,15 +198,21 @@ function x0200(buffer) {
   var result = {};
   result.sim_id = formatSim(buffer.slice(5, 11)); //终端手机号
   result.alarm = DICT.getAlarm(buffer.slice(13, 17)); //报警标志
-  result.state = buffer.slice(17, 21); //状态
-  result.lat = buffer.slice(21, 25); //纬度
-  result.lng = buffer.slice(25, 29); //经度
-  result.altitude = buffer.slice(29, 31); //高程
-  result.speed = buffer.slice(31, 33); //速度
-  result.rotate = buffer.slice(33, 35); //方向
-  result.time = buffer.slice(35, 41).map(item => {
-    return item.toString(16);
-  }); //时间
+  result.state =
+    (buffer[17] << 24) + (buffer[14] << 16) + (buffer[15] << 8) + buffer[16]; //  buffer.slice(17, 21); //状态
+  result.lat =
+    ((buffer[21] << 24) + (buffer[22] << 16) + (buffer[23] << 8) + buffer[24]) /
+    1000000.0; //buffer.slice(21, 25); //纬度
+  result.lng =
+    ((buffer[25] << 24) + (buffer[26] << 16) + (buffer[27] << 8) + buffer[28]) /
+    1000000.0; //buffer.slice(25, 29); //经度
+  if (result.lng < result.lat) {
+    [result.lng, result.lat] = [result.lat, result.lng];
+  }
+  result.altitude = (buffer[29] << 8) + buffer[30]; //buffer.slice(29, 31); //高程
+  result.speed = (buffer[31] << 32) + buffer[30]; //buffer.slice(31, 33); //速度
+  result.rotate = (buffer[33] << 8) + buffer[34]; // buffer.slice(33, 35); //方向
+  result.time = formatTime(buffer.slice(35, 41)); //时间
   return result;
 }
 function x0704() {}
@@ -238,4 +222,26 @@ function formatSim(buffer) {
     code.push(item.toString(16));
   });
   return code.join("");
+}
+function formatTime(buffer) {
+  var code = [];
+  buffer.map(item => {
+    var _item = item.toString(16);
+    _item = "0".repeat(2 - _item.length) + _item;
+    code.push(_item);
+  });
+  var date = "20" + code.join("");
+  return (
+    date.substring(0, 4) +
+    "-" +
+    date.substring(4, 6) +
+    "-" +
+    date.substring(6, 8) +
+    " " +
+    date.substring(8, 10) +
+    ":" +
+    date.substring(10, 12) +
+    ":" +
+    date.substring(12, 14)
+  );
 }
