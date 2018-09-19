@@ -286,6 +286,7 @@ export default {
                         item.start_address = addressArr[0][index];
                         item.stop_address = addressArr[1][index];
                       });
+
                       this.$set(this.tableData, "data", Object.freeze(data));
                       this.$set(
                         this.tableData,

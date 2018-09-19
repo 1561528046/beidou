@@ -124,7 +124,8 @@ export default {
     {
       path: "vehicle-setting",
       name: "vehicle-setting",
-      meta: { name: "车辆参数设置", icon: "iconfont icon-setting-fill" }
+      meta: { name: "车辆参数设置", icon: "iconfont icon-setting-fill" },
+      component: () => import("@/views/manage/vehicle/parameter.vue")
     }
   ]
 };

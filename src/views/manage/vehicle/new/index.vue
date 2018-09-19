@@ -131,7 +131,7 @@
                   </el-col>
                   <el-col :span="24" style="text-align:center;">
                     <el-button @click="renew.platformVisible=false">取消</el-button>
-                    <el-button @click="upsubmit(scope)" type="primary">提交</el-button>
+                    <el-button @click="upsubmit" type="primary">提交</el-button>
                   </el-col>
                 </el-row>
               </el-form>
@@ -268,7 +268,8 @@ export default {
         plateformDate: "",
         companyDate: "",
         compaynVisible: false,
-        platformVisible: false
+        platformVisible: false,
+        renew: {}
       },
       openCompany: {
         postData: {
@@ -375,7 +376,6 @@ export default {
         return false;
       }
       checkUserRenewAndActive().then(res => {
-        console.log(res);
         if (res.data.code == 0) {
           var data = res.data.data[0];
           this.renew_platform = data.renew_platform == "False" ? false : true;
@@ -409,6 +409,7 @@ export default {
     renewPlatform(scope) {
       this.renew.platformVisible = true;
       this.renew.plateformDate = scope.row.contract_date;
+      this.renew.renew = scope.row;
       this.renew.plateformDate = moment(this.renew.plateformDate).format(
         "YYYY-MM-DD"
       );
@@ -422,9 +423,9 @@ export default {
         this.renew.plateformDate = scope.row.contract_date;
       }
     },
-    upsubmit(scope) {
-      scope.row.contract_date = this.renew.plateformDate;
-      AddFeeVehicle(scope.row).then(res => {
+    upsubmit() {
+      this.renew.renew.contract_date = this.renew.plateformDate;
+      AddFeeVehicle(this.renew.renew).then(res => {
         if (res.data.code == 0) {
           this.$message.success(res.data.msg);
           this.renew.platformVisible = false;
