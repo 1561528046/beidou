@@ -1,16 +1,438 @@
 <template>
-  <div class="home">
-    <div id="container" style="width:100%;height:800px;"></div>
+  <div class="monitor">
+    <div id="container" style="width:100%;height:100%;"></div>
+    <div class="vehicle-search shadow-box">
+      <el-row :gutter="20">
+        <el-col :span="20">
+          <el-input placeholder="搜索车辆（车牌号、终端ID）" size="small" class="input-with-select">
+            <el-button slot="append" icon="el-icon-search"></el-button>
+          </el-input>
+        </el-col>
+        <el-col :span="4" class="_right">
+          <i class="el-icon-more"></i>
+        </el-col>
+      </el-row>
+    </div>
+
+    <div class="vehicle-info-box shadow-box open">
+      <div class="_header">
+        <strong class="_title">冀R61333</strong>
+        <small class="_text">服务到期日期：2019-3-1 </small>
+        <i class="_close el-icon-circle-close-outline"></i>
+      </div>
+      <div class="_map">
+        <a class="_map-btn">展开地图</a>
+        <div class="_map-container"></div>
+      </div>
+      <div class="_body">
+        <el-row>
+          <el-col :span="24">
+            定位时间：2018-05-05 13：22：36
+          </el-col>
+          <el-col :span="12">
+            联系人：XXX
+          </el-col>
+          <el-col :span="12">
+            联系方式： 13000000000
+          </el-col>
+          <el-col :span="12">
+            时速：60/km
+          </el-col>
+          <el-col :span="12">
+            今日里程：600/km
+          </el-col>
+          <el-col :span="24">
+            地理位置：河北省廊坊市广阳区XXX300米
+          </el-col>
+        </el-row>
+      </div>
+      <div class="_footer">
+        <i class="iconfont icon-idcard"></i>
+        <i class="iconfont icon-boxplot-fill"></i>
+        <i class="iconfont icon-sim"></i>
+        <i class="iconfont icon-alert-fill"></i>
+        <i class="iconfont icon-wifi"></i>
+        <i class="iconfont icon-error-fill _error"></i>
+
+      </div>
+    </div>
+
+    <div class="status-container shadow-box">
+      <div class="_header">
+        <span class="_global-status">平台车辆总数：
+          <strong>100000 </strong>
+        </span>
+        <span class="_global-status _online">在线车辆：
+          <strong>51651 </strong>
+        </span>
+        <span class="_global-status _alarm">报警车辆：
+          <strong>16161 </strong>
+        </span>
+        <span class="_global-status _error">异常车辆：
+          <strong>981196 </strong>
+        </span>
+        <span class="_global-status _offline">离线车辆：
+          <strong>400</strong>
+        </span>
+        <el-button class="_open" icon="el-icon-arrow-right" size="mini">展开</el-button>
+      </div>
+      <div class="_body">
+        <el-form :inline="true" size="mini" class="_search">
+          <el-form-item label="用户名称">
+            <el-input placeholder="用户名称"></el-input>
+          </el-form-item>
+          <el-form-item label="活动区域">
+            <el-select placeholder="活动区域">
+              <el-option label="区域一" value="shanghai"></el-option>
+              <el-option label="区域二" value="beijing"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary">查询</el-button>
+          </el-form-item>
+        </el-form>
+        <div class="_table">
+          <el-table :data="tableData" size="small" style="width: 100%">
+            <el-table-column prop="user_name" label="用户名称" width="180">
+            </el-table-column>
+            <el-table-column prop="total" label="车辆总数">
+            </el-table-column>
+            <el-table-column prop="online" label="在线车辆 ">
+            </el-table-column>
+            <el-table-column prop="alarm" label="报警车辆  ">
+            </el-table-column>
+            <el-table-column prop="error" label="异常车辆  ">
+            </el-table-column>
+            <el-table-column prop="offline" label="离线车辆 ">
+            </el-table-column>
+          </el-table>
+
+        </div>
+        <div class="_pager">
+          <el-pagination background layout="prev, pager, next" :total="1000">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-container shadow-box">
+      <div class="_header">
+        <div class="_title">
+          报警车辆
+        </div>
+        <div class="_text">
+          新东方客运公司
+        </div>
+      </div>
+      <div class="_body">
+        <div class="group-container">
+          <div class="group-name">子级分组1</div>
+          <el-select placeholder="全部分组" size="mini" style="width:100%;">
+            <el-option label="分组1" value="shanghai"></el-option>
+            <el-option label="分组2" value="beijing"></el-option>
+          </el-select>
+          <el-table :data="tableData" size="small" style="width: 100%">
+            <el-table-column prop="user_name" label="车牌号" width="180">
+            </el-table-column>
+            <el-table-column prop="total" label="报警总数">
+            </el-table-column>
+          </el-table>
+        </div>
+
+        <div class="group-container">
+          <div class="group-name">子级分组1</div>
+          <el-select placeholder="全部分组" size="mini" style="width:100%;">
+            <el-option label="分组1" value="shanghai"></el-option>
+            <el-option label="分组2" value="beijing"></el-option>
+          </el-select>
+          <el-table :data="tableData" size="small" style="width: 100%">
+            <el-table-column prop="user_name" label="车牌号" width="180">
+            </el-table-column>
+            <el-table-column prop="total" label="报警总数">
+            </el-table-column>
+          </el-table>
+        </div>
+
+        <div class="group-container">
+          <div class="group-name">子级分组1</div>
+          <el-select placeholder="全部分组" size="mini" style="width:100%;">
+            <el-option label="分组1" value="shanghai"></el-option>
+            <el-option label="分组2" value="beijing"></el-option>
+          </el-select>
+          <el-table :data="tableData" size="small" style="width: 100%">
+            <el-table-column prop="user_name" label="车牌号" width="180">
+            </el-table-column>
+            <el-table-column prop="total" label="报警总数">
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
+<style lang="less">
+@pirmary: #409eff;
+@success: #67c23a;
+@warning: #e6a23c;
+@danger: #f56c6c;
+@info: #909399;
+@t1: #303133;
+@t2: #606266;
+@t3: #909399;
+@t4: #c0c4cc;
+@b1: #dcdfe6;
+@b2: #e4e7ed;
+@b3: #ebeef5;
+@b4: #f2f6fc;
 
+.details-container {
+  width: 17%;
+  position: absolute;
+  z-index: 11;
+  right: 20px;
+  top: 20px;
+  bottom: 20px;
+  background: #fff;
+  ._header {
+    height: 60px;
+    padding: 15px;
+    line-height: 1.5;
+    ._text {
+      font-size: 12px;
+      color: @t3;
+    }
+  }
+  ._body {
+    padding: 15px;
+    box-sizing: border-box;
+    overflow: auto;
+    position: absolute;
+    top: 60px;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+  }
+  .group-container {
+    margin-bottom: 15px;
+    .group-name {
+      padding-bottom: 10px;
+    }
+  }
+}
+.status-container {
+  width: 60%;
+  position: absolute;
+  z-index: 11;
+  left: 390px;
+  top: 20px;
+  background: #fff;
+  ._header {
+    position: relative;
+    height: 50px;
+    box-sizing: border-box;
+    padding: 0 15px;
+    line-height: 50px;
+    border-bottom: 1px solid @b3;
+    font-size: 14px;
+    ._open {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
+    ._global-status {
+      padding-right: 2em;
+    }
+    ._online strong {
+      color: @success;
+    }
+    ._alarm strong {
+      color: @danger;
+    }
+    ._error strong {
+      color: @warning;
+    }
+    ._offline strong {
+      color: @t3;
+    }
+  }
+  ._body {
+    ._search {
+      padding: 15px 0 15px 15px;
+      border-bottom: 1px solid @b3;
+      .el-form-item {
+        margin-bottom: 0;
+      }
+    }
+    ._pager {
+      padding: 10px;
+      text-align: center;
+    }
+  }
+}
+.monitor {
+  height: 100%;
+  position: relative;
+  color: @t1;
+}
+.shadow-box {
+  box-shadow: 2px 2px 5px #ddd;
+  border-radius: 5px;
+}
+.vehicle-search {
+  position: absolute;
+  width: 350px;
+  background: #fff;
+  z-index: 10;
+  left: 20px;
+  top: 20px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 50px;
+  ._right {
+    text-align: center;
+    i {
+      font-size: 30px;
+      cursor: pointer;
+    }
+  }
+}
+.vehicle-info-box {
+  font-size: 14px;
+  position: absolute;
+  width: 350px;
+  background: #fff;
+  z-index: 10;
+  left: 20px;
+  top: 120px;
+  &.open {
+    height: 400px;
+    ._map {
+      height: 50%;
+      background: #999;
+    }
+  }
+  ._header {
+    box-sizing: border-box;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 0 15px;
+    position: relative;
+    height: 40px;
+    line-height: 40px;
+    ._title {
+      padding-right: 1em;
+      font-size: 16px;
+    }
+    ._text {
+      font-size: 12px;
+      color: #999;
+    }
+    ._close {
+      right: 15px;
+      top: 50%;
+      transform: translate3d(0, -50%, 0);
+      font-size: 20px;
+      position: absolute;
+    }
+  }
+  ._map {
+    position: relative;
+    min-height: 25px;
+    ._map-btn {
+      position: absolute;
+      bottom: 0;
+      font-size: 12px;
+      width: 100px;
+      left: 50%;
+      margin-left: -50px;
+      border: 1px solid #f0f0f0;
+      border-top: 0;
+      text-align: center;
+      height: 25px;
+      line-height: 25px;
+      background: #fff;
+    }
+    ._map-container {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  ._body {
+    height: 30%;
+    box-sizing: border-box;
+    padding: 15px;
+    line-height: 1.8;
+  }
+  ._footer {
+    height: 30px;
+    padding-top: 10px;
+    box-sizing: border-box;
+    border-top: 1px solid #f0f0f0;
+    ._error {
+      position: absolute;
+      right: 15px;
+      color: #ff8d00;
+    }
+    i {
+      font-size: 25px;
+      display: inline-block;
+      width: 40px;
+      cursor: pointer;
+      text-align: center;
+    }
+  }
+}
+</style>
 <script>
 /*eslint-disable*/
 import initMap from "@/utils/map.js";
 export default {
   data() {
     return {
-      maps: []
+      maps: [],
+      tableData: [
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        },
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        },
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        },
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        },
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        }
+      ]
     };
   },
   created() {
@@ -21,226 +443,12 @@ export default {
           pitch: 55,
           rotation: -45
         });
-        var pathArr = [
-          { status: "4", point: [75, 38.118117] },
-          { status: "2", point: [75, 38.218117] },
-          { status: "2", point: [75, 38.318117] },
-          { status: "3", point: [75, 38.418117] },
-          { status: "4", point: [75, 38.518117] },
-          { status: "4", point: [75, 38.618117] },
-          { status: "4", point: [75, 38.718117] },
-          { status: "4", point: [75, 38.818117] }
-        ];
-        //1正常（绿色）
-        //2异常（黄色）
-        //3离线 （灰色）
-        //4报警 （红色）
-        var markerArr = [];
-        var lineArr = [];
-        var colorDict = {
-          "1": "green",
-          "2": "yellow",
-          "3": "green",
-          "4": "red"
-        };
-        var overlayGroup = new AMap.OverlayGroup();
-        var splitArr = [
-          // {
-          //   status:"4",
-          //   line:[[75,38],...]
-          // }
-        ];
-        var infoWindow = new AMap.InfoWindow({
-          offset: new AMap.Pixel(0, -30)
-        });
-        var pointer = 0;
-        pathArr.map((point, index) => {
-          createMarker(point, index);
-          var pathObj = (splitArr[pointer] = splitArr[pointer] || {
-            status: "1",
-            line: []
-          });
-          if (pathArr[index + 1] && point.status == pathArr[index + 1].status) {
-            pathObj.line.push(point.point);
-            if (pathObj.status != point.status) {
-              pointer++;
-              pathObj = splitArr[pointer] = splitArr[pointer] || {
-                status: point.status,
-                line: []
-              };
-              pathObj.line.push(point.point);
-            }
-          } else {
-            if (pathObj.status == 1 || !pathArr[index + 1]) {
-              pathObj.line.push(point.point);
-            } else {
-              pathObj.line.push(point.point);
-              pointer++;
-              pathObj = splitArr[pointer] = splitArr[pointer] || {
-                status: "1",
-                line: []
-              };
-              pathObj.line.push(point.point);
-            }
-          }
-        });
-
-        splitArr.map(line => {
-          lineArr.push(
-            new AMap.Polyline({
-              path: line.line, // 设置线覆盖物路径
-              showDir: true,
-              isOutline: true,
-              strokeOpacity: 1,
-              //dirImg: canvasDir,
-              strokeColor: colorDict[line.status], // 线颜色
-              strokeWeight: 10 // 线宽
-            })
-          );
-        });
-
-        function createMarker(point, index) {
-          var span = document.createElement("span");
-          span.style.cssText =
-            "display:inline-block;border-radius:10px;border:1px solid #000;background:" +
-            colorDict[point.status] +
-            ";width:10px;height:10px";
-          var marker = new AMap.Marker({
-            position: point.point,
-            offset: { x: -5, y: -10 },
-            animation: "AMAP_ANIMATION_DROP",
-            content: span,
-            label: { content: "123123", offset: { x: 20, y: 0 } }
-          });
-          marker.content = `<div class="map-infowindow">    <div><strong>车　牌：</strong>冀A56309</div>    <div><strong>联系人：</strong>--</div>    <div><strong>电　话：</strong>18603533872</div>    <div><strong>车　速：</strong>0 km/h</div>    <div><strong>里　程：</strong>48733</div>    <div><strong>报　警：</strong>--</div>    <div><strong>时　间：</strong>2018-07-19 17:30:26</div>    <div><strong>位　置：</strong>山西省晋中市榆次区西沙沟村北676米</div>    <div><strong>经 纬 度：</strong>112.72003610517334,37.80896949604063</div></div>`;
-          marker.on("click", markerClick);
-          marker.emit("click", { target: marker });
-          markerArr.push(marker);
-        }
-        function markerClick(e) {
-          infoWindow.setContent(e.target.content);
-          infoWindow.open(map, e.target.getPosition());
-        }
-        overlayGroup.addOverlays(lineArr);
-        overlayGroup.addOverlays(markerArr);
-
-        map.add(overlayGroup);
-        map.setFitView();
-
-        var object3Dlayer = new AMap.Object3DLayer();
-        var bounds = [
-          new AMap.LngLat(116, 39),
-          new AMap.LngLat(117, 39),
-          new AMap.LngLat(117, 40),
-          new AMap.LngLat(116, 40)
-        ];
-        var height = 50000;
-        var color = "#0088ff"; //rgba
-        var prism = new AMap.Object3D.Prism({
-          path: bounds,
-          height: height,
-          color: color
-        });
-        object3Dlayer.add(prism);
-        map.add(object3Dlayer);
-
-        //测试
-
-        var cluster,
-          markers = [];
-        for (var i = 0; i < points.length; i += 1) {
-          markers.push(
-            new AMap.Marker({
-              position: points[i]["lnglat"],
-              content:
-                '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: 24px; width: 24px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
-              offset: new AMap.Pixel(-15, -15)
-            })
-          );
-        }
-        var count = markers.length;
-        var _renderCluserMarker = function(context) {
-          var factor = Math.pow(context.count / count, 1 / 18);
-          var div = document.createElement("div");
-          var Hue = 180 - factor * 180;
-          var bgColor = "hsla(" + Hue + ",100%,50%,0.7)";
-          var fontColor = "hsla(" + Hue + ",100%,20%,1)";
-          var borderColor = "hsla(" + Hue + ",100%,40%,1)";
-          var shadowColor = "hsla(" + Hue + ",100%,50%,1)";
-          div.style.backgroundColor = bgColor;
-          var size = Math.round(
-            30 + Math.pow(context.count / count, 1 / 5) * 20
-          );
-          div.style.width = div.style.height = size + "px";
-          div.style.border = "solid 1px " + borderColor;
-          div.style.borderRadius = size / 2 + "px";
-          div.style.boxShadow = "0 0 1px " + shadowColor;
-          div.innerHTML = context.count;
-          div.style.lineHeight = size + "px";
-          div.style.color = fontColor;
-          div.style.fontSize = "14px";
-          div.style.textAlign = "center";
-          context.marker.setOffset(new AMap.Pixel(-size / 2, -size / 2));
-          context.marker.setContent(div);
-        };
-        addCluster(2);
-
-        function addCluster(tag) {
-          if (cluster) {
-            cluster.setMap(null);
-          }
-          if (tag == 2) {
-            //完全自定义
-            cluster = new AMap.MarkerClusterer(map, markers, {
-              gridSize: 80,
-              renderCluserMarker: _renderCluserMarker
-            });
-          } else if (tag == 1) {
-            //自定义图标
-            var sts = [
-              {
-                url: "https://a.amap.com/jsapi_demos/static/images/blue.png",
-                size: new AMap.Size(32, 32),
-                offset: new AMap.Pixel(-16, -16)
-              },
-              {
-                url: "https://a.amap.com/jsapi_demos/static/images/green.png",
-                size: new AMap.Size(32, 32),
-                offset: new AMap.Pixel(-16, -16)
-              },
-              {
-                url: "https://a.amap.com/jsapi_demos/static/images/orange.png",
-                size: new AMap.Size(36, 36),
-                offset: new AMap.Pixel(-18, -18)
-              },
-              {
-                url: "https://a.amap.com/jsapi_demos/static/images/red.png",
-                size: new AMap.Size(48, 48),
-                offset: new AMap.Pixel(-24, -24)
-              },
-              {
-                url: "https://a.amap.com/jsapi_demos/static/images/darkRed.png",
-                size: new AMap.Size(48, 48),
-                offset: new AMap.Pixel(-24, -24)
-              }
-            ];
-            cluster = new AMap.MarkerClusterer(map, markers, {
-              styles: sts,
-              gridSize: 80
-            });
-          } else {
-            //默认样式
-            cluster = new AMap.MarkerClusterer(map, markers, { gridSize: 80 });
-          }
-        }
       });
     });
   },
   destroyed() {
-    console.log(12);
     this.maps.map(map => {
       console.log(map.destroy);
-      //map.destroy();
     });
   }
 };
