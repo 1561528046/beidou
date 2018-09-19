@@ -3,58 +3,58 @@
     <!-- 设备信息 -->
     <el-row :gutter="30">
       <el-col :span="12">
-        <el-form-item label="标注" prop="title">
-          <el-input v-model="formData.title"></el-input>
+        <el-form-item label="平台名称" prop="title">
+          <el-input v-model="formData.title" placeholder="平台名称"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="远程IP" prop="remote_ip">
-          <el-input v-model="formData.remote_ip"></el-input>
+          <el-input v-model="formData.remote_ip" placeholder="远程IP"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="远程端口号" prop="remote_port">
-          <el-input v-model="formData.remote_port"></el-input>
+          <el-input v-model="formData.remote_port" placeholder="远程端口号"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="用户ID" prop="user_name">
-          <el-input v-model="formData.user_name"></el-input>
+          <el-input v-model="formData.user_name" placeholder="用户ID"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="密码" prop="password">
-          <el-input v-model="formData.password"></el-input>
+          <el-input v-model="formData.password" placeholder="密码"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="接入码" prop="access_code">
-          <el-input v-model="formData.access_code"></el-input>
+          <el-input v-model="formData.access_code" placeholder="接入码"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="本地端口号" prop="local_port">
-          <el-input v-model="formData.local_port"></el-input>
+          <el-input v-model="formData.local_port" placeholder="本地端口号"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="M1" prop="M1">
-          <el-input v-model="formData.M1"></el-input>
+          <el-input v-model="formData.M1" placeholder="M1"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="IA1" prop="IA1">
-          <el-input v-model="formData.IA1"></el-input>
+          <el-input v-model="formData.IA1" placeholder="IA1"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="IC1" prop="IC1">
-          <el-input v-model="formData.IC1"></el-input>
+          <el-input v-model="formData.IC1" placeholder="IC1"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="Keys" prop="keys">
-          <el-input v-model="formData.key_value"></el-input>
+          <el-input v-model="formData.key_value" placeholder="keys"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="24">
@@ -74,7 +74,6 @@
   </el-form>
 </template>
 <script>
-import { rules } from "@/utils/rules.js";
 import { AddServer809 } from "@/api/index.js";
 export default {
   data() {
@@ -97,13 +96,70 @@ export default {
         enable: 1
       },
       rules: {
-        ...rules
+        title: [{ required: true, trigger: "blur", message: "请输入平台名称" }],
+        remote_ip: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateIp
+          }
+        ],
+        remote_port: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateDuankou
+          }
+        ],
+        local_port: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateLocalDuankou
+          }
+        ]
       }
     };
   },
   watch: {},
   created() {},
   methods: {
+    validateIp(rule, value, callback) {
+      var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      var reg = value.match(exp);
+      if (reg == null) {
+        callback(new Error("远程IP地址不合法!"));
+        return false;
+      } else {
+        callback();
+      }
+    },
+    validateDuankou(rule, value, callback) {
+      var parten = /^(\d)+$/g;
+      if (
+        parten.test(value) &&
+        parseInt(value) <= 65535 &&
+        parseInt(value) >= 0
+      ) {
+        callback();
+      } else {
+        callback(new Error("远程端口错误!"));
+        return false;
+      }
+    },
+    validateLocalDuankou(rule, value, callback) {
+      var parten = /^(\d)+$/g;
+      if (
+        parten.test(value) &&
+        parseInt(value) <= 65535 &&
+        parseInt(value) >= 0
+      ) {
+        callback();
+      } else {
+        callback(new Error("本地端口号错误!"));
+        return false;
+      }
+    },
     formSubmit() {
       if (this.formData.enable_type) {
         this.formData.enable = 1;

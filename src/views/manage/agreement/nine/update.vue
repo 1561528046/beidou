@@ -3,7 +3,7 @@
     <!-- 设备信息 -->
     <el-row :gutter="30">
       <el-col :span="12">
-        <el-form-item label="标注" prop="title">
+        <el-form-item label="平台名称" prop="title">
           <el-input v-model="formData.title"></el-input>
         </el-form-item>
       </el-col>
@@ -74,7 +74,6 @@
   </el-form>
 </template>
 <script>
-import { rules } from "@/utils/rules.js";
 import { GetServerById, UpdateServer809 } from "@/api/index.js";
 export default {
   data() {
@@ -98,7 +97,28 @@ export default {
         enable: 1
       },
       rules: {
-        ...rules
+        title: [{ required: true, trigger: "blur", message: "请输入平台名称" }],
+        remote_ip: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateIp
+          }
+        ],
+        remote_port: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateDuankou
+          }
+        ],
+        local_port: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateLocalDuankou
+          }
+        ]
       },
       tableData: {
         data: []
@@ -113,6 +133,42 @@ export default {
     this.getTable();
   },
   methods: {
+    validateIp(rule, value, callback) {
+      var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      var reg = value.match(exp);
+      if (reg == null) {
+        callback(new Error("远程IP地址不合法!"));
+        return false;
+      } else {
+        callback();
+      }
+    },
+    validateDuankou(rule, value, callback) {
+      var parten = /^(\d)+$/g;
+      if (
+        parten.test(value) &&
+        parseInt(value) <= 65535 &&
+        parseInt(value) >= 0
+      ) {
+        callback();
+      } else {
+        callback(new Error("远程端口号错误!"));
+        return false;
+      }
+    },
+    validateLocalDuankou(rule, value, callback) {
+      var parten = /^(\d)+$/g;
+      if (
+        parten.test(value) &&
+        parseInt(value) <= 65535 &&
+        parseInt(value) >= 0
+      ) {
+        callback();
+      } else {
+        callback(new Error("本地端口号错误!"));
+        return false;
+      }
+    },
     formSubmit() {
       if (this.formData.enable_type) {
         this.formData.enable = 1;

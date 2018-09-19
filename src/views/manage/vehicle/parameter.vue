@@ -14,9 +14,9 @@
                             </div>
                         </template>
                         <hr/>
-                        <el-table :data="communication.data" style="width: 100%" class="admin-table-list">
+                        <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
                             <el-table-column fixed prop="license" label="车牌号" width="100" :formatter="$utils.baseFormatter"> </el-table-column>
-                            <el-table-column fixed label="操作状态"></el-table-column>
+                            <el-table-column fixed prop="operating" label="操作状态" width="150"></el-table-column>
                             <el-table-column width="180" prop="" label="TCP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
                             <el-table-column width="180" prop="" label="TCP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
                             <el-table-column width="180" prop="" label="UDP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -32,114 +32,156 @@
                             <el-table-column width="180" prop="" label="位置汇报策略" :formatter="$utils.baseFormatter"> </el-table-column>
                             <el-table-column width="180" prop="" label="位置汇报方案" :formatter="$utils.baseFormatter"> </el-table-column>
                         </el-table>
-                        <el-form label-width="165px" label-position="left" class="table-search" size="small">
+                        <el-form label-width="170px" label-position="left" class="table-search" size="small">
                             <el-row :gutter="30">
                                 <!-- <div style="padding-left: 15px; padding-right: 15px;  ">
                                     <label style="width:100%;float:left; font-size:18px;">TCP</label>
                 
                                 </div> -->
                                 <el-col :span="8">
-                                    <el-form-item label="TCP消息应答超时时间">
-                                        <el-input style="width:60%"></el-input>秒(s)
-                                        <el-button>采集</el-button>
-                                        <el-button>设置</el-button>
+                                    <el-form-item label="TCP消息应答超时时间(s)">
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0002')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0002')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="TCP消息重传次数">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0003')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0003')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-form-item label="UDP消息应答超时时间">
-                                        <el-input style="width:60%"></el-input>秒(s)
-                                        <el-button>采集</el-button>
-                                        <el-button>设置</el-button>
+                                    <el-form-item label="UDP消息应答超时时间(s)">
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0004')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0004')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="UDP消息重传次数">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0005')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0005')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-form-item label="SMS消息应答超时时间">
-                                        <el-input style="width:60%"></el-input>秒(s)
-                                        <el-button>采集</el-button>
-                                        <el-button>设置</el-button>
+                                    <el-form-item label="SMS消息应答超时时间(s)">
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0006')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0006')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="SMS消息重传次数">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0007')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0007')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="主服务器APN">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0010')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0010')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="备份服务器APN">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0014')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0014')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="主服务器地址IP或域名">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0013')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0013')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="备份服务器地址IP或域名">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0017')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0017')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="服务器TCP端口">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0018')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0018')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="服务器UDP端口">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0019')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0019')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="位置汇报策略">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0020')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0020')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
                                     <el-form-item label="位置汇报方案">
-                                        <el-input style="width:60%"></el-input>
-                                        <el-button style="margin-left:31px">采集</el-button>
-                                        <el-button>设置</el-button>
+                                        <el-input style="width:60%">
+                                            <template slot="append">
+                                                <el-button @click="setup('0x0021')">设置</el-button>
+                                            </template>
+                                        </el-input>
+                                        <el-button @click="collect('0x0021')" style="margin-left:31px">采集</el-button>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
                         </el-form>
                     </el-tab-pane>
-                    <el-tab-pane label="车辆信息设置">
+                    <!-- <el-tab-pane label="车辆信息设置">
                         <el-form label-width="165px" label-position="left" class="table-search" size="small">
                             <el-row :gutter="30">
                                 <el-col :span="8">
@@ -363,7 +405,7 @@
                                 </el-col>
                             </el-row>
                         </el-form>
-                    </el-tab-pane>
+                    </el-tab-pane> -->
                 </el-tabs>
             </div>
         </el-card>
@@ -392,6 +434,12 @@ export default {
         SMStimes: "",
         masterAPN: "",
         backupAPN: "",
+        masterIP: "",
+        backupIP: "",
+        serverTCP: "",
+        serverUDP: "",
+        locationStrategy: "",
+        locationPlan: "",
         data: []
       },
       tableQuery: {
@@ -421,15 +469,60 @@ export default {
     }
   },
   methods: {
-    vehicleArr(scope) {
-      this.vehicleDialog = false;
-      this.length = scope.length;
-      this.$set(this.communication, "data", scope);
-    },
-    handleClick() {},
     vehicleClick() {
       this.vehicleDialog = true;
     },
+    vehicleArr(scope) {
+      this.vehicleDialog = false;
+      this.length = scope.length;
+      scope.map(item => {
+        item.operating = "--";
+      });
+      this.$set(this.communication, "data", scope);
+    },
+    // 采集
+    collect(num) {
+      var str = this.$dict.get_communication(num);
+      var instructioncollect;
+      this.communication.data.map(item => {
+        var simid = item.sim_id;
+        instructioncollect =
+          "^x8104" + "|" + num + "|" + simid + "|" + "1537319950660$";
+        item.operating = str + "采集成功";
+        console.log(instructioncollect);
+      });
+
+      // ^get
+      // 参数id
+      // sim_id
+      // $
+    },
+    // 设置
+    setup(num) {
+      // ^set
+      //参数id
+      //设置的值
+      //sim_id
+      // $
+      var str = this.$dict.get_communication(num);
+      var instructionset;
+      this.communication.data.map(item => {
+        var simid = item.sim_id;
+        instructionset =
+          "^x8103" +
+          "|" +
+          num +
+          "|" +
+          10 +
+          "|" +
+          simid +
+          "|" +
+          "1537319950660$";
+        item.operating = str + "设置成功";
+        console.log(instructionset);
+      });
+    },
+    handleClick() {},
     getTable() {
       console.log(this.tableQuery);
     },
@@ -508,6 +601,6 @@ li:hover {
   height: 100%;
 }
 .el-form-item--small.el-form-item {
-  margin-bottom: 50px;
+  margin-bottom: 36px;
 }
 </style>

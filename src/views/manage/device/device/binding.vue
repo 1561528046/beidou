@@ -190,7 +190,7 @@ export default {
     },
     renderBind() {
       this.$set(this.$data, "leftList", []);
-      this.bindTableQuery.total = 0;
+      // this.bindTableQuery.total = 0;
       if (this.currentUser.user_id) {
         var postData = Object.assign({}, this.bindTableQuery);
         postData.user_id = this.currentUser.user_id;

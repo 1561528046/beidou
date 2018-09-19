@@ -10,6 +10,7 @@ export default {
   data() {
     return {
       loading: false,
+      type: true,
       area_id: "",
       areas: []
     };
@@ -18,6 +19,9 @@ export default {
     area_id: function() {
       this.$emit("input", this.area_id);
       var area = this.getAreaObj(this.area_id)[0];
+      if (area == undefined) {
+        return this.$emit("update:area", {});
+      }
       area.province_id = area.province_id == 0 ? "" : area.province_id;
       area.city_id = area.city_id == 0 ? "" : area.city_id;
       area.county_id = area.county_id == 0 ? "" : area.county_id;

@@ -48,7 +48,7 @@ export default {
   },
   formatDate(date, separator = "-") {
     date = date.toString();
-    if (!date) {
+    if (!date || date == 0) {
       return "--";
     }
     if (date.length == 8 || date.length == 14) {
