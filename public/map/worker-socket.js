@@ -46,9 +46,7 @@ var DICT = {
     }
     return xh;
   },
-  getAlarm: function(codes) {
-    var num = buffer2number(codes);
-    // console.log(num);
+  getAlarm: function(num) {
     var str = [];
     for (var key in DICT.ALARM) {
       if ((num & key) == key) {
@@ -61,7 +59,10 @@ var DICT = {
 
 self.onmessage = function(e) {
   format(e.data).map(item => {
-    self.postMessage(serialize(item));
+    var results = serialize(item);
+    results.map(result => {
+      self.postMessage(result);
+    });
   });
 };
 var RS = 0x7e; //分隔符
@@ -171,51 +172,155 @@ function concatBuffer(type, ...arrays) {
 }
 
 function serialize(buffer) {
+  var arr = [];
   var result = {};
-  result.msgId = buffer.slice(1, 3);
-  result.msgId = (result.msgId[0] << 8) + result.msgId[1];
-  if (result.msgId == 0x0200) {
-    Object.assign(result, x0200(buffer));
+  result.msgId = (buffer[1] << 8) + buffer[2]; //消息ID
+  result.sim_id = formatSim(buffer.slice(5, 11)); //终端手机号
+  switch (result.msgId) {
+    case 0x0200:
+      arr.push(
+        Object.assign(result, x0200(buffer.slice(13, buffer.length - 1)))
+      );
+      break;
+    case 0x0704:
+      var results = x0704(buffer.slice(13, buffer.length - 1));
+      results.map(item => {
+        arr.push(Object.assign(result, item));
+      });
+      break;
   }
-  if (result.msgId == 0x0704) {
-    x0704(buffer);
-  }
-  return result;
+
+  return arr;
 }
 
 //ArrayBuffer转10进制
-function buffer2number(typedBuffer) {
-  var totalLength = typedBuffer.length;
-  return typedBuffer.reduceRight((total, num, index) => {
-    if (index == totalLength - 1) {
-      return num << ((totalLength - index - 1) * 8);
-    }
-    return total + (num << ((totalLength - index - 1) * 8));
-  }, 0);
-}
+// function buffer2number(typedBuffer) {
+//   var totalLength = typedBuffer.length;
+//   return typedBuffer.reduceRight((total, num, index) => {
+//     if (index == totalLength - 1) {
+//       return num << ((totalLength - index - 1) * 8);
+//     }
+//     return total + (num << ((totalLength - index - 1) * 8));
+//   }, 0);
+// }
 //0200定位数据
 function x0200(buffer) {
   var result = {};
-  result.sim_id = formatSim(buffer.slice(5, 11)); //终端手机号
-  result.alarm = DICT.getAlarm(buffer.slice(13, 17)); //报警标志
+  result.alarm = DICT.getAlarm(
+    (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]
+  ); //报警标志
   result.state =
-    (buffer[17] << 24) + (buffer[14] << 16) + (buffer[15] << 8) + buffer[16]; //  buffer.slice(17, 21); //状态
+    (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]; //  buffer.slice(17, 21); //状态
   result.lat =
-    ((buffer[21] << 24) + (buffer[22] << 16) + (buffer[23] << 8) + buffer[24]) /
+    ((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]) /
     1000000.0; //buffer.slice(21, 25); //纬度
   result.lng =
-    ((buffer[25] << 24) + (buffer[26] << 16) + (buffer[27] << 8) + buffer[28]) /
+    ((buffer[12] << 24) + (buffer[13] << 16) + (buffer[14] << 8) + buffer[15]) /
     1000000.0; //buffer.slice(25, 29); //经度
-  if (result.lng < result.lat) {
-    [result.lng, result.lat] = [result.lat, result.lng];
+  result.altitude = (buffer[16] << 8) + buffer[17]; //buffer.slice(29, 31); //高程
+  result.speed = ((buffer[18] << 8) + buffer[19]) / 10; //buffer.slice(31, 33); //速度
+  result.rotate = (buffer[20] << 8) + buffer[21]; // buffer.slice(33, 35); //方向
+  result.time = formatTime(buffer.slice(22, 28)); //时间
+  if (buffer.length > 28) {
+    //处理附加消息
+    var len = 0;
+    for (var i = 28; i < buffer.length; i = i + 2 + len) {
+      var msgid = buffer[i];
+      len = buffer[i + 1];
+      // var start = i + 2;
+      // var msg =  buffer.slice(start, start + len);
+      switch (msgid) {
+        case 0x01:
+          result.mileage =
+            (buffer[i + 2] << 24) +
+            (buffer[i + 3] << 16) +
+            (buffer[i + 4] << 8) +
+            buffer[i + 5];
+          break;
+        case 0x02:
+          result.oil = (buffer[i + 2] << 8) + buffer[i + 3];
+          break;
+        case 0x03:
+          result.speed1 = (buffer[i + 2] << 8) + buffer[i + 3];
+          break;
+        case 0x04:
+          result.alarmId = (buffer[i + 2] << 8) + buffer[i + 3];
+          break;
+        case 0x11:
+          result.overSpeedPositionType = buffer[i + 2];
+          if (result.overSpeedPositionType > 0) {
+            result.overSpeedAreaId =
+              (buffer[i + 3] << 24) +
+              (buffer[i + 4] << 16) +
+              (buffer[i + 5] << 8) +
+              buffer[i + 6];
+          }
+          break;
+        case 0x12:
+          result.inoutAlarm = result.inoutAlarm || [];
+          result.inoutAlarm.push({
+            type: buffer[i + 2],
+            areaId:
+              (buffer[i + 3] << 24) +
+              (buffer[i + 4] << 16) +
+              (buffer[i + 5] << 8) +
+              buffer[i + 6],
+            direction: buffer[i + 7]
+          });
+          break;
+        case 0x13:
+          result.runTimeAlarm = {
+            routeID:
+              (buffer[i + 2] << 24) +
+              (buffer[i + 3] << 16) +
+              (buffer[i + 4] << 8) +
+              buffer[i + 5],
+            time: (buffer[i + 6] << 8) + buffer[i + 7],
+            type: buffer[i + 8]
+          };
+          break;
+        case 0x25:
+          result.vehicleSignal =
+            (buffer[i + 2] << 24) +
+            (buffer[i + 3] << 16) +
+            (buffer[i + 4] << 8) +
+            buffer[i + 5];
+          break;
+        case 0x2a:
+          result.IO = (buffer[i + 2] << 8) + buffer[i + 3];
+          break;
+        case 0x2b:
+          result.analog =
+            (buffer[i + 2] << 24) +
+            (buffer[i + 3] << 16) +
+            (buffer[i + 4] << 8) +
+            buffer[i + 5];
+          break;
+        case 0x30:
+          result.wifiSignal = buffer[i + 2];
+          break;
+        case 0x31:
+          result.GNSSCount = buffer[i + 2];
+          break;
+      }
+    }
   }
-  result.altitude = (buffer[29] << 8) + buffer[30]; //buffer.slice(29, 31); //高程
-  result.speed = (buffer[31] << 32) + buffer[30]; //buffer.slice(31, 33); //速度
-  result.rotate = (buffer[33] << 8) + buffer[34]; // buffer.slice(33, 35); //方向
-  result.time = formatTime(buffer.slice(35, 41)); //时间
   return result;
 }
-function x0704() {}
+function x0704(buffer) {
+  var arr = [];
+  var x0200Count = (buffer[0] << 8) + buffer[1];
+  // var type = buffer[2];//0：正常位置批量汇报，1：盲区补报
+  var len = 0;
+  for (var i = 3; i < buffer.length; i = i + 2 + len) {
+    if (arr.length >= x0200Count) {
+      break;
+    }
+    len = (buffer[i] << 8) + buffer[i + 1];
+    arr.push(x0200(buffer.slice(i + 2, i + len + 2)));
+  }
+  return arr;
+}
 function formatSim(buffer) {
   var code = [];
   buffer.map(item => {
