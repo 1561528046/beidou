@@ -216,6 +216,7 @@ export default {
             return item;
           });
           this.$set(this.$data, "rightList", arr);
+
           this.unbindTableQuery.total = res.data.total;
         }
       });

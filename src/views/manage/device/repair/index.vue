@@ -54,13 +54,13 @@
         <el-table-column prop="last_logistics_no" label="物流单号" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="state" label="维修状态" :formatter="(row)=>{return this.$dict.get_repair_state(row.state)}">
           <template slot-scope="scope">
-            <el-tag type="success" v-if="scope.row.state==1">
+            <el-tag type="success" v-if="scope.row.state=='1'">
               未安装
             </el-tag>
-            <el-tag type="danger" v-if="scope.row.state==3">
+            <el-tag type="danger" v-if="scope.row.state=='3'">
               维修
             </el-tag>
-            <el-tag type="info" v-if="scope.row.state==4">
+            <el-tag type="info" v-if="scope.row.state=='4'">
               报废
             </el-tag>
           </template>
@@ -74,13 +74,16 @@
                 <el-table-column width="150" label="操作时间" property="time" :formatter="formatChildTime"></el-table-column>
                 <el-table-column width="150" label="状态" property="state">
                   <template slot-scope="scope">
-                    <el-tag type="danger" v-if="scope.row.state==3">
+                    <label v-if="scope.row.state==''">
+                      --
+                    </label>
+                    <el-tag type="danger" v-if="scope.row.state=='3'">
                       维修
                     </el-tag>
-                    <el-tag type="success" v-if="scope.row.state==4">
+                    <el-tag type="success" v-if="scope.row.state=='4'">
                       已修复
                     </el-tag>
-                    <el-tag type="info" v-if="scope.row.state==5">
+                    <el-tag type="info" v-if="scope.row.state=='5'">
                       报废
                     </el-tag>
                   </template>

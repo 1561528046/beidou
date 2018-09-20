@@ -199,7 +199,7 @@ export const dict = {
     return this.order_paytype[key] || "--";
   },
   order_state: {
-    "1": "开通前装车待审核",
+    "1": "前装车待审核",
     "2": "正常",
     "3": "拒绝开通前装车",
     "4": "取消订单审核通过",

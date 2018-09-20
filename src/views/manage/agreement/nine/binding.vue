@@ -4,7 +4,7 @@
       <div class="bind-box">
         <div class="user-box">
           <div class="user-header">
-            用户列表
+            标注列表
           </div>
           <div class="user-filter" :class="{active:userFilterOpen}">
             <el-form :model="agreement" size="small">
@@ -39,14 +39,14 @@
         <div class="transfer-container">
           <div class="transfer-filter">
             <div class="transfer-filter-item">
-              <el-form :inline="true" :model="binding" size="mini">
+              <el-form :inline="true" :model="bindTableQuery" size="mini">
                 <el-form-item>
-                  <el-input placeholder="车牌号" v-model="binding.license">
+                  <el-input placeholder="车牌号" v-model="bindTableQuery.license">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-input placeholder="用户" v-model="binding.real_name">
+                  <el-input placeholder="用户" v-model="bindTableQuery.real_name">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
@@ -57,14 +57,14 @@
             </div>
             <div style="width:100px;"></div>
             <div class="transfer-filter-item">
-              <el-form :inline="true" :model="unbounded" size="mini">
+              <el-form :inline="true" :model="unbindTableQuery" size="mini">
                 <el-form-item>
-                  <el-input placeholder="车牌号" v-model="unbounded.license">
+                  <el-input placeholder="车牌号" v-model="unbindTableQuery.license">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-input placeholder="用户" v-model="unbounded.real_name">
+                  <el-input placeholder="用户" v-model="unbindTableQuery.real_name">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
@@ -146,24 +146,7 @@ export default {
         flag: 809,
         title: ""
       },
-      // 已绑定查询
-      binding: {
-        page: 1,
-        size: 10,
-        server_id: "",
-        flag: 809,
-        license: "",
-        real_name: ""
-      },
-      // 未绑定查询
-      unbounded: {
-        page: 1,
-        size: 10,
-        server_id: "",
-        flag: 809,
-        license: "",
-        real_name: ""
-      },
+
       groupData: {
         vehicle_ids: "",
         server_id: "",
@@ -174,19 +157,28 @@ export default {
         size: 20,
         page: 1
       },
+      // 已绑定查询
       bindTableQuery: {
-        license: "",
-        owner: "",
         size: 20,
         page: 1,
-        total: 0
+        license: "",
+        total: 0,
+        server_id: "",
+        flag: 809,
+        license: "",
+        real_name: ""
       },
+
+      // 未绑定查询
       unbindTableQuery: {
-        license: "",
-        owner: "",
         size: 20,
         page: 1,
-        total: 0
+        license: "",
+        total: 0,
+        server_id: "",
+        flag: 809,
+        license: "",
+        real_name: ""
       },
       leftCol: [{ prop: "license", label: "车牌号" }],
       rightCol: [{ prop: "license", label: "车牌号" }]
@@ -227,7 +219,7 @@ export default {
     renderBind() {
       this.$set(this.$data, "leftList", []);
       // if (this.groupData.group_id) {
-      var postData = Object.assign({}, this.binding);
+      var postData = Object.assign({}, this.bindTableQuery);
       GetServerBindByPage(postData).then(res => {
         if (res.data.code == 0) {
           var arr = res.data.data.map(item => {
@@ -235,7 +227,7 @@ export default {
             return item;
           });
           this.$set(this.$data, "leftList", arr);
-          this.bindTableQuery.total = res.data.data.length;
+          this.bindTableQuery.total = res.data.total;
         } else {
           this.bindTableQuery.total = 0;
         }
@@ -246,14 +238,14 @@ export default {
     renderUnbind() {
       this.$set(this.$data, "rightList", []);
       // if (this.groupData.group_id) {
-      GetServerUnBindByPage(this.unbounded).then(res => {
+      GetServerUnBindByPage(this.unbindTableQuery).then(res => {
         if (res.data.code == 0) {
           var arr = res.data.data.map(item => {
             item.parent = "right";
             return item;
           });
           this.$set(this.$data, "rightList", arr);
-          this.unbindTableQuery.total = res.data.data.length;
+          this.unbindTableQuery.total = res.data.total;
         }
       });
       // }
@@ -289,8 +281,8 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             next(true);
-            this.binding.page = 1;
-            this.unbounded.page = 1;
+            this.bindTableQuery.page = 1;
+            this.unbindTableQuery.page = 1;
             this.renderBind();
             this.renderUnbind();
           } else {
@@ -336,8 +328,8 @@ export default {
     },
     changeUser(user) {
       this.currentUser = user;
-      this.binding.server_id = user.server_id;
-      this.unbounded.server_id = user.server_id;
+      this.bindTableQuery.server_id = user.server_id;
+      this.unbindTableQuery.server_id = user.server_id;
       this.renderBind();
       this.renderUnbind();
     },

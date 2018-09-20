@@ -104,17 +104,32 @@ export default {
       }
     },
     selectAll(allSelected) {
-      console.log(allSelected);
+      var state = false;
       // 可以根据allSelected的长度判断是全选还是取消全选
-      //   if (allSelected.length != 0) {
-      //     // 全选
-      //     allSelected.map(item => {
-      //       this.selection.push(item.vehicle_id);
-      //       this.vehicle.push(item);
-      //     });
-      //   } else {
-      //     // 取消全选
-      //   }
+      if (allSelected.length != 0) {
+        state = true;
+      }
+      if (state) {
+        allSelected.map(item => {
+          if (!this.selection.includes(item.vehicle_id)) {
+            this.selection.push(item.vehicle_id);
+            this.vehicle.push(item);
+          }
+        });
+      } else {
+        this.tableData.data.map(olditem => {
+          this.selection.map(item => {
+            if (item == olditem.vehicle_id) {
+              var index = this.selection.indexOf(item);
+              if (index != -1) {
+                this.selection.splice(index, 1);
+                this.vehicle.splice(index, 1);
+                return;
+              }
+            }
+          });
+        });
+      }
     },
     getTable() {
       getVehicleAll(this.tableQuery).then(res => {
@@ -134,7 +149,6 @@ export default {
       });
     },
     formSubmit() {
-      console.log(this.vehicle);
       this.$emit("choose", JSON.parse(JSON.stringify(this.vehicle)));
     },
     // 分页

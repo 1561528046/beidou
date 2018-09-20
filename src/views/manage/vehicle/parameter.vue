@@ -491,7 +491,6 @@ export default {
         item.operating = str + "采集成功";
         console.log(instructioncollect);
       });
-
       // ^get
       // 参数id
       // sim_id
