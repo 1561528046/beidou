@@ -1,191 +1,446 @@
 <template>
-  <div class="monitor">
-    <div id="container" style="width:100%;height:100%;"></div>
-    <div class="vehicle-search shadow-box">
-      <el-row :gutter="20">
-        <el-col :span="20">
-          <el-input placeholder="搜索车辆（车牌号、终端ID）" size="small" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
-        </el-col>
-        <el-col :span="4" class="_right">
-          <i class="el-icon-more"></i>
-        </el-col>
-      </el-row>
-    </div>
 
-    <div class="vehicle-info-box shadow-box open">
-      <div class="_header">
-        <strong class="_title">冀R61333</strong>
-        <small class="_text">服务到期日期：2019-3-1 </small>
-        <i class="_close el-icon-circle-close-outline"></i>
-      </div>
-      <div class="_map">
-        <a class="_map-btn">展开地图</a>
-        <div class="_map-container"></div>
-      </div>
-      <div class="_body">
-        <el-row>
-          <el-col :span="24">
-            定位时间：2018-05-05 13：22：36
-          </el-col>
-          <el-col :span="12">
-            联系人：XXX
-          </el-col>
-          <el-col :span="12">
-            联系方式： 13000000000
-          </el-col>
-          <el-col :span="12">
-            时速：60/km
-          </el-col>
-          <el-col :span="12">
-            今日里程：600/km
-          </el-col>
-          <el-col :span="24">
-            地理位置：河北省廊坊市广阳区XXX300米
-          </el-col>
-        </el-row>
-      </div>
-      <div class="_footer">
-        <i class="iconfont icon-idcard"></i>
-        <i class="iconfont icon-boxplot-fill"></i>
-        <i class="iconfont icon-sim"></i>
-        <i class="iconfont icon-alert-fill"></i>
-        <i class="iconfont icon-wifi"></i>
-        <i class="iconfont icon-error-fill _error"></i>
-
-      </div>
-    </div>
-
-    <div class="status-container shadow-box">
-      <div class="_header">
-        <span class="_global-status">平台车辆总数：
-          <strong>100000 </strong>
-        </span>
-        <span class="_global-status _online">在线车辆：
-          <strong>51651 </strong>
-        </span>
-        <span class="_global-status _alarm">报警车辆：
-          <strong>16161 </strong>
-        </span>
-        <span class="_global-status _error">异常车辆：
-          <strong>981196 </strong>
-        </span>
-        <span class="_global-status _offline">离线车辆：
-          <strong>400</strong>
-        </span>
-        <el-button class="_open" icon="el-icon-arrow-right" size="mini">展开</el-button>
-      </div>
-      <div class="_body">
-        <el-form :inline="true" size="mini" class="_search">
-          <el-form-item label="用户名称">
-            <el-input placeholder="用户名称"></el-input>
-          </el-form-item>
-          <el-form-item label="活动区域">
-            <el-select placeholder="活动区域">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary">查询</el-button>
-          </el-form-item>
-        </el-form>
-        <div class="_table">
-          <el-table :data="tableData" size="small" style="width: 100%">
-            <el-table-column prop="user_name" label="用户名称" width="180">
-            </el-table-column>
-            <el-table-column prop="total" label="车辆总数">
-            </el-table-column>
-            <el-table-column prop="online" label="在线车辆 ">
-            </el-table-column>
-            <el-table-column prop="alarm" label="报警车辆  ">
-            </el-table-column>
-            <el-table-column prop="error" label="异常车辆  ">
-            </el-table-column>
-            <el-table-column prop="offline" label="离线车辆 ">
-            </el-table-column>
-          </el-table>
-
+  <el-tabs v-model="currentTab" style="height:100%;" class="monitor-tabs">
+    <el-tab-pane label="监控" :closable="false" name="m">
+      <div class="monitor">
+        <div id="container" style="width:100%;height:100%;"></div>
+        <div class="vehicle-search shadow-box">
+          <el-row :gutter="20">
+            <el-col :span="20">
+              <el-input placeholder="搜索车辆（车牌号、终端ID）" size="small" class="input-with-select">
+                <el-button slot="append" icon="el-icon-search"></el-button>
+              </el-input>
+            </el-col>
+            <el-col :span="4" class="_right">
+              <i class="el-icon-more" @click="add"></i>
+            </el-col>
+          </el-row>
         </div>
-        <div class="_pager">
-          <el-pagination background layout="prev, pager, next" :total="1000">
-          </el-pagination>
+        <transition-group name="list-complete" tag="div" class="current-vehicle-container">
+          <vehicle-monitor class="list-complete-item" @close="remove(vehicle.vehicle_id)" v-for="(vehicle,index) in currentVehicles" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
+        </transition-group>
+
+        <el-collapse accordion class="status-container shadow-box">
+          <el-collapse-item class="group-container">
+            <template slot="title">
+              <div class="_header">
+                <span class="_global-status" @click.stop>平台车辆总数：
+                  <strong>{{offlineList.length+onlineList.length}} </strong>
+                </span>
+                <span class="_global-status _online">在线车辆：
+                  <strong>{{onlineList.length}} </strong>
+                </span>
+                <span class="_global-status _alarm">报警车辆：
+                  <strong>{{alarmList.length}} </strong>
+                </span>
+                <span class="_global-status _error">异常车辆：
+                  <strong>{{errorList.length}} </strong>
+                </span>
+                <span class="_global-status _offline">离线车辆：
+                  <strong>{{offlineList.length}}</strong>
+                </span>
+
+              </div>
+            </template>
+            <div class="_body">
+              <el-form :inline="true" size="mini" class="_search">
+                <el-form-item label="用户名称">
+                  <el-input placeholder="用户名称"></el-input>
+                </el-form-item>
+                <el-form-item label="活动区域">
+                  <el-select value="1" placeholder="活动区域">
+                    <el-option label="区域一" value="shanghai"></el-option>
+                    <el-option label="区域二" value="beijing"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary">查询</el-button>
+                </el-form-item>
+              </el-form>
+              <div class="_table">
+                <el-table :data="tableData" size="small" style="width: 100%">
+                  <el-table-column prop="user_name" label="用户名称" width="180">
+                  </el-table-column>
+                  <el-table-column prop="total" label="车辆总数">
+                  </el-table-column>
+                  <el-table-column prop="online" label="在线车辆 ">
+                  </el-table-column>
+                  <el-table-column prop="alarm" label="报警车辆  ">
+                  </el-table-column>
+                  <el-table-column prop="error" label="异常车辆  ">
+                  </el-table-column>
+                  <el-table-column prop="offline" label="离线车辆 ">
+                  </el-table-column>
+                </el-table>
+
+              </div>
+              <div class="_pager">
+                <el-pagination background layout="prev, pager, next" :total="1000">
+                </el-pagination>
+              </div>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+
+        <div class="details-container shadow-box">
+          <div class="_header">
+            <div class="_title">
+              报警车辆
+            </div>
+            <div class="_text">
+              新东方客运公司
+            </div>
+          </div>
+          <div class="_body">
+
+            <el-collapse accordion>
+              <el-collapse-item class="group-container">
+                <template slot="title">
+                  <div class="group-name">
+                    子级分组1
+                  </div>
+                </template>
+                <div class="group-body">
+                  <el-select value="1" placeholder="全部分组" size="mini" style="width:100%;">
+                    <el-option label="分组1" value="shanghai"></el-option>
+                    <el-option label="分组2" value="beijing"></el-option>
+                  </el-select>
+                  <el-table :data="tableData" size="small" style="width: 100%">
+                    <el-table-column prop="user_name" label="车牌号">
+                    </el-table-column>
+                    <el-table-column prop="total" label="报警总数">
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item class="group-container">
+                <template slot="title">
+                  <div class="group-name">
+                    子级分组1
+                  </div>
+                </template>
+                <div class="group-body">
+                  <el-select value="1" placeholder="全部分组" size="mini" style="width:100%;">
+                    <el-option label="分组1" value="shanghai"></el-option>
+                    <el-option label="分组2" value="beijing"></el-option>
+                  </el-select>
+                  <el-table :data="tableData" size="small" style="width: 100%">
+                    <el-table-column prop="user_name" label="车牌号">
+                    </el-table-column>
+                    <el-table-column prop="total" label="报警总数">
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item class="group-container">
+                <template slot="title">
+                  <div class="group-name">
+                    子级分组1
+                  </div>
+                </template>
+                <div class="group-body">
+                  <el-select value="1" placeholder="全部分组" size="mini" style="width:100%;">
+                    <el-option label="分组1" value="shanghai"></el-option>
+                    <el-option label="分组2" value="beijing"></el-option>
+                  </el-select>
+                  <el-table :data="tableData" size="small" style="width: 100%">
+                    <el-table-column prop="user_name" label="车牌号">
+                    </el-table-column>
+                    <el-table-column prop="total" label="报警总数">
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </el-collapse-item>
+
+            </el-collapse>
+
+          </div>
         </div>
+
       </div>
-    </div>
+    </el-tab-pane>
 
-    <div class="details-container shadow-box">
-      <div class="_header">
-        <div class="_title">
-          报警车辆
-        </div>
-        <div class="_text">
-          新东方客运公司
-        </div>
-      </div>
-      <div class="_body">
-        <div class="group-container">
-          <div class="group-name">子级分组1</div>
-          <el-select placeholder="全部分组" size="mini" style="width:100%;">
-            <el-option label="分组1" value="shanghai"></el-option>
-            <el-option label="分组2" value="beijing"></el-option>
-          </el-select>
-          <el-table :data="tableData" size="small" style="width: 100%">
-            <el-table-column prop="user_name" label="车牌号" width="180">
-            </el-table-column>
-            <el-table-column prop="total" label="报警总数">
-            </el-table-column>
-          </el-table>
-        </div>
+    <el-tab-pane label="冀R12345" :closable="true" name="x">asdfasdf
+    </el-tab-pane>
+  </el-tabs>
 
-        <div class="group-container">
-          <div class="group-name">子级分组1</div>
-          <el-select placeholder="全部分组" size="mini" style="width:100%;">
-            <el-option label="分组1" value="shanghai"></el-option>
-            <el-option label="分组2" value="beijing"></el-option>
-          </el-select>
-          <el-table :data="tableData" size="small" style="width: 100%">
-            <el-table-column prop="user_name" label="车牌号" width="180">
-            </el-table-column>
-            <el-table-column prop="total" label="报警总数">
-            </el-table-column>
-          </el-table>
-        </div>
-
-        <div class="group-container">
-          <div class="group-name">子级分组1</div>
-          <el-select placeholder="全部分组" size="mini" style="width:100%;">
-            <el-option label="分组1" value="shanghai"></el-option>
-            <el-option label="分组2" value="beijing"></el-option>
-          </el-select>
-          <el-table :data="tableData" size="small" style="width: 100%">
-            <el-table-column prop="user_name" label="车牌号" width="180">
-            </el-table-column>
-            <el-table-column prop="total" label="报警总数">
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
-    </div>
-
-  </div>
 </template>
-<style lang="less">
-@pirmary: #409eff;
-@success: #67c23a;
-@warning: #e6a23c;
-@danger: #f56c6c;
-@info: #909399;
-@t1: #303133;
-@t2: #606266;
-@t3: #909399;
-@t4: #c0c4cc;
-@b1: #dcdfe6;
-@b2: #e4e7ed;
-@b3: #ebeef5;
-@b4: #f2f6fc;
 
+<script>
+/*eslint-disable*/
+import initMap from "@/utils/map.js";
+import vehicleMonitor from "./components/vehicle-monitor.vue";
+export default {
+  name:"monitor",
+  components: { vehicleMonitor },
+  data() {
+    return {
+      currentVehicles: [{ vehicle_id: 1 }],
+      currentTab: "m",
+      maps: [],
+      tableData: [
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        },
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        },
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        },
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        },
+        {
+          user_name: "王小虎",
+          total: 616161,
+          error: 16161,
+          online: 1234,
+          offline: 1255,
+          alarm: 2616
+        }
+      ],
+      alarmList:{},
+      errorList:{},
+      onlineList:{},
+      offlineList:{}
+    };
+  },
+  created() {
+
+var arr = [];
+var dict = {};
+    this.$ajax("http://localhost:8080/static/vehicle.json").then(res => {
+      Monitor.init(res.data)
+      console.log(Monitor);
+      
+    });
+    var that = this;
+    var Monitor = {
+      data: [], //所有数据
+      dict: {
+        //字典
+        index: {}, //车辆在数组中的位置
+        alarm: {}, //报警
+        online: {}, //在线
+        offline: {}, //离线
+        error: {} //异常
+      },
+      init(data) {
+        this.data = data;
+        this.initDict();
+        setInterval(()=>{
+          // that.$set(that.$data,"alarmList",this.dict.alarm);
+          // that.$set(that.$data,"errorList",this.dict.error);
+          // that.$set(that.$data,"onlineList",this.dict.online);
+          // that.$set(that.$data,"offlineList",this.dict.offline);
+          console.log(111)
+        },3000)
+      },
+      initDict() {
+        //初始化字典
+
+       Object.defineProperty(this.dict.alarm, "len", {
+          value: 0,
+          enumerable: false,
+          writable:true
+      });
+
+      Object.defineProperty(this.dict.online, "len", {
+          value: 0,
+          enumerable: false,
+          writable:true
+      });
+
+      Object.defineProperty(this.dict.offline, "len", {
+          value: 0,
+          enumerable: false,
+          writable:true
+      });
+
+      Object.defineProperty(this.dict.error, "len", {
+          value: 0,
+          enumerable: false,
+          writable:true
+      });
+
+
+        //{"id":"064867953103","pId":"130635","name":"冀FF7251","Owner":"郭立娜","LinkMan":"郭立娜","Tel":"15530283288","ProvinceId":0,"CityId":130600,"CountyId":130635,"CityAgentId":0,"CountyAgentId":0,"Time":"2018-09-20T14:32:52","Alarm":0,"Status":786627,"Lon":116.336040,"Lat":39.619132,"Altitude":41,"GPSSpeed":350,"Direction":271,"x01":931294,"x02":0,"x03":350,"x25":0,"x30":14,"x31":16}
+       
+        this.data.map((vehicle, index) => {
+
+          vehicle.sim_id = vehicle.id;
+          vehicle.time = vehicle.Time;
+          vehicle.lat = vehicle.Lat;
+          vehicle.lng = vehicle.Lon;
+          vehicle.alarm = vehicle.Alarm;
+          vehicle.license = vehicle.name
+          vehicle.alarm_count = 0;
+
+
+          this.dict.index[vehicle.id] = index; //记录在数组中的位置
+          if(vehicle.alarm!="0"){
+            this.dict.alarm[vehicle.sim_id] = true;
+            this.dict.alarm.len++
+          }
+          if(new Date()-new Date(vehicle.time) > 180000){
+            this.dict.online[vehicle.sim_id] = true;
+            this.dict.online.len++
+          }else{
+            this.dict.offline[vehicle.sim_id] = true;
+            this.dict.offline.len++
+          }
+        });
+        console.log(this);
+      },
+      setVehicleData(vehicleData){
+        if(this.dict.index[vehicleData.sim_id]){
+        if(vehicleData.alarm!=""){
+          this.setAlarm(vehicleData)
+        }
+        if(new Date()-new Date(vehicleData.time) > 180000){
+          this.setOnline(vehicleData)
+        }else{
+          this.setOffline(vehicleData)
+        }
+        }
+      },
+      setOnline(vehicle){
+        //离线中删除、加入在线字典
+        this.delOffline(vehicle);
+        if(!this.dict.online[vehicle.sim_id]){
+          this.dict.online[vehicle.sim_id]=true;
+          this.dict.online.len++;
+        }
+      },
+      delOnline(vehicle){
+        if(this.dict.online[vehicle.sim_id]){
+          delete this.dict.online[vehicle.sim_id];
+          this.dict.online.len--;
+        }
+      },
+      setOffline(vehicle){
+        this.delOnline(vehicle);
+        if( this.dict.offline[vehicle.sim_id]){
+          this.dict.offline[vehicle.sim_id]=true;
+          this.dict.offline.len++;
+        }
+      },
+      delOffline(vehicle){
+         if(this.dict.offline[vehicle.sim_id]){
+          delete this.dict.offline[vehicle.sim_id];
+          this.dict.offline.len--;
+        }
+        
+      },
+      setAlarm(){},
+    };
+   
+    initMap(() => {
+      this.$nextTick(() => {
+        // var map = new AMap.Map("container", {
+        //   viewMode: "3D",
+        //   pitch: 55,
+        //   rotation: -45
+        // });
+      });
+    });
+    var ws = new WebSocket("ws://127.0.0.1:9999");
+     var socketDataWorker = new Worker("/map/worker-socket.js");
+     ws.binaryType = 'arraybuffer'
+   
+
+      window.arr = [];
+      window.bb = [];
+    socketDataWorker.onmessage = event => {
+      window.arr.push(event.data);
+      event.data.sim_id = "0"+event.data.sim_id;
+      Monitor.setVehicleData(event.data);
+
+    };
+    ws.onmessage=function(evt){      
+       socketDataWorker.postMessage(new Uint8Array(evt.data));
+      //  ws.close()
+       
+    }
+  },
+  destroyed() {
+    this.maps.map(map => {
+      console.log(map.destroy);
+    });
+  },
+  methods: {
+    add() {
+      this.currentVehicles.push({ vehicle_id: new Date().getTime() });
+    },
+    remove(vehicle_id) {
+      var index = this.currentVehicles.findIndex(item => {
+        return item.vehicle_id == vehicle_id;
+      });
+      this.currentVehicles.splice(index, 1);
+    }
+  }
+};
+</script>
+<style lang="less">
+@import "../../style/var.less";
+.list-complete-item {
+  transition: all 1s;
+  display: inline-block;
+  margin-right: 10px;
+}
+.list-complete-enter, .list-complete-leave-to
+/* .list-complete-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.list-complete-leave-active {
+  position: absolute;
+}
+.current-vehicle-container {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  right: 380px;
+  width:0;
+  bottom: 0;
+}
+.monitor-tabs {
+  height: 100%;
+  .el-tabs__header {
+    margin: 0;
+    padding-left: 15px;
+  }
+  .el-tabs__content {
+    background: none;
+    overflow: auto;
+    height: calc(100% - 50px);
+    padding: 0;
+  }
+  .el-tab-pane {
+    height: 100%;
+  }
+}
 .details-container {
   width: 17%;
   position: absolute;
@@ -214,9 +469,20 @@
     left: 0;
   }
   .group-container {
-    margin-bottom: 15px;
+    .el-collapse-item__header {
+      height: 35px;
+      line-height: 35px;
+      .el-collapse-item__arrow {
+        line-height: 35px;
+      }
+    }
     .group-name {
-      padding-bottom: 10px;
+      background: @b4;
+      color: @t2;
+      padding-left: 1em;
+    }
+    .group-body {
+      padding: 12px;
     }
   }
 }
@@ -298,158 +564,4 @@
     }
   }
 }
-.vehicle-info-box {
-  font-size: 14px;
-  position: absolute;
-  width: 350px;
-  background: #fff;
-  z-index: 10;
-  left: 20px;
-  top: 120px;
-  &.open {
-    height: 400px;
-    ._map {
-      height: 50%;
-      background: #999;
-    }
-  }
-  ._header {
-    box-sizing: border-box;
-    border-bottom: 1px solid #f0f0f0;
-    padding: 0 15px;
-    position: relative;
-    height: 40px;
-    line-height: 40px;
-    ._title {
-      padding-right: 1em;
-      font-size: 16px;
-    }
-    ._text {
-      font-size: 12px;
-      color: #999;
-    }
-    ._close {
-      right: 15px;
-      top: 50%;
-      transform: translate3d(0, -50%, 0);
-      font-size: 20px;
-      position: absolute;
-    }
-  }
-  ._map {
-    position: relative;
-    min-height: 25px;
-    ._map-btn {
-      position: absolute;
-      bottom: 0;
-      font-size: 12px;
-      width: 100px;
-      left: 50%;
-      margin-left: -50px;
-      border: 1px solid #f0f0f0;
-      border-top: 0;
-      text-align: center;
-      height: 25px;
-      line-height: 25px;
-      background: #fff;
-    }
-    ._map-container {
-      height: 100%;
-      width: 100%;
-    }
-  }
-  ._body {
-    height: 30%;
-    box-sizing: border-box;
-    padding: 15px;
-    line-height: 1.8;
-  }
-  ._footer {
-    height: 30px;
-    padding-top: 10px;
-    box-sizing: border-box;
-    border-top: 1px solid #f0f0f0;
-    ._error {
-      position: absolute;
-      right: 15px;
-      color: #ff8d00;
-    }
-    i {
-      font-size: 25px;
-      display: inline-block;
-      width: 40px;
-      cursor: pointer;
-      text-align: center;
-    }
-  }
-}
 </style>
-<script>
-/*eslint-disable*/
-import initMap from "@/utils/map.js";
-export default {
-  data() {
-    return {
-      maps: [],
-      tableData: [
-        {
-          user_name: "王小虎",
-          total: 616161,
-          error: 16161,
-          online: 1234,
-          offline: 1255,
-          alarm: 2616
-        },
-        {
-          user_name: "王小虎",
-          total: 616161,
-          error: 16161,
-          online: 1234,
-          offline: 1255,
-          alarm: 2616
-        },
-        {
-          user_name: "王小虎",
-          total: 616161,
-          error: 16161,
-          online: 1234,
-          offline: 1255,
-          alarm: 2616
-        },
-        {
-          user_name: "王小虎",
-          total: 616161,
-          error: 16161,
-          online: 1234,
-          offline: 1255,
-          alarm: 2616
-        },
-        {
-          user_name: "王小虎",
-          total: 616161,
-          error: 16161,
-          online: 1234,
-          offline: 1255,
-          alarm: 2616
-        }
-      ]
-    };
-  },
-  created() {
-    initMap(() => {
-      this.$nextTick(() => {
-        var map = new AMap.Map("container", {
-          viewMode: "3D",
-          pitch: 55,
-          rotation: -45
-        });
-      });
-    });
-  },
-  destroyed() {
-    this.maps.map(map => {
-      console.log(map.destroy);
-    });
-  }
-};
-</script>
