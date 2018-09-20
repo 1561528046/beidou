@@ -60,9 +60,12 @@
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
                     <el-table-column width="180" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
-                    <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
+                    <el-table-column width="150" label="故障原因" prop="Reason" :formatter="$utils.baseFormatter"></el-table-column>
                     <el-table-column width="150" label="维修状态" prop="RepairState">
                       <template slot-scope="scope">
+                        <label v-if="scope.row.RepairState==''">
+                          --
+                        </label>
                         <el-tag type="danger" v-if="scope.row.RepairState==1">
                           未处理
                         </el-tag>
@@ -72,7 +75,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="操作人" prop="RealName"></el-table-column>
+                    <el-table-column width="150" label="操作人" prop="RealName" :formatter="$utils.baseFormatter"></el-table-column>
                   </el-table>
                   <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
                 </el-popover>
@@ -160,9 +163,12 @@
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
                     <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
-                    <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
-                    <el-table-column width="150" label="维修状态" prop="RepairState">
+                    <el-table-column width="150" label="故障原因" prop="Reason" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column width="150" label="维修状态" prop="RepairState" :formatter="$utils.baseFormatter">
                       <template slot-scope="scope">
+                        <label v-if="scope.row.RepairState==''">
+                          --
+                        </label>
                         <el-tag type="danger" v-if="scope.row.RepairState==1">
                           未处理
                         </el-tag>
@@ -172,7 +178,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="操作人" prop="RealName"></el-table-column>
+                    <el-table-column width="150" label="操作人" prop="RealName" :formatter="$utils.baseFormatter"></el-table-column>
                   </el-table>
                   <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
                 </el-popover>
@@ -260,9 +266,12 @@
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
                     <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
-                    <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
-                    <el-table-column width="150" label="维修状态" prop="RepairState">
+                    <el-table-column width="150" label="故障原因" prop="Reason" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column width="150" label="维修状态" prop="RepairState" :formatter="$utils.baseFormatter">
                       <template slot-scope="scope">
+                        <label v-if="scope.row.RepairState==''">
+                          --
+                        </label>
                         <el-tag type="danger" v-if="scope.row.RepairState==1">
                           未处理
                         </el-tag>
@@ -272,7 +281,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="操作人" prop="RealName"></el-table-column>
+                    <el-table-column width="150" label="操作人" prop="RealName" :formatter="$utils.baseFormatter"></el-table-column>
                   </el-table>
                   <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
                 </el-popover>
@@ -360,9 +369,12 @@
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
                     <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
-                    <el-table-column width="150" label="故障原因" prop="Reason"></el-table-column>
-                    <el-table-column width="150" label="维修状态" prop="RepairState">
+                    <el-table-column width="150" label="故障原因" prop="Reason" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column width="150" label="维修状态" prop="RepairState" :formatter="$utils.baseFormatter">
                       <template slot-scope="scope">
+                        <label v-if="scope.row.RepairState==''">
+                          --
+                        </label>
                         <el-tag type="danger" v-if="scope.row.RepairState==1">
                           未处理
                         </el-tag>
@@ -372,7 +384,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="操作人" prop="RealName"></el-table-column>
+                    <el-table-column width="150" label="操作人" prop="RealName" :formatter="$utils.baseFormatter"></el-table-column>
                   </el-table>
                   <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
                 </el-popover>

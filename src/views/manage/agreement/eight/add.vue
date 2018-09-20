@@ -3,8 +3,8 @@
     <!-- 设备信息 -->
     <el-row :gutter="30">
       <el-col :span="24">
-        <el-form-item label="标注" prop="title">
-          <el-input v-model="formData.title" placeholder="标注"></el-input>
+        <el-form-item label="平台名称" prop="title">
+          <el-input v-model="formData.title" placeholder="平台名称"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="24">
@@ -29,7 +29,6 @@
   </el-form>
 </template>
 <script>
-import { rules } from "@/utils/rules.js";
 import { AddServer808 } from "@/api/index.js";
 export default {
   data() {
@@ -42,13 +41,51 @@ export default {
         enable: 1
       },
       rules: {
-        ...rules
+        title: [{ required: true, trigger: "blur", message: "请输入平台名称" }],
+        ip: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateIp
+          }
+        ],
+        port: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateDuankou
+          }
+        ]
       }
     };
   },
+  rules: {},
   watch: {},
   created() {},
   methods: {
+    validateIp(rule, value, callback) {
+      var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      var reg = value.match(exp);
+      if (reg == null) {
+        callback(new Error("IP地址不合法!"));
+        return false;
+      } else {
+        callback();
+      }
+    },
+    validateDuankou(rule, value, callback) {
+      var parten = /^(\d)+$/g;
+      if (
+        parten.test(value) &&
+        parseInt(value) <= 65535 &&
+        parseInt(value) >= 0
+      ) {
+        callback();
+      } else {
+        callback(new Error("端口错误!"));
+        return false;
+      }
+    },
     formSubmit() {
       if (this.formData.enable_type) {
         this.formData.enable = 1;

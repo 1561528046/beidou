@@ -133,7 +133,7 @@ export default {
     dateRange: function(value) {
       value = value || ["", ""];
       this.tableQuery.start_date = value[0];
-      this.tableQuery.end_data = value[1];
+      this.tableQuery.end_date = value[1];
     },
     value: function() {
       this.sim_no = this.$props.value;

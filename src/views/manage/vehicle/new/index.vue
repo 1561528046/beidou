@@ -498,7 +498,7 @@ export default {
       AddOrder(this.openCompany.company).then(res => {
         if (res.data.code == 0) {
           this.openCompany.company_renewal = false;
-          this.$message.success(res.data.msg);
+          this.$message.success("操作成功");
           this.getTable();
         } else {
           this.$message.error(res.data.msg);

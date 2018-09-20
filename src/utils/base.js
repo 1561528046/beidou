@@ -199,7 +199,7 @@ export const dict = {
     return this.order_paytype[key] || "--";
   },
   order_state: {
-    "1": "开通前装车待审核",
+    "1": "前装车待审核",
     "2": "正常",
     "3": "拒绝开通前装车",
     "4": "取消订单审核通过",
@@ -307,6 +307,26 @@ export const dict = {
   get_vtype: function(key) {
     key = key.slice(1);
     return this.vtype[key] || "--";
+  },
+  communication: {
+    // "0x0001":"",
+    "0x0002": "TCP消息应答超时时间",
+    "0x0003": "TCP消息重传次数",
+    "0x0004": "UDP消息应答超时时间",
+    "0x0005": "UDP消息重传次数",
+    "0x0006": "SMS消息应答超时时间",
+    "0x0007": "SMS消息重传次数",
+    "0x0010": "主服务器APN",
+    "0x0013": "主服务器地址IP或域名",
+    "0x0014": "备份服务器APN",
+    "0x0017": "备份服务器地址IP或域名",
+    "0x0018": "服务器TCP端口",
+    "0x0019": "服务器UDP端口",
+    "0x0020": "位置汇报策略",
+    "0x0021": "位置汇报方案"
+  },
+  get_communication: function(key) {
+    return this.communication[key] || "";
   }
 };
 import utils from "@/utils/utils";

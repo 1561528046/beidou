@@ -17,16 +17,16 @@
       </el-card>
       <el-card shadow="hover" style="margin-bottom:20px;">
         <!-- 授权车辆 -->
-        <div style=" text-align: left; width: 100%;padding-top: 4px; margin-bottom: 4px;" class="clearfix" @click="Collapse">
-          <i v-show="!local" class="el-icon-arrow-right" style="float:right;"></i>
-          <i v-show="local" class="el-icon-arrow-down" style="float:right;"></i>
+        <div style="cursor:pointer; text-align: left; width: 100%;padding-top: 4px; margin-bottom: 4px;" class="clearfix" @click="Collapse(1)">
+          <i v-show="!vehicleShow" class="el-icon-arrow-right" style="float:right;"></i>
+          <i v-show="vehicleShow" class="el-icon-arrow-down" style="float:right;"></i>
           <span>授权车辆
             <i class="header-icon iconfont icon-car-fill"></i>
           </span>
           <el-button type="primary" size="mini" @click="addFrom(1)" style="margin-left:20px;">添加</el-button>
         </div>
         <el-form-item>
-          <el-table v-show="local" size="mini" :data="formData.detail" class="admin-table-list" style="width: 100%; margin-top: 20px" v-loading="tableLoading">
+          <el-table v-show="vehicleShow" size="mini" :data="formData.detail" class="admin-table-list" style="width: 100%; margin-top: 20px" v-loading="tableLoading">
             <el-table-column prop="car_type" label="车辆类型">
               <template slot-scope="scope">
                 <label v-if="scope.row.car_type==1">物流运输(普货)</label>
@@ -81,16 +81,16 @@
       </el-card>
       <el-card shadow="hover" style="margin-bottom:20px;">
         <!-- 授权厂商 -->
-        <div style=" text-align: left; width: 100%;padding-top: 4px;margin-bottom: 4px;" class="clearfix" @click="Collapse2">
-          <i v-show="!local2" class="el-icon-arrow-right" style="float:right;"></i>
-          <i v-show="local2" class="el-icon-arrow-down" style="float:right;"></i>
+        <div style="cursor:pointer;  text-align: left; width: 100%;padding-top: 4px;margin-bottom: 4px;" class="clearfix" @click="Collapse(2)">
+          <i v-show="!companyShow" class="el-icon-arrow-right" style="float:right;"></i>
+          <i v-show="companyShow" class="el-icon-arrow-down" style="float:right;"></i>
           <span>授权厂商
             <i class="header-icon iconfont icon-company"></i>
           </span>
           <el-button type="primary" @click="addFrom(2)" style="margin-left:20px;" size="mini">添加</el-button>
         </div>
         <el-form-item>
-          <el-table v-show="local2" size="mini" :data="formData.company" c class="admin-table-list" style="width: 100%; margin-top: 20px">
+          <el-table v-show="companyShow" size="mini" :data="formData.company" c class="admin-table-list" style="width: 100%; margin-top: 20px">
             <el-table-column prop="company_id" label="终端厂商">
               <template slot-scope="scope">
                 {{scope.row.company_name}}
@@ -133,16 +133,16 @@
       </el-card>
       <el-card shadow="hover" style="margin-bottom:20px;">
         <!-- SIM卡 -->
-        <div s style=" text-align: left; width: 100%;padding-top: 4px; margin-bottom: 4px;" class="clearfix" @click="Collapse3">
-          <i v-show="!local3" class="el-icon-arrow-right" style="float:right;"></i>
-          <i v-show="local3" class="el-icon-arrow-down" style="float:right;"></i>
+        <div style="cursor:pointer;  text-align: left; width: 100%;padding-top: 4px; margin-bottom: 4px;" class="clearfix" @click="Collapse(3)">
+          <i v-show="!simShow" class="el-icon-arrow-right" style="float:right;"></i>
+          <i v-show="simShow" class="el-icon-arrow-down" style="float:right;"></i>
           <span>SIM卡
             <i class="header-icon iconfont icon-sim"></i>
           </span>
           <el-button type="primary" @click="addFrom(4)" style="margin-left:41px;" size="mini">添加</el-button>
         </div>
         <el-form-item>
-          <el-table v-show="local3" size="mini" :data="formData.sim" class="admin-table-list" style="width: 100%; margin-top: 20px">
+          <el-table v-show="simShow" size="mini" :data="formData.sim" class="admin-table-list" style="width: 100%; margin-top: 20px">
             <el-table-column prop="detail_name" label="运营商" width="240">
             </el-table-column>
             <el-table-column prop="count" label="使用流量">
@@ -181,16 +181,16 @@
       </el-card>
       <el-card shadow="hover" style="margin-bottom:52px;">
         <!-- 短信 -->
-        <div style=" text-align: left; width: 100%;padding-top: 4px; margin-bottom: 4px;" class="clearfix" @click="Collapse4">
-          <i v-show="!local4" class="el-icon-arrow-right" style="float:right;"></i>
-          <i v-show="local4" class="el-icon-arrow-down" style="float:right;"></i>
+        <div style="cursor:pointer;  text-align: left; width: 100%;padding-top: 4px; margin-bottom: 4px;" class="clearfix" @click="Collapse(4)">
+          <i v-show="!smsShow" class="el-icon-arrow-right" style="float:right;"></i>
+          <i v-show="smsShow" class="el-icon-arrow-down" style="float:right;"></i>
           <span>短信
             <i class="header-icon iconfont icon-mail-fill"></i>
           </span>
           <el-button type="primary" @click="addFrom(3)" style="margin-left:52px;" size="mini">添加</el-button>
         </div>
         <el-form-item prop="sms">
-          <el-table v-show="local4" size="mini" :data="formData.sms" class="admin-table-list" style="width: 100%; margin-top: 20px">
+          <el-table v-show="smsShow" size="mini" :data="formData.sms" class="admin-table-list" style="width: 100%; margin-top: 20px">
             <el-table-column prop="count" label="数量">
             </el-table-column>
             <el-table-column prop="original_price" label="单价">
@@ -258,11 +258,11 @@ export default {
   components: { selectCompany, updateProduct },
   data() {
     return {
+      vehicleShow: false,
+      companyShow: false,
+      simShow: false,
+      smsShow: false,
       tableLoading: false,
-      local: false,
-      local2: false,
-      local3: false,
-      local4: false,
       addDialog: false,
       parent_id: "",
       parent_type: "",
@@ -454,6 +454,15 @@ export default {
       this.addDialog = true;
       this.parent_id = this.formData.package_id;
       this.parent_type = type;
+      if (type == 1) {
+        this.vehicleShow = false;
+      } else if (type == 2) {
+        this.companyShow = false;
+      } else if (type == 3) {
+        this.simShow = false;
+      } else if (type == 4) {
+        this.smsShow = false;
+      }
     },
     // 删除单一收费项
     delDetail(scope) {
@@ -470,32 +479,43 @@ export default {
         })
         .catch(() => {});
     },
-    Collapse() {
-      if (!this.local) {
-        this.local = true;
-      } else {
-        this.local = false;
-      }
-    },
-    Collapse2() {
-      if (!this.local2) {
-        this.local2 = true;
-      } else {
-        this.local2 = false;
-      }
-    },
-    Collapse3() {
-      if (!this.local3) {
-        this.local3 = true;
-      } else {
-        this.local3 = false;
-      }
-    },
-    Collapse4() {
-      if (!this.local4) {
-        this.local4 = true;
-      } else {
-        this.local4 = false;
+    Collapse(state) {
+      if (state == 1) {
+        if (this.vehicleShow) {
+          this.vehicleShow = false;
+        } else {
+          this.vehicleShow = true;
+        }
+        this.companyShow = false;
+        this.simShow = false;
+        this.smsShow = false;
+      } else if (state == 2) {
+        if (this.companyShow) {
+          this.companyShow = false;
+        } else {
+          this.companyShow = true;
+        }
+        this.vehicleShow = false;
+        this.simShow = false;
+        this.smsShow = false;
+      } else if (state == 3) {
+        if (this.simShow) {
+          this.simShow = false;
+        } else {
+          this.simShow = true;
+        }
+        this.vehicleShow = false;
+        this.companyShow = false;
+        this.smsShow = false;
+      } else if (state == 4) {
+        if (this.smsShow) {
+          this.smsShow = false;
+        } else {
+          this.smsShow = true;
+        }
+        this.vehicleShow = false;
+        this.companyShow = false;
+        this.simShow = false;
       }
     }
   }

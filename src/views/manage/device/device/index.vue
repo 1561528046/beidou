@@ -276,9 +276,9 @@ export default {
     //获取设备列表
     getTable() {
       this.tableLoading = true;
-      if (this.tableQuery.real_name == "") {
-        this.tableQuery.user_id = "";
-      }
+      // if (this.tableQuery.real_name == "") {
+      //   this.tableQuery.user_id = "";
+      // }
       var query = Object.assign({}, this.tableQuery);
       getDeviceList(query)
         .then(res => {

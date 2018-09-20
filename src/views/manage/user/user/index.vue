@@ -10,7 +10,7 @@
           </el-col>
 
           <el-col :span="6">
-            <el-form-item label-width="110px" label="个人/公司名称">
+            <el-form-item label-width="110px" label="企业名称">
               <el-input v-model=" tableQuery.real_name " placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
@@ -166,6 +166,7 @@ export default {
       this.tableLoading = true;
       var query = Object.assign({}, this.tableQuery, this.tableQuery.area);
       delete query.area;
+      console.log(query);
       getUserList(query)
         .then(res => {
           if (res.data.code == 0) {
