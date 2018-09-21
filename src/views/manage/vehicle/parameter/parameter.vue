@@ -1,0 +1,225 @@
+<template>
+  <div class="admin-table-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
+    <el-card shadow="always" style="height:100%;" class="full-box">
+      <div class="bind-box" style="height:100%;">
+        <el-tabs style=" width: 100%;position: relative; background-color:#fff;" type="border-card" @tab-click="handleClick">
+          <el-tab-pane label="通讯设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <choose-communication :message="communication"></choose-communication>
+          </el-tab-pane>
+          <el-tab-pane label="车辆信息设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <choose-information :message="information"></choose-information>
+          </el-tab-pane>
+          <el-tab-pane label="行车报警设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <choose-alarm :message="alarm"></choose-alarm>
+          </el-tab-pane>
+          <el-tab-pane label="终端上报时间间隔设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <choose-report :message="report"></choose-report>
+          </el-tab-pane>
+          <el-tab-pane label="终端通讯设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <choose-device :message="device"></choose-device>
+          </el-tab-pane>
+          <el-tab-pane label="拍照设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <choose-picture :message="picture"></choose-picture>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </el-card>
+  </div>
+</template>
+<script>
+import chooseParameter from "@/components/choose-parameter.vue";
+import selectVehicle from "./select-vehicle.vue";
+import chooseCommunication from "./choose-communication.vue";
+import chooseInformation from "./choose-information.vue";
+import chooseAlarm from "./choose-alarm.vue";
+import chooseReport from "./choose-report.vue";
+import chooseDevice from "./choose-device";
+import choosePicture from "./choose-picture";
+export default {
+  components: {
+    selectVehicle,
+    chooseParameter,
+    chooseCommunication,
+    chooseInformation,
+    chooseAlarm,
+    chooseReport,
+    chooseDevice,
+    choosePicture
+  },
+  created() {
+    // this.websocket = new WebSocket();
+  },
+  beforeDestroy() {
+    // this.websocket.close();
+  },
+  props: {
+    vehicle_type: Number, //vehicle_type区分普货和其他类型车辆
+    state: Number //state: 1新增车辆 2定位车辆 3到期车辆
+  },
+  data() {
+    return {
+      selectedVehicles: [],
+      length: 0,
+      vehicleDialog: false,
+      parameter_type: 1,
+      tableQuery: {
+        license: "",
+        user_name: "",
+        type: 1
+      },
+      tableData: {
+        total: 0,
+        data: []
+      },
+      communication: [],
+      information: [],
+      alarm: [],
+      device: [],
+      report: [],
+      picture: [],
+      tableLoading: true
+    };
+  },
+  watch: {
+    tableQuery: {
+      handler: function() {
+        if (this.tableQuery.type == 1) {
+          this.tableQuery.user_name = "";
+          this.getTable();
+        } else {
+          this.tableQuery.license = "";
+          this.getTable();
+        }
+      },
+      deep: true
+    }
+  },
+  methods: {
+    selectVehicle(scope) {
+      if (this.parameter_type == 1) {
+        this.communication = scope;
+      } else if (this.parameter_type == 2) {
+        this.information = scope;
+      } else if (this.parameter_type == 3) {
+        this.alarm = scope;
+      } else if (this.parameter_type == 4) {
+        this.report = scope;
+      } else if (this.parameter_type == 5) {
+        this.device = scope;
+      } else if (this.parameter_type == 4) {
+        this.picture = scope;
+      }
+    },
+    vehicleClick() {
+      this.vehicleDialog = true;
+    },
+    vehicleArr(scope) {
+      this.vehicleDialog = false;
+      this.length = scope.length;
+      scope.map(item => {
+        item.operating = "--";
+      });
+      this.$set(this.communication, "data", scope);
+    },
+    handleClick(tab) {
+      if (tab.label == "通讯设置") {
+        this.parameter_type == 1;
+      } else if (tab.label == "车辆信息设置") {
+        this.parameter_type = 2;
+      } else if (tab.label == "行车报警设置") {
+        this.parameter_type = 3;
+      } else if (tab.label == "终端上报时间间隔设置") {
+        this.parameter_type = 4;
+      } else if (tab.label == "终端通讯设置") {
+        this.parameter_type = 5;
+      } else if (tab.label == "拍照设置") {
+        this.parameter_type = 6;
+      }
+    },
+    getTable() {
+      console.log(this.tableQuery);
+    },
+    handleSizeChange(val) {
+      //每页数量切换
+      this.tableQuery.page = 1;
+      this.tableQuery.size = val;
+      this.getTable();
+    },
+    handleCurrentChange(val) {
+      //翻页
+      this.tableQuery.page = val;
+      this.getTable();
+    }
+  }
+};
+</script>
+<style>
+.bind-box {
+  display: flex;
+  margin: -20px;
+  font-size: 14px;
+  height: 100%;
+}
+.user-header {
+  height: 40px;
+  line-height: 40px;
+  background: #f5f7fa;
+  margin: 0;
+  border-bottom: 1px solid #ebeef5;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #000;
+}
+.user-list {
+  position: absolute;
+  top: 100px;
+  bottom: 32px;
+  width: 100%;
+  overflow: auto;
+}
+.user-pager {
+  background: #f1f1f1;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+}
+.el-input__inner {
+  text-align: center;
+}
+ul,
+li {
+  margin: 0;
+  padding: 0;
+}
+li {
+  height: 32px;
+  line-height: 32px;
+  overflow: hidden;
+  list-style-type: none;
+  box-sizing: border-box;
+  padding: 0 15px;
+}
+li.active {
+  color: #fff;
+  background-color: #1890ff !important;
+}
+li:hover {
+  background-color: #f5f7fa;
+  cursor: pointer;
+}
+.el-card__body {
+  height: 100%;
+}
+.el-form-item--small.el-form-item {
+  margin-bottom: 36px;
+}
+</style>
