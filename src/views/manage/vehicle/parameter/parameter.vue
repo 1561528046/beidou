@@ -53,7 +53,7 @@ export default {
     choosePicture
   },
   created() {
-    // this.websocket = new WebSocket();
+    this.websocket = new WebSocket();
   },
   beforeDestroy() {
     // this.websocket.close();

@@ -210,10 +210,17 @@ export default {
       },
       deep: true
     }
+    // socket: {
+    //   handler: function() {
+    //     console.log(this.$props.socket);
+    //   },
+    //   deep: true
+    // }
   },
   computed: {},
   props: {
     message: Array
+    // socket: Object
   },
   created() {},
   methods: {
