@@ -210,17 +210,11 @@ export default {
       },
       deep: true
     }
-    // socket: {
-    //   handler: function() {
-    //     console.log(this.$props.socket);
-    //   },
-    //   deep: true
-    // }
   },
   computed: {},
   props: {
-    message: Array
-    // socket: Object
+    message: Array,
+    socket: WebSocket
   },
   created() {},
   methods: {
@@ -246,7 +240,7 @@ export default {
       this.communication.data.map(item => {
         var simid = item.sim_id;
         instructioncollect = "^x8104" + "|" + num + "|" + simid + "|" + "$";
-        console.log(instructioncollect);
+        this.$emit("instruction", instructioncollect);
       });
     },
     // 设置
