@@ -37,7 +37,7 @@
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-              <el-button type="primary" @click="getTable">查询</el-button>
+              <el-button type="primary" @click="getTable(1)">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -180,7 +180,10 @@ export default {
       this.sim_no = "";
       this.$emit("input", "");
     },
-    getTable() {
+    getTable(state) {
+      if (state == 1) {
+        this.tableQuery.page = 1;
+      }
       this.tableLoading = true;
       var getSim = getSimList;
       if (this.$props.filter == "uninstall") {

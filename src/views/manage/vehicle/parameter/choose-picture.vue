@@ -15,7 +15,7 @@
             <el-row :gutter="30">
                 <el-col :span="8">
                     <el-form-item label="定时拍照控制">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0064">
                             <template slot="append">
                                 <el-button @click="setup('0x0064')">设置</el-button>
                             </template>
@@ -25,7 +25,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="定距拍照控制">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0065">
                             <template slot="append">
                                 <el-button @click="setup('0x0065')">设置</el-button>
                             </template>
@@ -35,7 +35,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="图像/视频质量">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0070">
                             <template slot="append">
                                 <el-button @click="setup('0x0070')">设置</el-button>
                             </template>
@@ -45,7 +45,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="亮度">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0071">
                             <template slot="append">
                                 <el-button @click="setup('0x0071')">设置</el-button>
                             </template>
@@ -55,7 +55,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="对比度">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0072">
                             <template slot="append">
                                 <el-button @click="setup('0x0072')">设置</el-button>
                             </template>
@@ -65,7 +65,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="饱和度">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0073">
                             <template slot="append">
                                 <el-button @click="setup('0x0073')">设置</el-button>
                             </template>
@@ -75,7 +75,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="色度">
-                        <el-input style="width:60% ">
+                        <el-input style="width:60%" v-model="communication.Ox0074">
                             <template slot="append">
                                 <el-button @click="setup('0x0074')">设置</el-button>
                             </template>
@@ -98,6 +98,13 @@ export default {
       length: 0,
       vehicleDialog: false,
       communication: {
+        Ox0064: "",
+        Ox0065: "",
+        Ox0070: "",
+        Ox0071: "",
+        Ox0072: "",
+        Ox0073: "",
+        Ox0074: "",
         data: []
       },
       tableQuery: {
@@ -148,28 +155,28 @@ export default {
       this.communication.data.map(item => {
         var simid = item.sim_id;
         instructioncollect = "^x8104" + "|" + num + "|" + simid + "|" + "$";
-        console.log(instructioncollect);
+        this.$emit("instruction", instructioncollect);
       });
     },
     // 设置
-    setup(num) {
-      // ^set+参数id+设置的值+sim_id+// $
-      //   var str = this.$dict.get_communication(num);
+    setup(type) {
+      var key = "O" + type.slice(1);
+      var value = this.communication[key];
       var instructionset;
+      if (this.communication.data.length == 0) {
+        return this.$message.error("请选择车辆!");
+      }
+      if (value == "") {
+        return this.$message.error("设置项不能为空!");
+      }
       this.communication.data.map(item => {
         var simid = item.sim_id;
         instructionset =
-          "^x8103" + "|" + num + "|" + 10 + "|" + simid + "|" + "$";
-        console.log(instructionset);
+          "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
+        this.$emit("setting", instructionset);
       });
-      //   连接成功回调
-      //   this.websocket.onopen = function() {
-      //     this.websocket.send(instructionset);
-      //   };
-      // 服务端返回数据回调
-      //   this.websocket.onmessage = function(event) {
-      //     console.log(event.data);
-      //   };
+      // ^set+参数id+设置的值+sim_id+ $
+      //   var str = this.$dict.get_communication(num);
     }
   }
 };

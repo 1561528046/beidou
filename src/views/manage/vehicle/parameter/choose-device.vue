@@ -14,7 +14,7 @@
             <el-row :gutter="30">
                 <el-col :span="8">
                     <el-form-item label="监控平台电话号码">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0040">
                             <template slot="append">
                                 <el-button @click="setup('0x0040')">设置</el-button>
                             </template>
@@ -24,7 +24,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="监控平台SMS电话号码">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0043">
                             <template slot="append">
                                 <el-button @click="setup('0x0043')">设置</el-button>
                             </template>
@@ -34,7 +34,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="接受终端SMS文本报警号码">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0044">
                             <template slot="append">
                                 <el-button @click="setup('0x0044')">设置</el-button>
                             </template>
@@ -44,17 +44,22 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="终端电话接听策略">
-                        <el-input style="width:60%">
+                        <!-- <el-input style="width:60%">
                             <template slot="append">
                                 <el-button @click="setup('0x0045')">设置</el-button>
                             </template>
-                        </el-input>
+                        </el-input> -->
+                        <el-select style="width:46%;" v-model="communication.Ox0045">
+                            <el-option label="自动接听" value="0"></el-option>
+                            <el-option label="ACC(ON 时自动接听,OFF时手动接听)" value="1"></el-option>
+                        </el-select>
+                        <el-button style="background-color:#f5f7fa;color:#909399;font-size: inherit" @click="setup('0x0045')">设置</el-button>
                         <el-button @click="collect('0x0045')" style="margin-left:31px">采集</el-button>
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="监听电话号码">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0048">
                             <template slot="append">
                                 <el-button @click="setup('0x0048')">设置</el-button>
                             </template>
@@ -64,7 +69,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="监管平台特权短信号码">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0049">
                             <template slot="append">
                                 <el-button @click="setup('0x0049')">设置</el-button>
                             </template>
@@ -87,6 +92,12 @@ export default {
       length: 0,
       vehicleDialog: false,
       communication: {
+        Ox0040: "",
+        Ox0043: "",
+        Ox0044: "",
+        Ox0045: "",
+        Ox0048: "",
+        Ox0049: "",
         data: []
       },
       tableQuery: {
@@ -137,28 +148,28 @@ export default {
       this.communication.data.map(item => {
         var simid = item.sim_id;
         instructioncollect = "^x8104" + "|" + num + "|" + simid + "|" + "$";
-        console.log(instructioncollect);
+        this.$emit("instruction", instructioncollect);
       });
     },
     // 设置
-    setup(num) {
-      // ^set+参数id+设置的值+sim_id+// $
-      //   var str = this.$dict.get_communication(num);
+    setup(type) {
+      var key = "O" + type.slice(1);
+      var value = this.communication[key];
       var instructionset;
+      if (this.communication.data.length == 0) {
+        return this.$message.error("请选择车辆!");
+      }
+      if (value == "") {
+        return this.$message.error("设置项不能为空!");
+      }
       this.communication.data.map(item => {
         var simid = item.sim_id;
         instructionset =
-          "^x8103" + "|" + num + "|" + 10 + "|" + simid + "|" + "$";
-        console.log(instructionset);
+          "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
+        this.$emit("setting", instructionset);
       });
-      //   连接成功回调
-      //   this.websocket.onopen = function() {
-      //     this.websocket.send(instructionset);
-      //   };
-      // 服务端返回数据回调
-      //   this.websocket.onmessage = function(event) {
-      //     console.log(event.data);
-      //   };
+      // ^set+参数id+设置的值+sim_id+ $
+      //   var str = this.$dict.get_communication(num);
     }
   }
 };
