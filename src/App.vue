@@ -8,7 +8,9 @@
       <el-container>
         <!-- <base-slidebar></base-slidebar> -->
         <el-main style="padding:0;">
-          <router-view></router-view>
+          <keep-alive include="monitor">
+            <router-view></router-view>
+          </keep-alive>
         </el-main>
       </el-container>
     </el-container>
