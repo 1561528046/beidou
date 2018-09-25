@@ -5,7 +5,7 @@
         <el-tabs style=" width: 100%;position: relative; background-color:#fff;" type="border-card" @tab-click="handleClick">
           <el-tab-pane label="通讯设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-communication :message="communication"></choose-communication>
+            <choose-communication :message="communication" :socket="websocket"></choose-communication>
           </el-tab-pane>
           <el-tab-pane label="车辆信息设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
@@ -53,7 +53,7 @@ export default {
     choosePicture
   },
   created() {
-    this.websocket = new WebSocket();
+    this.websocket = new WebSocket("ws://" + this.$dict.INSTRUCTION_URL);
   },
   beforeDestroy() {
     // this.websocket.close();

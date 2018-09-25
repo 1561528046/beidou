@@ -1,6 +1,6 @@
 var BASE_URL = "http://192.168.88.100:725/";
 var API_URL = "http://192.168.88.100:725/api";
-var INSTRUCTION_URL = "http://127.0.0.1:5000";
+var INSTRUCTION_URL = "127.0.0.1:5000";
 if (process.env.NODE_ENV == "production") {
   BASE_URL = "http://192.168.88.6:827/";
   API_URL = "http://192.168.88.6:827/api";
