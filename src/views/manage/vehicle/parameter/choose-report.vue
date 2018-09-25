@@ -12,11 +12,11 @@
             <el-table-column width="190" prop="" label="休眠时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column width="190" prop="" label="紧急报警时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
         </el-table>
-        <el-form label-width="190px" label-position="left" class="table-search" size="small">
+        <el-form label-width="205px" label-position="left" class="table-search" size="small">
             <el-row :gutter="30">
                 <el-col :span="8">
-                    <el-form-item label="休眠时汇报时间间隔">
-                        <el-input style="width:60%">
+                    <el-form-item label="休眠时汇报时间间隔(s)">
+                        <el-input style="width:60%" v-model="communication.Ox0027">
                             <template slot="append">
                                 <el-button @click="setup('0x0027')">设置</el-button>
                             </template>
@@ -25,8 +25,8 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="休眠时汇报距离间隔">
-                        <el-input style="width:60%">
+                    <el-form-item label="休眠时汇报距离间隔(m)">
+                        <el-input style="width:60%" v-model="communication.Ox002E">
                             <template slot="append">
                                 <el-button @click="setup('0x002E')">设置</el-button>
                             </template>
@@ -35,8 +35,8 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="缺省时间汇报间隔">
-                        <el-input style="width:60%">
+                    <el-form-item label="缺省时间汇报间隔(s)">
+                        <el-input style="width:60%" v-model="communication.Ox0029">
                             <template slot="append">
                                 <el-button @click="setup('0x0029')">设置</el-button>
                             </template>
@@ -45,8 +45,8 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="缺省距离汇报间隔">
-                        <el-input style="width:60%">
+                    <el-form-item label="缺省距离汇报间隔(m)">
+                        <el-input style="width:60%" v-model="communication.Ox002C">
                             <template slot="append">
                                 <el-button @click="setup('0x002C')">设置</el-button>
                             </template>
@@ -55,8 +55,8 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="紧急报警时汇报时间间隔">
-                        <el-input style="width:60%">
+                    <el-form-item label="紧急报警时汇报时间间隔(s)">
+                        <el-input style="width:60%" v-model="communication.Ox0028">
                             <template slot="append">
                                 <el-button @click="setup('0x0028')">设置</el-button>
                             </template>
@@ -65,8 +65,8 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="紧急报警时汇报距离间隔">
-                        <el-input style="width:60%">
+                    <el-form-item label="紧急报警时汇报距离间隔(m)">
+                        <el-input style="width:60%" v-model="communication.Ox002F">
                             <template slot="append">
                                 <el-button @click="setup('0x002F')">设置</el-button>
                             </template>
@@ -75,8 +75,8 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="驾驶员未登录汇报时间间隔">
-                        <el-input style="width:60%">
+                    <el-form-item label="驾驶员未登录汇报时间间隔(s)">
+                        <el-input style="width:60%" v-model="communication.Ox0022">
                             <template slot="append">
                                 <el-button @click="setup('0x0022')">设置</el-button>
                             </template>
@@ -85,8 +85,8 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="驾驶员未登录汇报距离间隔">
-                        <el-input style="width:60%">
+                    <el-form-item label="驾驶员未登录汇报距离间隔(m)">
+                        <el-input style="width:60%" v-model="communication.Ox002D">
                             <template slot="append">
                                 <el-button @click="setup('0x002D')">设置</el-button>
                             </template>
@@ -109,6 +109,14 @@ export default {
       length: 0,
       vehicleDialog: false,
       communication: {
+        Ox0027: "",
+        Ox002E: "",
+        Ox0029: "",
+        Ox002C: "",
+        Ox0028: "",
+        Ox002F: "",
+        Ox0022: "",
+        Ox002D: "",
         data: []
       },
       tableQuery: {
@@ -159,28 +167,28 @@ export default {
       this.communication.data.map(item => {
         var simid = item.sim_id;
         instructioncollect = "^x8104" + "|" + num + "|" + simid + "|" + "$";
-        console.log(instructioncollect);
+        this.$emit("instruction", instructioncollect);
       });
     },
     // 设置
-    setup(num) {
-      // ^set+参数id+设置的值+sim_id+// $
-      //   var str = this.$dict.get_communication(num);
+    setup(type) {
+      var key = "O" + type.slice(1);
+      var value = this.communication[key];
       var instructionset;
+      if (this.communication.data.length == 0) {
+        return this.$message.error("请选择车辆!");
+      }
+      if (value == "") {
+        return this.$message.error("设置项不能为空!");
+      }
       this.communication.data.map(item => {
         var simid = item.sim_id;
         instructionset =
-          "^x8103" + "|" + num + "|" + 10 + "|" + simid + "|" + "$";
-        console.log(instructionset);
+          "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
+        this.$emit("setting", instructionset);
       });
-      //   连接成功回调
-      //   this.websocket.onopen = function() {
-      //     this.websocket.send(instructionset);
-      //   };
-      // 服务端返回数据回调
-      //   this.websocket.onmessage = function(event) {
-      //     console.log(event.data);
-      //   };
+      // ^set+参数id+设置的值+sim_id+ $
+      //   var str = this.$dict.get_communication(num);
     }
   }
 };

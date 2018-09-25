@@ -5,27 +5,27 @@
         <el-tabs style=" width: 100%;position: relative; background-color:#fff;" type="border-card" @tab-click="handleClick">
           <el-tab-pane label="通讯设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-communication :message="communication" :socket="socket" @instruction="instruction"></choose-communication>
+            <choose-communication :message="communication" @instruction="instruction" @setting="setting"></choose-communication>
           </el-tab-pane>
           <el-tab-pane label="车辆信息设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-information :message="information"></choose-information>
+            <choose-information :message="information" @instruction="instruction" @setting="setting"></choose-information>
           </el-tab-pane>
           <el-tab-pane label="行车报警设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-alarm :message="alarm"></choose-alarm>
+            <choose-alarm :message="alarm" @instruction="instruction" @setting="setting"></choose-alarm>
           </el-tab-pane>
           <el-tab-pane label="终端上报时间间隔设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-report :message="report"></choose-report>
+            <choose-report :message="report" @instruction="instruction" @setting="setting"></choose-report>
           </el-tab-pane>
           <el-tab-pane label="终端通讯设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-device :message="device"></choose-device>
+            <choose-device :message="device" @instruction="instruction" @setting="setting"></choose-device>
           </el-tab-pane>
           <el-tab-pane label="拍照设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-picture :message="picture"></choose-picture>
+            <choose-picture :message="picture" @instruction="instruction" @setting="setting"></choose-picture>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -54,6 +54,7 @@ export default {
   },
   created() {
     this.socket = new WebSocket("ws://127.0.0.1:5000");
+    window.socket = this.socket;
     // 服务端返回数据回调
     this.socket.onmessage = function(event) {
       console.log(event.data);
@@ -106,8 +107,12 @@ export default {
     }
   },
   methods: {
+    //采集发送指令
     instruction(num) {
-      //连接成功回调
+      this.socket.send(num);
+    },
+    // 设置发送指令
+    setting(num) {
       this.socket.send(num);
     },
     selectVehicle(scope) {

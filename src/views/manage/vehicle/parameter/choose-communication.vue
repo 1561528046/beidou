@@ -22,7 +22,7 @@
             <el-row :gutter="30">
                 <el-col :span="8">
                     <el-form-item label="TCP消息应答超时时间(s)">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0002">
                             <template slot="append">
                                 <el-button @click="setup('0x0002')">设置</el-button>
                             </template>
@@ -32,7 +32,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="TCP消息重传次数">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0003">
                             <template slot="append">
                                 <el-button @click="setup('0x0003')">设置</el-button>
                             </template>
@@ -42,7 +42,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="UDP消息应答超时时间(s)">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0004">
                             <template slot="append">
                                 <el-button @click="setup('0x0004')">设置</el-button>
                             </template>
@@ -52,7 +52,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="UDP消息重传次数">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0005">
                             <template slot="append">
                                 <el-button @click="setup('0x0005')">设置</el-button>
                             </template>
@@ -62,7 +62,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="SMS消息应答超时时间(s)">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0006">
                             <template slot="append">
                                 <el-button @click="setup('0x0006')">设置</el-button>
                             </template>
@@ -72,7 +72,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="SMS消息重传次数">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0007">
                             <template slot="append">
                                 <el-button @click="setup('0x0007')">设置</el-button>
                             </template>
@@ -82,7 +82,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="主服务器APN">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0010">
                             <template slot="append">
                                 <el-button @click="setup('0x0010')">设置</el-button>
                             </template>
@@ -92,7 +92,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="备份服务器APN">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0014">
                             <template slot="append">
                                 <el-button @click="setup('0x0014')">设置</el-button>
                             </template>
@@ -102,7 +102,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="主服务器地址IP或域名">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0013">
                             <template slot="append">
                                 <el-button @click="setup('0x0013')">设置</el-button>
                             </template>
@@ -112,7 +112,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="备份服务器地址IP或域名">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0017">
                             <template slot="append">
                                 <el-button @click="setup('0x0017')">设置</el-button>
                             </template>
@@ -122,7 +122,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="服务器TCP端口">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0018">
                             <template slot="append">
                                 <el-button @click="setup('0x0018')">设置</el-button>
                             </template>
@@ -132,7 +132,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="服务器UDP端口">
-                        <el-input style="width:60%">
+                        <el-input style="width:60%" v-model="communication.Ox0019">
                             <template slot="append">
                                 <el-button @click="setup('0x0019')">设置</el-button>
                             </template>
@@ -142,21 +142,32 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="位置汇报策略">
-                        <el-input style="width:60%">
+                        <!-- <el-input style="width:60%" v-model="communication.Ox0020">
                             <template slot="append">
                                 <el-button @click="setup('0x0020')">设置</el-button>
                             </template>
-                        </el-input>
+                        </el-input> -->
+                        <el-select style="width:46%;" v-model="communication.Ox0020">
+                            <el-option label="定时汇报" value="0"></el-option>
+                            <el-option label="定距汇报" value="1"></el-option>
+                            <el-option label="定时和定距汇报" value="2"></el-option>
+                        </el-select>
+                        <el-button style="background-color:#f5f7fa;color:#909399;font-size: inherit" @click="setup('0x0020')">设置</el-button>
                         <el-button @click="collect('0x0020')" style="margin-left:31px">采集</el-button>
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="位置汇报方案">
-                        <el-input style="width:60%">
+                        <!-- <el-input style="width:60%" v-model="communication.Ox0021">
                             <template slot="append">
                                 <el-button @click="setup('0x0021')">设置</el-button>
                             </template>
-                        </el-input>
+                        </el-input> -->
+                        <el-select style="width:46%;" v-model="communication.Ox0021">
+                            <el-option label="根据ACC状态" value="0"></el-option>
+                            <el-option label="根据登录状态和ACC状态" value="1"></el-option>
+                        </el-select>
+                        <el-button style="background-color:#f5f7fa;color:#909399;font-size: inherit" @click="setup('0x0021')">设置</el-button>
                         <el-button @click="collect('0x0021')" style="margin-left:31px">采集</el-button>
                     </el-form-item>
                 </el-col>
@@ -175,20 +186,20 @@ export default {
       length: 0,
       vehicleDialog: false,
       communication: {
-        TCPtime: "",
-        TCPtimes: "",
-        UDPtime: "",
-        UDPtimes: "",
-        SMStime: "",
-        SMStimes: "",
-        masterAPN: "",
-        backupAPN: "",
-        masterIP: "",
-        backupIP: "",
-        serverTCP: "",
-        serverUDP: "",
-        locationStrategy: "",
-        locationPlan: "",
+        Ox0002: "",
+        Ox0003: "",
+        Ox0004: "",
+        Ox0005: "",
+        Ox0006: "",
+        Ox0007: "",
+        Ox0010: "",
+        Ox0013: "",
+        Ox0014: "",
+        Ox0017: "",
+        Ox0018: "",
+        Ox0019: "",
+        Ox0020: "",
+        Ox0021: "",
         data: []
       },
       tableQuery: {
@@ -213,8 +224,7 @@ export default {
   },
   computed: {},
   props: {
-    message: Array,
-    socket: WebSocket
+    message: Array
   },
   created() {},
   methods: {
@@ -232,39 +242,40 @@ export default {
     // 采集
     collect(num) {
       if (this.communication.data.length == 0) {
-        return this.$message.error("请选择车辆!");
+        return this.$notify({
+          message: "请选择车辆!",
+          title: "提示",
+          type: "error"
+        });
       }
       // ^get + 参数id+ sim_id+$
       //   var str = this.$dict.get_communication(num);
       var instructioncollect;
       this.communication.data.map(item => {
         var simid = item.sim_id;
-        instructioncollect = "^x8104" + "|" + num + "|" + simid + "|" + "$";
+        instructioncollect = "^x8104" + "|" + num + "|" + simid + "$";
         this.$emit("instruction", instructioncollect);
       });
     },
     // 设置
-    setup(num) {
+    setup(type) {
+      var key = "O" + type.slice(1);
+      var value = this.communication[key];
+      var instructionset;
       if (this.communication.data.length == 0) {
         return this.$message.error("请选择车辆!");
       }
-      // ^set+参数id+设置的值+sim_id+// $
-      //   var str = this.$dict.get_communication(num);
-      var instructionset;
+      if (value == "") {
+        return this.$message.error("设置项不能为空!");
+      }
       this.communication.data.map(item => {
         var simid = item.sim_id;
         instructionset =
-          "^x8103" + "|" + num + "|" + 10 + "|" + simid + "|" + "$";
-        console.log(instructionset);
+          "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
+        this.$emit("setting", instructionset);
       });
-      //   连接成功回调
-      //   this.websocket.onopen = function() {
-      //     this.websocket.send(instructionset);
-      //   };
-      // 服务端返回数据回调
-      //   this.websocket.onmessage = function(event) {
-      //     console.log(event.data);
-      //   };
+      // ^set+参数id+设置的值+sim_id+ $
+      //   var str = this.$dict.get_communication(num);
     }
   }
 };
