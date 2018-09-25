@@ -53,9 +53,9 @@ export default {
   props: ["index"],
   computed: {
     position: function() {
-      var maxRow = Math.floor(this.bodyHeight / 380);
+      var maxRow = Math.floor(this.bodyHeight / 360);
       var left = Math.floor(this.index / maxRow) * 350;
-      var top = (this.index % maxRow) * 380;
+      var top = (this.index % maxRow) * 360;
       return {
         left: left + Math.floor(this.index / maxRow) * 10,
         top: top + (this.index % maxRow) * 10
@@ -75,6 +75,12 @@ export default {
 </script>
 <style lang="less">
 @import "../../../style/var.less";
+.amap-logo {
+  display: none !important;
+}
+.amap-copyright {
+  display: none !important;
+}
 .vehicle-info-box {
   font-size: 12px;
   position: absolute;
@@ -82,9 +88,9 @@ export default {
   background: #fff;
   z-index: 10;
   &.open {
-    height: 380px;
+    height: 360px;
     ._map {
-      height: 180px;
+      height: 160px;
       background: #999;
     }
   }

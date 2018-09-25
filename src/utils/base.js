@@ -1,15 +1,19 @@
 var BASE_URL = "http://192.168.88.100:725/";
 var API_URL = "http://192.168.88.100:725/api";
+var INSTRUCTION_URL = "http://127.0.0.1:5000";
 if (process.env.NODE_ENV == "production") {
   BASE_URL = "http://192.168.88.6:827/";
   API_URL = "http://192.168.88.6:827/api";
+  INSTRUCTION_URL = "http://127.0.0.1:5000";
 }
 export const dict = {
   //全局字典
   AMAP_KEY: "1effb3317ab25b91eb7b163d5febd226", //高德key
   BMAP_KEY: "E6CTjsauEoavEzCYG4WM1zt0S5OB6dAf", //百度key
-  BASE_URL: BASE_URL,
-  API_URL: API_URL,
+  BASE_URL: BASE_URL, //web站点路径
+  API_URL: API_URL, //API具体路径
+  INSTRUCTION_URL: INSTRUCTION_URL, //指令websocket地址
+
   // BASE_URL: "http://192.168.88.88:10462/",
   // API_URL: "http://192.168.88.88:10462/api",
   license_color: {

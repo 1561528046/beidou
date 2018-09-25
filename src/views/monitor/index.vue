@@ -472,7 +472,7 @@ export default {
 .list-complete-enter, .list-complete-leave-to
 /* .list-complete-leave-active for below version 2.1.8 */ {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(-30px);
 }
 .list-complete-leave-active {
   position: absolute;
@@ -494,7 +494,7 @@ export default {
   .el-tabs__content {
     background: none;
     overflow: auto;
-    height: calc(100% - 50px);
+    height: calc(100% - 40px);
     padding: 0;
   }
   .el-tab-pane {
