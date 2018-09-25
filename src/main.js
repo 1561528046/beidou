@@ -11,6 +11,7 @@ import "@/utils/md5.js";
 import store from "./store";
 import { dict, utils } from "./utils/base";
 import "./utils/directive";
+Vue.prototype.$monitor = {};
 Vue.prototype.$ajax = ajax;
 Vue.prototype.$dict = dict;
 Vue.prototype.$utils = utils;

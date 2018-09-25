@@ -7,7 +7,7 @@
     </div>
     <div class="_map">
       <!-- <a class="_map-btn">展开地图</a> -->
-      <div class="_map-container"></div>
+      <div class="_map-container" ref="map"></div>
     </div>
     <div class="_body">
       <el-row>
@@ -43,6 +43,7 @@
   </div>
 </template>
 <script>
+import initMap from "@/utils/map.js";
 export default {
   data() {
     return {
@@ -65,6 +66,18 @@ export default {
   mounted() {
     this.bodyWidth = this.$el.parentElement.scrollWidth;
     this.bodyHeight = this.$el.parentElement.scrollHeight;
+    initMap(() => {
+      this.$nextTick(() => {
+        // eslint-disable-next-line
+        new AMap.Map(this.$refs.map, {
+          //viewMode: "3D",
+          //pitch: 55,
+          // rotation: -45,
+          // features: ["bg", "road"],
+          zoom: 20
+        });
+      });
+    });
   },
   methods: {
     close() {
