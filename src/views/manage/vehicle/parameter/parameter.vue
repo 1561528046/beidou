@@ -57,16 +57,15 @@ export default {
     window.socket = this.socket;
     // 服务端返回数据回调
     this.socket.onmessage = function(event) {
-      console.log(event.data);
+      if (event.data[event.data.length - 1] == 1) {
+        console.log(event.data);
+      }
     };
   },
   beforeDestroy() {
     this.socket.close();
   },
-  props: {
-    vehicle_type: Number, //vehicle_type区分普货和其他类型车辆
-    state: Number //state: 1新增车辆 2定位车辆 3到期车辆
-  },
+  props: {},
   data() {
     return {
       socket: {},
@@ -126,7 +125,7 @@ export default {
         this.report = scope;
       } else if (this.parameter_type == 5) {
         this.device = scope;
-      } else if (this.parameter_type == 4) {
+      } else if (this.parameter_type == 6) {
         this.picture = scope;
       }
     },

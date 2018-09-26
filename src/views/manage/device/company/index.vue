@@ -1,7 +1,6 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-
       <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
         <el-row :gutter="30">
           <el-col :span="6">
@@ -61,7 +60,6 @@ import updateComponents from "./update.vue";
 export default {
   created() {
     this.getTable();
-    this.keyupSubmit();
   },
   components: {
     selectCompanytype,

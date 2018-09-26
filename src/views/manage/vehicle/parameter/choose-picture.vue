@@ -34,7 +34,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="图像/视频质量">
+                    <el-form-item label="图像/视频质量(1-10)">
                         <el-input style="width:60%" v-model="communication.Ox0070">
                             <template slot="append">
                                 <el-button @click="setup('0x0070')">设置</el-button>
@@ -44,7 +44,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="亮度">
+                    <el-form-item label="亮度(0-255)">
                         <el-input style="width:60%" v-model="communication.Ox0071">
                             <template slot="append">
                                 <el-button @click="setup('0x0071')">设置</el-button>
@@ -54,7 +54,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="对比度">
+                    <el-form-item label="对比度(0-127)">
                         <el-input style="width:60%" v-model="communication.Ox0072">
                             <template slot="append">
                                 <el-button @click="setup('0x0072')">设置</el-button>
@@ -64,7 +64,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="饱和度">
+                    <el-form-item label="饱和度(0-127)">
                         <el-input style="width:60%" v-model="communication.Ox0073">
                             <template slot="append">
                                 <el-button @click="setup('0x0073')">设置</el-button>
@@ -74,7 +74,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="色度">
+                    <el-form-item label="色度(0-255)">
                         <el-input style="width:60%" v-model="communication.Ox0074">
                             <template slot="append">
                                 <el-button @click="setup('0x0074')">设置</el-button>
@@ -150,11 +150,18 @@ export default {
     // 采集
     collect(num) {
       // ^get + 参数id+ sim_id+$
-      //   var str = this.$dict.get_communication(num);
+      if (this.communication.data.length == 0) {
+        return this.$message.error("请选择车辆!");
+      }
       var instructioncollect;
+      var simid;
       this.communication.data.map(item => {
-        var simid = item.sim_id;
-        instructioncollect = "^x8104" + "|" + num + "|" + simid + "|" + "$";
+        if (item.sim_id.length == 11) {
+          simid = "0" + item.sim_id;
+        } else {
+          simid = item.sim_id;
+        }
+        instructioncollect = "^x8104" + "|" + num + "|" + simid + "$";
         this.$emit("instruction", instructioncollect);
       });
     },
@@ -163,6 +170,8 @@ export default {
       var key = "O" + type.slice(1);
       var value = this.communication[key];
       var instructionset;
+      var simid;
+      // ^set+参数id+设置的值+sim_id+ $
       if (this.communication.data.length == 0) {
         return this.$message.error("请选择车辆!");
       }
@@ -170,13 +179,15 @@ export default {
         return this.$message.error("设置项不能为空!");
       }
       this.communication.data.map(item => {
-        var simid = item.sim_id;
+        if (item.sim_id.length == 11) {
+          simid = "0" + item.sim_id;
+        } else {
+          simid = item.sim_id;
+        }
         instructionset =
           "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
         this.$emit("setting", instructionset);
       });
-      // ^set+参数id+设置的值+sim_id+ $
-      //   var str = this.$dict.get_communication(num);
     }
   }
 };

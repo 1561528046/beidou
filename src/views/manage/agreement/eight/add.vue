@@ -98,11 +98,6 @@ export default {
           AddServer808(postData)
             .then(res => {
               if (res.data.code == 0) {
-                this.formData.title = "";
-                this.formData.ip = "";
-                this.formData.port = "";
-                this.formData.enable_type = true;
-                this.formData.enable = 1;
                 this.$emit("success");
                 this.$notify({
                   message: res.data.msg,

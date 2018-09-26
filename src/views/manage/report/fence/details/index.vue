@@ -193,7 +193,11 @@ export default {
     vehicleCallback(scope) {
       this.dialog = scope.row.dialog;
       this.tableQuery.license = scope.row.license;
-      this.tableQuery.sim_ids = "0" + scope.row.sim_id;
+      if (scope.row.sim_id.length == 11) {
+        this.tableQuery.sim_ids = "0" + scope.row.sim_id;
+      } else {
+        this.tableQuery.sim_ids = scope.row.sim_id;
+      }
       this.tableQuery.license_color = scope.row.license_color;
     },
     // 查询时间验证
