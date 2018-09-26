@@ -116,11 +116,18 @@ export default {
     // 采集
     collect(num) {
       // ^get + 参数id+ sim_id+$
-      //   var str = this.$dict.get_communication(num);
+      if (this.communication.data.length == 0) {
+        return this.$message.error("请选择车辆!");
+      }
       var instructioncollect;
+      var simid;
       this.communication.data.map(item => {
-        var simid = item.sim_id;
-        instructioncollect = "^x8104" + "|" + num + "|" + simid + "|" + "$";
+        if (item.sim_id.length == 11) {
+          simid = "0" + item.sim_id;
+        } else {
+          simid = item.sim_id;
+        }
+        instructioncollect = "^x8104" + "|" + num + "|" + simid + "$";
         this.$emit("instruction", instructioncollect);
       });
     },
@@ -129,6 +136,8 @@ export default {
       var key = "O" + type.slice(1);
       var value = this.communication[key];
       var instructionset;
+      var simid;
+      // ^set+参数id+设置的值+sim_id+ $
       if (this.communication.data.length == 0) {
         return this.$message.error("请选择车辆!");
       }
@@ -136,13 +145,15 @@ export default {
         return this.$message.error("设置项不能为空!");
       }
       this.communication.data.map(item => {
-        var simid = item.sim_id;
+        if (item.sim_id.length == 11) {
+          simid = "0" + item.sim_id;
+        } else {
+          simid = item.sim_id;
+        }
         instructionset =
           "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
         this.$emit("setting", instructionset);
       });
-      // ^set+参数id+设置的值+sim_id+ $
-      //   var str = this.$dict.get_communication(num);
     }
   }
 };

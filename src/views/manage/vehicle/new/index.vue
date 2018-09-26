@@ -553,6 +553,7 @@ export default {
       getVehicleList(query)
         .then(res => {
           if (res.data.code == 0) {
+            console.log(res.data);
             this.$set(this.$data, "tableData", res.data);
           } else {
             this.$set(this.$data, "tableData", []);

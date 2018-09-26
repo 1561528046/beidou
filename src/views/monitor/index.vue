@@ -3,8 +3,14 @@
     <div class="monitor-nav">
       <i class="iconfont icon-unorderedlist _header"></i>
       <div class="_list">
-        <a href="#"><i class="iconfont icon-guiji"></i> <span>轨迹回放</span></a>
-        <a href="#"><i class="iconfont icon-weilan"></i> <span>围栏管理</span></a>
+        <a href="#">
+          <i class="iconfont icon-guiji"></i>
+          <span>轨迹回放</span>
+        </a>
+        <a href="#">
+          <i class="iconfont icon-weilan"></i>
+          <span>围栏管理</span>
+        </a>
       </div>
     </div>
     <el-tabs v-model="currentTab" style="height:100%;" class="monitor-tabs">
@@ -87,8 +93,8 @@
           </transition>
         </div>
       </el-tab-pane>
-
-      <el-tab-pane label="冀R12345" :closable="true" name="x">asdfasdf
+      <el-tab-pane label="冀R12345" :closable="true" name="x">
+        <vehicle-area></vehicle-area>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -100,10 +106,11 @@ import { getInitVehicle, getUserList, getGroupByUser } from "@/api/index.js";
 import initMap from "@/utils/map.js";
 import vehicleMonitor from "./components/vehicle-monitor.vue";
 import vehicleDetails from "./components/vehicle-details.vue";
+import vehicleArea from "./components/vehicle-area.vue";
 window.monitor = {};
 export default {
   name: "monitor",
-  components: { vehicleMonitor, vehicleDetails },
+  components: { vehicleMonitor, vehicleDetails, vehicleArea },
   data() {
     return {
       initLoader: {},

@@ -27,6 +27,10 @@ body,
 .base-slide-bar {
   height: 100%; // overflow-y: auto;
 }
+#app {
+  position: relative;
+  z-index: 1;
+}
 </style>
 <script>
 import baseNav from "@/components/base-nav.vue";
