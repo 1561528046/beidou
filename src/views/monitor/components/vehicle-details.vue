@@ -101,6 +101,7 @@ export default {
     var showVehicle = this.$props.showVehicle;
     this.timer = setInterval(() => {
       if (showVehicle.isShowAll) {
+        void 0;
       }
       var groups = monitor.dict.groups.get(this.$props.showVehicle.group_id);
       if (groups) {
