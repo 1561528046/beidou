@@ -129,3 +129,22 @@ export const delGroup = query => {
     params: query
   });
 };
+export const getGroupSons = query => {
+  //只获取指定组的儿子级别组
+  return ajax.get("/group/GetGroupSonListByGroupId", {
+    params: query
+  });
+};
+
+export const getGroupChildrens = query => {
+  //只获取指定组的所有子孙级别组
+  return ajax.get("/group/GetGroupChildrenListByGroupId", {
+    params: query
+  });
+};
+export const getGroupByUser = query => {
+  //只获取指定组的所有子孙级别组
+  return ajax.get("/group/GetGroupChildrenListByUserId", {
+    params: query
+  });
+};
