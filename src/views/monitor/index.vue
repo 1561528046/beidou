@@ -303,10 +303,11 @@ export default {
         if (this.data.has(vehicleData.sim_id)) {
           vehicleData.lat = vehicleData.lat - 0 + Math.random() * 0.8;
           vehicleData.lng = vehicleData.lng - 0 + Math.random() * 0.8;
+          vehicleData.sim_id = 10000000001 + Math.round(Math.random()*9000000000);
           if (vehicleData.alarm != "") {
             this.setAlarm(vehicleData);
           }
-          if (new Date() - new Date(vehicleData.time) > 95132724) {
+          if (new Date() - new Date(vehicleData.time) > 95132724*10) {
             this.setOnline(vehicleData);
           } else {
             this.setOffline(vehicleData);
