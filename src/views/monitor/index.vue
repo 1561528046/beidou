@@ -69,6 +69,9 @@
                     <el-table-column prop="user_name" label="用户名称" width="180">
                     </el-table-column>
                     <el-table-column prop="total" label="车辆总数">
+                      <template slot-scope="scope">
+                        {{scope.row.online + scope.row.offline}}
+                      </template>
                     </el-table-column>
                     <el-table-column prop="online" label="在线车辆 ">
                     </el-table-column>
@@ -168,23 +171,23 @@ export default {
         //1、车辆放入对应分组、并区分状态
         //2、区分总的在线、离线、报警、异常
         data.map(vehicle => {
-          vehicle.group_path = [];
-          var temp = JSON.parse(
-            '["1", "2", "3", "69", "106", "4", "72", "73", "75", "107", "79", "108", "83", "74", "85", "80", "81", "109", "110", "111", "5", "78", "71", "77"]'
-          );
-          vehicle.group_path.push(1);
-          vehicle.group_path.push(
-            this.dict.groups
-              .get(temp[Math.round(Math.random() * 23)])
-              .get("data")
-              .group_id.toString()
-          );
-          vehicle.group_path.push(
-            this.dict.groups
-              .get(temp[Math.round(Math.random() * 23)])
-              .get("data")
-              .group_id.toString()
-          );
+          // vehicle.group_path = [];
+          // var temp = JSON.parse(
+          //   '["1", "2", "3", "69", "106", "4", "72", "73", "75", "107", "79", "108", "83", "74", "85", "80", "81", "109", "110", "111", "5", "78", "71", "77"]'
+          // );
+          // vehicle.group_path.push("1");
+          // vehicle.group_path.push(
+          //   this.dict.groups
+          //     .get(temp[Math.round(Math.random() * 23)])
+          //     .get("data")
+          //     .group_id.toString()
+          // );
+          // vehicle.group_path.push(
+          //   this.dict.groups
+          //     .get(temp[Math.round(Math.random() * 23)])
+          //     .get("data")
+          //     .group_id.toString()
+          // );
           // vehicle.sim_id = vehicle.id;
           // vehicle.time = vehicle.Time;
           // vehicle.lat = vehicle.Lat;
@@ -199,10 +202,12 @@ export default {
             //车辆所对应的分组 均加入记录
             this.setGroupDict(vehicle.group_path, "alarm", vehicle.sim_id);
           }
-          if (new Date() - new Date(vehicle.time) > 95132724) {
+          if (new Date() - new Date(vehicle.time) > 95132724 * 5) {
+            vehicle.online = true;
             this.dict.online.add(vehicle.sim_id);
             this.setGroupDict(vehicle.group_path, "online", vehicle.sim_id);
           } else {
+            //vehicle.online = false;
             this.dict.offline.add(vehicle.sim_id);
             this.setGroupDict(vehicle.group_path, "offline", vehicle.sim_id);
           }
@@ -238,12 +243,17 @@ export default {
         if (typeof groups == "string") {
           groups = [groups];
         }
+        if (!groups.length) {
+          return false;
+        }
         var groupDict = this.dict.groups;
         groups.map(groups_id => {
-          groupDict
-            .get(groups_id.toString())
-            .get(status)
-            .add(sim_id);
+          if (groups_id) {
+            groupDict
+              .get(groups_id.toString())
+              .get(status)
+              .add(sim_id);
+          }
         });
       },
       deleteGroupDict(groups, status, sim_id) {
@@ -252,12 +262,17 @@ export default {
         if (typeof groups == "string") {
           groups = [groups];
         }
+        if (!groups.length) {
+          return false;
+        }
         var groupDict = this.dict.groups;
         groups.map(groups_id => {
-          groupDict
-            .get(groups_id)
-            .get(status)
-            .delete(sim_id);
+          if (groups_id) {
+            groupDict
+              .get(groups_id.toString())
+              .get(status)
+              .delete(sim_id);
+          }
         });
       },
       initMap() {
@@ -300,14 +315,16 @@ export default {
         });
       },
       setVehicleData(vehicleData) {
+        vehicleData.sim_id = (
+          10000000001 + Math.round(Math.random() * 190000)
+        ).toString();
         if (this.data.has(vehicleData.sim_id)) {
           vehicleData.lat = vehicleData.lat - 0 + Math.random() * 0.8;
           vehicleData.lng = vehicleData.lng - 0 + Math.random() * 0.8;
-          vehicleData.sim_id = 10000000001 + Math.round(Math.random()*9000000000);
           if (vehicleData.alarm != "") {
             this.setAlarm(vehicleData);
           }
-          if (new Date() - new Date(vehicleData.time) > 95132724*10) {
+          if (new Date() - new Date(vehicleData.time) > 95132724 * 5) {
             this.setOnline(vehicleData);
           } else {
             this.setOffline(vehicleData);
@@ -316,6 +333,11 @@ export default {
       },
       setOnline(vehicle) {
         //离线中删除、加入在线字典
+        var vehicleData = this.data.get(vehicle.sim_id);
+        if (vehicleData) {
+          vehicleData.online = true;
+        }
+
         this.dict.offline.delete(vehicle.sim_id);
         this.dict.online.add(vehicle.sim_id);
         var groups = this.data.get(vehicle.sim_id).group_path;
@@ -325,6 +347,10 @@ export default {
         this.deleteGroupDict(groups, "offline", vehicle.sim_id);
       },
       setOffline(vehicle) {
+        var vehicleData = this.data.get(vehicle.sim_id);
+        if (vehicleData) {
+          vehicleData.online = false;
+        }
         this.dict.online.delete(vehicle.sim_id);
         this.dict.offline.add(vehicle.sim_id);
         var groups = this.data.get(vehicle.sim_id).group_path;
@@ -382,8 +408,8 @@ export default {
               license: item[2],
               device_id: item[3],
               group_path: item[4].split(","), //车辆对应分组路径 [path1,path2,path3....]
-              alarm_count: "", //当天报警次数
-              error_count: "", //当天异常次数
+              alarm_count: "1", //当天报警次数
+              error_count: "0", //当天异常次数
               lng: "", //最后一次定位的经度
               lat: "", //最后一次定位的纬度
               last_time: "" //最后定位时间
@@ -401,6 +427,11 @@ export default {
     showVehicleWithGroup(row, column, cell, event) {
       //根据分组显示车辆
       var type = column.property;
+      if (
+        ["total", "online", "offline", "alarm", "error"].indexOf(type) == -1
+      ) {
+        return false;
+      }
       this.showVehicle.type = type;
       this.showVehicle.isShowAll = false;
       this.showVehicle.isShow = true;
@@ -419,6 +450,8 @@ export default {
       this.showVehicle.type = "";
       this.showVehicle.isShowAll = false;
       this.showVehicle.isShow = false;
+      this.showVehicle.group_id = "";
+      this.showVehicle.sub_title = "";
     },
     toggleUserList(current) {
       if (current != "") {

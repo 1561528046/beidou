@@ -1,59 +1,75 @@
 <template>
-    <div class="details-container shadow-box" v-if="true||showVehicle.isShow">
-        <div class="_header">
-            <div class="_title">
-                {{getShowVehicleTitle()}}
+  <div class="details-container shadow-box" v-if="showVehicle.isShow">
+    <div class="_header">
+      <div class="_title">
+        {{getShowVehicleTitle()}}
+      </div>
+      <div class="_text">
+        {{showVehicle.sub_title}}
+      </div>
+      <div class="_close">
+        <i class="el-icon-close" @click="closeShowVehicle"></i>
+      </div>
+    </div>
+    <div class="_body" v-if="showVehicle.isShowAll">
+      <el-table :data="list" size="small" style="width: 100%">
+        <el-table-column prop="license" label="车牌号">
+        </el-table-column>
+        <el-table-column prop="error_count" label="今日异常数" v-if="showVehicle.type=='error'">
+        </el-table-column>
+        <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'">
+        </el-table-column>
+        <el-table-column label="在线状态" v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1">
+          <template slot-scope="scope">
+            <span class="vehicle-online" v-if="scope.row.online">在线</span>
+            <span class="vehicle-offline" v-if="!scope.row.online">离线</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="_pager">
+        <el-pagination background @current-change="changePager" small :page-size="pager.size" :pager-count="5" layout="prev, pager, next" :total="pager.total">
+        </el-pagination>
+      </div>
+    </div>
+    <div class="_body" v-if="!showVehicle.isShowAll">
+      <el-collapse accordion v-model="currentGroup" @change="groupChange">
+        <el-collapse-item class="group-container" v-for="group in currentGroupSon" :key="group.group_id" :name="group.group_id">
+          <template slot="title">
+            <div class="group-name">
+              {{group.group_name}}
             </div>
-            <div class="_text">
-                {{showVehicle.sub_title}}
-            </div>
-            <div class="_close">
-                <i class="el-icon-close" @click="closeShowVehicle"></i>
-            </div>
-        </div>
-        <div class="_body" v-if="showVehicle.isShowAll">
-            <el-table :data="list" size="small" style="width: 100%">
-                <el-table-column prop="license" label="车牌号">
-                </el-table-column>
-                <el-table-column prop="total" label="报警总数">
-                </el-table-column>
+          </template>
+          <div class="group-body">
+            <el-select v-model="currentGroupFilter" placeholder="全部分组" size="mini" style="width:100%;">
+              <el-option label="全部分组" value=""></el-option>
+              <el-option :label="childrenGroup.group_name" :value="childrenGroup.group_id" v-for="childrenGroup in currentGroupSonChildrens" :key="childrenGroup.group_id"></el-option>
+            </el-select>
+            <el-table :data="list" size="small" style="width: 100%" v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1" :key="group.group_id+'table'">
+              <el-table-column prop="license" label="车牌号">
+              </el-table-column>
+              <el-table-column label="在线状态" :formatter="onlineState">
+              </el-table-column>
+            </el-table>
+            <el-table :data="list" size="small" style="width: 100%" v-if="['error','alarm'].indexOf(showVehicle.type)!=-1" :key="group.group_id+'table'">
+              <el-table-column prop="license" label="车牌号">
+              </el-table-column>
+              <el-table-column prop="error_count" label="今日异常数" v-if="showVehicle.type=='error'">
+              </el-table-column>
+              <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'">
+              </el-table-column>
             </el-table>
             <div class="_pager">
-                <el-pagination background @current-change="changePager" small :page-size="pager.size" :pager-count="5" layout="prev, pager, next" :total="pager.total">
-                </el-pagination>
+              <el-pagination background @current-change="changePager" small :page-size="pager.size" :pager-count="5" layout="prev, pager, next" :total="pager.total">
+              </el-pagination>
             </div>
-        </div>
-        <div class="_body" v-if="!showVehicle.isShowAll">
-            <el-collapse accordion v-model="currentGroup" @change="groupChange">
-                <el-collapse-item class="group-container" v-for="group in currentGroupSon" :key="group.group_id" :name="group.group_id">
-                    <template slot="title">
-                        <div class="group-name">
-                            {{group.group_name}}
-                        </div>
-                    </template>
-                    <div class="group-body">
-                        <el-select v-model="currentGroupFilter" placeholder="全部分组" size="mini" style="width:100%;">
-                            <el-option label="分组1" value="shanghai"></el-option>
-                            <el-option label="分组2" value="beijing"></el-option>
-                        </el-select>
-                        <el-table :data="list" size="small" style="width: 100%">
-                            <el-table-column prop="user_name" label="车牌号">
-                            </el-table-column>
-                            <el-table-column prop="total" label="报警总数">
-                            </el-table-column>
-                        </el-table>
-                        <div class="_pager">
-                            <el-pagination background @current-change="changePager" small :page-size="pager.size" :pager-count="5" layout="prev, pager, next,total" :total="pager.total">
-                            </el-pagination>
-                        </div>
-                    </div>
-                </el-collapse-item>
+          </div>
+        </el-collapse-item>
 
-            </el-collapse>
-
-        </div>
+      </el-collapse>
 
     </div>
+
+  </div>
 </template>
 <script>
 import { getGroupChildrens } from "@/api/index.js";
@@ -62,7 +78,7 @@ export default {
     return {
       currentGroup: "",
       currentGroupSon: [], //儿子级别组
-      currentGroupChildrens: [],
+      currentGroupSonChildrens: [],
       currentGroupFilter: "",
       pager: {
         size: 50,
@@ -82,15 +98,30 @@ export default {
       // eslint-disable-next-line
       var x = this.dataVersion;
       if (showVehicle.isShowAll) {
-        var sim_ids = monitor.dict[showVehicle.type];
-        for (let sim_id of sim_ids) {
-          list.push(monitor.data.get(sim_id));
+        if (showVehicle.type == "total") {
+          list = Array.from(monitor.data.values());
+        } else {
+          var sim_ids = monitor.dict[showVehicle.type];
+          for (let sim_id of sim_ids) {
+            list.push(monitor.data.get(sim_id));
+          }
         }
       }
-      var groups = monitor.dict.groups.get(this.currentGroup);
+      var groups = monitor.dict.groups.get(
+        this.currentGroupFilter || this.currentGroup
+      );
       if (groups) {
-        for (let sim_id of groups.get(showVehicle.type)) {
-          list.push(monitor.data.get(sim_id));
+        if (showVehicle.type == "total") {
+          for (let sim_id of groups.get("online")) {
+            list.push(monitor.data.get(sim_id));
+          }
+          for (let sim_id of groups.get("offline")) {
+            list.push(monitor.data.get(sim_id));
+          }
+        } else {
+          for (let sim_id of groups.get(showVehicle.type)) {
+            list.push(monitor.data.get(sim_id));
+          }
         }
       }
       // eslint-disable-next-line
@@ -101,8 +132,10 @@ export default {
     }
   },
   watch: {
-    "showVehicle.group_id": function() {
-      this.getGroupSon();
+    "showVehicle.group_id": function(newVal) {
+      if (newVal) {
+        this.getGroupSon();
+      }
     },
     currentGroup: function() {
       this.initPager();
@@ -119,6 +152,13 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    onlineState(row) {
+      if (row.online) {
+        return `<span class="vehicle-online">在线</span>`;
+      } else {
+        return `<span class="vehicle-offline" v-if="!scope.row.online">离线</span>`;
+      }
+    },
     initPager() {
       this.pager.size = 50;
       this.pager.total = 0;
@@ -132,13 +172,25 @@ export default {
           groupChildrens.push(value.get("data"));
         }
       }
+      if (groupChildrens.length == 0) {
+        groupChildrens.push(
+          window.monitor.dict.groups.get(this.showVehicle.group_id).get("data")
+        );
+      }
       this.$set(this.$data, "currentGroupSon", groupChildrens);
     },
     getGroupChildrens() {
       //this.currentGroupChildrens
-      // eslint-disable-next-line 
+      // eslint-disable-next-line
+      this.$set(this.$data, "currentGroupSonChildrens", []);
+      if (!this.currentGroup) {
+        return false;
+      }
       getGroupChildrens({ group_id: this.currentGroup }).then(res => {
-      }); 
+        if (res.data.code == 0) {
+          this.$set(this.$data, "currentGroupSonChildrens", res.data.data);
+        }
+      });
     },
     groupChange() {
       this.pager.size = 50;
@@ -228,6 +280,38 @@ export default {
     }
     .group-body {
       padding: 12px;
+    }
+  }
+  .vehicle-online {
+    color: @success;
+    &:before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      line-height: 6px;
+      text-align: center;
+      font-size: 0;
+      background: @success;
+      display: inline-block;
+      margin-right: 5px;
+      border-radius: 6px;
+      vertical-align: 1px;
+    }
+  }
+  .vehicle-offline {
+    color: @t4;
+    &:before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      line-height: 6px;
+      text-align: center;
+      font-size: 0;
+      background: @t4;
+      display: inline-block;
+      margin-right: 5px;
+      border-radius: 6px;
+      vertical-align: 1px;
     }
   }
 }
