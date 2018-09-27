@@ -33,7 +33,7 @@
             <vehicle-monitor class="list-complete-item" @close="remove(vehicle.vehicle_id)" v-for="(vehicle,index) in currentVehicles" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
           </transition-group>
 
-          <el-collapse accordion class="status-container shadow-box">
+          <el-collapse accordion class="status-container shadow-box" @change="toggleUserList">
             <el-collapse-item class="group-container">
               <template slot="title">
                 <div class="_header">
@@ -56,18 +56,12 @@
                 </div>
               </template>
               <div class="_body">
-                <el-form :inline="true" size="mini" class="_search">
-                  <el-form-item label="用户名称">
-                    <el-input placeholder="用户名称"></el-input>
-                  </el-form-item>
-                  <el-form-item label="活动区域">
-                    <el-select value="1" placeholder="活动区域">
-                      <el-option label="区域一" value="shanghai"></el-option>
-                      <el-option label="区域二" value="beijing"></el-option>
-                    </el-select>
+                <el-form :inline="true" size="mini" class="_search" @submit.native.prevent>
+                  <el-form-item label="企业名称">
+                    <el-input placeholder="企业名称" v-model="userListQuery.real_name"></el-input>
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="primary">查询</el-button>
+                    <el-button type="primary" native-type="submit" @click="searchUserList">查询</el-button>
                   </el-form-item>
                 </el-form>
                 <div class="_table">
@@ -88,7 +82,7 @@
 
                 </div>
                 <div class="_pager">
-                  <el-pagination background layout="prev, pager, next" :total="1000">
+                  <el-pagination background layout="prev, pager, next" :total="userListQuery.total" @current-change="userListCurrentChange" :page-size="userListQuery.size">
                   </el-pagination>
                 </div>
               </div>
@@ -108,16 +102,18 @@
 
 <script>
 /*eslint-disable*/
+import { getInitVehicle, getUserList, getGroupByUser } from "@/api/index.js";
 import initMap from "@/utils/map.js";
 import vehicleMonitor from "./components/vehicle-monitor.vue";
 import vehicleDetails from "./components/vehicle-details.vue";
 import vehicleArea from "./components/vehicle-area.vue";
-import Vue from "vue";
+window.monitor = {};
 export default {
   name: "monitor",
   components: { vehicleMonitor, vehicleDetails, vehicleArea },
   data() {
     return {
+      initLoader: {},
       currentGroup: {},
       showVehicle: {
         group_id: "",
@@ -139,57 +135,22 @@ export default {
         offline: 0,
         error: 0
       },
-      userList: [
-        // {
-        //   user_id: 1,
-        //   //...
-        //   alarm: 1000,
-        //   online: 1000,
-        //   offline: 1000,
-        //   error: 1000
-        // }
-      ]
+      userList: [],
+      userListQuery: {
+        real_name: "",
+        size: 10,
+        page: 1,
+        total: 0
+      }
     };
   },
   watch: {
     userList: function() {}
   },
   created() {
-    var that = this;
-    var userList = JSON.parse(
-      '[{"user_id":"1","parent_id":"0","user_name":"admin","pass_word":"49ba59abbe56e057","user_type":"2","province_id":"130000","city_id":"130900","county_id":"130902","real_name":"admin","industry":"1","linkman":"1","tel":"1","address":"1","device_total":"11","device_num":"12","role_id":"2","state":"1","expiry_time":"0","group_id":"1","balance":"","group_ids":"1","corporation":"","business_no":"","province_name":"河北省","city_name":"沧州市","county_name":"新华区","role_name":"","group_id1":"1","group_name":"根目录","parent_id1":"0","level":"1"},{"user_id":"94","parent_id":"1","user_name":"bbb","pass_word":"8f00b204e9800998","user_type":"1","province_id":"130000","city_id":"130100","county_id":"130102","real_name":"个人","industry":"1","linkman":"123","tel":"123456","address":"123","device_total":"4","device_num":"","role_id":"6","state":"1","expiry_time":"20180920","group_id":"3","balance":"70.00","group_ids":"1,2,3","corporation":"","business_no":"","province_name":"河北省","city_name":"石家庄市","county_name":"长安区","role_name":"二级管理员","group_id1":"3","group_name":"廊坊市","parent_id1":"2","level":"3"},{"user_id":"105","parent_id":"94","user_name":"caca","pass_word":"ac59075b964b0715","user_type":"1","province_id":"130000","city_id":"130100","county_id":"130102","real_name":"123xxx","industry":"","linkman":"","tel":"","address":"","device_total":"7","device_num":"","role_id":"9","state":"1","expiry_time":"20180929","group_id":"3","balance":"","group_ids":"1,2,3","corporation":"","business_no":"","province_name":"河北省","city_name":"石家庄市","county_name":"长安区","role_name":"三级管理员","group_id1":"3","group_name":"廊坊市","parent_id1":"2","level":"3"},{"user_id":"106","parent_id":"1","user_name":"河北省","pass_word":"ac59075b964b0715","user_type":"2","province_id":"130000","city_id":"130100","county_id":"130102","real_name":"河北省用户","industry":"1","linkman":"","tel":"17732154214","address":"0","device_total":"1","device_num":"","role_id":"6","state":"1","expiry_time":"0","group_id":"2","balance":"","group_ids":"1,2","corporation":"","business_no":"","province_name":"河北省","city_name":"石家庄市","county_name":"长安区","role_name":"二级管理员","group_id1":"2","group_name":"河北省","parent_id1":"1","level":"2"},{"user_id":"107","parent_id":"106","user_name":"廊坊市","pass_word":"ad75564da5d89e83","user_type":"2","province_id":"130000","city_id":"130100","county_id":"130102","real_name":"廊坊市用户","industry":"1","linkman":"","tel":"","address":"","device_total":"0","device_num":"","role_id":"6","state":"1","expiry_time":"0","group_id":"3","balance":"","group_ids":"1,2,3","corporation":"","business_no":"","province_name":"河北省","city_name":"石家庄市","county_name":"长安区","role_name":"二级管理员","group_id1":"3","group_name":"廊坊市","parent_id1":"2","level":"3"},{"user_id":"110","parent_id":"1","user_name":"甘肃省","pass_word":"ac59075b964b0715","user_type":"2","province_id":"130000","city_id":"130100","county_id":"130102","real_name":"甘肃省用户","industry":"","linkman":"","tel":"","address":"","device_total":"0","device_num":"","role_id":"6","state":"1","expiry_time":"0","group_id":"71","balance":"","group_ids":"1,71","corporation":"","business_no":"","province_name":"河北省","city_name":"石家庄市","county_name":"长安区","role_name":"二级管理员","group_id1":"71","group_name":"甘肃省","parent_id1":"1","level":"2"},{"user_id":"111","parent_id":"106","user_name":"石家庄","pass_word":"ac59075b964b0715","user_type":"2","province_id":"130000","city_id":"130100","county_id":"130102","real_name":"石家庄","industry":"","linkman":"","tel":"","address":"","device_total":"0","device_num":"","role_id":"6","state":"1","expiry_time":"0","group_id":"4","balance":"","group_ids":"1,2,4","corporation":"","business_no":"","province_name":"河北省","city_name":"石家庄市","county_name":"长安区","role_name":"二级管理员","group_id1":"4","group_name":"石家庄市","parent_id1":"2","level":"3"},{"user_id":"112","parent_id":"111","user_name":"长安区","pass_word":"ac59075b964b0715","user_type":"2","province_id":"130000","city_id":"130100","county_id":"130102","real_name":"长安区","industry":"1","linkman":"","tel":"","address":"","device_total":"0","device_num":"","role_id":"6","state":"1","expiry_time":"0","group_id":"72","balance":"1100.00","group_ids":"1,2,4,72","corporation":"","business_no":"","province_name":"河北省","city_name":"石家庄市","county_name":"长安区","role_name":"二级管理员","group_id1":"72","group_name":"长安区","parent_id1":"4","level":"4"},{"user_id":"114","parent_id":"106","user_name":"衡水市","pass_word":"ac59075b964b0715","user_type":"","province_id":"130000","city_id":"131100","county_id":"131102","real_name":"衡水市有限公司","industry":"1","linkman":"张三","tel":"17723561452","address":"桃城区","device_total":"100","device_num":"","role_id":"6","state":"1","expiry_time":"0","group_id":"73","balance":"","group_ids":"1,2,73","corporation":"规范","business_no":"DVS2","province_name":"河北省","city_name":"衡水市","county_name":"桃城区","role_name":"二级管理员","group_id1":"73","group_name":"衡水市","parent_id1":"2","level":"3"},{"user_id":"116","parent_id":"106","user_name":"邯郸市","pass_word":"ac59075b964b0715","user_type":"","province_id":"130000","city_id":"130400","county_id":"130402","real_name":"邯郸公司","industry":"1","linkman":"李四","tel":"17723541245","address":"","device_total":"200","device_num":"","role_id":"6","state":"1","expiry_time":"20180930","group_id":"74","balance":"","group_ids":"1,2,74","corporation":"","business_no":"","province_name":"河北省","city_name":"邯郸市","county_name":"邯山区","role_name":"二级管理员","group_id1":"74","group_name":"邯郸市","parent_id1":"2","level":"3"}]'
-    );
-    userList.map(user => {
-      user.total = 0;
-      user.alarm = 0;
-      user.online = 0;
-      user.offline = 0;
-      user.error = 0;
-    });
-    that.$set(that.$data, "userList", userList);
-
-    this.$ajax("http://localhost:8080/static/vehicle.json").then(res => {
-      var res2 = [];
-      res.data.map(item => {
-        // let item1 = JSON.parse(JSON.stringify(item));
-        // item1.id += "a";
-        // let item2 = JSON.parse(JSON.stringify(item));
-        // item2.id += "b";
-        // let item3 = JSON.parse(JSON.stringify(item));
-        // item3.id += "c";
-        // let item4 = JSON.parse(JSON.stringify(item));
-        // item4.id += "d";
-        res2.push(item);
-        // res2.push(item1);
-        // res2.push(item2);
-        // res2.push(item3);
-        // res2.push(item4);
-      });
-
-      this.$monitor.init(res2);
-    });
-    var that = this;
-    Vue.prototype.$monitor = {
+    this.init();
+    var vm = this;
+    window.monitor = {
       data: new Map(), //所有数据
       dict: {
         //字典
@@ -197,53 +158,58 @@ export default {
         online: new Set(), //在线
         offline: new Set(), //离线
         error: new Set(), //异常
-        groups: new Map() //userid为key 车辆为value
+        groups: new Map() //group_id为key value为一个Map对象，包括alarm online offline error4个Set对象以及一个普通对象data 存放group原有信息
       },
-      init(data) {
-        var groups = JSON.parse(
-          "[1, 2, 3, 4, 5, 69, 71, 72, 73, 74, 75, 77, 78, 79, 80, 81, 83, 85, 106, 107, 108, 109, 110, 111]"
-        );
+      init(data, groups) {
+        vm.initLoader.setText("建立数据字典");
         //建立分组字典
         this.initGroupDict(groups);
         //初始化车辆
         //1、车辆放入对应分组、并区分状态
         //2、区分总的在线、离线、报警、异常
         data.map(vehicle => {
-          vehicle.group_ids = [];
-          vehicle.group_ids.push(
-            groups[Math.round(Math.random() * 23)].toString()
+          vehicle.group_path = [];
+          var temp = JSON.parse(
+            '["1", "2", "3", "69", "106", "4", "72", "73", "75", "107", "79", "108", "83", "74", "85", "80", "81", "109", "110", "111", "5", "78", "71", "77"]'
           );
-          vehicle.group_ids.push(
-            groups[Math.round(Math.random() * 23)].toString()
+          vehicle.group_path.push(1);
+          vehicle.group_path.push(
+            this.dict.groups
+              .get(temp[Math.round(Math.random() * 23)])
+              .get("data")
+              .group_id.toString()
           );
-          vehicle.group_ids.push(
-            groups[Math.round(Math.random() * 23)].toString()
+          vehicle.group_path.push(
+            this.dict.groups
+              .get(temp[Math.round(Math.random() * 23)])
+              .get("data")
+              .group_id.toString()
           );
-          vehicle.sim_id = vehicle.id;
-          vehicle.time = vehicle.Time;
-          vehicle.lat = vehicle.Lat;
-          vehicle.lng = vehicle.Lon;
-          vehicle.alarm = vehicle.Alarm;
-          vehicle.license = vehicle.name;
-          vehicle.alarm_count = 0;
+          // vehicle.sim_id = vehicle.id;
+          // vehicle.time = vehicle.Time;
+          // vehicle.lat = vehicle.Lat;
+          // vehicle.lng = vehicle.Lon;
+          // vehicle.alarm = vehicle.Alarm;
+          // vehicle.license = vehicle.name;
+          // vehicle.alarm_count = 0;
           //根据sim_id 创建所有数据集合的MAP对象
           this.data.set(vehicle.sim_id, vehicle);
-          if (vehicle.alarm != "0") {
+          if (vehicle.alarm_count != "0") {
             this.dict.alarm.add(vehicle.sim_id);
-
             //车辆所对应的分组 均加入记录
-            this.setGroupDict(vehicle.group_ids, "alarm", vehicle.sim_id);
+            this.setGroupDict(vehicle.group_path, "alarm", vehicle.sim_id);
           }
           if (new Date() - new Date(vehicle.time) > 95132724) {
             this.dict.online.add(vehicle.sim_id);
-            this.setGroupDict(vehicle.group_ids, "online", vehicle.sim_id);
+            this.setGroupDict(vehicle.group_path, "online", vehicle.sim_id);
           } else {
             this.dict.offline.add(vehicle.sim_id);
-            this.setGroupDict(vehicle.group_ids, "offline", vehicle.sim_id);
+            this.setGroupDict(vehicle.group_path, "offline", vehicle.sim_id);
           }
         });
+        vm.initLoader.close();
         initMap(() => {
-          // that.$nextTick(() => {
+          // vm.$nextTick(() => {
           //   initAMapUI();
           //   this.initMap();
           // });
@@ -254,14 +220,18 @@ export default {
           // this.setCurrentGroup();
         }, 0);
       },
-      // setCurrentGroup(){
-      //   var currentGroup = [];
-      //   if(showVehicle.group_id){
-
-      //   }
-      //   this.showVehicle.group_id
-      //   that.$set(that.$data,"currentGroup",currentGroup)
-      // },
+      initGroupDict(groups) {
+        //后台接口、根据当前用户分组 获取所有分组（平铺）
+        groups.map(group => {
+          var groupVehicleMap = new Map();
+          groupVehicleMap.set("alarm", new Set());
+          groupVehicleMap.set("online", new Set());
+          groupVehicleMap.set("offline", new Set());
+          groupVehicleMap.set("error", new Set());
+          groupVehicleMap.set("data", group);
+          this.dict.groups.set(group.group_id.toString(), groupVehicleMap);
+        });
+      },
       setGroupDict(groups, status, sim_id) {
         //传入groups 可以是String Array （String自动转为Array）
         //status 状态类表 alarm online offline error
@@ -271,7 +241,7 @@ export default {
         var groupDict = this.dict.groups;
         groups.map(groups_id => {
           groupDict
-            .get(groups_id)
+            .get(groups_id.toString())
             .get(status)
             .add(sim_id);
         });
@@ -319,19 +289,9 @@ export default {
           }
         );
       },
-      initGroupDict(groups) {
-        //后台接口、根据当前用户分组 获取所有分组（平铺）
-        groups.map(group_id => {
-          var groupVehicleMap = new Map();
-          groupVehicleMap.set("alarm", new Set());
-          groupVehicleMap.set("online", new Set());
-          groupVehicleMap.set("offline", new Set());
-          groupVehicleMap.set("error", new Set());
-          this.dict.groups.set(group_id.toString(), groupVehicleMap);
-        });
-      },
+
       setUserCount() {
-        that.userList.map(user => {
+        vm.userList.map(user => {
           var groupDict = this.dict.groups.get(user.group_id);
           user.alarm = groupDict.get("alarm").size;
           user.online = groupDict.get("online").size;
@@ -357,7 +317,7 @@ export default {
         //离线中删除、加入在线字典
         this.dict.offline.delete(vehicle.sim_id);
         this.dict.online.add(vehicle.sim_id);
-        var groups = this.data.get(vehicle.sim_id).group_ids;
+        var groups = this.data.get(vehicle.sim_id).group_path;
         this.data.get(vehicle.sim_id).lng = vehicle.lng;
         this.data.get(vehicle.sim_id).lat = vehicle.lat;
         this.setGroupDict(groups, "online", vehicle.sim_id);
@@ -366,36 +326,26 @@ export default {
       setOffline(vehicle) {
         this.dict.online.delete(vehicle.sim_id);
         this.dict.offline.add(vehicle.sim_id);
-        var groups = this.data.get(vehicle.sim_id).group_ids;
+        var groups = this.data.get(vehicle.sim_id).group_path;
         this.setGroupDict(groups, "offline", vehicle.sim_id);
         this.deleteGroupDict(groups, "online", vehicle.sim_id);
       },
       setCount() {
-        that.vehicleCount.online = this.dict.online.size;
-        that.vehicleCount.offline = this.dict.offline.size;
-        that.vehicleCount.error = this.dict.error.size;
-        that.vehicleCount.alarm = this.dict.alarm.size;
+        vm.vehicleCount.online = this.dict.online.size;
+        vm.vehicleCount.offline = this.dict.offline.size;
+        vm.vehicleCount.error = this.dict.error.size;
+        vm.vehicleCount.alarm = this.dict.alarm.size;
       },
       setAlarm() {}
     };
 
-    // initMap(() => {
-    //   this.$nextTick(() => {
-    //     // var map = new AMap.Map("container", {
-    //     //   //viewMode: "3D",
-    //     //   //pitch: 55,
-    //     //   // rotation: -45,
-    //     //   zoom: 4
-    //     // });
-    //   });
-    // });
     var ws = new WebSocket("ws://127.0.0.1:9999");
     var socketDataWorker = new Worker("/map/worker-socket.js");
     ws.binaryType = "arraybuffer";
 
     socketDataWorker.onmessage = event => {
       event.data.sim_id = "0" + event.data.sim_id;
-      Monitor.setVehicleData(event.data);
+      monitor.setVehicleData(event.data);
     };
     ws.onmessage = function(evt) {
       socketDataWorker.postMessage(new Uint8Array(evt.data));
@@ -408,6 +358,45 @@ export default {
     });
   },
   methods: {
+    init() {
+      this.initLoader = this.$loading({ text: "初始化分组数据" });
+      getGroupByUser()
+        .then(res => {
+          this.initVehicle(res.data.data);
+        })
+        .catch(err => {
+          this.initLoader.close();
+          this.$alert("初始化分组失败！");
+        });
+    },
+    initVehicle(groups) {
+      this.initLoader.setText("初始化车辆数据");
+      getInitVehicle()
+        .then(res => {
+          var res2 = [];
+          res.data.data.map(item => {
+            res2.push({
+              vehicle_id: item[0],
+              sim_id: item[1],
+              license: item[2],
+              device_id: item[3],
+              group_path: item[4].split(","), //车辆对应分组路径 [path1,path2,path3....]
+              alarm_count: "", //当天报警次数
+              error_count: "", //当天异常次数
+              lng: "", //最后一次定位的经度
+              lat: "", //最后一次定位的纬度
+              last_time: "" //最后定位时间
+            });
+          });
+          window.monitor.init(res2, groups);
+        })
+        .catch(err => {
+          this.initLoader.close();
+          this.$alert("初始车辆化失败！");
+          console.error(err);
+        });
+    },
+
     showVehicleWithGroup(row, column, cell, event) {
       //根据分组显示车辆
       var type = column.property;
@@ -430,7 +419,43 @@ export default {
       this.showVehicle.isShowAll = false;
       this.showVehicle.isShow = false;
     },
-
+    toggleUserList(current) {
+      if (current != "") {
+        this.getUserList();
+      } else {
+        this.$set(this.$data, "userList", []);
+      }
+    },
+    searchUserList() {
+      this.userListQuery.page = 1;
+      this.getUserList();
+    },
+    getUserList() {
+      var query = Object.assign({}, this.userListQuery);
+      getUserList(query)
+        .then(res => {
+          if (res.data.code == 0) {
+            res.data.data.map(user => {
+              user.total = 0;
+              user.alarm = 0;
+              user.online = 0;
+              user.offline = 0;
+              user.error = 0;
+            });
+            this.$set(this.$data, "userList", res.data.data);
+            this.userListQuery.total = res.data.total;
+          } else {
+            this.$set(this.$data, "userList", []);
+            this.userListQuery.total = 0;
+            this.userListQuery.page = 1;
+          }
+        })
+        .catch(() => {});
+    },
+    userListCurrentChange(val) {
+      this.userListQuery.page = val;
+      this.getUserList();
+    },
     add() {
       this.currentVehicles.push({ vehicle_id: new Date().getTime() });
     },
@@ -531,64 +556,7 @@ export default {
     height: 100%;
   }
 }
-.details-container {
-  width: 17%;
-  position: absolute;
-  z-index: 11;
-  right: 20px;
-  top: 20px;
-  bottom: 20px;
-  background: #fff;
-  z-index: 100;
-  ._header {
-    position: relative;
-    height: 60px;
-    padding: 15px;
-    line-height: 1.5;
-    ._text {
-      font-size: 12px;
-      color: @t3;
-    }
-    ._close {
-      position: absolute;
-      transition: all 0.8s;
-      right: 15px;
-      top: 20px;
-      font-size: 20px;
-      cursor: pointer;
-    }
-    ._close:hover {
-      transform: rotate(360deg);
-    }
-  }
-  ._body {
-    padding: 15px;
-    box-sizing: border-box;
-    overflow: auto;
-    position: absolute;
-    top: 60px;
-    bottom: 0;
-    width: 100%;
-    left: 0;
-  }
-  .group-container {
-    .el-collapse-item__header {
-      height: 35px;
-      line-height: 35px;
-      .el-collapse-item__arrow {
-        line-height: 35px;
-      }
-    }
-    .group-name {
-      background: @b4;
-      color: @t2;
-      padding-left: 1em;
-    }
-    .group-body {
-      padding: 12px;
-    }
-  }
-}
+
 .status-container {
   width: 60%;
   position: absolute;

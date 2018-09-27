@@ -6,3 +6,4 @@ export * from "./vehicle.js";
 export * from "./product.js";
 export * from "./report.js";
 export * from "./agreement.js";
+export * from "./monitor.js";
