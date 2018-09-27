@@ -1,5 +1,4 @@
-<template>
-
+<template slot-scope="scope">
     <div style="width:760px; height:420px; border:1px solid #777; background-color:#fff;">
         <div style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
         <el-dialog width="20%" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
@@ -7,90 +6,80 @@
                 <el-row :gutter="30">
                     <el-col :span="24">
                         <el-form-item label="名称" prop="name">
-                            <el-input v-model="formdata.name"></el-input>
+                            <el-input size="small" v-model="formdata.name"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="24">
                         <el-form-item label="报警类型" prop="type">
-                            <el-select v-model="formdata.type" style="width:100%;">
-                                <el-option label="禁入" value="1">禁入</el-option>
-                                <el-option label="禁出" value="2">禁出</el-option>
+                            <el-select size="small" v-model="formdata.type" style="width:100%;">
+                                <el-option label="禁入" value="3">禁入</el-option>
+                                <el-option label="禁出" value="5">禁出</el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="24">
                         <el-form-item label="时间" prop="time">
-                            <el-date-picker v-model="formdata.time" style="width:100%;" value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-                            </el-date-picker>
+                            <el-time-picker size="small" style="width:100%;" is-range v-model="formdata.time" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" placeholder="选择时间范围">
+                            </el-time-picker>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <div style="width:150px;margin:0 auto;">
-                    <el-button type="primary">保存</el-button>
-                    <el-button @click="addDialog=false" type="primary">关闭</el-button>
+                    <el-button @click="save" type="primary">保存</el-button>
+                    <el-button @click="down" type="primary">关闭</el-button>
                 </div>
             </el-form>
         </el-dialog>
-        <div class="input-card">
-            <div class="input-item">
-                <input type="radio" name='func' checked="" value='marker'>
-                <span class="input-text">画点</span>
-                <input type="radio" name='func' value='polyline'>
-                <span class="input-text">画折线</span>
-                <input type="radio" name='func' value='polygon'>
-                <span class="input-text">画多边形</span>
+        <div v-if="operation" class="input-card">
+            <div class="input-item" style="margin-top:15px;">
+                <el-radio style="margin-left:0;padding-left:0" @change="selectRadio" v-model="radio" label="circle">画圆</el-radio>
+                <el-radio style="margin-left:15px;padding-left:0" @change="selectRadio" v-model="radio" label="rectangle">画矩形</el-radio>
+                <el-radio style="margin-left:15px;padding-left:0" @change="selectRadio" v-model="radio" label="polygon">画多边形</el-radio>
             </div>
-            <div class="input-item">
-                <input type="radio" name='func' value='rectangle'>
-                <span style="margin-right: 26px;" class="input-text">画矩形</span>
-                <input type="radio" name='func' value='circle'>
-                <span class="input-text">画圆</span>
-            </div>
-            <div class="input-item">
-                <!-- <input id="clear" type="button" class="btn" value="清除" />
-                <input id="close" type="button" class="btn" value="关闭绘图" /> -->
-                <el-button @click="clear" class="btn">清除</el-button>
-                <el-button @click="close" class="btn">关闭绘图</el-button>
+            <div class="input-item item-btn" style="margin-top:24px; width:227px;margin:0 auto;">
+                <!-- <el-button @click="clear" class="btn">清除</el-button> -->
+                <el-button @click="close" size="mini" icon="iconfont icon-tuodong"></el-button>
+                <el-button class="btn" @click="down" style="margin-left:95px;">关闭绘图</el-button>
             </div>
         </div>
-        <div style="width:760px;height:420px; position:absolute;left:0;right:0;top:0;bottom:0; z-index:99;background-color:#fff;">
-            <el-form :model="tableQuery" ref="baseForm">
-                <el-row :gutter="30">
-                    <el-col :span="10">
-                        <el-form-item label="名称" prop="name">
-                            <el-input v-model="tableQuery.name" size="small"></el-input>
+        <div v-show="areaType" style="width:760px;height:420px; position:absolute;left:0;right:0;top:0;bottom:0;border:1px solid #777; z-index:99;background-color:#fff; ">
+            <el-form :model="tableQuery " ref="baseForm ">
+                <el-row :gutter="30 ">
+                    <el-col :span="10 ">
+                        <el-form-item label="名称 " prop="name ">
+                            <el-input v-model="tableQuery.name " size="small "></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="管理类型" prop="type">
-                            <el-input v-model="tableQuery.type" size="small"></el-input>
+                    <el-col :span="10 ">
+                        <el-form-item label="管理类型 " prop="type ">
+                            <el-input v-model="tableQuery.type " size="small "></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="4">
-                        <el-form-item style="text-align:center;margin-top:40px;">
-                            <el-button type="primary" @click="formSubmit" size="small">查询</el-button>
+                    <el-col :span="4 ">
+                        <el-form-item style="text-align:center;margin-top:40px; ">
+                            <el-button type="primary " @click="selectForm " size="small ">查询</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-button type="primary" @click="addForm" size="small">添加行车区域</el-button>
-                <el-button type="primary" @click="addForm" size="small">添加自定义区域</el-button>
+                <el-button type="primary " @click="addForm " size="small ">添加行车区域</el-button>
+                <el-button type="primary " @click="addForm " size="small ">添加自定义区域</el-button>
             </el-form>
-            <el-table :data="tableData.data">
-                <el-table-column prop="sequence" label="序号" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="type" label="管理类型" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="name" label="名称" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="alarm_type" label="报警类型" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column prop="time" label="时间" :formatter="$utils.baseFormatter"> </el-table-column>
-                <el-table-column width="150" label="操作">
-                    <template slot-scope="scope">
-                        <label style="margin-right:3px;">添加车辆</label>
-                        <label style="margin-right:3px;">删除</label>
+            <el-table :data="tableData.data ">
+                <el-table-column prop="sequence" label="序号 " :formatter="$utils.baseFormatter "> </el-table-column>
+                <el-table-column prop="type" label="管理类型 " :formatter="$utils.baseFormatter "> </el-table-column>
+                <el-table-column prop="name" label="名称 " :formatter="$utils.baseFormatter "> </el-table-column>
+                <el-table-column prop="alarm_type" label="报警类型 " :formatter="$utils.baseFormatter "> </el-table-column>
+                <el-table-column prop="time" label="时间 " :formatter="$utils.baseFormatter "> </el-table-column>
+                <el-table-column width="150" label="操作 ">
+                    <template slot-scope="scope ">
+                        <label style="margin-right:3px; ">添加车辆</label>
+                        <label style="margin-right:3px; ">删除</label>
                         <label>查看</label>
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="admin-table-pager">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+            <div class="admin-table-pager ">
+                <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
                 </el-pagination>
             </div>
         </div>
@@ -99,30 +88,54 @@
 <script>
 /*eslint-disable*/
 import initMap from "@/utils/map.js";
+import moment from "moment";
 export default {
-  created() {},
+  created() {
+    this.socket = new WebSocket("ws://127.0.0.1:5000");
+  },
   mounted() {
+    var vm = this;
     initMap(() => {
       var map = new AMap.Map(this.$refs.map, {
         zoom: 14
       });
-      //   var mouseTool = new AMap.MouseTool(map);
-      //   var overlays = [];
-      //   this.mouseTool.on("draw", function(e) {
-      //     overlays.push(e.obj);
-      //   });
+      vm.$set(vm.mapData, "map", map);
+      map.plugin(["AMap.MouseTool"], function() {
+        var mouseTool = new AMap.MouseTool(map);
+        vm.$set(vm.mapData, "mouseTool", mouseTool);
+        var overlays = [];
+        mouseTool.on("draw", function(e) {
+          if (vm.label == "circle") {
+            var Center = e.obj.getCenter();
+            var Radius = e.obj.getRadius();
+            overlays[0] = Center;
+            overlays[1] = Radius;
+          } else if (vm.label == "rectangle") {
+            var Rectangle = e.obj.getOptions();
+            overlays[0] = Rectangle;
+          } else if (vm.label == "polygon") {
+            var Polygon = e.obj.getPath();
+            overlays[0] = Polygon;
+          }
+          map.remove(overlays);
+          vm.addDialog = true;
+        });
+        vm.$set(vm.mapData, "overlays", overlays);
+      });
     });
-    //监听draw事件可获取画好的覆盖物
-    // var radios = document.getElementsByName("func");
-    // for (var i = 0; i < radios.length; i += 1) {
-    //   radios[i].onchange = function(e) {
-    //     this.draw(e.target.value);
-    //   };
-    // }
-    // this.draw("marker");
   },
   data() {
     return {
+      radio: false,
+      label: "",
+      areaType: true,
+      operation: false,
+      mapData: {
+        map: {},
+        mouseTool: {},
+        overlays: [],
+        radios: {}
+      },
       addDialog: false,
       addKey: 0,
       tableQuery: {
@@ -153,11 +166,79 @@ export default {
     };
   },
   methods: {
-    mouseTool() {},
-    formSubmit() {},
+    save() {
+      var str;
+      this.formdata.start_time =
+        "000000" + moment(this.formdata.time[0]).format("HHmmss");
+      this.formdata.stop_time =
+        "000000" + moment(this.formdata.time[1]).format("HHmmss");
+      if (this.label == "circle") {
+        str =
+          "^0x8600|" +
+          this.formdata.type +
+          "|" +
+          this.mapData.overlays[0].lat +
+          "|" +
+          this.mapData.overlays[0].lng +
+          "|" +
+          this.mapData.overlays[1] +
+          "|" +
+          this.formdata.start_time +
+          "|" +
+          this.formdata.stop_time +
+          "$";
+      } else if (this.label == "rectangle") {
+        str =
+          "^0x8602|" +
+          this.formdata.type +
+          "|" +
+          this.mapData.overlays[0].path[0].lat +
+          "|" +
+          this.mapData.overlays[0].path[0].lng +
+          "|" +
+          this.mapData.overlays[0].path[3].lat +
+          "|" +
+          this.mapData.overlays[0].path[3].lng +
+          "|" +
+          this.formdata.start_time +
+          "|" +
+          this.formdata.stop_time +
+          "$";
+      } else if (this.label == "polygon") {
+        var vertices = "";
+        this.mapData.overlays[0].map(item => {
+          vertices = vertices + item.lat + "," + item.lng + ";";
+        });
+        vertices = vertices.substring(0, vertices.lastIndexOf(";"));
+        str =
+          "^0x8604|" +
+          this.formdata.start_time +
+          "|" +
+          this.formdata.stop_time +
+          "|" +
+          vertices +
+          "$";
+      }
+      this.socket.send(str);
+    },
+    selectRadio(label) {
+      this.label = label;
+      this.draw(label);
+    },
+    selectForm() {},
     addForm() {
-      this.addKey++;
-      this.addDialog = true;
+      this.areaType = false;
+      this.operation = true;
+    },
+    down() {
+      this.addDialog = false;
+      this.operation = false;
+      this.areaType = true;
+      this.radio = false;
+      this.formdata.time = "";
+      this.formdata.name = "";
+      this.formdata.type = "";
+      this.mapData.mouseTool.close(true);
     },
     // 分页
     handleSizeChange(val) {
@@ -169,64 +250,43 @@ export default {
       this.tableQuery.page = val;
       this.getTable();
     },
-    clear() {
-      //   map.remove(overlays);
-      //   overlays = [];
-    },
     close() {
-      //   mouseTool.close(true); //关闭，并清除覆盖物
-      //   for (var i = 0; i < radios.length; i += 1) {
-      //     radios[i].checked = false;
-      //   }
+      this.mapData.mouseTool.close(true); //关闭，并清除覆盖物
+      this.radio = false;
     },
     draw(type) {
-      console.log(type);
-      //   switch (type) {
-      //     case "marker": {
-      //       this.mouseTool.marker({
-      //         //同Marker的Option设置
-      //       });
-      //       break;
-      //     }
-      //     case "polyline": {
-      //       this.mouseTool.polyline({
-      //         strokeColor: "#80d8ff"
-      //         //同Polyline的Option设置
-      //       });
-      //       break;
-      //     }
-      //     case "polygon": {
-      //       this.mouseTool.polygon({
-      //         fillColor: "#00b0ff",
-      //         strokeColor: "#80d8ff"
-      //         //同Polygon的Option设置
-      //       });
-      //       break;
-      //     }
-      //     case "rectangle": {
-      //       this.mouseTool.rectangle({
-      //         fillColor: "#00b0ff",
-      //         strokeColor: "#80d8ff"
-      //         //同Polygon的Option设置
-      //       });
-      //       break;
-      //     }
-      //     case "circle": {
-      //       this.mouseTool.circle({
-      //         fillColor: "#00b0ff",
-      //         strokeColor: "#80d8ff"
-      //         //同Circle的Option设置
-      //       });
-      //       break;
-      //     }
-      //   }
+      switch (type) {
+        case "polygon": {
+          this.mapData.mouseTool.polygon({
+            fillColor: "#00b0ff",
+            strokeColor: "#80d8ff"
+            //同Polygon的Option设置
+          });
+          break;
+        }
+        case "rectangle": {
+          this.mapData.mouseTool.rectangle({
+            fillColor: "#00b0ff",
+            strokeColor: "#80d8ff"
+            //同Polygon的Option设置
+          });
+          break;
+        }
+        case "circle": {
+          this.mapData.mouseTool.circle({
+            fillColor: "#00b0ff",
+            strokeColor: "#80d8ff"
+            //同Circle的Option设置
+          });
+          break;
+        }
+      }
     }
   }
 };
 </script>
 <style>
 .btn {
-  float: left;
   width: 72px;
   height: 26px;
   display: inline-block;
@@ -240,8 +300,6 @@ export default {
   line-height: 1.5;
   border-radius: 1rem;
   cursor: pointer;
-  margin-left: 24px;
-  margin-right: 12px;
 }
 .btn:hover {
   background-color: #25a5f7;

@@ -151,7 +151,7 @@ export default {
     userList: function() {}
   },
   created() {
-    this.init();
+    // this.init();
     var vm = this;
     window.monitor = {
       data: new Map(), //所有数据
