@@ -126,6 +126,7 @@ export default {
     },
     getGroupSon() {
       var groupChildrens = [];
+      // eslint-disable-next-line
       for (let [key, value] of window.monitor.dict.groups) {
         if (value.get("data").parent_id == this.showVehicle.group_id) {
           groupChildrens.push(value.get("data"));
@@ -135,7 +136,9 @@ export default {
     },
     getGroupChildrens() {
       //this.currentGroupChildrens
-      getGroupChildrens({ group_id: this.currentGroup }).then(res => {});
+      // eslint-disable-next-line 
+      getGroupChildrens({ group_id: this.currentGroup }).then(res => {
+      }); 
     },
     groupChange() {
       this.pager.size = 50;
