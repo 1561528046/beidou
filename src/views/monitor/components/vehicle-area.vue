@@ -109,7 +109,6 @@ export default {
       map.plugin(["AMap.MouseTool"], function() {
         var mousetool = new AMap.MouseTool(map);
       });
-      // var mouseTool = new AMap.MouseTool(map);
       //   var overlays = [];
       //   this.mouseTool.on("draw", function(e) {
       //     overlays.push(e.obj);
