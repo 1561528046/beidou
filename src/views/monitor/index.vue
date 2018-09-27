@@ -148,7 +148,7 @@ export default {
     userList: function() {}
   },
   created() {
-    this.init();
+    // this.init();
     var vm = this;
     window.monitor = {
       data: new Map(), //所有数据
@@ -303,11 +303,12 @@ export default {
         if (this.data.has(vehicleData.sim_id)) {
           vehicleData.lat = vehicleData.lat - 0 + Math.random() * 0.8;
           vehicleData.lng = vehicleData.lng - 0 + Math.random() * 0.8;
-          vehicleData.sim_id = 10000000001 + Math.round(Math.random()*9000000000);
+          vehicleData.sim_id =
+            10000000001 + Math.round(Math.random() * 9000000000);
           if (vehicleData.alarm != "") {
             this.setAlarm(vehicleData);
           }
-          if (new Date() - new Date(vehicleData.time) > 95132724*10) {
+          if (new Date() - new Date(vehicleData.time) > 95132724 * 10) {
             this.setOnline(vehicleData);
           } else {
             this.setOffline(vehicleData);
@@ -359,44 +360,44 @@ export default {
     });
   },
   methods: {
-    init() {
-      this.initLoader = this.$loading({ text: "初始化分组数据" });
-      getGroupByUser()
-        .then(res => {
-          this.initVehicle(res.data.data);
-        })
-        .catch(err => {
-          this.initLoader.close();
-          this.$alert("初始化分组失败！");
-        });
-    },
-    initVehicle(groups) {
-      this.initLoader.setText("初始化车辆数据");
-      getInitVehicle()
-        .then(res => {
-          var res2 = [];
-          res.data.data.map(item => {
-            res2.push({
-              vehicle_id: item[0],
-              sim_id: item[1],
-              license: item[2],
-              device_id: item[3],
-              group_path: item[4].split(","), //车辆对应分组路径 [path1,path2,path3....]
-              alarm_count: "", //当天报警次数
-              error_count: "", //当天异常次数
-              lng: "", //最后一次定位的经度
-              lat: "", //最后一次定位的纬度
-              last_time: "" //最后定位时间
-            });
-          });
-          window.monitor.init(res2, groups);
-        })
-        .catch(err => {
-          this.initLoader.close();
-          this.$alert("初始车辆化失败！");
-          console.error(err);
-        });
-    },
+    // init() {
+    //   this.initLoader = this.$loading({ text: "初始化分组数据" });
+    //   getGroupByUser()
+    //     .then(res => {
+    //       this.initVehicle(res.data.data);
+    //     })
+    //     .catch(err => {
+    //       this.initLoader.close();
+    //       this.$alert("初始化分组失败！");
+    //     });
+    // },
+    // initVehicle(groups) {
+    //   this.initLoader.setText("初始化车辆数据");
+    //   getInitVehicle()
+    //     .then(res => {
+    //       var res2 = [];
+    //       res.data.data.map(item => {
+    //         res2.push({
+    //           vehicle_id: item[0],
+    //           sim_id: item[1],
+    //           license: item[2],
+    //           device_id: item[3],
+    //           group_path: item[4].split(","), //车辆对应分组路径 [path1,path2,path3....]
+    //           alarm_count: "", //当天报警次数
+    //           error_count: "", //当天异常次数
+    //           lng: "", //最后一次定位的经度
+    //           lat: "", //最后一次定位的纬度
+    //           last_time: "" //最后定位时间
+    //         });
+    //       });
+    //       window.monitor.init(res2, groups);
+    //     })
+    //     .catch(err => {
+    //       this.initLoader.close();
+    //       this.$alert("初始车辆化失败！");
+    //       console.error(err);
+    //     });
+    // },
 
     showVehicleWithGroup(row, column, cell, event) {
       //根据分组显示车辆
