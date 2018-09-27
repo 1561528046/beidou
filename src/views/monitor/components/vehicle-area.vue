@@ -106,7 +106,10 @@ export default {
       var map = new AMap.Map(this.$refs.map, {
         zoom: 14
       });
-      //   var mouseTool = new AMap.MouseTool(map);
+      map.plugin(["AMap.MouseTool"], function() {
+        var mousetool = new AMap.MouseTool(map);
+      });
+      // var mouseTool = new AMap.MouseTool(map);
       //   var overlays = [];
       //   this.mouseTool.on("draw", function(e) {
       //     overlays.push(e.obj);
