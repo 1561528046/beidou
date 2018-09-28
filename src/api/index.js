@@ -7,3 +7,4 @@ export * from "./product.js";
 export * from "./report.js";
 export * from "./agreement.js";
 export * from "./monitor.js";
+export * from "./fence.js";
