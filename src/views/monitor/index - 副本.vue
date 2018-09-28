@@ -6,7 +6,7 @@
 
 <script>
 /*eslint-disable*/
-import initMap from "@/utils/map.js";
+import { initMap } from "@/utils/map.js";
 export default {
   data() {
     return {

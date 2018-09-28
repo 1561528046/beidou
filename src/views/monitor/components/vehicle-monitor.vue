@@ -7,7 +7,7 @@
     </div>
     <div class="_map">
       <!-- <a class="_map-btn">展开地图</a> -->
-      <div class="_map-container" ref="map"></div>
+      <div class="_map-container" ref="vehicle_map"></div>
     </div>
     <div class="_body">
       <el-row>
@@ -15,10 +15,10 @@
           定位时间：2018-05-05 13：22：36
         </el-col>
         <el-col :span="12">
-          联系人：XXX
+          {{mapData.vehicle.linkman}}
         </el-col>
         <el-col :span="12">
-          联系方式： 13000000000
+          联系方式： {{mapData.vehicle.tel}}
         </el-col>
         <el-col :span="12">
           时速：60/km
@@ -43,15 +43,21 @@
   </div>
 </template>
 <script>
-import initMap from "@/utils/map.js";
+import { initMap, createMarker, setMarker } from "@/utils/map.js";
 export default {
   data() {
     return {
+      mapData: {
+        //注释属性为动态添加，为非响应式数据！
+        // map:{},
+        // marker:{},
+        vehicle: {} //车辆数据、setInterval刷新
+      },
       bodyWidth: "",
       bodyHeight: ""
     };
   },
-  props: ["index"],
+  props: ["index", "vehicle"],
   computed: {
     position: function() {
       var maxRow = Math.floor(this.bodyHeight / 360);
@@ -66,20 +72,46 @@ export default {
   mounted() {
     this.bodyWidth = this.$el.parentElement.scrollWidth;
     this.bodyHeight = this.$el.parentElement.scrollHeight;
+    this.mapData.vehicle = Object.assign(
+      this.$props.vehicle,
+      window.monitor.data.get(this.$props.vehicle.sim_id)
+    );
+    var vm = this;
     initMap(() => {
-      this.$nextTick(() => {
-        // eslint-disable-next-line
-        new AMap.Map(this.$refs.map, {
-          //viewMode: "3D",
-          //pitch: 55,
-          // rotation: -45,
-          // features: ["bg", "road"],
-          zoom: 20
-        });
+      var AMap = window.AMap;
+      // eslint-disable-next-line
+      vm.mapData.map = new AMap.Map(vm.$refs.vehicle_map, {
+        viewMode: "3D",
+        pitch: 55,
+        rotation: -45,
+        center: [vm.mapData.vehicle.lng, vm.mapData.vehicle.lat],
+        dragEnable: false,
+        keyboardEnable: false,
+        zoom: 15
       });
+      vm.mapData.map.on("zoomchange", () => {
+        vm.mapData.map.setCenter(
+          new AMap.LngLat(vm.mapData.vehicle.lng, vm.mapData.vehicle.lat)
+        );
+      });
+      vm.mapData.marker = createMarker(vm.mapData.vehicle, AMap);
+      vm.mapData.marker.setMap(vm.mapData.map);
+      this.updateVehicle();
     });
   },
   methods: {
+    updateVehicle() {
+      var vehicleData = Object.assign(
+        this.$props.vehicle,
+        window.monitor.data.get(this.$props.vehicle.sim_id)
+      );
+      vehicleData.lng += new Date().getTime() / 1e15;
+      vehicleData.lat += new Date().getTime() / 1e15;
+      vehicleData.angle = parseInt(Math.random() * 10);
+      this.$set(this.mapData, "vehicle", vehicleData);
+      setMarker(this.mapData.marker, vehicleData, window.AMap);
+      this.mapData.map.setCenter(this.mapData.marker.getPosition());
+    },
     close() {
       this.$emit("close");
     }

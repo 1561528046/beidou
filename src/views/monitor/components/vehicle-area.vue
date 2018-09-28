@@ -87,7 +87,7 @@
 </template>
 <script>
 /*eslint-disable*/
-import initMap from "@/utils/map.js";
+import {initMap} from "@/utils/map.js";
 import moment from "moment";
 export default {
   created() {

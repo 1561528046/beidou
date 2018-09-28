@@ -11,15 +11,15 @@
         <i class="el-icon-close" @click="closeShowVehicle"></i>
       </div>
     </div>
-    <div class="_body" v-if="showVehicle.isShowAll">
+    <div class="_body" v-show="showVehicle.isShowAll">
       <el-table :data="list" size="small" style="width: 100%">
         <el-table-column prop="license" label="车牌号">
         </el-table-column>
-        <el-table-column prop="error_count" label="今日异常数" v-if="showVehicle.type=='error'">
+        <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="allalarm">
         </el-table-column>
-        <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'">
+        <el-table-column prop="error_count" label="今日异常数" v-if="showVehicle.type=='error'" key="allerror">
         </el-table-column>
-        <el-table-column label="在线状态" v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1">
+        <el-table-column label="在线状态" v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1" key="allOnline">
           <template slot-scope="scope">
             <span class="vehicle-online" v-if="scope.row.online">在线</span>
             <span class="vehicle-offline" v-if="!scope.row.online">离线</span>
@@ -44,18 +44,18 @@
               <el-option label="全部分组" value=""></el-option>
               <el-option :label="childrenGroup.group_name" :value="childrenGroup.group_id" v-for="childrenGroup in currentGroupSonChildrens" :key="childrenGroup.group_id"></el-option>
             </el-select>
-            <el-table :data="list" size="small" style="width: 100%" v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1" :key="group.group_id+'table'">
+            <el-table :data="list" size="small" style="width: 100%">
               <el-table-column prop="license" label="车牌号">
               </el-table-column>
-              <el-table-column label="在线状态" :formatter="onlineState">
+              <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="tablealarm">
               </el-table-column>
-            </el-table>
-            <el-table :data="list" size="small" style="width: 100%" v-if="['error','alarm'].indexOf(showVehicle.type)!=-1" :key="group.group_id+'table'">
-              <el-table-column prop="license" label="车牌号">
+              <el-table-column prop="error_count" label="今日异常数" v-if="showVehicle.type=='error'" key="tableerror">
               </el-table-column>
-              <el-table-column prop="error_count" label="今日异常数" v-if="showVehicle.type=='error'">
-              </el-table-column>
-              <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'">
+              <el-table-column label="在线状态" v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1" key="tableOnline">
+                <template slot-scope="scope">
+                  <span class="vehicle-online" v-if="scope.row.online">在线</span>
+                  <span class="vehicle-offline" v-if="!scope.row.online">离线</span>
+                </template>
               </el-table-column>
             </el-table>
             <div class="_pager">
@@ -152,13 +152,6 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
-    onlineState(row) {
-      if (row.online) {
-        return `<span class="vehicle-online">在线</span>`;
-      } else {
-        return `<span class="vehicle-offline" v-if="!scope.row.online">离线</span>`;
-      }
-    },
     initPager() {
       this.pager.size = 50;
       this.pager.total = 0;

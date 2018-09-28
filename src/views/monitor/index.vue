@@ -20,9 +20,9 @@
           <div class="vehicle-search shadow-box">
             <el-row :gutter="20">
               <el-col :span="20">
-                <el-input placeholder="搜索车辆（车牌号、终端ID）" size="small" class="input-with-select">
-                  <el-button slot="append" icon="el-icon-search"></el-button>
-                </el-input>
+                <el-autocomplete class="inline-input" v-model="searchVehicle" :fetch-suggestions="vehicleSearch" placeholder="搜索车辆（车牌号、终端ID）" @select="vehicleSelected" size="small" icon="el-icon-search">
+                  <el-button slot="append"></el-button>
+                </el-autocomplete>
               </el-col>
               <el-col :span="4" class="_right">
                 <i class="el-icon-more" @click="add"></i>
@@ -30,7 +30,7 @@
             </el-row>
           </div>
           <transition-group name="list-complete" tag="div" class="current-vehicle-container">
-            <vehicle-monitor class="list-complete-item" @close="remove(vehicle.vehicle_id)" v-for="(vehicle,index) in currentVehicles" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
+            <vehicle-monitor class="list-complete-item" @close="remove(vehicle.vehicle_id)" v-for="(vehicle,index) in currentVehicles" :vehicle="vehicle" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
           </transition-group>
 
           <el-collapse accordion class="status-container shadow-box" @change="toggleUserList">
@@ -65,7 +65,7 @@
                   </el-form-item>
                 </el-form>
                 <div class="_table">
-                  <el-table :data="userList" size="small" style="width: 100%" @cell-click="showVehicleWithGroup">
+                  <el-table :data="userList" size="small" style="width: 100%" @cell-click="showVehicleWithGroup" key="user-table">
                     <el-table-column prop="user_name" label="用户名称" width="180">
                     </el-table-column>
                     <el-table-column prop="total" label="车辆总数">
@@ -106,7 +106,7 @@
 <script>
 /*eslint-disable*/
 import { getInitVehicle, getUserList, getGroupByUser } from "@/api/index.js";
-import initMap from "@/utils/map.js";
+import { initMap } from "@/utils/map.js";
 import vehicleMonitor from "./components/vehicle-monitor.vue";
 import vehicleDetails from "./components/vehicle-details.vue";
 import vehicleArea from "./components/vehicle-area.vue";
@@ -116,6 +116,7 @@ export default {
   components: { vehicleMonitor, vehicleDetails, vehicleArea },
   data() {
     return {
+      searchVehicle: "",
       initLoader: {},
       currentGroup: {},
       showVehicle: {
@@ -125,7 +126,15 @@ export default {
         type: "",
         sub_title: ""
       },
-      currentVehicles: [{ vehicle_id: 1 }],
+      currentVehicles: [
+        // {
+        //   vehicle_id: "10000000001",
+        //   sim_id: "10000000001",
+        //   linkman: "zzz",
+        //   tel: "15930616103",
+        //   contract_date: "20180808"
+        // }
+      ],
       currentTab: "m",
       maps: [],
       alarmList: {},
@@ -151,7 +160,7 @@ export default {
     userList: function() {}
   },
   created() {
-    // this.init();
+    this.init();
     var vm = this;
     window.monitor = {
       data: new Map(), //所有数据
@@ -195,6 +204,10 @@ export default {
           // vehicle.alarm = vehicle.Alarm;
           // vehicle.license = vehicle.name;
           // vehicle.alarm_count = 0;
+
+          vehicle.lat = 39.0 + Math.random();
+          vehicle.lng = 116.0 + Math.random();
+
           //根据sim_id 创建所有数据集合的MAP对象
           this.data.set(vehicle.sim_id, vehicle);
           if (vehicle.alarm_count != "0") {
@@ -490,8 +503,29 @@ export default {
       this.userListQuery.page = val;
       this.getUserList();
     },
+    vehicleSearch(queryString, cb) {
+      var result = [];
+      for (let [sim_id, vehicle] of monitor.data) {
+        if (vehicle.license.indexOf(queryString)) {
+          result.push(vehicle);
+        }
+        if (result.length > 20) {
+          break;
+        }
+      }
+    },
+    vehicleSelected() {
+      console.log(arguments);
+    },
     add() {
-      this.currentVehicles.push({ vehicle_id: new Date().getTime() });
+      this.currentVehicles.push({
+        vehicle_id: "10000000001",
+        sim_id: "10000000001",
+        linkman: "zzz",
+        tel: "15930616103",
+        contract_date: "20180808",
+        angle: 65
+      });
     },
     remove(vehicle_id) {
       var index = this.currentVehicles.findIndex(item => {
