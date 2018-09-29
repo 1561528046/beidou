@@ -73,6 +73,7 @@
         <el-radio style="margin-left:0;padding-left:0" @change="selectRadio" v-model="radio" label="circle">画圆</el-radio>
         <el-radio style="margin-left:15px;padding-left:0" @change="selectRadio" v-model="radio" label="rectangle">画矩形</el-radio>
         <el-radio style="margin-left:15px;padding-left:0" @change="selectRadio" v-model="radio" label="polygon">画多边形</el-radio>
+        <el-radio style="margin-left:0;" @change="selectRadio" v-model="radio" label="marker">画点</el-radio>
       </div>
       <div class="input-item item-btn" style="margin-top:24px; width:227px;margin:0 auto;">
         <el-button @click="close" size="mini" icon="iconfont icon-tuodong"></el-button>
@@ -81,11 +82,11 @@
     </div>
     <!-- 列表 -->
     <div v-show="areaType" style="width:760px;height:420px; position:absolute;left:0;right:0;top:0;bottom:0;border:1px solid #777; z-index:99;background-color:#fff; ">
-      <el-form :model="tableQuery " ref="baseForm ">
+      <el-form :model="tableQuery " @submit.native.prevent ref="baseForm ">
         <el-row :gutter="30 ">
           <el-col :span="10 ">
             <el-form-item label="名称 " prop="name ">
-              <el-input v-model="tableQuery.AreaName " size="small "></el-input>
+              <el-input v-model="tableQuery.AreaName" size="small "></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="10 ">
@@ -95,7 +96,7 @@
           </el-col>
           <el-col :span="4 ">
             <el-form-item style="text-align:center;margin-top:40px; ">
-              <el-button type="primary " @click="selectForm " size="small ">查询</el-button>
+              <el-button type="primary " native-type="submit" @click="getTable" size="small ">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -106,7 +107,12 @@
         <el-table-column prop="AreaId" label="序号 " :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="type" label="管理类型 " :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="AreaName" label="名称 " :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="AreaProperty" label="报警类型 " :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="AreaProperty" label="报警类型 " :formatter="$utils.baseFormatter ">
+          <template slot-scope="scope">
+            <label v-if="scope.row.AreaProperty=='3'">禁入</label>
+            <label v-if="scope.row.AreaProperty=='5'">禁出</label>
+          </template>
+        </el-table-column>
         <el-table-column prop="time" label="时间 " :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column width="150" label="操作 ">
           <template slot-scope="scope ">
@@ -131,7 +137,7 @@
 </template>
 <script>
 /*eslint-disable*/
-import {initMap} from "@/utils/map.js";
+import { initMap } from "@/utils/map.js";
 import moment from "moment";
 import { AddRegion, GetRegionByPage, DeleteRegion } from "@/api/index.js";
 export default {
@@ -141,6 +147,8 @@ export default {
   },
   mounted() {
     var vm = this;
+    var district,
+      polygons = [];
     initMap(() => {
       var map = new AMap.Map(this.$refs.map, {
         zoom: 14
@@ -162,14 +170,15 @@ export default {
           } else if (vm.label == "polygon") {
             var Polygon = e.obj.getPath();
             overlays[0] = Polygon;
+          } else if (vm.label == "marker") {
+            var Marker = e.obj.getPosition();
+            console.log(Marker);
           }
           map.remove(overlays);
           vm.addDialog = true;
         });
         vm.$set(vm.mapData, "overlays", overlays);
       });
-      var district,
-        polygons = [];
       map.plugin(["AMap.DistrictSearch"], function() {
         var opts = {
           subdistrict: 0, //获取边界不需要返回下级行政区
@@ -219,6 +228,9 @@ export default {
   },
   data() {
     return {
+      circleLat: "", //圆中心点纬度
+      circleLng: "", //圆中心点经度
+      circleRadius: "", //圆半径
       AreaId: "",
       radio: false,
       label: "",
@@ -235,7 +247,7 @@ export default {
         mouseTool: {},
         district: {},
         circle: {},
-        rectangle:{},
+        rectangle: {},
         polygons: [],
         overlays: [],
         radios: {}
@@ -269,12 +281,15 @@ export default {
     };
   },
   methods: {
+    // 查看所画区域
     selceForm(scope) {
       console.log(scope);
+      //根据不同类型选择显示
       this.mapData.circle.setMap(this.mapData.map);
       // 缩放地图到合适的视野级别
       this.mapData.map.setFitView([this.mapData.circle]);
     },
+    // 删除区域
     delForm(scope) {
       this.AreaId = scope.row.AreaId;
       this.delDialog = true;
@@ -318,7 +333,12 @@ export default {
       var vs = this;
       var data = {};
       var type = "3";
+      // var sun = "";
       this.mapData.district.search(this.xingzheng, function(status, result) {
+        // result.districtList[0].boundaries[9].map(ison => {
+        //   sun = sun + "[" + ison.lng + "," + ison.lat + "]" + ",";
+        // });
+        // console.log(sun);
         if (result.districtList[0].boundaries.length > 1) {
           type = "4";
         }
@@ -512,6 +532,12 @@ export default {
     // 根据选择(画圆,画矩形,画多边形)调用工具
     draw(type) {
       switch (type) {
+        case "marker": {
+          this.mapData.mouseTool.marker({
+            //同Marker的Option设置
+          });
+          break;
+        }
         case "polygon": {
           this.mapData.mouseTool.polygon({
             fillColor: "#00b0ff",
@@ -538,8 +564,6 @@ export default {
         }
       }
     },
-    // 列表查询
-    selectForm() {},
     // 分页
     handleSizeChange(val) {
       this.tableQuery.page = 1;

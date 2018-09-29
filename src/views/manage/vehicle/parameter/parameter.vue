@@ -5,7 +5,7 @@
         <el-tabs style=" width: 100%;position: relative; background-color:#fff;" type="border-card" @tab-click="handleClick">
           <el-tab-pane label="通讯设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-communication :message="communication" @instruction="instruction" @setting="setting"></choose-communication>
+            <choose-communication :respond="respond" :message="communication" @instruction="instruction" @setting="setting"></choose-communication>
           </el-tab-pane>
           <el-tab-pane label="车辆信息设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
@@ -53,13 +53,11 @@ export default {
     choosePicture
   },
   created() {
-    this.socket = new WebSocket("ws://127.0.0.1:5000");
-    window.socket = this.socket;
+    this.socket = new WebSocket("ws://192.168.88.88:5000");
     // 服务端返回数据回调
+    var vm = this;
     this.socket.onmessage = function(event) {
-      if (event.data[event.data.length - 1] == 1) {
-        console.log(event.data);
-      }
+      vm.fromSend(event.data);
     };
   },
   beforeDestroy() {
@@ -68,6 +66,7 @@ export default {
   props: {},
   data() {
     return {
+      respond: "",
       socket: {},
       selectedVehicles: [],
       length: 0,
@@ -106,6 +105,9 @@ export default {
     }
   },
   methods: {
+    fromSend(data) {
+      this.respond = data;
+    },
     //采集发送指令
     instruction(num) {
       this.socket.send(num);

@@ -52,7 +52,10 @@
                   <span class="_global-status _offline" @click.stop="showVehicleAll('offline')">离线车辆：
                     <strong>{{vehicleCount.offline}}</strong>
                   </span>
-
+                </div>
+                <div>
+                  <!-- <select-sim></select-sim> -->
+                  <!-- <select-device></select-device> -->
                 </div>
               </template>
               <div class="_body">
@@ -99,6 +102,12 @@
       <el-tab-pane label="冀R12345" :closable="true" name="x">
         <vehicle-area></vehicle-area>
       </el-tab-pane>
+      <!-- <el-tab-pane label="轨迹回放" :closable="true" name="z">
+        <vehicle-playback></vehicle-playback>
+      </el-tab-pane> -->
+      <el-tab-pane label="报警">
+        <vehicle-alarm></vehicle-alarm>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -110,10 +119,22 @@ import { initMap } from "@/utils/map.js";
 import vehicleMonitor from "./components/vehicle-monitor.vue";
 import vehicleDetails from "./components/vehicle-details.vue";
 import vehicleArea from "./components/vehicle-area.vue";
+import vehiclePlayback from "./components/vehicle-playback.vue";
+import vehicleAlarm from "./components/vehicle-alarm.vue";
+import selectDevice from "./components/select-device.vue";
+import selectSim from "./components/select-sim.vue";
 window.monitor = {};
 export default {
   name: "monitor",
-  components: { vehicleMonitor, vehicleDetails, vehicleArea },
+  components: {
+    vehicleMonitor,
+    vehicleDetails,
+    vehicleArea,
+    vehiclePlayback,
+    vehicleAlarm,
+    selectDevice,
+    selectSim
+  },
   data() {
     return {
       searchVehicle: "",
@@ -160,7 +181,7 @@ export default {
     userList: function() {}
   },
   created() {
-    this.init();
+    // this.init();
     var vm = this;
     window.monitor = {
       data: new Map(), //所有数据
@@ -398,44 +419,44 @@ export default {
     });
   },
   methods: {
-    init() {
-      this.initLoader = this.$loading({ text: "初始化分组数据" });
-      getGroupByUser()
-        .then(res => {
-          this.initVehicle(res.data.data);
-        })
-        .catch(err => {
-          this.initLoader.close();
-          this.$alert("初始化分组失败！");
-        });
-    },
-    initVehicle(groups) {
-      this.initLoader.setText("初始化车辆数据");
-      getInitVehicle()
-        .then(res => {
-          var res2 = [];
-          res.data.data.map(item => {
-            res2.push({
-              vehicle_id: item[0],
-              sim_id: item[1],
-              license: item[2],
-              device_id: item[3],
-              group_path: item[4].split(","), //车辆对应分组路径 [path1,path2,path3....]
-              alarm_count: "1", //当天报警次数
-              error_count: "0", //当天异常次数
-              lng: "", //最后一次定位的经度
-              lat: "", //最后一次定位的纬度
-              last_time: "" //最后定位时间
-            });
-          });
-          window.monitor.init(res2, groups);
-        })
-        .catch(err => {
-          this.initLoader.close();
-          this.$alert("初始车辆化失败！");
-          console.error(err);
-        });
-    },
+    // init() {
+    //   this.initLoader = this.$loading({ text: "初始化分组数据" });
+    //   getGroupByUser()
+    //     .then(res => {
+    //       this.initVehicle(res.data.data);
+    //     })
+    //     .catch(err => {
+    //       this.initLoader.close();
+    //       this.$alert("初始化分组失败！");
+    //     });
+    // },
+    // initVehicle(groups) {
+    //   this.initLoader.setText("初始化车辆数据");
+    //   getInitVehicle()
+    //     .then(res => {
+    //       var res2 = [];
+    //       res.data.data.map(item => {
+    //         res2.push({
+    //           vehicle_id: item[0],
+    //           sim_id: item[1],
+    //           license: item[2],
+    //           device_id: item[3],
+    //           group_path: item[4].split(","), //车辆对应分组路径 [path1,path2,path3....]
+    //           alarm_count: "1", //当天报警次数
+    //           error_count: "0", //当天异常次数
+    //           lng: "", //最后一次定位的经度
+    //           lat: "", //最后一次定位的纬度
+    //           last_time: "" //最后定位时间
+    //         });
+    //       });
+    //       window.monitor.init(res2, groups);
+    //     })
+    //     .catch(err => {
+    //       this.initLoader.close();
+    //       this.$alert("初始车辆化失败！");
+    //       console.error(err);
+    //     });
+    // },
 
     showVehicleWithGroup(row, column, cell, event) {
       //根据分组显示车辆

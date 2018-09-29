@@ -1,5 +1,5 @@
 <template>
-  <el-form status-icon :rules="rules" :model="tableQuery" size="small" ref="baseForm" class="msg-form">
+  <el-form status-icon :rules="rules" :model="tableQuery" @submit.native.prevent size="small" ref="baseForm" class="msg-form">
     <el-row :gutter="30">
       <el-col :span="7">
         <el-form-item label="车牌号" prop="query_mode">
@@ -19,16 +19,13 @@
       <el-col :span="3" style="text-align: right;">
         <el-form-item>
           <label style="display:inline-block; width:100%;"></label>
-          <el-button size="small" type="primary" @click="selectForm(1)">搜索</el-button>
+          <el-button size="small" type="primary" native-type="submit" @click="selectForm(1)">搜索</el-button>
         </el-form-item>
       </el-col>
     </el-row>
     <template>
-      <el-table :data="tableData.data" border style="width: 100%">
-        <el-table-column label="状态" width="50">
-          <template slot-scope="scope">
-            <el-checkbox size="medium" v-model="scope.row.checked" style="margin-left:7px;"></el-checkbox>
-          </template>
+      <el-table :data="tableData.data" @select-all="selectAll" @select="selectHandler" ref="vechileTable" border style="width: 100%">
+        <el-table-column type="selection" label="状态" width="50">
         </el-table-column>
         <el-table-column prop="license" :formatter="$utils.baseFormatter" label="车牌号">
         </el-table-column>
@@ -55,6 +52,8 @@ export default {
   data() {
     return {
       checked: true,
+      selection: [],
+      vehicle: [],
       formData: {
         license: "",
         owner: "",
@@ -91,37 +90,88 @@ export default {
     // }
   },
   methods: {
+    selectHandler(allSelected, currentRow) {
+      var isChecked = false;
+      if (allSelected.length != 0) {
+        allSelected.map(item => {
+          if (item.vehicle_id == currentRow.vehicle_id) {
+            isChecked = true;
+          }
+        });
+      }
+
+      if (isChecked) {
+        //处理选中
+        if (!this.selection.includes(currentRow.vehicle_id)) {
+          this.selection.push(currentRow.vehicle_id);
+          this.vehicle.push(currentRow);
+        }
+      } else {
+        //处理取消
+        var index = this.selection.indexOf(currentRow.vehicle_id);
+        if (index != -1) {
+          this.selection.splice(index, 1);
+          this.vehicle.splice(index, 1);
+        }
+      }
+    },
+    selectAll(allSelected) {
+      var state = false;
+      // 可以根据allSelected的长度判断是全选还是取消全选
+      if (allSelected.length != 0) {
+        state = true;
+      }
+      if (state) {
+        allSelected.map(item => {
+          if (!this.selection.includes(item.vehicle_id)) {
+            this.selection.push(item.vehicle_id);
+            this.vehicle.push(item);
+          }
+        });
+      } else {
+        this.tableData.data.map(olditem => {
+          this.selection.map(item => {
+            if (item == olditem.vehicle_id) {
+              var index = this.selection.indexOf(item);
+              if (index != -1) {
+                this.selection.splice(index, 1);
+                this.vehicle.splice(index, 1);
+                return;
+              }
+            }
+          });
+        });
+      }
+    },
     selectForm(state) {
       if (state == 1) {
         this.tableQuery.page = 1;
       }
       getVehicleByPage(this.tableQuery).then(res => {
         if (res.data.code == 0) {
-          for (var j = 0; j < res.data.data.length; j++) {
-            res.data.data[j].checked = false;
-          }
           this.$set(this.tableData, "data", res.data.data);
           this.$set(this.tableData, "total", res.data.total);
+          this.$nextTick(() => {
+            this.tableData.data.map(vehicle => {
+              if (this.selection.includes(vehicle.vehicle_id)) {
+                this.$refs.vechileTable.toggleRowSelection(vehicle, true);
+              }
+            });
+          });
         } else {
           this.$message.error(res.data.msg);
         }
       });
     },
     formSubmit() {
-      var arr = [];
-      for (var i = 0; i < this.tableData.data.length; i++) {
-        if (this.tableData.data[i].checked) {
-          arr.push(this.tableData.data[i]);
-        }
-      }
-      if (arr[0] == undefined) {
+      if (this.vehicle.length == 0) {
         return this.$notify({
           message: "请选择信息",
           title: "提示",
           type: "error"
         });
       }
-      this.$emit("button", arr);
+      this.$emit("button", JSON.parse(JSON.stringify(this.vehicle)));
     },
     // 分页
     handleSizeChange(val) {
