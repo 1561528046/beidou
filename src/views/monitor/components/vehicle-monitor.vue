@@ -38,7 +38,6 @@
       <i class="iconfont icon-alert-fill"></i>
       <i class="iconfont icon-wifi"></i>
       <i class="iconfont icon-error-fill _error"></i>
-
     </div>
     <div class="_other">
       <el-row>

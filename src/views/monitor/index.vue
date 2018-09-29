@@ -44,7 +44,10 @@
                   <span class="_global-status _offline" @click.stop="showVehicleAll('offline')">离线车辆：
                     <strong>{{vehicleCount.offline}}</strong>
                   </span>
-
+                </div>
+                <div>
+                  <!-- <select-sim></select-sim> -->
+                  <!-- <select-device></select-device> -->
                 </div>
               </template>
               <div class="_body">
@@ -114,6 +117,10 @@ import vehicleMonitor from "./components/vehicle-monitor.vue";
 import vehicleDetails from "./components/vehicle-details.vue";
 import vehicleSingle from "./components/vehicle-single.vue";
 import vehicleArea from "./components/vehicle-area.vue";
+import vehiclePlayback from "./components/vehicle-playback.vue";
+import vehicleAlarm from "./components/vehicle-alarm.vue";
+import selectDevice from "./components/select-device.vue";
+import selectSim from "./components/select-sim.vue";
 window.monitor = {};
 export default {
   name: "monitor",
@@ -159,7 +166,7 @@ export default {
     userList: function() {}
   },
   created() {
-    this.init();
+    // this.init();
     var vm = this;
     window.monitor = {
       data: new Map(), //所有数据

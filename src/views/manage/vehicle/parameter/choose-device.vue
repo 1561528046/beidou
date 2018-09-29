@@ -142,6 +142,7 @@ export default {
     },
     // 采集
     collect(num) {
+      num = parseInt(num);
       // ^get + 参数id+ sim_id+$
       if (this.communication.data.length == 0) {
         return this.$message.error("请选择车辆!");
@@ -154,7 +155,7 @@ export default {
         } else {
           simid = item.sim_id;
         }
-        instructioncollect = "^x8104" + "|" + num + "|" + simid + "$";
+        instructioncollect = "^x8106" + "|" + num + "|" + simid + "$";
         this.$emit("instruction", instructioncollect);
       });
     },
@@ -164,6 +165,7 @@ export default {
       var value = this.communication[key];
       var instructionset;
       var simid;
+      type = parseInt(type);
       // ^set+参数id+设置的值+sim_id+ $
       if (this.communication.data.length == 0) {
         return this.$message.error("请选择车辆!");

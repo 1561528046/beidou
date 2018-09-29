@@ -212,6 +212,7 @@ export default {
     },
     // 回来的数据
     xz(scope) {
+      console.log(scope);
       this.vehicleDialog = false;
       if (!scope.length == 0) {
         this.userAlert = true;
