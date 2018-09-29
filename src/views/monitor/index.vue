@@ -13,24 +13,16 @@
         </a>
       </div>
     </div>
-    <el-tabs v-model="currentTab" style="height:100%;" class="monitor-tabs">
-      <el-tab-pane label="监控" :closable="false" name="m">
+    <el-tabs v-model="currentTab" style="height:100%;" class="monitor-tabs" @tab-remove="tabRemove">
+      <el-tab-pane label="监控" :closable="false" name="index">
         <div class="monitor">
           <div id="container" style="width:100%;height:100%;"></div>
           <div class="vehicle-search shadow-box">
-            <el-row :gutter="20">
-              <el-col :span="20">
-                <el-autocomplete class="inline-input" v-model="searchVehicle" :fetch-suggestions="vehicleSearch" placeholder="搜索车辆（车牌号、终端ID）" @select="vehicleSelected" size="small" icon="el-icon-search">
-                  <el-button slot="append"></el-button>
-                </el-autocomplete>
-              </el-col>
-              <el-col :span="4" class="_right">
-                <i class="el-icon-more" @click="add"></i>
-              </el-col>
-            </el-row>
+            <el-autocomplete v-model="searchVehicle" :fetch-suggestions="vehicleSearch" placeholder="搜索车辆（车牌号、终端ID）" @select="vehicleSelected" size="small" prefix-icon="el-icon-search" style="width:100%;">
+            </el-autocomplete>
           </div>
           <transition-group name="list-complete" tag="div" class="current-vehicle-container">
-            <vehicle-monitor class="list-complete-item" @close="remove(vehicle.vehicle_id)" v-for="(vehicle,index) in currentVehicles" :vehicle="vehicle" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
+            <vehicle-monitor class="list-complete-item" :closeable="true" @close="removeCurrentVehicle(vehicle.sim_id)" v-for="(vehicle,index) in currentVehicles" :vehicle="vehicle" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
           </transition-group>
 
           <el-collapse accordion class="status-container shadow-box" @change="toggleUserList">
@@ -92,28 +84,40 @@
             </el-collapse-item>
           </el-collapse>
           <transition name="fade" enter-active-class="fadeInLeft" leave-active-class="fadeOutLeft">
-            <vehicle-details @close="closeShowVehicle" :vehicle="currentGroup" :show-vehicle="showVehicle"></vehicle-details>
+            <vehicle-details @close="closeShowVehicle" @open-single="addSingleVehicle" :vehicle="currentGroup" :show-vehicle="showVehicle"></vehicle-details>
           </transition>
         </div>
       </el-tab-pane>
       <el-tab-pane label="冀R12345" :closable="true" name="x">
         <vehicle-area></vehicle-area>
       </el-tab-pane>
+      <el-tab-pane label="冀R12345" :closable="true" v-for="vehicle in singleVehicle" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
+        <vehicle-single :vehicle="vehicle"></vehicle-single>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
+
+
 <script>
 /*eslint-disable*/
-import { getInitVehicle, getUserList, getGroupByUser } from "@/api/index.js";
+import {
+  getInitVehicle,
+  getUserList,
+  getGroupByUser,
+  getUser
+} from "@/api/index.js";
 import { initMap } from "@/utils/map.js";
+import { GPS } from "@/utils/map-tools.js";
 import vehicleMonitor from "./components/vehicle-monitor.vue";
 import vehicleDetails from "./components/vehicle-details.vue";
+import vehicleSingle from "./components/vehicle-single.vue";
 import vehicleArea from "./components/vehicle-area.vue";
 window.monitor = {};
 export default {
   name: "monitor",
-  components: { vehicleMonitor, vehicleDetails, vehicleArea },
+  components: { vehicleMonitor, vehicleDetails, vehicleArea, vehicleSingle },
   data() {
     return {
       searchVehicle: "",
@@ -126,16 +130,9 @@ export default {
         type: "",
         sub_title: ""
       },
-      currentVehicles: [
-        // {
-        //   vehicle_id: "10000000001",
-        //   sim_id: "10000000001",
-        //   linkman: "zzz",
-        //   tel: "15930616103",
-        //   contract_date: "20180808"
-        // }
-      ],
-      currentTab: "m",
+      currentVehiclesSet: new Set(), //小地图查看的车去重SET
+      currentVehicles: [], //小地图查看的车
+      currentTab: "index",
       maps: [],
       alarmList: {},
       errorList: {},
@@ -153,7 +150,9 @@ export default {
         size: 10,
         page: 1,
         total: 0
-      }
+      },
+      singleVehicle: [], //单车监控车辆
+      singleVehicleSet: new Set() //单车监控去重Set
     };
   },
   watch: {
@@ -180,47 +179,23 @@ export default {
         //1、车辆放入对应分组、并区分状态
         //2、区分总的在线、离线、报警、异常
         data.map(vehicle => {
-          // vehicle.group_path = [];
-          // var temp = JSON.parse(
-          //   '["1", "2", "3", "69", "106", "4", "72", "73", "75", "107", "79", "108", "83", "74", "85", "80", "81", "109", "110", "111", "5", "78", "71", "77"]'
-          // );
-          // vehicle.group_path.push("1");
-          // vehicle.group_path.push(
-          //   this.dict.groups
-          //     .get(temp[Math.round(Math.random() * 23)])
-          //     .get("data")
-          //     .group_id.toString()
-          // );
-          // vehicle.group_path.push(
-          //   this.dict.groups
-          //     .get(temp[Math.round(Math.random() * 23)])
-          //     .get("data")
-          //     .group_id.toString()
-          // );
-          // vehicle.sim_id = vehicle.id;
-          // vehicle.time = vehicle.Time;
-          // vehicle.lat = vehicle.Lat;
-          // vehicle.lng = vehicle.Lon;
-          // vehicle.alarm = vehicle.Alarm;
-          // vehicle.license = vehicle.name;
-          // vehicle.alarm_count = 0;
-
-          vehicle.lat = 39.0 + Math.random();
-          vehicle.lng = 116.0 + Math.random();
-
           //根据sim_id 创建所有数据集合的MAP对象
           this.data.set(vehicle.sim_id, vehicle);
+
           if (vehicle.alarm_count != "0") {
             this.dict.alarm.add(vehicle.sim_id);
             //车辆所对应的分组 均加入记录
             this.setGroupDict(vehicle.group_path, "alarm", vehicle.sim_id);
           }
-          if (new Date() - new Date(vehicle.time) > 95132724 * 5) {
+          if (
+            new Date() - new Date(vehicle.time) >
+            vm.$dict.ONLINE_TIMEOUT * 5
+          ) {
             vehicle.online = true;
             this.dict.online.add(vehicle.sim_id);
             this.setGroupDict(vehicle.group_path, "online", vehicle.sim_id);
           } else {
-            //vehicle.online = false;
+            vehicle.online = false;
             this.dict.offline.add(vehicle.sim_id);
             this.setGroupDict(vehicle.group_path, "offline", vehicle.sim_id);
           }
@@ -262,10 +237,10 @@ export default {
         var groupDict = this.dict.groups;
         groups.map(groups_id => {
           if (groups_id) {
-            groupDict
-              .get(groups_id.toString())
-              .get(status)
-              .add(sim_id);
+            var group = groupDict.get(groups_id.toString());
+            if (group) {
+              group.get(status).add(sim_id);
+            }
           }
         });
       },
@@ -304,10 +279,6 @@ export default {
               zIndex: 11,
               autoSetFitView: false,
               getPosition: function(item) {
-                // if (window.a == 1) {
-                //   console.log(item);
-                //   window.a = 2;
-                // }
                 return [item.lng, item.lat];
               }
             });
@@ -328,16 +299,14 @@ export default {
         });
       },
       setVehicleData(vehicleData) {
-        vehicleData.sim_id = (
-          10000000001 + Math.round(Math.random() * 190000)
-        ).toString();
         if (this.data.has(vehicleData.sim_id)) {
-          vehicleData.lat = vehicleData.lat - 0 + Math.random() * 0.8;
-          vehicleData.lng = vehicleData.lng - 0 + Math.random() * 0.8;
           if (vehicleData.alarm != "") {
             this.setAlarm(vehicleData);
           }
-          if (new Date() - new Date(vehicleData.time) > 95132724 * 5) {
+          if (
+            new Date() - new Date(vehicleData.time) >
+            vm.$dict.ONLINE_TIMEOUT
+          ) {
             this.setOnline(vehicleData);
           } else {
             this.setOffline(vehicleData);
@@ -379,18 +348,48 @@ export default {
       setAlarm() {}
     };
 
-    var ws = new WebSocket("ws://127.0.0.1:9999");
-    var socketDataWorker = new Worker("/map/worker-socket.js");
-    ws.binaryType = "arraybuffer";
-
-    socketDataWorker.onmessage = event => {
-      event.data.sim_id = "0" + event.data.sim_id;
-      monitor.setVehicleData(event.data);
-    };
-    ws.onmessage = function(evt) {
-      socketDataWorker.postMessage(new Uint8Array(evt.data));
-      //  ws.close()
-    };
+    var ws = new WebSocket("ws://192.168.88.88:5002");
+    // var socketDataWorker = new Worker("/map/worker-socket.js");
+    // ws.binaryType = "arraybuffer";
+    // ws.onmessage = function(evt) {
+    //   socketDataWorker.postMessage(new Uint8Array(evt.data));
+    //   //  ws.close()
+    // };
+    // ws.onopen = function() {
+    //   getUser({ user_id: vm.$store.state.user.user_id })
+    //     .then(res => {
+    //       if (res.data.code == 0) {
+    //         var blob = new Blob(
+    //           [
+    //             "^x3003|" +
+    //               res.data.data[0].user_name +
+    //               "|" +
+    //               res.data.data[0].pass_word +
+    //               "$"
+    //           ],
+    //           {
+    //             type: "text/plain"
+    //           }
+    //         );
+    //         var reader = new FileReader();
+    //         reader.readAsArrayBuffer(blob);
+    //         reader.onload = function(e) {
+    //           console.log(arguments, reader.result);
+    //           ws.send(reader.result);
+    //           ws.close();
+    //         };
+    //       } else {
+    //         vm.$message.error("实时数据链接失败，无法登陆！");
+    //       }
+    //     })
+    //     .catch(() => {
+    //       vm.$message.error("实时数据链接失败，无法登陆！");
+    //     });
+    // };
+    // socketDataWorker.onmessage = event => {
+    //   event.data.sim_id = "0" + event.data.sim_id;
+    //   monitor.setVehicleData(event.data);
+    // };
   },
   destroyed() {
     this.maps.map(map => {
@@ -415,17 +414,28 @@ export default {
         .then(res => {
           var res2 = [];
           res.data.data.map(item => {
+            var position = GPS.gcj_encrypt(item[4] || 0, item[5] || 0); //GPS转高德
             res2.push({
-              vehicle_id: item[0],
-              sim_id: item[1],
-              license: item[2],
-              device_id: item[3],
-              group_path: item[4].split(","), //车辆对应分组路径 [path1,path2,path3....]
-              alarm_count: "1", //当天报警次数
-              error_count: "0", //当天异常次数
-              lng: "", //最后一次定位的经度
-              lat: "", //最后一次定位的纬度
-              last_time: "" //最后定位时间
+              sim_id: item[0],
+              license: item[1],
+              device_id: item[2],
+              time: item[3], //最后定位时间
+              lng: position.lon, //最后一次定位的经度
+              lat: position.lat, //最后一次定位的纬度
+              alarm_count: parseInt(item[6] || 0), //当天报警次数
+              error_count: parseInt(item[7] || 0), //当天异常次数
+              vehicle_id: item[8],
+              group_path: item[9].split(","), //车辆对应分组路径 [path1,path2,path3....]
+              speed: 0,
+              speed1: 0,
+              alarm: 0,
+              altitude: 0, //高程
+              angle: "", //方向
+              wifiSignal: "", //信号强度
+              GNSSCount: "", //卫星数
+              inoutAlarm: "", //进出区域报警
+              mileage: "", //总里程
+              address: ""
             });
           });
           window.monitor.init(res2, groups);
@@ -504,34 +514,70 @@ export default {
       this.getUserList();
     },
     vehicleSearch(queryString, cb) {
-      var result = [];
+      var result = [
+        // { value: "冀R12345", sim_id: 111 }
+      ];
       for (let [sim_id, vehicle] of monitor.data) {
-        if (vehicle.license.indexOf(queryString)) {
-          result.push(vehicle);
-        }
         if (result.length > 20) {
           break;
         }
+        if (vehicle.license.indexOf(queryString) != -1) {
+          result.push({
+            value: vehicle.license,
+            sim_id: vehicle.sim_id
+          });
+        }
+      }
+      cb(result);
+    },
+    vehicleSelected(selected) {
+      var vehicle = monitor.data.get(selected.sim_id);
+      vehicle.lat = 39.1014;
+      vehicle.lng = 116.1114;
+      if (!this.currentVehiclesSet.has(vehicle.sim_id)) {
+        this.currentVehiclesSet.add(vehicle.sim_id);
+        this.currentVehicles.push(vehicle);
+      }
+      // setInterval(() => {
+      //   vehicle.lat += 39.1114;
+      //   vehicle.lng += 116.1114;
+      // }, 1000);
+    },
+    removeCurrentVehicle(sim_id) {
+      var index = this.currentVehicles.findIndex(item => {
+        return item.sim_id == sim_id;
+      });
+      if (index != -1) {
+        this.currentVehicles.splice(index, 1);
+      }
+      this.currentVehiclesSet.delete(sim_id);
+    },
+    addSingleVehicle(sim_id) {
+      var vehicle = monitor.data.get(sim_id);
+      if (!this.singleVehicleSet.has(sim_id)) {
+        this.singleVehicleSet.add(sim_id);
+        this.singleVehicle.push(vehicle);
+        this.currentTab = "single-" + sim_id;
       }
     },
-    vehicleSelected() {
-      console.log(arguments);
-    },
-    add() {
-      this.currentVehicles.push({
-        vehicle_id: "10000000001",
-        sim_id: "10000000001",
-        linkman: "zzz",
-        tel: "15930616103",
-        contract_date: "20180808",
-        angle: 65
+    removeSingleVehicle(sim_id) {
+      var index = this.singleVehicle.findIndex(item => {
+        return item.sim_id == sim_id;
       });
+      if (index != -1) {
+        this.singleVehicle.splice(index, 1);
+      }
+      this.singleVehicleSet.delete(sim_id);
+      this.currentTab = "index";
     },
-    remove(vehicle_id) {
-      var index = this.currentVehicles.findIndex(item => {
-        return item.vehicle_id == vehicle_id;
-      });
-      this.currentVehicles.splice(index, 1);
+    tabRemove(tabName) {
+      //tabName必须遵循 类型-sim_id
+      var tab = tabName.split("-");
+      switch (tab[0]) {
+        case "single":
+          this.removeSingleVehicle(tab[1]);
+          break;
+      }
     }
   }
 };

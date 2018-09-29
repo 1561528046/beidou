@@ -15,9 +15,7 @@ export const dict = {
   BASE_URL: BASE_URL, //web站点路径
   API_URL: API_URL, //API具体路径
   INSTRUCTION_URL: INSTRUCTION_URL, //指令websocket地址
-
-  // BASE_URL: "http://192.168.88.88:10462/",
-  // API_URL: "http://192.168.88.88:10462/api",
+  ONLINE_TIMEOUT: "300000", //上线超时时间（当前系统时间-定为时间 < 5分钟  即为上线）
   license_color: {
     "1": {
       backgroundColor: "#006DD9",
@@ -48,6 +46,12 @@ export const dict = {
       backgroundColor: "#79bb0f",
       borderColor: "#669e0b",
       name: "黄绿色",
+      style: "background:#79bb0f;border:1px solid #669e0b;color:#000;"
+    },
+    "6": {
+      backgroundColor: "#79bb0f",
+      borderColor: "#669e0b",
+      name: " 渐变绿",
       style: "background:#79bb0f;border:1px solid #669e0b;color:#000;"
     }
   },

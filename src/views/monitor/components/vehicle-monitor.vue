@@ -1,9 +1,9 @@
 <template>
   <div class="vehicle-info-box shadow-box open" ref="box" :style="{left:position.left+'px',top:position.top+'px'}">
     <div class="_header">
-      <strong class="_title">冀R61333</strong>
-      <small class="_text">服务到期日期：2019-3-1 </small>
-      <i class="_close el-icon-circle-close-outline" @click="close"></i>
+      <strong class="_title">{{mapData.vehicle.info.license}}</strong>
+      <small class="_text">服务到期日期：{{mapData.vehicle.info.contract_date}} </small>
+      <i class="_close el-icon-circle-close-outline" @click="close" v-if="$props.closeable"></i>
     </div>
     <div class="_map">
       <!-- <a class="_map-btn">展开地图</a> -->
@@ -12,22 +12,22 @@
     <div class="_body">
       <el-row>
         <el-col :span="24">
-          定位时间：2018-05-05 13：22：36
+          定位时间：{{mapData.vehicle.time}}
         </el-col>
         <el-col :span="12">
-          {{mapData.vehicle.linkman}}
+          联系人：{{mapData.vehicle.info.linkman||"--"}}
         </el-col>
         <el-col :span="12">
-          联系方式： {{mapData.vehicle.tel}}
+          联系方式： {{mapData.vehicle.info.tel||"--"}}
         </el-col>
         <el-col :span="12">
-          时速：60/km
+          时速：{{mapData.vehicle.speed1 || mapData.vehicle.speed }} km/h
         </el-col>
         <el-col :span="12">
-          今日里程：600/km
+          里程：{{mapData.vehicle.mileage||"--"}}
         </el-col>
         <el-col :span="24">
-          地理位置：河北省廊坊市广阳区XXX300米
+          地理位置：{{mapData.vehicle.address||"--"}}
         </el-col>
       </el-row>
     </div>
@@ -40,9 +40,36 @@
       <i class="iconfont icon-error-fill _error"></i>
 
     </div>
+    <div class="_other">
+      <el-row>
+        <el-col :span="12">
+          行驶记录仪速度{{mapData.vehicle.time}}
+        </el-col>
+        <el-col :span="12">
+          制动信号{{mapData.vehicle.info.linkman||"--"}}
+        </el-col>
+        <el-col :span="12">
+          ACC开关 {{mapData.vehicle.info.tel||"--"}}
+        </el-col>
+        <el-col :span="12">
+          左转向灯{{mapData.vehicle.speed1 || mapData.vehicle.speed }} km/h
+        </el-col>
+        <el-col :span="12">
+          右转向灯{{mapData.vehicle.mileage||"--"}}
+        </el-col>
+        <el-col :span="12">
+          远光灯{{mapData.vehicle.address||"--"}}
+        </el-col>
+        <el-col :span="12">
+          近光灯{{mapData.vehicle.address||"--"}}
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script>
+import { getVehicle } from "@/api/index.js";
+import { location2address } from "@/utils/map-tools.js";
 import { initMap, createMarker, setMarker } from "@/utils/map.js";
 export default {
   data() {
@@ -51,13 +78,23 @@ export default {
         //注释属性为动态添加，为非响应式数据！
         // map:{},
         // marker:{},
-        vehicle: {} //车辆数据、setInterval刷新
+        vehicle: {
+          info: {}
+        } //车辆数据
       },
       bodyWidth: "",
       bodyHeight: ""
     };
   },
-  props: ["index", "vehicle"],
+  props: ["index", "vehicle", "closeable"],
+  watch: {
+    "mapData.vehicle": {
+      handler: function() {
+        this.updateVehicle();
+      },
+      deep: true
+    }
+  },
   computed: {
     position: function() {
       var maxRow = Math.floor(this.bodyHeight / 360);
@@ -72,142 +109,87 @@ export default {
   mounted() {
     this.bodyWidth = this.$el.parentElement.scrollWidth;
     this.bodyHeight = this.$el.parentElement.scrollHeight;
-    this.mapData.vehicle = Object.assign(
-      this.$props.vehicle,
-      window.monitor.data.get(this.$props.vehicle.sim_id)
-    );
-    var vm = this;
-    initMap(() => {
-      var AMap = window.AMap;
-      // eslint-disable-next-line
-      vm.mapData.map = new AMap.Map(vm.$refs.vehicle_map, {
-        viewMode: "3D",
-        pitch: 55,
-        rotation: -45,
-        center: [vm.mapData.vehicle.lng, vm.mapData.vehicle.lat],
-        dragEnable: false,
-        keyboardEnable: false,
-        zoom: 15
-      });
-      vm.mapData.map.on("zoomchange", () => {
-        vm.mapData.map.setCenter(
-          new AMap.LngLat(vm.mapData.vehicle.lng, vm.mapData.vehicle.lat)
-        );
-      });
-      vm.mapData.marker = createMarker(vm.mapData.vehicle, AMap);
-      vm.mapData.marker.setMap(vm.mapData.map);
-      this.updateVehicle();
-    });
+    var monitorData = this.$props.vehicle;
+    if (!monitorData.info) {
+      //如果没有联系人等信息
+      getVehicle({ vehicle_id: monitorData.vehicle_id })
+        .then(res => {
+          if (res.data.code == 0) {
+            var lastData = res.data.data[0];
+            monitorData.info = lastData;
+            if (!monitorData.time) {
+              //如果监控数据中 没有定为时间，则把请求到的最后一条定为数据赋值到监控数据中
+              monitorData.time = lastData.Time;
+              monitorData.alarm = lastData.AlarmSign;
+              monitorData.lng = lastData.Longitude;
+              monitorData.lat = lastData.Latitude;
+              monitorData.altitude = lastData.Altitude;
+              monitorData.speed = lastData.Speed;
+              monitorData.speed1 = lastData.Speed1;
+              monitorData.angle = lastData.Direction;
+              monitorData.mileage = lastData.Mileage;
+              monitorData.GNSSCount = lastData.GNSSCount;
+              monitorData.alarm_count = lastData.alarmCount;
+              monitorData.error_count = lastData.ErrorCount;
+            }
+          } else {
+            this.$message.error("获取车辆信息失败！");
+          }
+          this.$set(this.mapData, "vehicle", monitorData);
+          this.initMap();
+        })
+        .catch(err => {
+          console.warn(err);
+          this.$message.error("接口错误，获取车辆信息失败！");
+        });
+    } else {
+      this.$set(this.mapData, "vehicle", monitorData);
+      this.initMap();
+    }
   },
   methods: {
+    initMap() {
+      initMap(() => {
+        var AMap = window.AMap;
+        // eslint-disable-next-line
+        this.mapData.map = new AMap.Map(this.$refs.vehicle_map, {
+          viewMode: "3D",
+          pitch: 55,
+          rotation: -45,
+          center: [this.mapData.vehicle.lng, this.mapData.vehicle.lat],
+          dragEnable: false,
+          keyboardEnable: false,
+          zoom: 15
+        });
+        this.mapData.map.on("zoomchange", () => {
+          this.mapData.map.setCenter(
+            new AMap.LngLat(this.mapData.vehicle.lng, this.mapData.vehicle.lat)
+          );
+        });
+        this.mapData.marker = createMarker(this.mapData.vehicle, AMap);
+        this.mapData.marker.setMap(this.mapData.map);
+      });
+    },
     updateVehicle() {
-      var vehicleData = Object.assign(
-        this.$props.vehicle,
-        window.monitor.data.get(this.$props.vehicle.sim_id)
-      );
-      vehicleData.lng += new Date().getTime() / 1e15;
-      vehicleData.lat += new Date().getTime() / 1e15;
-      vehicleData.angle = parseInt(Math.random() * 10);
-      this.$set(this.mapData, "vehicle", vehicleData);
-      setMarker(this.mapData.marker, vehicleData, window.AMap);
-      this.mapData.map.setCenter(this.mapData.marker.getPosition());
+      if (this.mapData.marker) {
+        var vehicleData = this.mapData.vehicle;
+        location2address({
+          data: [vehicleData],
+          longKey: "lng",
+          latKey: "lat"
+        }).then(res => {
+          this.mapData.vehicle.address = res[0];
+          setMarker(this.mapData.marker, vehicleData, window.AMap);
+          this.mapData.map.setCenter(this.mapData.marker.getPosition());
+        });
+      }
     },
     close() {
       this.$emit("close");
     }
+  },
+  destroyed() {
+    this.mapData.map.destroy();
   }
 };
 </script>
-<style lang="less">
-@import "../../../style/var.less";
-.amap-logo {
-  display: none !important;
-}
-.amap-copyright {
-  display: none !important;
-}
-.vehicle-info-box {
-  font-size: 12px;
-  position: absolute;
-  width: 350px;
-  background: #fff;
-  z-index: 10;
-  &.open {
-    height: 360px;
-    ._map {
-      height: 160px;
-      background: #999;
-    }
-  }
-  ._header {
-    box-sizing: border-box;
-    border-bottom: 1px solid #f0f0f0;
-    padding: 0 15px;
-    position: relative;
-    height: 40px;
-    line-height: 40px;
-    ._title {
-      padding-right: 1em;
-      font-size: 16px;
-    }
-    ._text {
-      font-size: 12px;
-      color: #999;
-    }
-    ._close {
-      cursor: pointer;
-      right: 15px;
-      top: 50%;
-      transform: translate3d(0, -50%, 0);
-      font-size: 20px;
-      position: absolute;
-    }
-  }
-  ._map {
-    position: relative;
-    min-height: 25px;
-    height: 180px;
-    ._map-btn {
-      position: absolute;
-      bottom: 0;
-      font-size: 12px;
-      width: 100px;
-      left: 50%;
-      margin-left: -50px;
-      border: 1px solid #f0f0f0;
-      border-top: 0;
-      text-align: center;
-      height: 25px;
-      line-height: 25px;
-      background: #fff;
-    }
-    ._map-container {
-      height: 100%;
-      width: 100%;
-    }
-  }
-  ._body {
-    height: 120px;
-    box-sizing: border-box;
-    padding: 15px;
-    line-height: 1.8;
-  }
-  ._footer {
-    height: 40px;
-    line-height: 40px;
-    border-top: 1px solid #f0f0f0;
-    ._error {
-      position: absolute;
-      right: 15px;
-      color: #ff8d00;
-    }
-    i {
-      font-size: 25px;
-      display: inline-block;
-      width: 40px;
-      cursor: pointer;
-      text-align: center;
-    }
-  }
-}
-</style>

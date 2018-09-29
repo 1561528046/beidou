@@ -219,7 +219,7 @@ function x0200(buffer) {
     1000000.0; //buffer.slice(25, 29); //经度
   result.altitude = (buffer[16] << 8) + buffer[17]; //buffer.slice(29, 31); //高程
   result.speed = ((buffer[18] << 8) + buffer[19]) / 10; //buffer.slice(31, 33); //速度
-  result.rotate = (buffer[20] << 8) + buffer[21]; // buffer.slice(33, 35); //方向
+  result.angle = (buffer[20] << 8) + buffer[21]; // buffer.slice(33, 35); //方向
   result.time = formatTime(buffer.slice(22, 28)); //时间
   if (buffer.length > 28) {
     //处理附加消息

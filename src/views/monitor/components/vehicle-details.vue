@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="_body" v-show="showVehicle.isShowAll">
-      <el-table :data="list" size="small" style="width: 100%">
+      <el-table :data="list" size="small" style="width: 100%" @row-click="openSingleVehicle">
         <el-table-column prop="license" label="车牌号">
         </el-table-column>
         <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="allalarm">
@@ -44,7 +44,7 @@
               <el-option label="全部分组" value=""></el-option>
               <el-option :label="childrenGroup.group_name" :value="childrenGroup.group_id" v-for="childrenGroup in currentGroupSonChildrens" :key="childrenGroup.group_id"></el-option>
             </el-select>
-            <el-table :data="list" size="small" style="width: 100%">
+            <el-table :data="list" size="small" style="width: 100%" @row-click="openSingleVehicle">
               <el-table-column prop="license" label="车牌号">
               </el-table-column>
               <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="tablealarm">
@@ -152,6 +152,9 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    openSingleVehicle(row) {
+      this.$emit("open-single", row.sim_id);
+    },
     initPager() {
       this.pager.size = 50;
       this.pager.total = 0;

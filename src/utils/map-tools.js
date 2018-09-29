@@ -212,18 +212,28 @@ export const location2address = function({ data, longKey, latKey }) {
         if (item.data.infocode == "10000") {
           var addressArr = item.data.regeocodes;
           addressArr.map((address, addressIndex) => {
-            result[index * 20 + addressIndex] =
-              address.formatted_address +
-              (address.roadinters[0]
-                ? " " +
-                  address.roadinters[0].first_name +
-                  "/" +
-                  address.roadinters[0].second_name +
-                  " " +
-                  address.roadinters[0].direction +
-                  parseInt(address.roadinters[0].distance) +
-                  "米"
-                : "");
+            var addressTemp = address.formatted_address;
+            if (address.roadinters[0]) {
+              addressTemp +=
+                " " +
+                address.roadinters[0].first_name +
+                "/" +
+                address.roadinters[0].second_name +
+                " " +
+                address.roadinters[0].direction +
+                parseInt(address.roadinters[0].distance) +
+                "米";
+            } else if (address.roads[0]) {
+              addressTemp +=
+                " " +
+                address.roads[0].name +
+                " " +
+                address.roads[0].direction +
+                " " +
+                address.roads[0].distance +
+                "米";
+            }
+            result[index * 20 + addressIndex] = addressTemp;
           });
         } else {
           //   result[index * 20 + addressIndex] = "";
