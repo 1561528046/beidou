@@ -3,10 +3,10 @@
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="operating" label="操作状态"></el-table-column>
-      <el-table-column prop="" label="车辆所在的省域ID" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="" label="车辆所在的市域ID" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="" label="机动车号牌" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0081" label="车辆所在的省域ID" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0082" label="车辆所在的市域ID" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0083" label="机动车号牌" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0084" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
     </el-table>
     <el-form label-width="170px" label-position="left" class="table-search" size="small">
       <el-row :gutter="30">
@@ -87,15 +87,48 @@ export default {
   watch: {
     message: {
       handler: function() {
-        this.communication.data = this.$props.message;
-        console.log(this.communication.data);
+        this.$set(this.communication, "data", this.$props.message);
+        this.communication.data.map(item => {
+          if (item.Ox0081 == undefined) {
+            this.$set(item, "Ox0081", ""),
+              this.$set(item, "Ox0082", ""),
+              this.$set(item, "Ox0083", ""),
+              this.$set(item, "Ox0084", "");
+          }
+        });
+      },
+      deep: true
+    },
+    respond: {
+      handler: function() {
+        var limit = ["129", "130", "131", "132"];
+        var str = this.$props.respond;
+        str = str.split("|");
+        if (!limit.includes(str[1])) {
+          return;
+        }
+        str[3] = str[3].substring(0, str[3].length - 1);
+        str[1] = parseInt(str[1]).toString(16);
+        str[1] = "Ox" + "0".repeat(4 - str[1].length) + str[1];
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            item.sim_id = "0" + item.sim_id;
+          }
+          if (item.sim_id == str[3]) {
+            item[str[1]] = str[2];
+            console.log(str[1]);
+            var utc = this.$dict.get_communication(str[1]);
+            item.operating = utc + "采集成功";
+          }
+        });
       },
       deep: true
     }
   },
   computed: {},
   props: {
-    message: Array
+    message: Array,
+    respond: String
   },
   created() {},
   methods: {

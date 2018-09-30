@@ -4,17 +4,21 @@
             <el-table-column fixed prop="license" width="100" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column fixed prop="operating" width="150" label="操作状态"></el-table-column>
             <el-table-column width="180" prop="" label="报警设置" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="最高速度(km/h)" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="超速持续时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="连续驾驶时间门限" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="当天累计驾驶时间门限" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="最小休息时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="最长停车时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="超速报警预警差值" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="疲劳驾驶预警差值" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="碰撞报警参数设置" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="侧翻报警参数设置" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="报警屏蔽策略设置" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0050" label="报警屏蔽字" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0051" label="报警发送文本SMS开关" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0052" label="报警拍摄开关" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0053" label="报警拍摄存储标志" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0054" label="关键标志" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0055" label="最高速度(km/h)" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0056" label="超速持续时间" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0057" label="连续驾驶时间门限" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0058" label="当天累计驾驶时间门限" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0059" label="最小休息时间" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox005a" label="最长停车时间" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox005b" label="超速报警预警差值" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox005c" label="疲劳驾驶预警差值" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox005d" label="碰撞报警参数设置" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox005e" label="侧翻报警参数设置" :formatter="$utils.baseFormatter"> </el-table-column>
         </el-table>
         <el-form label-width="180px" label-position="left" class="table-search" size="small">
             <el-row :gutter="30">
@@ -215,14 +219,74 @@ export default {
   watch: {
     message: {
       handler: function() {
-        this.communication.data = this.$props.message;
+        this.$set(this.communication, "data", this.$props.message);
+        this.communication.data.map(item => {
+          if (item.Ox0050 == undefined) {
+            this.$set(item, "Ox0050:", ""),
+              this.$set(item, "Ox0051:", ""),
+              this.$set(item, "Ox0052:", ""),
+              this.$set(item, "Ox0053:", ""),
+              this.$set(item, "Ox0054:", ""),
+              this.$set(item, "Ox0055:", ""),
+              this.$set(item, "Ox0056:", ""),
+              this.$set(item, "Ox0057:", ""),
+              this.$set(item, "Ox0058:", ""),
+              this.$set(item, "Ox0059:", ""),
+              this.$set(item, "Ox005a:", ""),
+              this.$set(item, "Ox005b:", ""),
+              this.$set(item, "Ox005c:", ""),
+              this.$set(item, "Ox005d:", ""),
+              this.$set(item, "Ox005e:", "");
+          }
+        });
+      },
+      deep: true
+    },
+    respond: {
+      handler: function() {
+        var limit = [
+          "80",
+          "81",
+          "82",
+          "83",
+          "84",
+          "85",
+          "86",
+          "87",
+          "88",
+          "89",
+          "90",
+          "91",
+          "92",
+          "93",
+          "94"
+        ];
+        var str = this.$props.respond;
+        str = str.split("|");
+        if (!limit.includes(str[1])) {
+          return;
+        }
+        str[3] = str[3].substring(0, str[3].length - 1);
+        str[1] = parseInt(str[1]).toString(16);
+        str[1] = "Ox" + "0".repeat(4 - str[1].length) + str[1];
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            item.sim_id = "0" + item.sim_id;
+          }
+          if (item.sim_id == str[3]) {
+            item[str[1]] = str[2];
+            var utc = this.$dict.get_communication(str[1]);
+            item.operating = utc + "采集成功";
+          }
+        });
       },
       deep: true
     }
   },
   computed: {},
   props: {
-    message: Array
+    message: Array,
+    respond: String
   },
   created() {},
   methods: {
@@ -255,7 +319,7 @@ export default {
         } else {
           simid = item.sim_id;
         }
-        instructioncollect = "^x8106" + "|" + num + "|" + simid + "|" + "$";
+        instructioncollect = "^x8106" + "|" + num + "|" + simid + "$";
         this.$emit("instruction", instructioncollect);
       });
     },

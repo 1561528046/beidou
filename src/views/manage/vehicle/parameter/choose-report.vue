@@ -3,14 +3,14 @@
         <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
             <el-table-column fixed prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column fixed prop="operating" label="操作状态"></el-table-column>
-            <el-table-column width="190" prop="" label="休眠时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="" label="紧急报警时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="" label="缺省时间汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="" label="缺省距离汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="" label="驾驶员未登录汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="" label="驾驶员未登录汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="" label="休眠时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="" label="紧急报警时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="190" prop="Ox0027" label="休眠时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="190" prop="Ox002e" label="休眠时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="190" prop="Ox0028" label="紧急报警时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="190" prop="Ox002f" label="紧急报警时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="190" prop="Ox0029" label="缺省时间汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="190" prop="Ox002c" label="缺省距离汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="190" prop="Ox0022" label="驾驶员未登录汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="190" prop="Ox002d" label="驾驶员未登录汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
         </el-table>
         <el-form label-width="205px" label-position="left" class="table-search" size="small">
             <el-row :gutter="30">
@@ -35,7 +35,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="缺省时间汇报间隔(s)">
+                    <el-form-item label="缺省时间汇报时间间隔(s)">
                         <el-input style="width:60%" v-model="communication.Ox0029">
                             <template slot="append">
                                 <el-button @click="setup('0x0029')">设置</el-button>
@@ -45,7 +45,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="缺省距离汇报间隔(m)">
+                    <el-form-item label="缺省距离汇报距离间隔(m)">
                         <el-input style="width:60%" v-model="communication.Ox002C">
                             <template slot="append">
                                 <el-button @click="setup('0x002C')">设置</el-button>
@@ -109,14 +109,14 @@ export default {
       length: 0,
       vehicleDialog: false,
       communication: {
-        Ox0027: "",
-        Ox002E: "",
-        Ox0029: "",
-        Ox002C: "",
-        Ox0028: "",
-        Ox002F: "",
         Ox0022: "",
-        Ox002D: "",
+        Ox0027: "",
+        Ox0028: "",
+        Ox0029: "",
+        Ox002c: "",
+        Ox002d: "",
+        Ox002e: "",
+        Ox002f: "",
         data: []
       },
       tableQuery: {
@@ -134,14 +134,51 @@ export default {
   watch: {
     message: {
       handler: function() {
-        this.communication.data = this.$props.message;
+        this.$set(this.communication, "data", this.$props.message);
+        this.communication.data.map(item => {
+          if (item.Ox0022 == undefined) {
+            this.$set(item, "Ox0022", ""),
+              this.$set(item, "Ox0027", ""),
+              this.$set(item, "Ox0028", ""),
+              this.$set(item, "Ox0029", ""),
+              this.$set(item, "Ox002c", ""),
+              this.$set(item, "Ox002d", ""),
+              this.$set(item, "Ox002e", ""),
+              this.$set(item, "Ox002f", "");
+          }
+        });
+      },
+      deep: true
+    },
+    respond: {
+      handler: function() {
+        var limit = ["34", "39", "40", "41", "44", "45", "46", "47"];
+        var str = this.$props.respond;
+        str = str.split("|");
+        if (!limit.includes(str[1])) {
+          return;
+        }
+        str[3] = str[3].substring(0, str[3].length - 1);
+        str[1] = parseInt(str[1]).toString(16);
+        str[1] = "Ox" + "0".repeat(4 - str[1].length) + str[1];
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            item.sim_id = "0" + item.sim_id;
+          }
+          if (item.sim_id == str[3]) {
+            item[str[1]] = str[2];
+            var utc = this.$dict.get_communication(str[1]);
+            item.operating = utc + "采集成功";
+          }
+        });
       },
       deep: true
     }
   },
   computed: {},
   props: {
-    message: Array
+    message: Array,
+    respond: String
   },
   created() {},
   methods: {

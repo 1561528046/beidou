@@ -73,7 +73,7 @@
         <el-radio style="margin-left:0;padding-left:0" @change="selectRadio" v-model="radio" label="circle">画圆</el-radio>
         <el-radio style="margin-left:15px;padding-left:0" @change="selectRadio" v-model="radio" label="rectangle">画矩形</el-radio>
         <el-radio style="margin-left:15px;padding-left:0" @change="selectRadio" v-model="radio" label="polygon">画多边形</el-radio>
-        <el-radio style="margin-left:0;" @change="selectRadio" v-model="radio" label="marker">画点</el-radio>
+        <!-- <el-radio style="margin-left:0;" @change="selectRadio" v-model="radio" label="marker">画点</el-radio> -->
       </div>
       <div class="input-item item-btn" style="margin-top:24px; width:227px;margin:0 auto;">
         <el-button @click="close" size="mini" icon="iconfont icon-tuodong"></el-button>
@@ -86,12 +86,16 @@
         <el-row :gutter="30 ">
           <el-col :span="10 ">
             <el-form-item label="名称 " prop="name ">
-              <el-input v-model="tableQuery.AreaName" size="small "></el-input>
+              <el-input v-model="tableQuery.RegionName" size="small "></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="10 ">
             <el-form-item label="管理类型 " prop="type ">
-              <el-input v-model="tableQuery.type " size="small "></el-input>
+              <el-select style="width:100%;" v-model="tableQuery.Type" clearable>
+                <el-option label="圆形" value="1">圆形</el-option>
+                <el-option label="矩形" value="2">矩形</el-option>
+                <el-option label="多边形" value="3">多边形</el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="4 ">
@@ -102,11 +106,20 @@
         </el-row>
         <el-button type="primary " @click="addForm(1)" size="small ">添加行政区域</el-button>
         <el-button type="primary " @click="addForm(2)" size="small ">添加自定义区域</el-button>
+        <router-link :to="{name:'fence-area'}">
+          <el-button style="margin-left:10px;" size="small" type="primary" icon="el-icon-edit">添加车辆</el-button>
+        </router-link>
       </el-form>
-      <el-table :data="tableData.data" size="small">
+      <el-table height="200" :data="tableData.data" size="small">
         <el-table-column prop="AreaId" label="序号 " :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="type" label="管理类型 " :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="AreaName" label="名称 " :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="Type" label="管理类型 " :formatter="$utils.baseFormatter ">
+          <template slot-scope="scope">
+            <label v-if="scope.row.Type=='1'">圆形</label>
+            <label v-if="scope.row.Type=='2'">矩形</label>
+            <label v-if="scope.row.Type=='3'">多边形</label>
+          </template>
+        </el-table-column>
+        <el-table-column prop="RegionName" label="名称 " :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="AreaProperty" label="报警类型 " :formatter="$utils.baseFormatter ">
           <template slot-scope="scope">
             <label v-if="scope.row.AreaProperty=='3'">禁入</label>
@@ -116,7 +129,7 @@
         <el-table-column prop="time" label="时间 " :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column width="150" label="操作 ">
           <template slot-scope="scope ">
-            <label style="margin-right:3px; ">添加车辆</label>
+
             <label @click="delForm(scope)" style="margin-right:3px; ">删除</label>
             <el-dialog width="15%" :visible.sync="delDialog" :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
               <div style="width:142px;margin:0 auto;margin-top:-25px;">
@@ -172,7 +185,6 @@ export default {
             overlays[0] = Polygon;
           } else if (vm.label == "marker") {
             var Marker = e.obj.getPosition();
-            console.log(Marker);
           }
           map.remove(overlays);
           vm.addDialog = true;
@@ -190,48 +202,12 @@ export default {
         vm.$set(vm.mapData, "polygons", polygons);
       });
       // 绘制圆
-      var circle = new AMap.Circle({
-        center: [116.433322, 39.900255],
-        radius: 1000, //半径
-        borderWeight: 3,
-        strokeColor: "#FF33FF",
-        strokeOpacity: 1,
-        strokeWeight: 6,
-        strokeOpacity: 0.2,
-        fillOpacity: 0.4,
-        strokeStyle: "dashed",
-        strokeDasharray: [10, 10],
-        // 线样式还支持 'dashed'
-        fillColor: "#1791fc",
-        zIndex: 50
-      });
-      vm.$set(vm.mapData, "circle", circle);
       // 绘制矩形
-      var southWest = new AMap.LngLat(116.356449, 39.859008);
-      var northEast = new AMap.LngLat(116.417901, 39.893797);
-      var bounds = new AMap.Bounds(southWest, northEast);
-      var rectangle = new AMap.Rectangle({
-        bounds: bounds,
-        strokeColor: "red",
-        strokeWeight: 6,
-        strokeOpacity: 0.5,
-        strokeDasharray: [30, 10],
-        // strokeStyle还支持 solid
-        strokeStyle: "dashed",
-        fillColor: "blue",
-        fillOpacity: 0.5,
-        cursor: "pointer",
-        zIndex: 50
-      });
-      vm.$set(vm.mapData, "rectangle", rectangle);
     });
   },
   data() {
     return {
-      circleLat: "", //圆中心点纬度
-      circleLng: "", //圆中心点经度
-      circleRadius: "", //圆半径
-      AreaId: "",
+      RegionId: "",
       radio: false,
       label: "",
       level: "",
@@ -246,15 +222,14 @@ export default {
         map: {},
         mouseTool: {},
         district: {},
-        circle: {},
-        rectangle: {},
         polygons: [],
         overlays: [],
         radios: {}
       },
       tableQuery: {
+        RegionName: "",
         AreaName: "",
-        type: "",
+        Type: "",
         alarm_type: "",
         page: 1,
         size: 10
@@ -263,6 +238,7 @@ export default {
         name: "",
         type: "",
         time: "",
+        alarm_type: "",
         start_time: "",
         stop_time: ""
       },
@@ -283,22 +259,71 @@ export default {
   methods: {
     // 查看所画区域
     selceForm(scope) {
-      console.log(scope);
-      //根据不同类型选择显示
-      this.mapData.circle.setMap(this.mapData.map);
-      // 缩放地图到合适的视野级别
-      this.mapData.map.setFitView([this.mapData.circle]);
+      if (scope.row.Type == "1") {
+        this.mapData.map.clearMap();
+        // 圆形
+        var circle = [scope.row.CenterLongitude, scope.row.CenterLatitude];
+        var Radius = scope.row.Radius;
+        var circle = new AMap.Circle({
+          center: circle,
+          radius: Radius, //半径
+          borderWeight: 3,
+          strokeColor: "#FF33FF",
+          strokeOpacity: 1,
+          strokeWeight: 6,
+          strokeOpacity: 0.2,
+          fillOpacity: 0.4,
+          strokeStyle: "dashed",
+          strokeDasharray: [10, 10],
+          // 线样式还支持 'dashed'
+          fillColor: "#1791fc",
+          zIndex: 50
+        });
+        //根据不同类型选择显示
+        circle.setMap(this.mapData.map);
+        // 缩放地图到合适的视野级别
+        this.mapData.map.setFitView([circle]);
+      } else if (scope.row.Type == "2") {
+        this.mapData.map.clearMap();
+        // 矩形
+        console.log(scope.row);
+        var leftlng = Number(scope.row.RightBottomLongitude);
+        var leftlat = Number(scope.row.LeftTopLatitude);
+        var rightlng = Number(scope.row.LeftTopLongitude);
+        var rightlat = Number(scope.row.RightBottomLatitude);
+        var southWest = new AMap.LngLat(leftlng, leftlat);
+        var northEast = new AMap.LngLat(rightlng, rightlat);
+        var bounds = new AMap.Bounds(southWest, northEast);
+        var rectangle = new AMap.Rectangle({
+          bounds: bounds,
+          strokeColor: "#FF33FF",
+          strokeWeight: 6,
+          strokeOpacity: 0.2,
+          strokeDasharray: [30, 10],
+          // strokeStyle还支持 solid
+          strokeStyle: "dashed",
+          fillColor: "#89c6f9",
+          fillOpacity: 0.5,
+          cursor: "pointer",
+          zIndex: 50
+        });
+        //根据不同类型选择显示
+        rectangle.setMap(this.mapData.map);
+        // 缩放地图到合适的视野级别
+        this.mapData.map.setFitView([rectangle]);
+      }
     },
     // 删除区域
     delForm(scope) {
-      this.AreaId = scope.row.AreaId;
+      this.RegionId = scope.row.RegionId;
       this.delDialog = true;
     },
     del() {
-      DeleteRegion({ AreaId: this.AreaId }).then(res => {
+      DeleteRegion({ RegionId: this.RegionId }).then(res => {
         if (res.data.code == 0) {
           this.getTable();
           this.delDialog = false;
+          this.mapData.map.clearMap();
           return this.$notify({
             message: res.data.msg,
             title: "提示",
@@ -332,37 +357,39 @@ export default {
       this.mapData.district.setLevel(this.xingzheng);
       var vs = this;
       var data = {};
-      var type = "3";
-      // var sun = "";
+      var Type = "3";
+      var areaobj = {
+        Latitude: "",
+        Longitude: ""
+      };
       this.mapData.district.search(this.xingzheng, function(status, result) {
-        // result.districtList[0].boundaries[9].map(ison => {
-        //   sun = sun + "[" + ison.lng + "," + ison.lat + "]" + ",";
-        // });
-        // console.log(sun);
         if (result.districtList[0].boundaries.length > 1) {
-          type = "4";
+          Type = "4";
         }
         result.districtList[0].boundaries.map(item => {
-          item.map(my => {});
+          item.map(my => {
+            areaobj.Latitude = Latitude + my.lat + ",";
+            areaobj.Longitude = Longitude + my.lng + ",";
+          });
         });
-        vs.mapData.map.remove(vs.mapData.polygons); //清除上次结果
-        vs.mapData.polygons = [];
-        var bounds = result.districtList[0].boundaries;
-        if (bounds) {
-          for (var i = 0, l = bounds.length; i < l; i++) {
-            //生成行政区划polygon
-            var polygon = new AMap.Polygon({
-              strokeWeight: 1,
-              path: bounds[i],
-              fillOpacity: 0.4,
-              fillColor: "#80d8ff",
-              strokeColor: "#0091ea"
-            });
-            vs.mapData.polygons.push(polygon);
-          }
-        }
-        vs.mapData.map.add(vs.mapData.polygons);
-        vs.mapData.map.setFitView(vs.mapData.polygons); //视口自适应
+        // vs.mapData.map.remove(vs.mapData.polygons); //清除上次结果
+        // vs.mapData.polygons = [];
+        // var bounds = result.districtList[0].boundaries;
+        // if (bounds) {
+        //   for (var i = 0, l = bounds.length; i < l; i++) {
+        //     //生成行政区划polygon
+        //     var polygon = new AMap.Polygon({
+        //       strokeWeight: 1,
+        //       path: bounds[i],
+        //       fillOpacity: 0.4,
+        //       fillColor: "#80d8ff",
+        //       strokeColor: "#0091ea"
+        //     });
+        //     vs.mapData.polygons.push(polygon);
+        //   }
+        // }
+        // vs.mapData.map.add(vs.mapData.polygons);
+        // vs.mapData.map.setFitView(vs.mapData.polygons); //视口自适应
       });
       this.formdata.start_time =
         "000000" + moment(this.formdata.time[0]).format("HHmmss");
@@ -370,15 +397,16 @@ export default {
         "000000" + moment(this.formdata.time[1]).format("HHmmss");
       data = {
         AreaProperty: this.formdata.alarm_type,
-        AreaName: this.formdata.name,
+        RegionName: this.formdata.name,
         StartTime: this.formdata.start_time,
         EndTime: this.formdata.stop_time,
-        type: type
+        Type: Type
       };
       AddRegion(data).then(res => {
         if (res.data.code == 0) {
           this.getTable();
           this.down();
+          this.mapData.map.clearMap();
           return this.$notify({
             message: res.data.msg,
             title: "提示",
@@ -403,18 +431,19 @@ export default {
       if (this.label == "circle") {
         data = {
           AreaProperty: this.formdata.alarm_type,
-          AreaName: this.formdata.name,
+          RegionName: this.formdata.name,
           StartTime: this.formdata.start_time,
           EndTime: this.formdata.stop_time,
           CenterLatitude: this.mapData.overlays[0].lat,
           CenterLongitude: this.mapData.overlays[0].lng,
           Radius: this.mapData.overlays[1],
-          type: "1"
+          Type: "1"
         };
         AddRegion(data).then(res => {
           if (res.data.code == 0) {
             this.getTable();
             this.down();
+            this.mapData.map.clearMap();
             return this.$notify({
               message: res.data.msg,
               title: "提示",
@@ -431,19 +460,20 @@ export default {
       } else if (this.label == "rectangle") {
         data = {
           AreaProperty: this.formdata.alarm_type,
-          AreaName: this.formdata.name,
+          RegionName: this.formdata.name,
           StartTime: this.formdata.start_time,
           EndTime: this.formdata.stop_time,
           LeftTopLatitude: this.mapData.overlays[0].path[0].lat,
           LeftTopLongitude: this.mapData.overlays[0].path[0].lng,
-          RightBottomLatitude: this.mapData.overlays[0].path[3].lat,
-          RightBottomLongitude: this.mapData.overlays[0].path[3].lng,
-          type: "2"
+          RightBottomLatitude: this.mapData.overlays[0].path[2].lat,
+          RightBottomLongitude: this.mapData.overlays[0].path[2].lng,
+          Type: "2"
         };
         AddRegion(data).then(res => {
           if (res.data.code == 0) {
             this.getTable();
             this.down();
+            this.mapData.map.clearMap();
             return this.$notify({
               message: res.data.msg,
               title: "提示",
@@ -468,17 +498,18 @@ export default {
         lng = lng.substring(0, lng.lastIndexOf(","));
         data = {
           AreaProperty: this.formdata.alarm_type,
-          AreaName: this.formdata.name,
+          RegionName: this.formdata.name,
           StartTime: this.formdata.start_time,
           EndTime: this.formdata.stop_time,
           Latitude: lat,
           Longitude: lng,
-          type: "3"
+          Type: "3"
         };
         AddRegion(data).then(res => {
           if (res.data.code == 0) {
             this.getTable();
             this.down();
+            this.mapData.map.clearMap();
             return this.$notify({
               message: res.data.msg,
               title: "提示",
@@ -501,6 +532,7 @@ export default {
     },
     // 添加自定义区域
     addForm(type) {
+      this.mapData.map.clearMap();
       this.areaType = false;
       if (type == 1) {
         this.nocustom = true;

@@ -9,23 +9,23 @@
           </el-tab-pane>
           <el-tab-pane label="车辆信息设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-information :message="information" @instruction="instruction" @setting="setting"></choose-information>
+            <choose-information :respond="respond" :message="information" @instruction="instruction" @setting="setting"></choose-information>
           </el-tab-pane>
           <el-tab-pane label="行车报警设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-alarm :message="alarm" @instruction="instruction" @setting="setting"></choose-alarm>
+            <choose-alarm :respond="respond" :message="alarm" @instruction="instruction" @setting="setting"></choose-alarm>
           </el-tab-pane>
           <el-tab-pane label="终端上报时间间隔设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-report :message="report" @instruction="instruction" @setting="setting"></choose-report>
+            <choose-report :respond="respond" :message="report" @instruction="instruction" @setting="setting"></choose-report>
           </el-tab-pane>
           <el-tab-pane label="终端通讯设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-device :message="device" @instruction="instruction" @setting="setting"></choose-device>
+            <choose-device :respond="respond" :message="device" @instruction="instruction" @setting="setting"></choose-device>
           </el-tab-pane>
           <el-tab-pane label="拍照设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-picture :message="picture" @instruction="instruction" @setting="setting"></choose-picture>
+            <choose-picture :respond="respond" :message="picture" @instruction="instruction" @setting="setting"></choose-picture>
           </el-tab-pane>
         </el-tabs>
       </div>
