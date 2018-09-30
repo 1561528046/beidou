@@ -91,10 +91,10 @@
           </transition>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="冀R12345" :closable="true" name="x">
+      <el-tab-pane label="围栏管理" :closable="true" name="fence" v-if="tabs.indexOf('fence') !=-1">
         <vehicle-area></vehicle-area>
       </el-tab-pane>
-      <el-tab-pane label="冀R12345" :closable="true" v-for="vehicle in singleVehicle" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
+      <el-tab-pane label="冀R12345" :closable="true" v-for="vehicle in singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
     </el-tabs>
@@ -137,8 +137,6 @@ export default {
         type: "",
         sub_title: ""
       },
-      currentVehiclesSet: new Set(), //小地图查看的车去重SET
-      currentVehicles: [], //小地图查看的车
       currentTab: "index",
       maps: [],
       alarmList: {},
@@ -158,15 +156,28 @@ export default {
         page: 1,
         total: 0
       },
-      singleVehicle: [], //单车监控车辆
-      singleVehicleSet: new Set() //单车监控去重Set
+      currentVehiclesSet: new Set(), //小地图查看的车SET
+      currentVehiclesLog: 0, //触发computed
+      tabs: [], //标签管理（单车监控标签通过singleVehicle管理）
+      singleVehiclesLog: 0, //触发computed
+      singleVehiclesSet: new Set() //单车监控Set
     };
+  },
+  computed: {
+    currentVehicles: function() {
+      void this.currentVehiclesLog;
+      return Array.from(this.currentVehiclesSet);
+    },
+    singleVehicles: function() {
+      void this.singleVehiclesLog;
+      return Array.from(this.singleVehiclesSet);
+    }
   },
   watch: {
     userList: function() {}
   },
   created() {
-    // this.init();
+    this.init();
     var vm = this;
     window.monitor = {
       data: new Map(), //所有数据
@@ -194,10 +205,7 @@ export default {
             //车辆所对应的分组 均加入记录
             this.setGroupDict(vehicle.group_path, "alarm", vehicle.sim_id);
           }
-          if (
-            new Date() - new Date(vehicle.time) >
-            vm.$dict.ONLINE_TIMEOUT * 5
-          ) {
+          if (new Date() - new Date(vehicle.time) < vm.$dict.ONLINE_TIMEOUT) {
             vehicle.online = true;
             this.dict.online.add(vehicle.sim_id);
             this.setGroupDict(vehicle.group_path, "online", vehicle.sim_id);
@@ -219,6 +227,7 @@ export default {
           this.setUserCount();
           // this.setCurrentGroup();
         }, 0);
+        vm.initWS();
       },
       initGroupDict(groups) {
         //后台接口、根据当前用户分组 获取所有分组（平铺）
@@ -263,10 +272,10 @@ export default {
         var groupDict = this.dict.groups;
         groups.map(groups_id => {
           if (groups_id) {
-            groupDict
-              .get(groups_id.toString())
-              .get(status)
-              .delete(sim_id);
+            var group = groupDict.get(groups_id.toString());
+            if (group) {
+              group.get(status).delete(sim_id);
+            }
           }
         });
       },
@@ -306,12 +315,13 @@ export default {
         });
       },
       setVehicleData(vehicleData) {
+        // debugger;
         if (this.data.has(vehicleData.sim_id)) {
           if (vehicleData.alarm != "") {
             this.setAlarm(vehicleData);
           }
           if (
-            new Date() - new Date(vehicleData.time) >
+            new Date() - new Date(vehicleData.time) <
             vm.$dict.ONLINE_TIMEOUT
           ) {
             this.setOnline(vehicleData);
@@ -354,49 +364,6 @@ export default {
       },
       setAlarm() {}
     };
-
-    var ws = new WebSocket("ws://192.168.88.88:5002");
-    // var socketDataWorker = new Worker("/map/worker-socket.js");
-    // ws.binaryType = "arraybuffer";
-    // ws.onmessage = function(evt) {
-    //   socketDataWorker.postMessage(new Uint8Array(evt.data));
-    //   //  ws.close()
-    // };
-    // ws.onopen = function() {
-    //   getUser({ user_id: vm.$store.state.user.user_id })
-    //     .then(res => {
-    //       if (res.data.code == 0) {
-    //         var blob = new Blob(
-    //           [
-    //             "^x3003|" +
-    //               res.data.data[0].user_name +
-    //               "|" +
-    //               res.data.data[0].pass_word +
-    //               "$"
-    //           ],
-    //           {
-    //             type: "text/plain"
-    //           }
-    //         );
-    //         var reader = new FileReader();
-    //         reader.readAsArrayBuffer(blob);
-    //         reader.onload = function(e) {
-    //           console.log(arguments, reader.result);
-    //           ws.send(reader.result);
-    //           ws.close();
-    //         };
-    //       } else {
-    //         vm.$message.error("实时数据链接失败，无法登陆！");
-    //       }
-    //     })
-    //     .catch(() => {
-    //       vm.$message.error("实时数据链接失败，无法登陆！");
-    //     });
-    // };
-    // socketDataWorker.onmessage = event => {
-    //   event.data.sim_id = "0" + event.data.sim_id;
-    //   monitor.setVehicleData(event.data);
-    // };
   },
   destroyed() {
     this.maps.map(map => {
@@ -414,6 +381,19 @@ export default {
           this.initLoader.close();
           this.$alert("初始化分组失败！");
         });
+    },
+    initWS() {
+      var ws = new WebSocket("ws://192.168.88.88:5002");
+      var socketDataWorker = new Worker("/map/worker-socket.js");
+      ws.binaryType = "arraybuffer";
+      ws.onopen = function() {};
+      ws.onmessage = function(evt) {
+        socketDataWorker.postMessage(new Uint8Array(evt.data));
+      };
+      socketDataWorker.onmessage = event => {
+        event.data.sim_id = parseInt(event.data.sim_id).toString();
+        monitor.setVehicleData(event.data);
+      };
     },
     initVehicle(groups) {
       this.initLoader.setText("初始化车辆数据");
@@ -539,11 +519,11 @@ export default {
     },
     vehicleSelected(selected) {
       var vehicle = monitor.data.get(selected.sim_id);
-      vehicle.lat = 39.1014;
-      vehicle.lng = 116.1114;
-      if (!this.currentVehiclesSet.has(vehicle.sim_id)) {
-        this.currentVehiclesSet.add(vehicle.sim_id);
-        this.currentVehicles.push(vehicle);
+      // vehicle.lat = 39.1014;
+      // vehicle.lng = 116.1114;
+      if (!this.currentVehiclesSet.has(vehicle)) {
+        this.currentVehiclesLog++;
+        this.currentVehiclesSet.add(vehicle);
       }
       // setInterval(() => {
       //   vehicle.lat += 39.1114;
@@ -551,38 +531,32 @@ export default {
       // }, 1000);
     },
     removeCurrentVehicle(sim_id) {
-      var index = this.currentVehicles.findIndex(item => {
-        return item.sim_id == sim_id;
-      });
-      if (index != -1) {
-        this.currentVehicles.splice(index, 1);
-      }
-      this.currentVehiclesSet.delete(sim_id);
+      var vehicle = monitor.data.get(sim_id);
+      this.currentVehiclesSet.delete(vehicle);
+      this.currentVehiclesLog++;
     },
     addSingleVehicle(sim_id) {
       var vehicle = monitor.data.get(sim_id);
-      if (!this.singleVehicleSet.has(sim_id)) {
-        this.singleVehicleSet.add(sim_id);
-        this.singleVehicle.push(vehicle);
+      if (!this.singleVehiclesSet.has(vehicle)) {
+        this.singleVehiclesLog++;
+        this.singleVehiclesSet.add(vehicle);
         this.currentTab = "single-" + sim_id;
       }
     },
     removeSingleVehicle(sim_id) {
-      var index = this.singleVehicle.findIndex(item => {
-        return item.sim_id == sim_id;
-      });
-      if (index != -1) {
-        this.singleVehicle.splice(index, 1);
-      }
-      this.singleVehicleSet.delete(sim_id);
+      var vehicle = monitor.data.get(sim_id);
+      this.singleVehiclesLog++;
+      this.singleVehiclesSet.delete(vehicle);
       this.currentTab = "index";
     },
     tabRemove(tabName) {
       //tabName必须遵循 类型-sim_id
       var tab = tabName.split("-");
       switch (tab[0]) {
-        case "single":
+        case "single": //单车监控
           this.removeSingleVehicle(tab[1]);
+          break;
+        case "fence": //围栏
           break;
       }
     }

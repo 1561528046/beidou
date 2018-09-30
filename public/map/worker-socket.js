@@ -61,6 +61,9 @@ self.onmessage = function(e) {
   format(e.data).map(item => {
     var results = serialize(item);
     results.map(result => {
+      if (result.lng < 0) {
+        // result.buffer = e.data;
+      }
       self.postMessage(result);
     });
   });
@@ -118,14 +121,20 @@ function format(buffer) {
       }
     }
   }
-  return transfer(result);
+  var results = [];
+  result.map(item => {
+    results.push(transfer(item));
+  });
+  return results;
 }
 
 function transfer(buffer) {
+  self.buffer = buffer;
   //处理转义
   var cache = new Uint8Array();
   var start = 0;
   var x7dIndex = buffer.indexOf(0x7d);
+
   if (x7dIndex == -1) {
     return buffer;
   }
@@ -207,15 +216,18 @@ function serialize(buffer) {
 function x0200(buffer) {
   var result = {};
   result.alarm = DICT.getAlarm(
-    (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]
+    SHL(buffer[0], 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]
   ); //报警标志
   result.state =
-    (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]; //  buffer.slice(17, 21); //状态
+    SHL(buffer[4], 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]; //  buffer.slice(17, 21); //状态
   result.lat =
-    ((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]) /
+    (SHL(buffer[8], 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]) /
     1000000.0; //buffer.slice(21, 25); //纬度
   result.lng =
-    ((buffer[12] << 24) + (buffer[13] << 16) + (buffer[14] << 8) + buffer[15]) /
+    (SHL(buffer[12], 24) +
+      (buffer[13] << 16) +
+      (buffer[14] << 8) +
+      buffer[15]) /
     1000000.0; //buffer.slice(25, 29); //经度
   result.altitude = (buffer[16] << 8) + buffer[17]; //buffer.slice(29, 31); //高程
   result.speed = ((buffer[18] << 8) + buffer[19]) / 10; //buffer.slice(31, 33); //速度
@@ -229,10 +241,14 @@ function x0200(buffer) {
       len = buffer[i + 1];
       // var start = i + 2;
       // var msg =  buffer.slice(start, start + len);
+      if (msgid >= 0xe0) {
+        //不处理自定义信息
+        break;
+      }
       switch (msgid) {
         case 0x01:
           result.mileage =
-            (buffer[i + 2] << 24) +
+            SHL(buffer[i + 2], 24) +
             (buffer[i + 3] << 16) +
             (buffer[i + 4] << 8) +
             buffer[i + 5];
@@ -250,7 +266,7 @@ function x0200(buffer) {
           result.overSpeedPositionType = buffer[i + 2];
           if (result.overSpeedPositionType > 0) {
             result.overSpeedAreaId =
-              (buffer[i + 3] << 24) +
+              SHL(buffer[i + 3], 24) +
               (buffer[i + 4] << 16) +
               (buffer[i + 5] << 8) +
               buffer[i + 6];
@@ -261,7 +277,7 @@ function x0200(buffer) {
           result.inoutAlarm.push({
             type: buffer[i + 2],
             areaId:
-              (buffer[i + 3] << 24) +
+              SHL(buffer[i + 3], 24) +
               (buffer[i + 4] << 16) +
               (buffer[i + 5] << 8) +
               buffer[i + 6],
@@ -271,7 +287,7 @@ function x0200(buffer) {
         case 0x13:
           result.runTimeAlarm = {
             routeID:
-              (buffer[i + 2] << 24) +
+              SHL(buffer[i + 2], 24) +
               (buffer[i + 3] << 16) +
               (buffer[i + 4] << 8) +
               buffer[i + 5],
@@ -281,7 +297,7 @@ function x0200(buffer) {
           break;
         case 0x25:
           result.vehicleSignal =
-            (buffer[i + 2] << 24) +
+            SHL(buffer[i + 2], 24) +
             (buffer[i + 3] << 16) +
             (buffer[i + 4] << 8) +
             buffer[i + 5];
@@ -291,7 +307,7 @@ function x0200(buffer) {
           break;
         case 0x2b:
           result.analog =
-            (buffer[i + 2] << 24) +
+            SHL(buffer[i + 2], 24) +
             (buffer[i + 3] << 16) +
             (buffer[i + 4] << 8) +
             buffer[i + 5];
@@ -322,11 +338,12 @@ function x0704(buffer) {
   return arr;
 }
 function formatSim(buffer) {
-  var code = [];
+  var sim_id = "";
   buffer.map(item => {
-    code.push(item.toString(16));
+    var value = item.toString(16);
+    sim_id += "0".repeat(2 - value.length) + value;
   });
-  return code.join("");
+  return sim_id;
 }
 function formatTime(buffer) {
   var code = [];
@@ -349,4 +366,16 @@ function formatTime(buffer) {
     ":" +
     date.substring(12, 14)
   );
+}
+/**
+ *js 255左移24位溢出问题
+ *
+ * @param {int} num 要左移的数字
+ * @param {int} step 左移的位数
+ */
+function SHL(num, step) {
+  var result = num.toString(2);
+  result = "0".repeat(8 - result.length) + result;
+  result += "0".repeat(parseInt(step));
+  return parseInt(result, 2);
 }
