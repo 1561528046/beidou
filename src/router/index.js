@@ -21,6 +21,12 @@ var routers = [
     meta: { name: "首页" }
   },
   {
+    path: "fence-area",
+    name: "fence-area",
+    meta: { name: "区域添加车辆", hidden: true },
+    component: () => import("@/views/monitor/components/binding.vue")
+  },
+  {
     path: "/monitor",
     name: "monitor",
     component: () => import("@/views/monitor/index.vue"),

@@ -1,85 +1,85 @@
 <template>
-    <div>
-        <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
-            <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="operating" label="操作状态"></el-table-column>
-            <el-table-column prop="" label="监控平台电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="" label="监控平台SMS电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="" label="接受终端SMS文本报警号码" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="" label="终端电话接听策略" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="" label="监听电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="" label="监管平台特权短信号码" :formatter="$utils.baseFormatter"> </el-table-column>
-        </el-table>
-        <el-form label-width="180px" label-position="left" class="table-search" size="small">
-            <el-row :gutter="30">
-                <el-col :span="8">
-                    <el-form-item label="监控平台电话号码">
-                        <el-input style="width:60%" v-model="communication.Ox0040">
-                            <template slot="append">
-                                <el-button @click="setup('0x0040')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0040')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="监控平台SMS电话号码">
-                        <el-input style="width:60%" v-model="communication.Ox0043">
-                            <template slot="append">
-                                <el-button @click="setup('0x0043')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0043')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="接受终端SMS文本报警号码">
-                        <el-input style="width:60%" v-model="communication.Ox0044">
-                            <template slot="append">
-                                <el-button @click="setup('0x0044')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0044')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="终端电话接听策略">
-                        <!-- <el-input style="width:60%">
+  <div>
+    <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
+      <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="operating" label="操作状态"></el-table-column>
+      <el-table-column prop="Ox0040" label="监控平台电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0043" label="监控平台SMS电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0044" label="接受终端SMS文本报警号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0045" label="终端电话接听策略" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0048" label="监听电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0049" label="监管平台特权短信号码" :formatter="$utils.baseFormatter"> </el-table-column>
+    </el-table>
+    <el-form label-width="180px" label-position="left" class="table-search" size="small">
+      <el-row :gutter="30">
+        <el-col :span="8">
+          <el-form-item label="监控平台电话号码">
+            <el-input style="width:60%" v-model="communication.Ox0040">
+              <template slot="append">
+                <el-button @click="setup('0x0040')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0040')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="监控平台SMS电话号码">
+            <el-input style="width:60%" v-model="communication.Ox0043">
+              <template slot="append">
+                <el-button @click="setup('0x0043')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0043')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="接受终端SMS文本报警号码">
+            <el-input style="width:60%" v-model="communication.Ox0044">
+              <template slot="append">
+                <el-button @click="setup('0x0044')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0044')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="终端电话接听策略">
+            <!-- <el-input style="width:60%">
                             <template slot="append">
                                 <el-button @click="setup('0x0045')">设置</el-button>
                             </template>
                         </el-input> -->
-                        <el-select style="width:46%;" v-model="communication.Ox0045">
-                            <el-option label="自动接听" value="0"></el-option>
-                            <el-option label="ACC(ON 时自动接听,OFF时手动接听)" value="1"></el-option>
-                        </el-select>
-                        <el-button style="background-color:#f5f7fa;color:#909399;font-size: inherit" @click="setup('0x0045')">设置</el-button>
-                        <el-button @click="collect('0x0045')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="监听电话号码">
-                        <el-input style="width:60%" v-model="communication.Ox0048">
-                            <template slot="append">
-                                <el-button @click="setup('0x0048')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0048')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="监管平台特权短信号码">
-                        <el-input style="width:60%" v-model="communication.Ox0049">
-                            <template slot="append">
-                                <el-button @click="setup('0x0049')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0049')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </el-form>
-    </div>
+            <el-select style="width:46%;" v-model="communication.Ox0045">
+              <el-option label="自动接听" value="0"></el-option>
+              <el-option label="ACC(ON 时自动接听,OFF时手动接听)" value="1"></el-option>
+            </el-select>
+            <el-button style="background-color:#f5f7fa;color:#909399;font-size: inherit" @click="setup('0x0045')">设置</el-button>
+            <el-button @click="collect('0x0045')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="监听电话号码">
+            <el-input style="width:60%" v-model="communication.Ox0048">
+              <template slot="append">
+                <el-button @click="setup('0x0048')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0048')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="监管平台特权短信号码">
+            <el-input style="width:60%" v-model="communication.Ox0049">
+              <template slot="append">
+                <el-button @click="setup('0x0049')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0049')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+  </div>
 </template>
 <script>
 import chooseParameter from "@/components/choose-parameter.vue";
@@ -115,14 +115,49 @@ export default {
   watch: {
     message: {
       handler: function() {
-        this.communication.data = this.$props.message;
+        this.$set(this.communication, "data", this.$props.message);
+        this.communication.data.map(item => {
+          if (item.Ox0040 == undefined) {
+            this.$set(item, "Ox0040", ""),
+              this.$set(item, "Ox0043", ""),
+              this.$set(item, "Ox0044", ""),
+              this.$set(item, "Ox0045", ""),
+              this.$set(item, "Ox0048", ""),
+              this.$set(item, "Ox0049", "");
+          }
+        });
+      },
+      deep: true
+    },
+    respond: {
+      handler: function() {
+        var limit = ["64", "67", "68", "69", "72", "73"];
+        var str = this.$props.respond;
+        str = str.split("|");
+        if (!limit.includes(str[1])) {
+          return;
+        }
+        str[3] = str[3].substring(0, str[3].length - 1);
+        str[1] = parseInt(str[1]).toString(16);
+        str[1] = "Ox" + "0".repeat(4 - str[1].length) + str[1];
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            item.sim_id = "0" + item.sim_id;
+          }
+          if (item.sim_id == str[3]) {
+            item[str[1]] = str[2];
+            var utc = this.$dict.get_communication(str[1]);
+            item.operating = utc + "采集成功";
+          }
+        });
       },
       deep: true
     }
   },
   computed: {},
   props: {
-    message: Array
+    message: Array,
+    respond: String
   },
   created() {},
   methods: {

@@ -3,20 +3,20 @@
         <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
             <el-table-column fixed prop="license" label="车牌号" width="100" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column fixed prop="operating" label="操作状态" width="150"></el-table-column>
-            <el-table-column width="180" prop="" label="TCP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="TCP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="UDP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="UDP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="SMS消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="SMS消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="主服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="备份服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="主服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="备份服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="服务器TCP端口" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="服务器UDP端口" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="位置汇报策略" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="" label="位置汇报方案" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0002" label="TCP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0003" label="TCP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0004" label="UDP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0005" label="UDP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0006" label="SMS消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0007" label="SMS消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0010" label="主服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0014" label="备份服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0013" label="主服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0017" label="备份服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0018" label="服务器TCP端口" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0019" label="服务器UDP端口" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0020" label="位置汇报策略" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="Ox0021" label="位置汇报方案" :formatter="$utils.baseFormatter"> </el-table-column>
         </el-table>
         <el-form label-width="170px" label-position="left" class="table-search" size="small">
             <el-row :gutter="30">
@@ -182,6 +182,7 @@ export default {
   //   name: "choose-communication",
   data() {
     return {
+      str: "",
       selectedVehicles: [],
       length: 0,
       vehicleDialog: false,
@@ -217,18 +218,90 @@ export default {
   watch: {
     message: {
       handler: function() {
-        this.communication.data = this.$props.message;
+        this.$set(this.communication, "data", this.$props.message);
+        this.communication.data.map(item => {
+          if (item.Ox0002 == undefined) {
+            this.$set(item, "Ox0002", "");
+            this.$set(item, "Ox0003 ", "");
+            this.$set(item, "Ox0004 ", "");
+            this.$set(item, "Ox0005 ", "");
+            this.$set(item, "Ox0006 ", "");
+            this.$set(item, "Ox0007 ", "");
+            this.$set(item, "Ox0010 ", "");
+            this.$set(item, "Ox0013 ", "");
+            this.$set(item, "Ox0014 ", "");
+            this.$set(item, "Ox0017 ", "");
+            this.$set(item, "Ox0018 ", "");
+            this.$set(item, "Ox0019 ", "");
+            this.$set(item, "Ox0020 ", "");
+            this.$set(item, "Ox0021 ", "");
+          }
+        });
       },
       deep: true
     },
     respond: {
       handler: function() {
-        // this.communication.data.map(item=>{
-        //     item.sim_id==this.$props.respond
-        // })
-        console.log(this.$props.respond);
-        var last = this.$props.respond.indexOf("|");
-        console.log(last);
+        var limit = [
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "10",
+          "19",
+          "20",
+          "23",
+          "24",
+          "25",
+          "32",
+          "33"
+        ];
+        this.$set(this.$data, "str", this.$props.respond);
+        this.str = this.str.split("|");
+        if (!limit.includes(this.str[1])) {
+          return;
+        }
+        console.log(this.str);
+        if (this.str[0] == "^x8106") {
+          var ins = this.str[2].substring(this.str[2].length - 1);
+          var thisname = this.str[2].substring(0, this.str[2].length - 2);
+          this.str[1] = parseInt(this.str[1]).toString(16);
+          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+          if (ins == "0") {
+            this.communication.data.map(item => {
+              if ((item.sim_id = thisname)) {
+                var utc = this.$dict.get_communication(this.str[1]);
+                item.operating = utc + "采集成功";
+              }
+            });
+          }
+          this.str[2] = this.str[2].substring(0, this.str[2].length - 2);
+          this.str[1] = parseInt(this.str[1]).toString(16);
+          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+          this.communication.data.map(item => {
+            if (item.sim_id.length == 11) {
+              item.sim_id = "0" + item.sim_id;
+            }
+            if (item.sim_id == this.str[2]) {
+              item[this.str[1]] = this.str[2];
+            }
+          });
+        } else {
+          //   str[3] = str[3].substring(0, str[3].length - 1);
+          //   str[1] = parseInt(str[1]).toString(16);
+          //   str[1] = "Ox" + "0".repeat(4 - str[1].length) + str[1];
+          //   this.communication.data.map(item => {
+          //     if (item.sim_id.length == 11) {
+          //       item.sim_id = "0" + item.sim_id;
+          //     }
+          //     if (item.sim_id == str[3]) {
+          //       var utc = this.$dict.get_communication(str[1]);
+          //       item.operating = utc + "设置成功";
+          //     }
+          //   });
+        }
       }
     }
   },
