@@ -211,7 +211,7 @@ export default {
 .el-input__inner {
   text-align: center;
 }
-ul,
+/* ul,
 li {
   margin: 0;
   padding: 0;
@@ -231,7 +231,7 @@ li.active {
 li:hover {
   background-color: #f5f7fa;
   cursor: pointer;
-}
+} */
 .el-card__body {
   height: 100%;
 }

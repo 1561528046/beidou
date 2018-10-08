@@ -1,7 +1,7 @@
 <template>
   <div style="padding:20px;">
     <el-tabs type="border-card" @tab-click="handleClick">
-      <el-tab-pane label="全国联动车辆">
+      <!-- <el-tab-pane label="全国联动车辆">
         <el-form :model="tableRepair" label-width="80px" label-position="left" class="table-search" size="small">
           <el-row :gutter="30">
             <el-col :span="6">
@@ -103,7 +103,7 @@
             <el-button @click="delDialog = false">取 消</el-button>
           </span>
         </el-dialog>
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane label="普通货车">
         <el-form :model="tableRepair" label-width="80px" label-position="left" class="table-search" size="small">
           <el-row :gutter="30">

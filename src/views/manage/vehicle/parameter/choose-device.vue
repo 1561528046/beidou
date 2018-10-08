@@ -44,11 +44,6 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="终端电话接听策略">
-            <!-- <el-input style="width:60%">
-                            <template slot="append">
-                                <el-button @click="setup('0x0045')">设置</el-button>
-                            </template>
-                        </el-input> -->
             <el-select style="width:46%;" v-model="communication.Ox0045">
               <el-option label="自动接听" value="0"></el-option>
               <el-option label="ACC(ON 时自动接听,OFF时手动接听)" value="1"></el-option>
@@ -139,8 +134,7 @@ export default {
           return;
         }
         if (this.str[0] == "^x8106") {
-          if (this.str[2][this.str[2].length - 1] == "0") {
-            var seletSim = this.str[2].substring(0, this.str[2].length - 2); //sim_id
+          if (this.str[3][0] == "0") {
             this.str[1] = parseInt(this.str[1]).toString(16);
             this.str[1] =
               "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
@@ -148,16 +142,27 @@ export default {
               if (item.sim_id.length == 11) {
                 item.sim_id = "0" + item.sim_id;
               }
-              if (item.sim_id == seletSim) {
+              if (item.sim_id == this.str[2]) {
                 var utc = this.$dict.get_communication(this.str[1]);
                 item.operating = utc + "采集成功";
-                // item[this.str[1]] = this.str[1];
               }
             });
           }
+        } else if (this.str[0] == "^x0104") {
+          this.str[3] = this.str[3].substring(0, this.str[3].length - 1);
+          this.str[1] = parseInt(this.str[1]).toString(16);
+          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+          this.communication.data.map(item => {
+            if (item.sim_id.length == 11) {
+              item.sim_id = "0" + item.sim_id;
+            }
+            if (item.sim_id == this.str[3]) {
+              item[this.str[1]] = this.str[2];
+            }
+          });
         } else {
-          if (this.str[3][this.str[3].length - 1] == "0") {
-            var setSim = this.str[3].substring(0, this.str[3].length - 2);
+          var state = this.str[4].substring(0, this.str[4].length - 1);
+          if (state == "0") {
             this.str[1] = parseInt(this.str[1]).toString(16);
             this.str[1] =
               "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
@@ -165,10 +170,9 @@ export default {
               if (item.sim_id.length == 11) {
                 item.sim_id = "0" + item.sim_id;
               }
-              if (item.sim_id == setSim) {
+              if (item.sim_id == this.str[3]) {
                 var utc = this.$dict.get_communication(this.str[1]);
                 item.operating = utc + "设置成功";
-                // item[this.str[1]] = this.str[1];
               }
             });
           }
@@ -194,9 +198,6 @@ export default {
         item.operating = "--";
       });
       this.$set(this.communication, "data", scope);
-    },
-    handleClick(tab) {
-      console.log(tab.label);
     },
     // 采集
     collect(num) {

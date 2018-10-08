@@ -1,102 +1,102 @@
 <template>
-    <div>
-        <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
-            <el-table-column fixed prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column fixed prop="operating" label="操作状态"></el-table-column>
-            <el-table-column width="190" prop="Ox0027" label="休眠时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="Ox002e" label="休眠时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="Ox0028" label="紧急报警时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="Ox002f" label="紧急报警时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="Ox0029" label="缺省时间汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="Ox002c" label="缺省距离汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="Ox0022" label="驾驶员未登录汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="190" prop="Ox002d" label="驾驶员未登录汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-        </el-table>
-        <el-form label-width="205px" label-position="left" class="table-search" size="small">
-            <el-row :gutter="30">
-                <el-col :span="8">
-                    <el-form-item label="休眠时汇报时间间隔(s)">
-                        <el-input style="width:60%" v-model="communication.Ox0027">
-                            <template slot="append">
-                                <el-button @click="setup('0x0027')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0027')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="休眠时汇报距离间隔(m)">
-                        <el-input style="width:60%" v-model="communication.Ox002E">
-                            <template slot="append">
-                                <el-button @click="setup('0x002E')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x002E')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="缺省时间汇报时间间隔(s)">
-                        <el-input style="width:60%" v-model="communication.Ox0029">
-                            <template slot="append">
-                                <el-button @click="setup('0x0029')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0029')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="缺省距离汇报距离间隔(m)">
-                        <el-input style="width:60%" v-model="communication.Ox002C">
-                            <template slot="append">
-                                <el-button @click="setup('0x002C')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x002C')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="紧急报警时汇报时间间隔(s)">
-                        <el-input style="width:60%" v-model="communication.Ox0028">
-                            <template slot="append">
-                                <el-button @click="setup('0x0028')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0028')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="紧急报警时汇报距离间隔(m)">
-                        <el-input style="width:60%" v-model="communication.Ox002F">
-                            <template slot="append">
-                                <el-button @click="setup('0x002F')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x002F')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="驾驶员未登录汇报时间间隔(s)">
-                        <el-input style="width:60%" v-model="communication.Ox0022">
-                            <template slot="append">
-                                <el-button @click="setup('0x0022')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0022')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="驾驶员未登录汇报距离间隔(m)">
-                        <el-input style="width:60%" v-model="communication.Ox002D">
-                            <template slot="append">
-                                <el-button @click="setup('0x002D')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x002D')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </el-form>
-    </div>
+  <div>
+    <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
+      <el-table-column fixed prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column fixed prop="operating" label="操作状态"></el-table-column>
+      <el-table-column width="190" prop="Ox0027" label="休眠时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column width="190" prop="Ox002e" label="休眠时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column width="190" prop="Ox0028" label="紧急报警时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column width="190" prop="Ox002f" label="紧急报警时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column width="190" prop="Ox0029" label="缺省时间汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column width="190" prop="Ox002c" label="缺省距离汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column width="190" prop="Ox0022" label="驾驶员未登录汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column width="190" prop="Ox002d" label="驾驶员未登录汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+    </el-table>
+    <el-form label-width="205px" label-position="left" class="table-search" size="small">
+      <el-row :gutter="30">
+        <el-col :span="8">
+          <el-form-item label="休眠时汇报时间间隔(s)">
+            <el-input style="width:60%" v-model="communication.Ox0027">
+              <template slot="append">
+                <el-button @click="setup('0x0027')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0027')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="休眠时汇报距离间隔(m)">
+            <el-input style="width:60%" v-model="communication.Ox002E">
+              <template slot="append">
+                <el-button @click="setup('0x002E')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x002E')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="缺省时间汇报时间间隔(s)">
+            <el-input style="width:60%" v-model="communication.Ox0029">
+              <template slot="append">
+                <el-button @click="setup('0x0029')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0029')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="缺省距离汇报距离间隔(m)">
+            <el-input style="width:60%" v-model="communication.Ox002C">
+              <template slot="append">
+                <el-button @click="setup('0x002C')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x002C')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="紧急报警时汇报时间间隔(s)">
+            <el-input style="width:60%" v-model="communication.Ox0028">
+              <template slot="append">
+                <el-button @click="setup('0x0028')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0028')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="紧急报警时汇报距离间隔(m)">
+            <el-input style="width:60%" v-model="communication.Ox002F">
+              <template slot="append">
+                <el-button @click="setup('0x002F')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x002F')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="驾驶员未登录汇报时间间隔(s)">
+            <el-input style="width:60%" v-model="communication.Ox0022">
+              <template slot="append">
+                <el-button @click="setup('0x0022')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0022')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="驾驶员未登录汇报距离间隔(m)">
+            <el-input style="width:60%" v-model="communication.Ox002D">
+              <template slot="append">
+                <el-button @click="setup('0x002D')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x002D')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+  </div>
 </template>
 <script>
 import chooseParameter from "@/components/choose-parameter.vue";
@@ -160,8 +160,7 @@ export default {
           return;
         }
         if (this.str[0] == "^x8106") {
-          if (this.str[2][this.str[2].length - 1] == "0") {
-            var seletSim = this.str[2].substring(0, this.str[2].length - 2); //sim_id
+          if (this.str[3][0] == "0") {
             this.str[1] = parseInt(this.str[1]).toString(16);
             this.str[1] =
               "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
@@ -169,16 +168,27 @@ export default {
               if (item.sim_id.length == 11) {
                 item.sim_id = "0" + item.sim_id;
               }
-              if (item.sim_id == seletSim) {
+              if (item.sim_id == this.str[2]) {
                 var utc = this.$dict.get_communication(this.str[1]);
                 item.operating = utc + "采集成功";
-                // item[this.str[1]] = this.str[1];
               }
             });
           }
+        } else if (this.str[0] == "^x0104") {
+          this.str[3] = this.str[3].substring(0, this.str[3].length - 1);
+          this.str[1] = parseInt(this.str[1]).toString(16);
+          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+          this.communication.data.map(item => {
+            if (item.sim_id.length == 11) {
+              item.sim_id = "0" + item.sim_id;
+            }
+            if (item.sim_id == this.str[3]) {
+              item[this.str[1]] = this.str[2];
+            }
+          });
         } else {
-          if (this.str[3][this.str[3].length - 1] == "0") {
-            var setSim = this.str[3].substring(0, this.str[3].length - 2);
+          var state = this.str[4].substring(0, this.str[4].length - 1);
+          if (state == "0") {
             this.str[1] = parseInt(this.str[1]).toString(16);
             this.str[1] =
               "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
@@ -186,10 +196,9 @@ export default {
               if (item.sim_id.length == 11) {
                 item.sim_id = "0" + item.sim_id;
               }
-              if (item.sim_id == setSim) {
+              if (item.sim_id == this.str[3]) {
                 var utc = this.$dict.get_communication(this.str[1]);
                 item.operating = utc + "设置成功";
-                // item[this.str[1]] = this.str[1];
               }
             });
           }
@@ -215,9 +224,6 @@ export default {
         item.operating = "--";
       });
       this.$set(this.communication, "data", scope);
-    },
-    handleClick(tab) {
-      console.log(tab.label);
     },
     // 采集
     collect(num) {

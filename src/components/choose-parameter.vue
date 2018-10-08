@@ -32,7 +32,7 @@
       </el-row>
     </el-form>
 
-    <el-table :data="tableData.data" @select-all="selectAll" @select="selectHandler" ref="vechileTable" style="width: 100%" class="admin-table-list">
+    <el-table height="500" :data="tableData.data" @select-all="selectAll" @select="selectHandler" ref="vechileTable" style="width: 100%;" class="admin-table-list">
       <el-table-column type="selection" label="状态" width="100">
       </el-table-column>
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -44,7 +44,7 @@
       <el-button type="primary" size="small" @click="formSubmit">提交</el-button>
     </div>
     <div class="admin-table-pager">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100,300,500]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
       </el-pagination>
     </div>
   </div>
