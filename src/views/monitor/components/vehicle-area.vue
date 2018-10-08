@@ -1,5 +1,5 @@
-<template slot-scope="scope">
-  <div style="width:760px; height:420px; border:1px solid #777; background-color:#fff;">
+<template>
+  <div style="width:760px; height:420px; border:1px solid #777; background-color:#fff;" class="vehicle-area">
     <!-- 地图 -->
     <div style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
     <!-- 自定义区域 -->
@@ -609,64 +609,66 @@ export default {
   }
 };
 </script>
-<style>
-.btn {
-  width: 72px;
-  height: 26px;
-  display: inline-block;
-  font-weight: 400;
-  font-size: 12px;
-  border: 1px solid #25a5f7;
-  background-color: #fff;
-  color: #25a5f7;
-  border-color: #25a5f7;
-  padding: 0.25rem 0.5rem;
-  line-height: 1.5;
-  border-radius: 1rem;
-  cursor: pointer;
-}
-.btn:hover {
-  background-color: #25a5f7;
-  color: #fff;
-}
-span {
-  font-size: 12px;
-}
-.input-card {
-  z-index: 88;
-  width: 230px;
-  height: 97px;
-  border-radius: 4px;
-  position: fixed;
-  right: 10px;
-  bottom: 10px;
-  background-color: #fff;
-  box-shadow: 0 2px 6px 0 rgba(114, 124, 245, 0.5);
-  padding: 9px 15px;
-}
-.input-text {
-  margin-right: 38px;
-}
-.input-item {
-  margin-bottom: 15px;
-  overflow: hidden;
-}
-.input-item-text {
-  width: 100%;
-  height: 25px;
-  line-height: 25px;
-  text-align: justify;
-  display: inline-block;
-  font-size: 12px;
-  margin-bottom: 0;
-  font-weight: 400;
-  color: #495057;
-  text-align: center;
-  white-space: nowrap;
-  background-color: #e9ecef;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  border-bottom-right-radius: 0;
-  border-top-right-radius: 0;
+<style lang="less">
+.vehicle-area {
+  .btn {
+    width: 72px;
+    height: 26px;
+    display: inline-block;
+    font-weight: 400;
+    font-size: 12px;
+    border: 1px solid #25a5f7;
+    background-color: #fff;
+    color: #25a5f7;
+    border-color: #25a5f7;
+    padding: 0.25rem 0.5rem;
+    line-height: 1.5;
+    border-radius: 1rem;
+    cursor: pointer;
+  }
+  .btn:hover {
+    background-color: #25a5f7;
+    color: #fff;
+  }
+  span {
+    font-size: 12px;
+  }
+  .input-card {
+    z-index: 88;
+    width: 230px;
+    height: 97px;
+    border-radius: 4px;
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px 0 rgba(114, 124, 245, 0.5);
+    padding: 9px 15px;
+  }
+  .input-text {
+    margin-right: 38px;
+  }
+  .input-item {
+    margin-bottom: 15px;
+    overflow: hidden;
+  }
+  .input-item-text {
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+    text-align: justify;
+    display: inline-block;
+    font-size: 12px;
+    margin-bottom: 0;
+    font-weight: 400;
+    color: #495057;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+  }
 }
 </style>

@@ -210,7 +210,7 @@ export const location2address = function({ data, longKey, latKey }) {
     axios.all(promiseArr).then(res => {
       res.map((item, index) => {
         if (item.data.infocode == "10000") {
-          var addressArr = item.data.regeocodes;
+          var addressArr = item.data.regeocodes || [];
           addressArr.map((address, addressIndex) => {
             var addressTemp = address.formatted_address;
             if (address.roadinters[0]) {

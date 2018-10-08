@@ -118,17 +118,17 @@ export default {
             monitorData.info = lastData;
             if (!monitorData.time) {
               //如果监控数据中 没有定为时间，则把请求到的最后一条定为数据赋值到监控数据中
-              monitorData.time = lastData.Time;
+              monitorData.time = lastData.time;
               monitorData.alarm = lastData.AlarmSign;
-              monitorData.lng = lastData.Longitude;
-              monitorData.lat = lastData.Latitude;
+              monitorData.lng = lastData.Longitude || 0;
+              monitorData.lat = lastData.Latitude || 0;
               monitorData.altitude = lastData.Altitude;
               monitorData.speed = lastData.Speed;
               monitorData.speed1 = lastData.Speed1;
               monitorData.angle = lastData.Direction;
               monitorData.mileage = lastData.Mileage;
               monitorData.GNSSCount = lastData.GNSSCount;
-              monitorData.alarm_count = lastData.alarmCount;
+              monitorData.alarm_count = lastData.AlarmCount;
               monitorData.error_count = lastData.ErrorCount;
             }
           } else {
@@ -151,19 +151,21 @@ export default {
       initMap(() => {
         var AMap = window.AMap;
         // eslint-disable-next-line
+        var position = new AMap.LngLat(
+          this.mapData.vehicle.lng,
+          this.mapData.vehicle.lat
+        );
         this.mapData.map = new AMap.Map(this.$refs.vehicle_map, {
           viewMode: "3D",
           pitch: 55,
           rotation: -45,
-          center: [this.mapData.vehicle.lng, this.mapData.vehicle.lat],
+          center: position,
           dragEnable: false,
           keyboardEnable: false,
           zoom: 15
         });
         this.mapData.map.on("zoomchange", () => {
-          this.mapData.map.setCenter(
-            new AMap.LngLat(this.mapData.vehicle.lng, this.mapData.vehicle.lat)
-          );
+          this.mapData.map.setCenter(position);
         });
         this.mapData.marker = createMarker(this.mapData.vehicle, AMap);
         this.mapData.marker.setMap(this.mapData.map);
@@ -187,7 +189,7 @@ export default {
       this.$emit("close");
     }
   },
-  destroyed() {
+  beforeDestroyed() {
     this.mapData.map.destroy();
   }
 };
