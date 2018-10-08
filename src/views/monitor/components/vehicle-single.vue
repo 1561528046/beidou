@@ -20,7 +20,7 @@ export default {
   mounted() {},
   methods: {},
   destroyed() {
-    this.mapData.map.destroy();
+    // this.mapData.map.destroy();
   }
 };
 </script>

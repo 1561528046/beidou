@@ -47,14 +47,14 @@ export const createMarker = function(vehicleData, AMap) {
 };
 
 export const setMarker = function(marker, vehicleData, AMap) {
-  var img = "/static/offine.png";
+  var img = "/static/offline.png";
   if (vehicleData.alarmCount == "0") {
     img = "/static/alarm.png";
   }
   if (vehicleData.online) {
-    img = "/static/offine.png";
-  } else {
     img = "/static/online.png";
+  } else {
+    img = "/static/offline.png";
   }
   var image = new AMap.Icon({
     size: new AMap.Size(54, 54), //图标大小
