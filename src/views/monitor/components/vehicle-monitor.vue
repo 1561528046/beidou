@@ -42,25 +42,53 @@
     <div class="_other">
       <el-row>
         <el-col :span="12">
-          行驶记录仪速度{{mapData.vehicle.time}}
-        </el-col>
-        <el-col :span="12">
-          制动信号{{mapData.vehicle.info.linkman||"--"}}
-        </el-col>
-        <el-col :span="12">
           ACC开关 {{mapData.vehicle.info.tel||"--"}}
         </el-col>
         <el-col :span="12">
-          左转向灯{{mapData.vehicle.speed1 || mapData.vehicle.speed }} km/h
+          是否定位{{mapData.vehicle.time}}
         </el-col>
         <el-col :span="12">
-          右转向灯{{mapData.vehicle.mileage||"--"}}
+          纬度类型{{mapData.vehicle.info.linkman||"--"}}
+        </el-col>
+
+        <el-col :span="12">
+          经度类型{{mapData.vehicle.speed1 || mapData.vehicle.speed }} km/h
         </el-col>
         <el-col :span="12">
-          远光灯{{mapData.vehicle.address||"--"}}
+          运营状态{{mapData.vehicle.mileage||"--"}}
         </el-col>
         <el-col :span="12">
-          近光灯{{mapData.vehicle.address||"--"}}
+          实载状态：{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          油路状态:{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          电路状态:{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          车门状态:{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          前门状态:{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          中门状态:{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          后门状态:{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          驾驶席门状态:{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          是否使用北斗定位:{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          是否使用GLONASS定位:{{mapData.vehicle.address1||"--"}}
+        </el-col>
+        <el-col :span="12">
+          是否使用Galileo定位:{{mapData.vehicle.address1||"--"}}
         </el-col>
       </el-row>
     </div>
@@ -116,6 +144,35 @@ export default {
           if (res.data.code == 0) {
             var lastData = res.data.data[0];
             monitorData.info = lastData;
+            var tpl = {
+              alarm: "",
+              state: "",
+              lat: "",
+              lng: "",
+              altitude: "",
+              speed: "",
+              angle: "",
+              time: "",
+              mileage: "",
+              oil: "",
+              speed1: "",
+              alarmId: "",
+              overSpeedPositionType: "",
+              overSpeedAreaId: "",
+              inoutAlarm: [],
+              runTimeAlarm: {
+                routeID: "",
+                time: "",
+                type: ""
+              },
+              vehicleSignal: "",
+              IO: "",
+              analog: "",
+              wifiSignal: "",
+              GNSSCount: ""
+            };
+            Object.assign(monitorData, tpl);
+
             if (!monitorData.time) {
               //如果监控数据中 没有定为时间，则把请求到的最后一条定为数据赋值到监控数据中
               monitorData.time = lastData.time;
@@ -156,19 +213,19 @@ export default {
           this.mapData.vehicle.lat
         );
         this.mapData.map = new AMap.Map(this.$refs.vehicle_map, {
-          viewMode: "3D",
-          pitch: 55,
-          rotation: -45,
+          // viewMode: "3D",
+          // pitch: 55,
+          // rotation: -45,
           center: position,
-          dragEnable: false,
-          keyboardEnable: false,
+          // dragEnable: false,
+          // keyboardEnable: false,
           zoom: 15
-        });
-        this.mapData.map.on("zoomchange", () => {
-          this.mapData.map.setCenter(position);
         });
         this.mapData.marker = createMarker(this.mapData.vehicle, AMap);
         this.mapData.marker.setMap(this.mapData.map);
+        this.mapData.map.on("zoomchange", () => {
+          this.mapData.map.setCenter(this.mapData.marker.getPosition());
+        });
       });
     },
     updateVehicle() {

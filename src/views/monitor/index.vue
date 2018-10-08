@@ -94,7 +94,7 @@
       <el-tab-pane label="围栏管理" :closable="true" name="fence" v-if="tabs.indexOf('fence') !=-1">
         <vehicle-area></vehicle-area>
       </el-tab-pane>
-      <el-tab-pane label="冀R12345" :closable="true" v-for="vehicle in singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
+      <el-tab-pane :label="vehicle.license" :closable="true" v-for="vehicle in singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
     </el-tabs>
@@ -226,7 +226,7 @@ export default {
           this.setCount();
           this.setUserCount();
           // this.setCurrentGroup();
-        }, 0);
+        }, 20);
         vm.initWS();
       },
       initGroupDict(groups) {
@@ -239,6 +239,17 @@ export default {
           groupVehicleMap.set("error", new Set());
           groupVehicleMap.set("data", group);
           this.dict.groups.set(group.group_id.toString(), groupVehicleMap);
+
+          var otherGroupVehicleMap = new Map();
+          otherGroupVehicleMap.set("alarm", new Set());
+          otherGroupVehicleMap.set("online", new Set());
+          otherGroupVehicleMap.set("offline", new Set());
+          otherGroupVehicleMap.set("error", new Set());
+          // otherGroupVehicleMap.set("data", group);
+          this.dict.groups.set(
+            "other" + group.group_id.toString(),
+            otherGroupVehicleMap
+          ); //未分配车辆分组
         });
       },
       setGroupDict(groups, status, sim_id) {
@@ -259,6 +270,12 @@ export default {
             }
           }
         });
+        //处理未分配车辆
+        var lastGroupId = groups[groups.length - 1];
+        var lastGroup = groupDict.get("other" + lastGroupId.toString());
+        if (lastGroup) {
+          lastGroup.get(status).add(sim_id);
+        }
       },
       deleteGroupDict(groups, status, sim_id) {
         //传入groups 可以是String Array （String自动转为Array）
@@ -278,6 +295,12 @@ export default {
             }
           }
         });
+        //处理未分配车辆
+        var lastGroupId = groups[groups.length - 1];
+        var lastGroup = groupDict.get("other" + lastGroupId.toString());
+        if (lastGroup) {
+          lastGroup.get(status).delete(sim_id);
+        }
       },
       initMap() {
         var map = new AMap.Map("container", {
@@ -336,12 +359,10 @@ export default {
         if (vehicleData) {
           vehicleData.online = true;
         }
-
+        Object.assign(vehicleData, vehicle);
         this.dict.offline.delete(vehicle.sim_id);
         this.dict.online.add(vehicle.sim_id);
         var groups = this.data.get(vehicle.sim_id).group_path;
-        this.data.get(vehicle.sim_id).lng = vehicle.lng;
-        this.data.get(vehicle.sim_id).lat = vehicle.lat;
         this.setGroupDict(groups, "online", vehicle.sim_id);
         this.deleteGroupDict(groups, "offline", vehicle.sim_id);
       },
@@ -392,6 +413,15 @@ export default {
       };
       socketDataWorker.onmessage = event => {
         event.data.sim_id = parseInt(event.data.sim_id).toString();
+        if (event.data.sim_id == "10000120030") {
+          console.log(event.data);
+        }
+        var position = GPS.gcj_encrypt(
+          event.data.lat || 0,
+          event.data.lng || 0
+        ); //GPS转高德
+        event.data.lng = position.lon;
+        event.data.lat = position.lat;
         monitor.setVehicleData(event.data);
       };
     },
@@ -476,9 +506,29 @@ export default {
     },
     getUserList() {
       var query = Object.assign({}, this.userListQuery);
+      if (query.page == 1) {
+        getUser({ user_id: this.$store.state.user.user_id })
+          .then(res => {
+            if (res.data.code == 0) {
+              this.getUserChildrenList(query, res.data.data[0]);
+            }
+          })
+          .catch(err => {
+            this.$message.error("获取当前登录用户信息出错！");
+            console.warn(err);
+          });
+      } else {
+        this.getUserChildrenList(query);
+      }
+    },
+    getUserChildrenList(query, currentUser) {
       getUserList(query)
         .then(res => {
           if (res.data.code == 0) {
+            if (query.page == 1) {
+              res.data.data.splice(0, 0, currentUser);
+            }
+
             res.data.data.map(user => {
               user.total = 0;
               user.alarm = 0;
@@ -486,8 +536,9 @@ export default {
               user.offline = 0;
               user.error = 0;
             });
+
             this.$set(this.$data, "userList", res.data.data);
-            this.userListQuery.total = res.data.total;
+            this.userListQuery.total = res.data.total || 0;
           } else {
             this.$set(this.$data, "userList", []);
             this.userListQuery.total = 0;

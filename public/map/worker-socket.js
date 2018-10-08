@@ -215,9 +215,11 @@ function serialize(buffer) {
 //0200定位数据
 function x0200(buffer) {
   var result = {};
-  result.alarm = DICT.getAlarm(
-    SHL(buffer[0], 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]
-  ); //报警标志
+  // result.alarm = DICT.getAlarm(
+  //   SHL(buffer[0], 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]
+  // ); //报警标志
+  result.alarm =
+    SHL(buffer[0], 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3];
   result.state =
     SHL(buffer[4], 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]; //  buffer.slice(17, 21); //状态
   result.lat =

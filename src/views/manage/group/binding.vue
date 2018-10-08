@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-table-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
+  <div class="admin-table-container group-bind-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
     <el-card shadow="always" class="full-box">
       <div class="bind-box">
         <div class="user-box">
@@ -135,6 +135,7 @@ export default {
       },
       userFilterOpen: false, //用户筛选展开关闭
       userTableQuery: {
+        total: "",
         real_name: "",
         size: 20,
         page: 1
@@ -331,181 +332,183 @@ export default {
 };
 </script>
 <style lang="less">
-.group-container {
-  box-shadow: inset 5px 0 15px #eef0f3;
-  padding: 22px;
-  border-right: 1px solid #eaecf1;
-  .select-group-cotainer {
+.group-bind-container {
+  .group-container {
+    box-shadow: inset 5px 0 15px #eef0f3;
+    padding: 22px;
+    border-right: 1px solid #eaecf1;
+    .select-group-cotainer {
+      height: 100%;
+      ._body {
+        height: 100%;
+      }
+      ._tree {
+        height: 100%;
+      }
+    }
+    .select-group-cotainer ._tree .is-current > .el-tree-node__content {
+      background: #1890ff;
+      color: #fff;
+    }
+  }
+  .full-box {
     height: 100%;
-    ._body {
-      height: 100%;
-    }
-    ._tree {
+    .el-card__body {
       height: 100%;
     }
   }
-  .select-group-cotainer ._tree .is-current > .el-tree-node__content {
-    background: #1890ff;
-    color: #fff;
+
+  .bind-box {
+    display: flex;
+    margin: -20px;
+    font-size: 14px;
+    height: 100%;
   }
-}
-.full-box {
-  height: 100%;
+
+  .transfer-container {
+    width: 100%;
+    position: relative;
+    margin: 20px;
+  }
+
+  .transfer-list {
+    position: absolute;
+    width: 100%;
+    top: 40px;
+    bottom: 40px;
+  }
+
+  .transfer-pager {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    display: flex;
+    justify-content: space-around;
+    height: 40px;
+    .transfer-pager-item {
+      padding-top: 3px;
+      box-sizing: border-box;
+      text-align: center;
+      background: #f5f7fa;
+      width: 40%;
+    }
+  }
+
+  .transfer-filter {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-around;
+    height: 40px;
+    box-sizing: border-box;
+    .transfer-filter-item {
+      border: 1px solid #ebeef5;
+      height: 100%;
+      height: 40px;
+      box-sizing: border-box;
+      padding: 5px 0;
+      text-align: center;
+      background: #f5f7fa;
+      width: 40%;
+    }
+  }
+
+  .transfer-fiter {
+    height: 50px;
+    background: #f5f7fa;
+  }
+
   .el-card__body {
     height: 100%;
   }
-}
 
-.bind-box {
-  display: flex;
-  margin: -20px;
-  font-size: 14px;
-  height: 100%;
-}
-
-.transfer-container {
-  width: 100%;
-  position: relative;
-  margin: 20px;
-}
-
-.transfer-list {
-  position: absolute;
-  width: 100%;
-  top: 40px;
-  bottom: 40px;
-}
-
-.transfer-pager {
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  display: flex;
-  justify-content: space-around;
-  height: 40px;
-  .transfer-pager-item {
-    padding-top: 3px;
-    box-sizing: border-box;
-    text-align: center;
-    background: #f5f7fa;
-    width: 40%;
+  .user-box {
+    width: 300px;
+    position: relative;
+    border-right: 1px solid #ebeef5;
   }
-}
 
-.transfer-filter {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: space-around;
-  height: 40px;
-  box-sizing: border-box;
-  .transfer-filter-item {
-    border: 1px solid #ebeef5;
-    height: 100%;
+  .user-header {
     height: 40px;
-    box-sizing: border-box;
-    padding: 5px 0;
-    text-align: center;
+    line-height: 40px;
     background: #f5f7fa;
-    width: 40%;
-  }
-}
-
-.transfer-fiter {
-  height: 50px;
-  background: #f5f7fa;
-}
-
-.el-card__body {
-  height: 100%;
-}
-
-.user-box {
-  width: 300px;
-  position: relative;
-  border-right: 1px solid #ebeef5;
-}
-
-.user-header {
-  height: 40px;
-  line-height: 40px;
-  background: #f5f7fa;
-  margin: 0;
-  padding-left: 15px;
-  border-bottom: 1px solid #ebeef5;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  color: #000;
-}
-
-.user-load-more {
-  background: #edf2f9;
-  text-align: center;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 15px;
-  border-top: 1px solid #e3e9f1;
-  border-bottom: 1px solid #e3e9f1;
-  cursor: pointer;
-}
-
-.user-filter {
-  position: absolute;
-  width: 100%;
-  height: 60px;
-  box-sizing: border-box;
-  overflow: hidden;
-  padding: 4px;
-  background: #edf2f9;
-  z-index: 2;
-  transition: all 0.2s;
-  &.active {
-    overflow: visibility;
-    height: 115px;
-  }
-}
-
-.user-pager {
-  background: #f1f1f1;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
-  .el-input__inner {
-    text-align: center;
-  }
-}
-
-.user-list {
-  position: absolute;
-  top: 100px;
-  bottom: 32px;
-  width: 100%;
-  overflow: auto;
-  ul,
-  li {
     margin: 0;
-    padding: 0;
+    padding-left: 15px;
+    border-bottom: 1px solid #ebeef5;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #000;
   }
-  li {
+
+  .user-load-more {
+    background: #edf2f9;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    border-top: 1px solid #e3e9f1;
+    border-bottom: 1px solid #e3e9f1;
+    cursor: pointer;
+  }
+
+  .user-filter {
+    position: absolute;
+    width: 100%;
+    height: 60px;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 4px;
+    background: #edf2f9;
+    z-index: 2;
+    transition: all 0.2s;
+    &.active {
+      overflow: visibility;
+      height: 115px;
+    }
+  }
+
+  .user-pager {
+    background: #f1f1f1;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
     height: 32px;
     line-height: 32px;
-    overflow: hidden;
-    list-style-type: none;
-    box-sizing: border-box;
-    padding: 0 15px;
+    text-align: center;
+    .el-input__inner {
+      text-align: center;
+    }
   }
-  li.active {
-    color: #fff;
-    background: #1890ff !important;
-  }
-  li:hover {
-    background-color: #f5f7fa;
-    cursor: pointer;
+
+  .user-list {
+    position: absolute;
+    top: 100px;
+    bottom: 32px;
+    width: 100%;
+    overflow: auto;
+    ul,
+    li {
+      margin: 0;
+      padding: 0;
+    }
+    li {
+      height: 32px;
+      line-height: 32px;
+      overflow: hidden;
+      list-style-type: none;
+      box-sizing: border-box;
+      padding: 0 15px;
+    }
+    li.active {
+      color: #fff;
+      background: #1890ff !important;
+    }
+    li:hover {
+      background-color: #f5f7fa;
+      cursor: pointer;
+    }
   }
 }
 </style>

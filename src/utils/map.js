@@ -53,6 +53,9 @@ export const setMarker = function(marker, vehicleData, AMap) {
   }
   if (vehicleData.online) {
     img = "/static/online.png";
+    if (vehicleData.alarm != "0") {
+      img = "/static/alarm.png";
+    }
   } else {
     img = "/static/offline.png";
   }

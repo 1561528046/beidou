@@ -32,17 +32,24 @@
       </div>
     </div>
     <div class="_body" v-if="!showVehicle.isShowAll">
-      <el-collapse accordion v-model="currentGroup" @change="groupChange">
-        <el-collapse-item class="group-container" v-for="group in currentGroupSon" :key="group.group_id" :name="group.group_id">
+      <el-collapse accordion v-model="currentGroup" @change="groupChange" :key="'other'+showVehicle.group_id" :name="'other'+showVehicle.group_id">
+        <!-- <el-collapse-item class="group-container">
+          <template slot="title">
+            <div class="group-name">
+              未分配车辆
+            </div>
+          </template>
+        </el-collapse-item> -->
+        <el-collapse-item class="group-container" v-for="group in currentGroupSon" :key="'collapse'+group.group_id" :name="group.group_id">
           <template slot="title">
             <div class="group-name">
               {{group.group_name}}
             </div>
           </template>
           <div class="group-body">
-            <el-select v-model="currentGroupFilter" placeholder="全部分组" size="mini" style="width:100%;">
+            <el-select v-model="currentGroupFilter" placeholder="全部分组" size="mini" style="width:100%;" v-if="currentGroupSonChildrens.length">
               <el-option label="全部分组" value=""></el-option>
-              <el-option :label="childrenGroup.group_name" :value="childrenGroup.group_id" v-for="childrenGroup in currentGroupSonChildrens" :key="childrenGroup.group_id"></el-option>
+              <el-option :label="childrenGroup.group_name" :value="childrenGroup.group_id" v-for="childrenGroup in currentGroupSonChildrens" :key="'select'+childrenGroup.group_id"></el-option>
             </el-select>
             <el-table :data="list" size="small" style="width: 100%" @row-click="openSingleVehicle">
               <el-table-column prop="license" label="车牌号">
@@ -95,6 +102,8 @@ export default {
       var monitor = window.monitor;
       var showVehicle = this.$props.showVehicle;
       var list = [];
+
+      //触发list更新
       // eslint-disable-next-line
       var x = this.dataVersion;
       if (showVehicle.isShowAll) {
@@ -146,7 +155,7 @@ export default {
   created() {
     this.timer = setInterval(() => {
       this.dataVersion++; //触发list更新
-    }, 10);
+    }, 300);
   },
   beforeDestroy() {
     clearInterval(this.timer);
@@ -164,7 +173,10 @@ export default {
       var groupChildrens = [];
       // eslint-disable-next-line
       for (let [key, value] of window.monitor.dict.groups) {
-        if (value.get("data").parent_id == this.showVehicle.group_id) {
+        if (
+          value.get("data") &&
+          value.get("data").parent_id == this.showVehicle.group_id
+        ) {
           groupChildrens.push(value.get("data"));
         }
       }
@@ -173,13 +185,17 @@ export default {
           window.monitor.dict.groups.get(this.showVehicle.group_id).get("data")
         );
       }
+      groupChildrens.push({
+        group_name: "未分配车辆",
+        group_id: "other" + this.showVehicle.group_id
+      }); //加入未分配车辆分组
       this.$set(this.$data, "currentGroupSon", groupChildrens);
     },
     getGroupChildrens() {
       //this.currentGroupChildrens
       // eslint-disable-next-line
       this.$set(this.$data, "currentGroupSonChildrens", []);
-      if (!this.currentGroup) {
+      if (!this.currentGroup || this.currentGroup.indexOf("other") != -1) {
         return false;
       }
       getGroupChildrens({ group_id: this.currentGroup }).then(res => {
