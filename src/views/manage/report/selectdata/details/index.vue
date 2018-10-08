@@ -25,9 +25,13 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return this.$utils.get_license_color(row.license_color)}"> </el-table-column>
-        <el-table-column prop="" label="车牌颜色" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
         <el-table-column prop="" label="指令" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="具体设置内容" :formatter="$utils.baseFormatter "> </el-table-column>

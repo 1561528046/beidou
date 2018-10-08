@@ -1,4 +1,4 @@
-<template slot-scope="scope">
+<template>
     <div>
         <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
             <el-table-column fixed prop="license" label="车牌号" width="100" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -142,11 +142,6 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="位置汇报策略">
-                        <!-- <el-input style="width:60%" v-model="communication.Ox0020">
-                            <template slot="append">
-                                <el-button @click="setup('0x0020')">设置</el-button>
-                            </template>
-                        </el-input> -->
                         <el-select style="width:46%;" v-model="communication.Ox0020">
                             <el-option label="定时汇报" value="0"></el-option>
                             <el-option label="定距汇报" value="1"></el-option>
@@ -158,11 +153,6 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="位置汇报方案">
-                        <!-- <el-input style="width:60%" v-model="communication.Ox0021">
-                            <template slot="append">
-                                <el-button @click="setup('0x0021')">设置</el-button>
-                            </template>
-                        </el-input> -->
                         <el-select style="width:46%;" v-model="communication.Ox0021">
                             <el-option label="根据ACC状态" value="0"></el-option>
                             <el-option label="根据登录状态和ACC状态" value="1"></el-option>
@@ -222,19 +212,19 @@ export default {
         this.communication.data.map(item => {
           if (item.Ox0002 == undefined) {
             this.$set(item, "Ox0002", "");
-            this.$set(item, "Ox0003 ", "");
-            this.$set(item, "Ox0004 ", "");
-            this.$set(item, "Ox0005 ", "");
-            this.$set(item, "Ox0006 ", "");
-            this.$set(item, "Ox0007 ", "");
-            this.$set(item, "Ox0010 ", "");
-            this.$set(item, "Ox0013 ", "");
-            this.$set(item, "Ox0014 ", "");
-            this.$set(item, "Ox0017 ", "");
-            this.$set(item, "Ox0018 ", "");
-            this.$set(item, "Ox0019 ", "");
-            this.$set(item, "Ox0020 ", "");
-            this.$set(item, "Ox0021 ", "");
+            this.$set(item, "Ox0003", "");
+            this.$set(item, "Ox0004", "");
+            this.$set(item, "Ox0005", "");
+            this.$set(item, "Ox0006", "");
+            this.$set(item, "Ox0007", "");
+            this.$set(item, "Ox0010", "");
+            this.$set(item, "Ox0013", "");
+            this.$set(item, "Ox0014", "");
+            this.$set(item, "Ox0017", "");
+            this.$set(item, "Ox0018", "");
+            this.$set(item, "Ox0019", "");
+            this.$set(item, "Ox0020", "");
+            this.$set(item, "Ox0021", "");
           }
         });
       },
@@ -249,7 +239,7 @@ export default {
           "5",
           "6",
           "7",
-          "10",
+          "16",
           "19",
           "20",
           "23",
@@ -264,43 +254,50 @@ export default {
           return;
         }
         console.log(this.str);
+        console.log(this.str[2].length);
         if (this.str[0] == "^x8106") {
-          var ins = this.str[2].substring(this.str[2].length - 1);
-          var thisname = this.str[2].substring(0, this.str[2].length - 2);
-          this.str[1] = parseInt(this.str[1]).toString(16);
-          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-          if (ins == "0") {
+          if (this.str[3][0] == "0") {
+            this.str[1] = parseInt(this.str[1]).toString(16);
+            this.str[1] =
+              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
             this.communication.data.map(item => {
-              if ((item.sim_id = thisname)) {
+              if (item.sim_id.length == 11) {
+                item.sim_id = "0" + item.sim_id;
+              }
+              if (item.sim_id == this.str[2]) {
                 var utc = this.$dict.get_communication(this.str[1]);
                 item.operating = utc + "采集成功";
               }
             });
           }
-          this.str[2] = this.str[2].substring(0, this.str[2].length - 2);
+        } else if (this.str[0] == "^x0104") {
+          this.str[3] = this.str[3].substring(0, this.str[3].length - 1);
           this.str[1] = parseInt(this.str[1]).toString(16);
           this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
           this.communication.data.map(item => {
             if (item.sim_id.length == 11) {
               item.sim_id = "0" + item.sim_id;
             }
-            if (item.sim_id == this.str[2]) {
+            if (item.sim_id == this.str[3]) {
               item[this.str[1]] = this.str[2];
             }
           });
         } else {
-          //   str[3] = str[3].substring(0, str[3].length - 1);
-          //   str[1] = parseInt(str[1]).toString(16);
-          //   str[1] = "Ox" + "0".repeat(4 - str[1].length) + str[1];
-          //   this.communication.data.map(item => {
-          //     if (item.sim_id.length == 11) {
-          //       item.sim_id = "0" + item.sim_id;
-          //     }
-          //     if (item.sim_id == str[3]) {
-          //       var utc = this.$dict.get_communication(str[1]);
-          //       item.operating = utc + "设置成功";
-          //     }
-          //   });
+          var state = this.str[4].substring(0, this.str[4].length - 1);
+          if (state == "0") {
+            this.str[1] = parseInt(this.str[1]).toString(16);
+            this.str[1] =
+              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+            this.communication.data.map(item => {
+              if (item.sim_id.length == 11) {
+                item.sim_id = "0" + item.sim_id;
+              }
+              if (item.sim_id == this.str[3]) {
+                var utc = this.$dict.get_communication(this.str[1]);
+                item.operating = utc + "设置成功";
+              }
+            });
+          }
         }
       }
     }

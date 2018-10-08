@@ -53,6 +53,7 @@ export default {
     choosePicture
   },
   created() {
+    // 192.168.88.88:5000
     this.socket = new WebSocket("ws://192.168.88.88:5000");
     // 服务端返回数据回调
     var vm = this;
@@ -210,7 +211,7 @@ export default {
 .el-input__inner {
   text-align: center;
 }
-ul,
+/* ul,
 li {
   margin: 0;
   padding: 0;
@@ -230,7 +231,7 @@ li.active {
 li:hover {
   background-color: #f5f7fa;
   cursor: pointer;
-}
+} */
 .el-card__body {
   height: 100%;
 }

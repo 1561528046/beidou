@@ -3,7 +3,7 @@
         <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
             <el-table-column fixed prop="license" width="100" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column fixed prop="operating" width="150" label="操作状态"></el-table-column>
-            <el-table-column width="180" prop="" label="报警设置" :formatter="$utils.baseFormatter"> </el-table-column>
+            <!-- <el-table-column width="180" prop="" label="报警设置" :formatter="$utils.baseFormatter"> </el-table-column> -->
             <el-table-column width="180" prop="Ox0050" label="报警屏蔽字" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column width="180" prop="Ox0051" label="报警发送文本SMS开关" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column width="180" prop="Ox0052" label="报警拍摄开关" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -183,6 +183,7 @@ export default {
   //   name: "choose-communication",
   data() {
     return {
+      str: "",
       selectedVehicles: [],
       length: 0,
       vehicleDialog: false,
@@ -222,21 +223,21 @@ export default {
         this.$set(this.communication, "data", this.$props.message);
         this.communication.data.map(item => {
           if (item.Ox0050 == undefined) {
-            this.$set(item, "Ox0050:", ""),
-              this.$set(item, "Ox0051:", ""),
-              this.$set(item, "Ox0052:", ""),
-              this.$set(item, "Ox0053:", ""),
-              this.$set(item, "Ox0054:", ""),
-              this.$set(item, "Ox0055:", ""),
-              this.$set(item, "Ox0056:", ""),
-              this.$set(item, "Ox0057:", ""),
-              this.$set(item, "Ox0058:", ""),
-              this.$set(item, "Ox0059:", ""),
-              this.$set(item, "Ox005a:", ""),
-              this.$set(item, "Ox005b:", ""),
-              this.$set(item, "Ox005c:", ""),
-              this.$set(item, "Ox005d:", ""),
-              this.$set(item, "Ox005e:", "");
+            this.$set(item, "Ox0050", ""),
+              this.$set(item, "Ox0051", ""),
+              this.$set(item, "Ox0052", ""),
+              this.$set(item, "Ox0053", ""),
+              this.$set(item, "Ox0054", ""),
+              this.$set(item, "Ox0055", ""),
+              this.$set(item, "Ox0056", ""),
+              this.$set(item, "Ox0057", ""),
+              this.$set(item, "Ox0058", ""),
+              this.$set(item, "Ox0059", ""),
+              this.$set(item, "Ox005a", ""),
+              this.$set(item, "Ox005b", ""),
+              this.$set(item, "Ox005c", ""),
+              this.$set(item, "Ox005d", ""),
+              this.$set(item, "Ox005e", "");
           }
         });
       },
@@ -261,24 +262,55 @@ export default {
           "93",
           "94"
         ];
-        var str = this.$props.respond;
-        str = str.split("|");
-        if (!limit.includes(str[1])) {
+        this.$set(this.$data, "str", this.$props.respond);
+        this.str = this.str.split("|");
+        if (!limit.includes(this.str[1])) {
           return;
         }
-        str[3] = str[3].substring(0, str[3].length - 1);
-        str[1] = parseInt(str[1]).toString(16);
-        str[1] = "Ox" + "0".repeat(4 - str[1].length) + str[1];
-        this.communication.data.map(item => {
-          if (item.sim_id.length == 11) {
-            item.sim_id = "0" + item.sim_id;
+        if (this.str[0] == "^x8106") {
+          if (this.str[3][0] == "0") {
+            this.str[1] = parseInt(this.str[1]).toString(16);
+            this.str[1] =
+              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+            this.communication.data.map(item => {
+              if (item.sim_id.length == 11) {
+                item.sim_id = "0" + item.sim_id;
+              }
+              if (item.sim_id == this.str[2]) {
+                var utc = this.$dict.get_communication(this.str[1]);
+                item.operating = utc + "采集成功";
+              }
+            });
           }
-          if (item.sim_id == str[3]) {
-            item[str[1]] = str[2];
-            var utc = this.$dict.get_communication(str[1]);
-            item.operating = utc + "采集成功";
+        } else if (this.str[0] == "^x0104") {
+          this.str[3] = this.str[3].substring(0, this.str[3].length - 1);
+          this.str[1] = parseInt(this.str[1]).toString(16);
+          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+          this.communication.data.map(item => {
+            if (item.sim_id.length == 11) {
+              item.sim_id = "0" + item.sim_id;
+            }
+            if (item.sim_id == this.str[3]) {
+              item[this.str[1]] = this.str[2];
+            }
+          });
+        } else {
+          var state = this.str[4].substring(0, this.str[4].length - 1);
+          if (state == "0") {
+            this.str[1] = parseInt(this.str[1]).toString(16);
+            this.str[1] =
+              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+            this.communication.data.map(item => {
+              if (item.sim_id.length == 11) {
+                item.sim_id = "0" + item.sim_id;
+              }
+              if (item.sim_id == this.str[3]) {
+                var utc = this.$dict.get_communication(this.str[1]);
+                item.operating = utc + "设置成功";
+              }
+            });
           }
-        });
+        }
       },
       deep: true
     }
@@ -300,9 +332,6 @@ export default {
         item.operating = "--";
       });
       this.$set(this.communication, "data", scope);
-    },
-    handleClick(tab) {
-      console.log(tab.label);
     },
     // 采集
     collect(num) {

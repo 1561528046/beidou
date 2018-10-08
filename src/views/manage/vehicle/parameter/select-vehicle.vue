@@ -63,9 +63,6 @@ export default {
         item.operating = "--";
       });
       this.$emit("choose", scope);
-    },
-    handleClick(tab) {
-      console.log(tab.label);
     }
   }
 };

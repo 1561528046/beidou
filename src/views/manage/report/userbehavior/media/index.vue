@@ -32,6 +32,11 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <div class="admin-table-actions">
+        <el-button type="primary" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
+      </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="" label="类型" :formatter="$utils.baseFormatter "> </el-table-column>
