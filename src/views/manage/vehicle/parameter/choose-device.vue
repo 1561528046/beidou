@@ -88,6 +88,7 @@ export default {
   //   name: "choose-communication",
   data() {
     return {
+      str: "",
       selectedVehicles: [],
       length: 0,
       vehicleDialog: false,
@@ -132,24 +133,46 @@ export default {
     respond: {
       handler: function() {
         var limit = ["64", "67", "68", "69", "72", "73"];
-        var str = this.$props.respond;
-        str = str.split("|");
-        if (!limit.includes(str[1])) {
+        this.$set(this.$data, "str", this.$props.respond);
+        this.str = this.str.split("|");
+        if (!limit.includes(this.str[1])) {
           return;
         }
-        str[3] = str[3].substring(0, str[3].length - 1);
-        str[1] = parseInt(str[1]).toString(16);
-        str[1] = "Ox" + "0".repeat(4 - str[1].length) + str[1];
-        this.communication.data.map(item => {
-          if (item.sim_id.length == 11) {
-            item.sim_id = "0" + item.sim_id;
+        if (this.str[0] == "^x8106") {
+          if (this.str[2][this.str[2].length - 1] == "0") {
+            var seletSim = this.str[2].substring(0, this.str[2].length - 2); //sim_id
+            this.str[1] = parseInt(this.str[1]).toString(16);
+            this.str[1] =
+              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+            this.communication.data.map(item => {
+              if (item.sim_id.length == 11) {
+                item.sim_id = "0" + item.sim_id;
+              }
+              if (item.sim_id == seletSim) {
+                var utc = this.$dict.get_communication(this.str[1]);
+                item.operating = utc + "采集成功";
+                // item[this.str[1]] = this.str[1];
+              }
+            });
           }
-          if (item.sim_id == str[3]) {
-            item[str[1]] = str[2];
-            var utc = this.$dict.get_communication(str[1]);
-            item.operating = utc + "采集成功";
+        } else {
+          if (this.str[3][this.str[3].length - 1] == "0") {
+            var setSim = this.str[3].substring(0, this.str[3].length - 2);
+            this.str[1] = parseInt(this.str[1]).toString(16);
+            this.str[1] =
+              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+            this.communication.data.map(item => {
+              if (item.sim_id.length == 11) {
+                item.sim_id = "0" + item.sim_id;
+              }
+              if (item.sim_id == setSim) {
+                var utc = this.$dict.get_communication(this.str[1]);
+                item.operating = utc + "设置成功";
+                // item[this.str[1]] = this.str[1];
+              }
+            });
           }
-        });
+        }
       },
       deep: true
     }
