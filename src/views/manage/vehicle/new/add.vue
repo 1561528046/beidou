@@ -435,7 +435,8 @@ export default {
       formData: {
         //除普货外，车辆具体型号大块中 只有车架号VIN是必填
         //只有普货用和全国平台有关联的内容，包括验证规则，车辆具体型号内容等
-        area: ["130000", "130100", "130102"],
+        // "130000", "130100", "130102"
+        area: [],
         is_enter: this.$props.is_enter,
         //提交的数据
         register_no1: "", //车辆登记证1
@@ -619,6 +620,11 @@ export default {
           this.loader = false;
           if (res.data.code == 0 && res.data.data.length) {
             Object.assign(this.formData, res.data.data[0]);
+            this.formData.area = [
+              this.formData.province_id,
+              this.formData.city_id,
+              this.formData.county_id
+            ];
             this.$nextTick(() => {
               this.isInit = true;
             });

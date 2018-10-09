@@ -13,29 +13,11 @@
 import chooseParameter from "@/components/choose-parameter.vue";
 export default {
   components: { chooseParameter },
-  //   name: "choose-communication",
   data() {
     return {
       selectedVehicles: [],
       length: 0,
       vehicleDialog: false,
-      communication: {
-        TCPtime: "",
-        TCPtimes: "",
-        UDPtime: "",
-        UDPtimes: "",
-        SMStime: "",
-        SMStimes: "",
-        masterAPN: "",
-        backupAPN: "",
-        masterIP: "",
-        backupIP: "",
-        serverTCP: "",
-        serverUDP: "",
-        locationStrategy: "",
-        locationPlan: "",
-        data: []
-      },
       tableQuery: {
         license: "",
         user_name: "",

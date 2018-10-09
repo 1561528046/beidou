@@ -20,7 +20,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="SIM ID">
-              <el-input v-model="tableQuery.sim_id" placeholder="SIM卡号"></el-input>
+              <el-input v-model="tableQuery.sim_id" placeholder="SIM ID"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-show="isCollapse">
@@ -64,7 +64,8 @@
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
-              <el-button type="primary" @click="isCollapse=!isCollapse">展开</el-button>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
               <el-button type="primary" @click="getTable" :loading="tableLoading" native-type="submit">查询</el-button>
             </el-form-item>
           </el-col>
@@ -356,15 +357,26 @@ export default {
   },
   watch: {
     contract_date: function(newVal) {
-      this.tableQuery.contract_startdate = newVal[0];
-      this.tableQuery.contract_enddate = newVal[1];
+      if (newVal) {
+        this.tableQuery.contract_startdate = newVal[0];
+        this.tableQuery.contract_enddate = newVal[1];
+      } else {
+        this.tableQuery.contract_startdate = "";
+        this.tableQuery.contract_enddate = "";
+      }
     },
     first_date: function(newVal) {
-      this.tableQuery.first_startdate = newVal[0];
-      this.tableQuery.first_enddate = newVal[1];
+      if (newVal) {
+        this.tableQuery.first_startdate = newVal[0];
+        this.tableQuery.first_enddate = newVal[1];
+      } else {
+        this.tableQuery.first_startdate = "";
+        this.tableQuery.first_enddate = "";
+      }
     },
     area: function(newVal) {
-      Object.assign(this.tableQuery, this.$utils.formatArea(newVal));
+      var area = [newVal.province_id, newVal.city_id, newVal.county_id];
+      Object.assign(this.tableQuery, this.$utils.formatArea(area));
     }
   },
   methods: {
@@ -553,7 +565,6 @@ export default {
       getVehicleList(query)
         .then(res => {
           if (res.data.code == 0) {
-            console.log(res.data);
             this.$set(this.$data, "tableData", res.data);
           } else {
             this.$set(this.$data, "tableData", []);

@@ -57,17 +57,20 @@ export default {
     this.socket = new WebSocket("ws://192.168.88.88:5000");
     // 服务端返回数据回调
     var vm = this;
+    this.timerOpen();
     this.socket.onmessage = function(event) {
       vm.fromSend(event.data);
     };
   },
   beforeDestroy() {
     this.socket.close();
+    this.timerDown();
   },
   props: {},
   data() {
     return {
       respond: "",
+      timer: {},
       socket: {},
       selectedVehicles: [],
       length: 0,
@@ -108,6 +111,15 @@ export default {
   methods: {
     fromSend(data) {
       this.respond = data;
+    },
+    timerOpen() {
+      var sm = this;
+      this.timer = setInterval(function() {
+        sm.socket.send("^heart$");
+      }, 30000);
+    },
+    timerDown() {
+      clearInterval(this.timer);
     },
     //采集发送指令
     instruction(num) {
