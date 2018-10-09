@@ -90,7 +90,7 @@
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
             <el-button size="small " icon="el-icon-error" @click="cancel(scope)" v-if="scope.row.has_cancel=='2'" v-rights="3-2-1">取消订单</el-button>
-            <el-dialog width="20%" title="" :visible.sync="cancelDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+            <el-dialog width="20%" title="确认取消订单?" :visible.sync="cancelDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
               <div style="width:154px;margin:0 auto;">
                 <el-button type="primary" @click="submit">确定</el-button>
                 <el-button @click="cancelDialog = false">取 消</el-button>

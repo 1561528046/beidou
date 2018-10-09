@@ -253,8 +253,6 @@ export default {
         if (!limit.includes(this.str[1])) {
           return;
         }
-        console.log(this.str);
-        console.log(this.str[2].length);
         if (this.str[0] == "^x8106") {
           if (this.str[3][0] == "0") {
             this.str[1] = parseInt(this.str[1]).toString(16);
