@@ -3,17 +3,17 @@
     <div class="monitor-nav">
       <i class="iconfont icon-unorderedlist _header"></i>
       <div class="_list">
-        <a href="#">
+        <a href="#" @click="openTab('track')">
           <i class="iconfont icon-guiji"></i>
           <span>轨迹回放</span>
         </a>
-        <a href="#">
+        <a href="#" @click="openTab('fence')">
           <i class="iconfont icon-weilan"></i>
           <span>围栏管理</span>
         </a>
       </div>
     </div>
-    <el-tabs v-model="currentTab" style="height:100%;" class="monitor-tabs" @tab-remove="tabRemove">
+    <el-tabs v-model="$store.state.monitor.currentTab" style="height:100%;" class="monitor-tabs" @tab-remove="tabRemove">
       <el-tab-pane label="监控" :closable="false" name="index">
         <div class="monitor">
           <div id="container" style="width:100%;height:100%;"></div>
@@ -91,10 +91,20 @@
           </transition>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="围栏管理" :closable="true" name="fence" v-if="tabs.indexOf('fence') !=-1">
+      <el-tab-pane label="围栏管理" :closable="true" name="fence" v-if="$store.state.monitor.tabs.indexOf('fence') !=-1">
         <vehicle-area></vehicle-area>
       </el-tab-pane>
-      <el-tab-pane :label="vehicle.license" :closable="true" v-for="vehicle in singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
+      <el-tab-pane label="报警车辆" :closable="true" name="alarm" v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1">
+        <vehicle-alarm :vehicle="$store.state.monitor.currentVehicleForTab"></vehicle-alarm>
+      </el-tab-pane>
+      <el-tab-pane label="轨迹回放" :closable="true" name="track" v-if="$store.state.monitor.tabs.indexOf('track') !=-1">
+        <vehicle-track :vehicle="$store.state.monitor.currentVehicleForTab"></vehicle-track>
+      </el-tab-pane>
+      <el-tab-pane label="数据异常" :closable="true" name="error" v-if="$store.state.monitor.tabs.indexOf('error') !=-1">
+        <!-- <vehicle-error :vehicle="$store.state.monitor.currentVehicleForTab"></vehicle-error> -->
+      </el-tab-pane>
+      <!-- 单车标签 -->
+      <el-tab-pane :label="vehicle.license" :closable="true" v-for="vehicle in $store.getters.singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
     </el-tabs>
@@ -117,12 +127,19 @@ import vehicleMonitor from "./components/vehicle-monitor.vue";
 import vehicleDetails from "./components/vehicle-details.vue";
 import vehicleSingle from "./components/vehicle-single.vue";
 import vehicleArea from "./components/vehicle-area.vue";
-import vehiclePlayback from "./components/vehicle-playback.vue";
+import vehicleTrack from "./components/vehicle-track.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
 window.monitor = {};
 export default {
   name: "monitor",
-  components: { vehicleMonitor, vehicleDetails, vehicleArea, vehicleSingle },
+  components: {
+    vehicleMonitor,
+    vehicleDetails,
+    vehicleArea,
+    vehicleSingle,
+    vehicleAlarm,
+    vehicleTrack
+  },
   data() {
     return {
       searchVehicle: "",
@@ -135,7 +152,6 @@ export default {
         type: "",
         sub_title: ""
       },
-      currentTab: "index",
       maps: [],
       alarmList: {},
       errorList: {},
@@ -155,10 +171,7 @@ export default {
         total: 0
       },
       currentVehiclesSet: new Set(), //小地图查看的车SET
-      currentVehiclesLog: 0, //触发computed
-      tabs: [], //标签管理（单车监控标签通过singleVehicle管理）
-      singleVehiclesLog: 0, //触发computed
-      singleVehiclesSet: new Set() //单车监控Set
+      currentVehiclesLog: 0 //触发computed
     };
   },
   computed: {
@@ -585,16 +598,10 @@ export default {
     },
     vehicleSelected(selected) {
       var vehicle = monitor.data.get(selected.sim_id);
-      // vehicle.lat = 39.1014;
-      // vehicle.lng = 116.1114;
       if (!this.currentVehiclesSet.has(vehicle)) {
         this.currentVehiclesLog++;
         this.currentVehiclesSet.add(vehicle);
       }
-      // setInterval(() => {
-      //   vehicle.lat += 39.1114;
-      //   vehicle.lng += 116.1114;
-      // }, 1000);
     },
     removeCurrentVehicle(sim_id) {
       var vehicle = monitor.data.get(sim_id);
@@ -603,17 +610,17 @@ export default {
     },
     addSingleVehicle(sim_id) {
       var vehicle = monitor.data.get(sim_id);
-      if (!this.singleVehiclesSet.has(vehicle)) {
-        this.singleVehiclesLog++;
-        this.singleVehiclesSet.add(vehicle);
-        this.currentTab = "single-" + sim_id;
-      }
+      this.$store.commit("openSingleVehicle", vehicle);
     },
     removeSingleVehicle(sim_id) {
       var vehicle = monitor.data.get(sim_id);
-      this.singleVehiclesLog++;
-      this.singleVehiclesSet.delete(vehicle);
-      this.currentTab = "index";
+      this.$store.commit("closeSingleVehicle", vehicle);
+    },
+    openTab(tabName) {
+      this.$store.commit("openTab", tabName);
+    },
+    closeTab(tabName) {
+      this.$store.commit("closeTab", tabName);
     },
     tabRemove(tabName) {
       //tabName必须遵循 类型-sim_id
@@ -622,8 +629,8 @@ export default {
         case "single": //单车监控
           this.removeSingleVehicle(tab[1]);
           break;
-        case "fence": //围栏
-          break;
+        default:
+          this.closeTab(tabName);
       }
     }
   }

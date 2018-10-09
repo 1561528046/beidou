@@ -1,6 +1,7 @@
 <template>
   <div style="height:100%">
     <div style="width:50%;height:100%">
+      {{$props.vehicle.license}}
       <el-table style="height:100%">
         <el-table-column prop="" label="车牌号" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="" label="报警类型" :formatter="$utils.baseFormatter "> </el-table-column>
@@ -19,13 +20,14 @@
 import { initMap } from "@/utils/map.js";
 export default {
   mounted() {
+    console.log(this.$props.vehicle);
     initMap(() => {
       var map = new AMap.Map(this.$refs.map, {
         zoom: 14
       });
     });
   },
-  props: {},
+  props: ["vehicle"],
   data() {
     return {};
   },

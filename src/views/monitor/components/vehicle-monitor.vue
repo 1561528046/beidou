@@ -209,12 +209,16 @@
       </el-row>
     </div>
     <div class="_footer">
-      <i class="iconfont icon-idcard"></i>
-      <i class="iconfont icon-boxplot-fill" @click="showCard('deviceCard','设备信息')"></i>
-      <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')"></i>
-      <i class="iconfont icon-alert-fill" @click="openCard('alarm')"></i>
-      <i class="iconfont icon-wifi" @click="openCard('audio')"></i>
-      <i class="iconfont icon-error-fill _error" @click="openCard('error')"></i>
+      <!-- <i class="iconfont icon-idcard"></i> -->
+      <i class="iconfont icon-boxplot-fill" @click="showCard('deviceCard','设备信息')" title="设备信息"></i>
+      <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')" title="sim卡信息"></i>
+      <i class="iconfont icon-wifi" @click="showCard('audio')" title="语音对讲"></i>
+      <i class="iconfont icon-error-fill _error" @click="openCard('error')" title="异常信息"></i>
+      <i class="iconfont icon-camera" title="抓拍"></i>
+      <i class="iconfont icon-video" title="视频信息"></i>
+      <el-badge :value="200" :max="99" class="alarm-badge">
+        <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
+      </el-badge>
     </div>
     <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%">
       <div :is="card.component" :vehicle="$props.vehicle"></div>
@@ -383,10 +387,8 @@ export default {
       }
     },
     openCard(type) {
-      this.$emit("opencard", {
-        type: type,
-        vehicle: this.$props.vehicle
-      });
+      this.$store.commit("openTab", type);
+      this.$store.commit("setCurrentVehicleForTab", this.$props.vehicle);
     },
     close() {
       this.$emit("close");
@@ -425,5 +427,17 @@ export default {
 }
 .single {
   height: auto !important;
+}
+.alarm-badge {
+  i {
+    width: auto;
+    line-height: 1;
+    vertical-align: 3px;
+    color: @danger;
+  }
+  .el-badge__content.is-fixed {
+    right: 20px;
+    top: 3px;
+  }
 }
 </style>
