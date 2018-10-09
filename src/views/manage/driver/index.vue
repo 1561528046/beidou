@@ -46,7 +46,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit" v-rights="6-1-3">编辑</el-button>
-            <!-- <el-button size="small" type="primary" icon="el-icon-edit" @click="openBindingVechile(scope)">绑定车辆</el-button> -->
+            <!-- <el-button size="small" type="primary" icon="el-icon-edit" @click="openBindingVehicle(scope)">绑定车辆</el-button> -->
             <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="6-1-2">删除</el-button>
           </template>
         </el-table-column>
@@ -102,7 +102,7 @@ export default {
     };
   },
   methods: {
-    openBindingVechile(scope) {
+    openBindingVehicle(scope) {
       this.bindingDialog = true;
       this.$set(this.$data, "bindingDriver", scope.row);
     },

@@ -143,5 +143,42 @@ export default {
       iframe.remove();
     });
     document.body.appendChild(iframe);
+  },
+  /**
+   *
+   *
+   * @param {number} [stateCode] state值
+   * @param {number} [position] 第几位
+   */
+  getState(stateCode, position) {
+    if (stateCode == undefined || position == undefined) {
+      return false;
+    }
+    var positionNum = Math.pow(2, position);
+    return (stateCode & positionNum) == positionNum;
+  },
+  getStateLoad(stateCode) {
+    stateCode = parseInt(stateCode) || 0;
+    /*获取实载
+    8-9位
+    00：空车；01：半载；10：保留；11：满载
+    （可用于客车的空、重车及货车的空载、满载状态表示，人工输入或传感器获取）
+    */
+    var num = parseInt(stateCode.toString(2).slice(8, 10), 2) || 0;
+    return ["空车", "半载", "保留", "满载"][num];
+  },
+  getIOState(stateCode, position) {
+    if (stateCode == undefined || position == undefined) {
+      return false;
+    }
+    var positionNum = Math.pow(2, position);
+    return (stateCode & positionNum) == positionNum;
+  },
+  getVehicleSignalState(stateCode, position) {
+    if (stateCode == undefined || position == undefined) {
+      return false;
+    }
+    var positionNum = Math.pow(2, position);
+    return (stateCode & positionNum) == positionNum;
   }
 };

@@ -24,7 +24,7 @@
       </el-col>
     </el-row>
     <template>
-      <el-table :data="tableData.data" @select-all="selectAll" @select="selectHandler" ref="vechileTable" border style="width: 100%">
+      <el-table :data="tableData.data" @select-all="selectAll" @select="selectHandler" ref="vehicleTable" border style="width: 100%">
         <el-table-column type="selection" label="状态" width="50">
         </el-table-column>
         <el-table-column prop="license" :formatter="$utils.baseFormatter" label="车牌号">
@@ -154,7 +154,7 @@ export default {
           this.$nextTick(() => {
             this.tableData.data.map(vehicle => {
               if (this.selection.includes(vehicle.vehicle_id)) {
-                this.$refs.vechileTable.toggleRowSelection(vehicle, true);
+                this.$refs.vehicleTable.toggleRowSelection(vehicle, true);
               }
             });
           });

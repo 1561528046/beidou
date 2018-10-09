@@ -32,7 +32,7 @@
       </el-row>
     </el-form>
 
-    <el-table height="500" :data="tableData.data" @select-all="selectAll" @select="selectHandler" ref="vechileTable" style="width: 100%;" class="admin-table-list">
+    <el-table height="500" :data="tableData.data" @select-all="selectAll" @select="selectHandler" ref="vehicleTable" style="width: 100%;" class="admin-table-list">
       <el-table-column type="selection" label="状态" width="100">
       </el-table-column>
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -139,7 +139,7 @@ export default {
           this.$nextTick(() => {
             this.tableData.data.map(vehicle => {
               if (this.selection.includes(vehicle.vehicle_id)) {
-                this.$refs.vechileTable.toggleRowSelection(vehicle, true);
+                this.$refs.vehicleTable.toggleRowSelection(vehicle, true);
               }
             });
           });
