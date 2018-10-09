@@ -1,7 +1,7 @@
 <template>
   <div class="vehicle-single">
     <div class="vehicle-single-map" ref="vehicle_map"></div>
-    <vehicle-monitor class="list-complete-item" :closeable="false" :vehicle="vehicle" :index="index" :key="'single'+vehicle.vehicle_id"></vehicle-monitor>
+    <vehicle-monitor class="list-complete-item" :single="true" :vehicle="vehicle" :index="index" :key="'single'+vehicle.vehicle_id"></vehicle-monitor>
   </div>
 
 </template>

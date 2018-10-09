@@ -22,7 +22,7 @@
             </el-autocomplete>
           </div>
           <transition-group name="list-complete" tag="div" class="current-vehicle-container">
-            <vehicle-monitor class="list-complete-item" :closeable="true" @close="removeCurrentVehicle(vehicle.sim_id)" v-for="(vehicle,index) in currentVehicles" :vehicle="vehicle" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
+            <vehicle-monitor class="list-complete-item" @close="removeCurrentVehicle(vehicle.sim_id)" v-for="(vehicle,index) in currentVehicles" :vehicle="vehicle" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
           </transition-group>
 
           <el-collapse accordion class="status-container shadow-box" @change="toggleUserList">
@@ -119,8 +119,6 @@ import vehicleSingle from "./components/vehicle-single.vue";
 import vehicleArea from "./components/vehicle-area.vue";
 import vehiclePlayback from "./components/vehicle-playback.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
-import selectDevice from "./components/select-device.vue";
-import selectSim from "./components/select-sim.vue";
 window.monitor = {};
 export default {
   name: "monitor",
@@ -198,6 +196,11 @@ export default {
         //2、区分总的在线、离线、报警、异常
         data.map(vehicle => {
           //根据sim_id 创建所有数据集合的MAP对象
+          if (vehicle.lng - 0 < vehicle.lat - 0) {
+            [vehicle.lng, vehicle.lat] = [vehicle.lat, vehicle.lng];
+          }
+          vehicle.lat = 36 + Math.random() * 5;
+          vehicle.lng = 115 + Math.random() * 10;
           this.data.set(vehicle.sim_id, vehicle);
 
           if (vehicle.alarm_count != "0") {
@@ -216,12 +219,12 @@ export default {
           }
         });
         vm.initLoader.close();
-        initMap(() => {
-          // vm.$nextTick(() => {
-          //   initAMapUI();
-          //   this.initMap();
-          // });
-        });
+        // initMap(() => {
+        //   vm.$nextTick(() => {
+        //     initAMapUI();
+        //     this.initMap();
+        //   });
+        // });
         setInterval(() => {
           this.setCount();
           this.setUserCount();
@@ -321,8 +324,18 @@ export default {
                 return [item.lng, item.lat];
               }
             });
+            var tmpArr = [];
+            for (let key of monitor.dict.offline) {
+              tmpArr.push(monitor.data.get(key));
+            }
+            distCluster.setData(tmpArr);
+            console.log(distCluster);
             setInterval(() => {
-              distCluster.setData([...this.data.values()]);
+              tmpArr = [];
+              for (let key of monitor.dict.offline) {
+                tmpArr.push(monitor.data.get(key));
+              }
+              distCluster.setData(tmpArr);
             }, 15000);
           }
         );
@@ -407,7 +420,9 @@ export default {
       var ws = new WebSocket("ws://192.168.88.88:5002");
       var socketDataWorker = new Worker("/map/worker-socket.js");
       ws.binaryType = "arraybuffer";
-      ws.onopen = function() {};
+      ws.onopen = function() {
+        ws.send("^login|admin|49ba59abbe56e057$");
+      };
       ws.onmessage = function(evt) {
         socketDataWorker.postMessage(new Uint8Array(evt.data));
       };
