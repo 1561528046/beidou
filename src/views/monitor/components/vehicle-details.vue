@@ -51,7 +51,7 @@
               <el-option label="全部分组" value=""></el-option>
               <el-option :label="childrenGroup.group_name" :value="childrenGroup.group_id" v-for="childrenGroup in currentGroupSonChildrens" :key="'select'+childrenGroup.group_id"></el-option>
             </el-select>
-            <el-table :data="list" size="small" style="width: 100%" @row-click="openSingleVehicle">
+            <el-table :data="list" size="small" style="width: 100%" @row-click="openTab">
               <el-table-column prop="license" label="车牌号">
               </el-table-column>
               <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="tablealarm">
@@ -163,6 +163,22 @@ export default {
   methods: {
     openSingleVehicle(row) {
       this.$emit("open-single", row.sim_id);
+    },
+    openTab(row) {
+      switch (this.showVehicle.type) {
+        case "alarm":
+          this.$store.commit(
+            "setMonitorAlarmVehicle",
+            window.monitor.data.get(row.sim_id)
+          );
+          break;
+        case "error":
+          this.$store.commit(
+            "setMonitorErrorVehicle",
+            window.monitor.data.get(row.sim_id)
+          );
+          break;
+      }
     },
     initPager() {
       this.pager.size = 50;

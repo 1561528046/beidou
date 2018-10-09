@@ -95,13 +95,13 @@
         <vehicle-area></vehicle-area>
       </el-tab-pane>
       <el-tab-pane label="报警车辆" :closable="true" name="alarm" v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1">
-        <vehicle-alarm :vehicle="$store.state.monitor.currentVehicleForTab"></vehicle-alarm>
+        <vehicle-alarm :vehicle="$store.state.monitor.monitorAlarmVehicle"></vehicle-alarm>
       </el-tab-pane>
       <el-tab-pane label="轨迹回放" :closable="true" name="track" v-if="$store.state.monitor.tabs.indexOf('track') !=-1">
-        <vehicle-track :vehicle="$store.state.monitor.currentVehicleForTab"></vehicle-track>
+        <vehicle-track :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-track>
       </el-tab-pane>
       <el-tab-pane label="数据异常" :closable="true" name="error" v-if="$store.state.monitor.tabs.indexOf('error') !=-1">
-        <!-- <vehicle-error :vehicle="$store.state.monitor.currentVehicleForTab"></vehicle-error> -->
+        <!-- <vehicle-error :vehicle="$store.state.monitor.monitorErrorVehicle"></vehicle-error> -->
       </el-tab-pane>
       <!-- 单车标签 -->
       <el-tab-pane :label="vehicle.license" :closable="true" v-for="vehicle in $store.getters.singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
@@ -221,6 +221,11 @@ export default {
             //车辆所对应的分组 均加入记录
             this.setGroupDict(vehicle.group_path, "alarm", vehicle.sim_id);
           }
+          if (vehicle.error_count != "0") {
+            this.dict.error.add(vehicle.sim_id);
+            //车辆所对应的分组 均加入记录
+            this.setGroupDict(vehicle.group_path, "error", vehicle.sim_id);
+          }
           if (new Date() - new Date(vehicle.time) < vm.$dict.ONLINE_TIMEOUT) {
             vehicle.online = true;
             this.dict.online.add(vehicle.sim_id);
@@ -261,7 +266,6 @@ export default {
           otherGroupVehicleMap.set("online", new Set());
           otherGroupVehicleMap.set("offline", new Set());
           otherGroupVehicleMap.set("error", new Set());
-          // otherGroupVehicleMap.set("data", group);
           this.dict.groups.set(
             "other" + group.group_id.toString(),
             otherGroupVehicleMap
