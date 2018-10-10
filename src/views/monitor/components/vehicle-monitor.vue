@@ -388,7 +388,14 @@ export default {
     },
     openCard(type) {
       this.$store.commit("openTab", type);
-      this.$store.commit("setCurrentVehicleForTab", this.$props.vehicle);
+      switch (type) {
+        case "error":
+          this.$store.commit("setMonitorErrorVehicle", this.$props.vehicle);
+          break;
+        case "alarm":
+          this.$store.commit("setMonitorAlarmVehicle", this.$props.vehicle);
+          break;
+      }
     },
     close() {
       this.$emit("close");
