@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="_body" v-show="showVehicle.isShowAll">
-      <el-table :data="list" size="small" style="width: 100%" @row-click="openSingleVehicle">
+      <el-table :data="list" size="small" style="width: 100%" @row-click="openTab">
         <el-table-column prop="license" label="车牌号">
         </el-table-column>
         <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="allalarm">
@@ -161,9 +161,6 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
-    openSingleVehicle(row) {
-      this.$emit("open-single", row.sim_id);
-    },
     openTab(row) {
       switch (this.showVehicle.type) {
         case "alarm":
@@ -178,6 +175,8 @@ export default {
             window.monitor.data.get(row.sim_id)
           );
           break;
+        default:
+          this.$emit("open-single", row.sim_id);
       }
     },
     initPager() {

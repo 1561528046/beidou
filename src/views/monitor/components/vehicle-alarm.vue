@@ -20,7 +20,6 @@
 import { initMap } from "@/utils/map.js";
 export default {
   mounted() {
-    console.log(this.$props.vehicle);
     initMap(() => {
       var map = new AMap.Map(this.$refs.map, {
         zoom: 14
