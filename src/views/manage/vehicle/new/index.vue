@@ -526,10 +526,22 @@ export default {
       this.detailsVisible = true;
     },
     goEdit(scope) {
-      this.$router.push({
-        path: "new/edit",
-        query: { vehicle_id: scope.row.vehicle_id }
-      });
+      if (this.$props.state == 1) {
+        this.$router.push({
+          path: "new/edit",
+          query: { vehicle_id: scope.row.vehicle_id }
+        });
+      } else if (this.$props.state == 2) {
+        this.$router.push({
+          path: "position/edit",
+          query: { vehicle_id: scope.row.vehicle_id }
+        });
+      } else {
+        this.$router.push({
+          path: "timeout/edit",
+          query: { vehicle_id: scope.row.vehicle_id }
+        });
+      }
     },
     delRow(scope) {
       //删除

@@ -315,7 +315,7 @@ export const dict = {
     t106: "自卸车"
   },
   get_vtype: function(key) {
-    key = key.slice(1);
+    // key = key.slice(1);
     return this.vtype[key] || "--";
   },
   communication: {
