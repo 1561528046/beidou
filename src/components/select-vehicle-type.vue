@@ -16,6 +16,9 @@ export default {
   watch: {
     vehicle_type: function() {
       this.$emit("input", this.vehicle_type);
+    },
+    value: function() {
+      this.$set(this.$data, "vehicle_type", this.$props.value);
     }
   },
   props: {

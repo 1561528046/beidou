@@ -509,14 +509,14 @@ export default {
             text: "一年后",
             onClick(picker) {
               const date = moment(new Date()).add(1, "year");
-              picker.$emit("pick", date.format("YYYY-MM-DD"));
+              picker.$emit("pick", date.format("YYYYMMDD"));
             }
           },
           {
             text: "两年后",
             onClick(picker) {
               const date = moment(new Date()).add(2, "year");
-              picker.$emit("pick", date.format("YYYY-MM-DD"));
+              picker.$emit("pick", date.format("YYYYMMDD"));
             }
           }
         ]

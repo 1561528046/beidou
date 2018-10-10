@@ -9,13 +9,16 @@ export default {
   name: "select-vtype",
   data() {
     return {
-      vtype: this.$props.value,
+      vtype: "",
       vtypes: this.$dict.vtype
     };
   },
   watch: {
     vtype: function() {
       this.$emit("input", this.vtype);
+    },
+    value: function() {
+      this.$set(this.$data, "vtype", this.$props.value);
     }
   },
   props: {

@@ -28,6 +28,7 @@
         </el-row>
         <div style="width:150px;margin:0 auto;">
           <el-button @click="save" type="primary">保存</el-button>
+          <!-- <el-button @click="administrative" type="primary">保存</el-button> -->
           <el-button @click="down(2)" type="primary">关闭</el-button>
         </div>
       </el-form>
@@ -129,12 +130,11 @@
         <el-table-column prop="time" label="时间 " :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column width="150" label="操作 ">
           <template slot-scope="scope ">
-
             <label @click="delForm(scope)" style="margin-right:3px; ">删除</label>
             <el-dialog width="15%" :visible.sync="delDialog" :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-              <div style="width:142px;margin:0 auto;margin-top:-25px;">
+              <div style="width:70%; margin:0 auto;">
                 <el-button @click="del" type="primary">确定</el-button>
-                <el-button @click="delDialog=false" type="primary">取消</el-button>
+                <el-button style="float:right" @click="delDialog=false" type="primary">取消</el-button>
               </div>
             </el-dialog>
             <label @click="selceForm(scope)">查看</label>
@@ -201,8 +201,6 @@ export default {
         vm.$set(vm.mapData, "district", district);
         vm.$set(vm.mapData, "polygons", polygons);
       });
-      // 绘制圆
-      // 绘制矩形
     });
   },
   data() {
@@ -286,7 +284,6 @@ export default {
       } else if (scope.row.Type == "2") {
         this.mapData.map.clearMap();
         // 矩形
-        console.log(scope.row);
         var leftlng = Number(scope.row.RightBottomLongitude);
         var leftlat = Number(scope.row.LeftTopLatitude);
         var rightlng = Number(scope.row.LeftTopLongitude);
@@ -311,6 +308,29 @@ export default {
         rectangle.setMap(this.mapData.map);
         // 缩放地图到合适的视野级别
         this.mapData.map.setFitView([rectangle]);
+      } else {
+        console.log(scope.row);
+        this.mapData.map.clearMap();
+        var latitude = scope.row.Latitude.split(",");
+        var longitude = scope.row.Longitude.split(",");
+        var path = [];
+        latitude.map((item, index) => {
+          path.push([longitude[index], item]);
+        });
+        var polygon = new AMap.Polygon({
+          path: path,
+          isOutline: true,
+          borderWeight: 3,
+          strokeColor: "#FF33FF",
+          strokeWeight: 6,
+          strokeOpacity: 0.2,
+          fillOpacity: 0.4,
+          // 线样式还支持 'dashed'
+          fillColor: "#1791fc",
+          zIndex: 50
+        });
+        polygon.setMap(this.mapData.map);
+        this.mapData.map.setFitView([polygon]);
       }
     },
     // 删除区域
@@ -358,67 +378,51 @@ export default {
       var vs = this;
       var data = {};
       var Type = "3";
-      var areaobj = {
-        Latitude: "",
-        Longitude: ""
-      };
+      var Latitude = "";
+      var Longitude = "";
       this.mapData.district.search(this.xingzheng, function(status, result) {
         if (result.districtList[0].boundaries.length > 1) {
           Type = "4";
         }
         result.districtList[0].boundaries.map(item => {
           item.map(my => {
-            areaobj.Latitude = Latitude + my.lat + ",";
-            areaobj.Longitude = Longitude + my.lng + ",";
+            Latitude = Latitude + my.lat + ",";
+            Longitude = Longitude + my.lng + ",";
           });
         });
-        // vs.mapData.map.remove(vs.mapData.polygons); //清除上次结果
-        // vs.mapData.polygons = [];
-        // var bounds = result.districtList[0].boundaries;
-        // if (bounds) {
-        //   for (var i = 0, l = bounds.length; i < l; i++) {
-        //     //生成行政区划polygon
-        //     var polygon = new AMap.Polygon({
-        //       strokeWeight: 1,
-        //       path: bounds[i],
-        //       fillOpacity: 0.4,
-        //       fillColor: "#80d8ff",
-        //       strokeColor: "#0091ea"
-        //     });
-        //     vs.mapData.polygons.push(polygon);
-        //   }
-        // }
-        // vs.mapData.map.add(vs.mapData.polygons);
-        // vs.mapData.map.setFitView(vs.mapData.polygons); //视口自适应
-      });
-      this.formdata.start_time =
-        "000000" + moment(this.formdata.time[0]).format("HHmmss");
-      this.formdata.stop_time =
-        "000000" + moment(this.formdata.time[1]).format("HHmmss");
-      data = {
-        AreaProperty: this.formdata.alarm_type,
-        RegionName: this.formdata.name,
-        StartTime: this.formdata.start_time,
-        EndTime: this.formdata.stop_time,
-        Type: Type
-      };
-      AddRegion(data).then(res => {
-        if (res.data.code == 0) {
-          this.getTable();
-          this.down();
-          this.mapData.map.clearMap();
-          return this.$notify({
-            message: res.data.msg,
-            title: "提示",
-            type: "success"
-          });
-        } else {
-          return this.$notify({
-            message: res.data.msg,
-            title: "提示",
-            type: "error"
-          });
-        }
+        Latitude = Latitude.substring(0, Latitude.length - 1);
+        Longitude = Longitude.substring(0, Longitude.length - 1);
+        vs.formdata.start_time =
+          "000000" + moment(vs.formdata.time[0]).format("HHmmss");
+        vs.formdata.stop_time =
+          "000000" + moment(vs.formdata.time[1]).format("HHmmss");
+        data = {
+          AreaProperty: vs.formdata.alarm_type,
+          RegionName: vs.formdata.name,
+          StartTime: vs.formdata.start_time,
+          EndTime: vs.formdata.stop_time,
+          Latitude: Latitude,
+          Longitude: Longitude,
+          Type: Type
+        };
+        AddRegion(data).then(res => {
+          if (res.data.code == 0) {
+            vs.getTable();
+            vs.down();
+            vs.mapData.map.clearMap();
+            return vs.$notify({
+              message: res.data.msg,
+              title: "提示",
+              type: "success"
+            });
+          } else {
+            return vs.$notify({
+              message: res.data.msg,
+              title: "提示",
+              type: "error"
+            });
+          }
+        });
       });
     },
     // 弹出块保存发送指令
@@ -492,7 +496,7 @@ export default {
         var lng = "";
         this.mapData.overlays[0].map(item => {
           lat = lat + item.lat + ",";
-          lng = lng + item.lng + ";";
+          lng = lng + item.lng + ",";
         });
         lat = lat.substring(0, lat.lastIndexOf(","));
         lng = lng.substring(0, lng.lastIndexOf(","));
