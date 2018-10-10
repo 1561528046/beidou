@@ -37,15 +37,15 @@ export default {
     },
     setMonitorAlarmVehicle(state, vehicle) {
       state.monitorAlarmVehicle = vehicle;
-      state.changeCurrentTag = "alarm";
+      this.commit("openTab", "alarm");
     },
     setMonitorErrorVehicle(state, vehicle) {
       state.monitorErrorVehicle = vehicle;
-      state.changeCurrentTag = "error";
+      this.commit("openTab", "error");
     },
     setMonitorTrackVehicle(state, vehicle) {
       state.monitorTrackVehicle = vehicle;
-      state.changeCurrentTag = "track";
+      this.commit("openTab", "track");
     }
   },
   actions: {},

@@ -1,229 +1,235 @@
 <template>
-  <div class="vehicle-info-box shadow-box open" :class="{'single':$props.single}" ref="box" :style="{left:position.left+'px',top:position.top+'px'}">
-    <div class="_header">
-      <strong class="_title">{{mapData.vehicle.info.license}}</strong>
-      <small class="_text">服务到期日期：{{mapData.vehicle.info.contract_date}} </small>
-      <i class="_close el-icon-circle-close-outline" @click="close" v-if="!$props.single"></i>
-    </div>
-    <div class="_map" v-if="!$props.single">
-      <!-- <a class="_map-btn">展开地图</a> -->
+  <div class="vehicle-info-container" :class="{'single':$props.single}" :style="{left:position.left+'px',top:position.top+'px'}">
+    <div class="_map" v-if="$props.single">
       <div class="_map-container" ref="vehicle_map"></div>
     </div>
-    <div class="_body">
-      <el-row>
-        <el-col :span="24">
-          定位时间：{{mapData.vehicle.time}}
-        </el-col>
-        <el-col :span="12">
-          联系人：{{mapData.vehicle.info.linkman||"--"}}
-        </el-col>
-        <el-col :span="12">
-          联系方式： {{mapData.vehicle.info.tel||"--"}}
-        </el-col>
-        <el-col :span="12">
-          时速：{{mapData.vehicle.speed1 || mapData.vehicle.speed }} km/h
-        </el-col>
-        <el-col :span="12">
-          里程：{{mapData.vehicle.mileage||"--"}}
-        </el-col>
-        <el-col :span="24">
-          地理位置：{{mapData.vehicle.address||"--"}}
-        </el-col>
-      </el-row>
-    </div>
-    <div class="_other" v-if="$props.single">
-      <el-row>
-        <el-col :span="12">
-          车头方向 {{mapData.vehicle.angle||"--"}}
-        </el-col>
-        <el-col :span="12">
-          油量 {{mapData.vehicle.oil||"--"}} 1/10L
-        </el-col>
+    <div class="vehicle-info-box shadow-box" ref="box">
+      <div class="_header">
+        <strong class="_title">{{mapData.vehicle.info.license}}</strong>
+        <small class="_text">服务到期日期：{{mapData.vehicle.info.contract_date}} </small>
+        <i class="_close el-icon-circle-close-outline" @click="close" v-if="!$props.single"></i>
+      </div>
+      <div class="_map" v-if="!$props.single">
+        <!-- <a class="_map-btn">展开地图</a> -->
+        <div class="_map-container" ref="vehicle_map"></div>
+      </div>
+      <div class="_body">
+        <el-row>
+          <el-col :span="24">
+            定位时间：{{mapData.vehicle.time}}
+          </el-col>
+          <el-col :span="12">
+            联系人：{{mapData.vehicle.info.linkman||"--"}}
+          </el-col>
+          <el-col :span="12">
+            联系方式： {{mapData.vehicle.info.tel||"--"}}
+          </el-col>
+          <el-col :span="12">
+            时速：{{mapData.vehicle.speed1 || mapData.vehicle.speed }} km/h
+          </el-col>
+          <el-col :span="12">
+            里程：{{mapData.vehicle.mileage||"--"}}
+          </el-col>
+          <el-col :span="24">
+            地理位置：{{mapData.vehicle.address||"--"}}
+          </el-col>
+        </el-row>
+      </div>
+      <div class="_other" v-if="$props.single">
+        <el-row>
+          <el-col :span="12">
+            车头方向 {{mapData.vehicle.angle||"--"}}
+          </el-col>
+          <el-col :span="12">
+            油量 {{mapData.vehicle.oil||"--"}} 1/10L
+          </el-col>
 
-        <el-col :span="12">
-          ACC 开/关
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,0)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          是否定位
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,1)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          纬度类型
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,2)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          经度类型
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,3)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          运营状态
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,4)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          实载状态：{{ $utils.getStateLoad(mapData.vehicle.state) }}
-        </el-col>
-        <el-col :span="12">
-          油路状态:{{$utils.getState(mapData.vehicle.state,10) ? "正常":"断开"}}
-        </el-col>
-        <el-col :span="12">
-          电路状态:{{$utils.getState(mapData.vehicle.state,11) ? "正常":"断开"}}
-        </el-col>
-        <el-col :span="12">
-          车门状态:{{$utils.getState(mapData.vehicle.state,12) ? "加锁":"解锁"}}
-        </el-col>
-        <el-col :span="12">
-          前门状态:
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,13)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          中门状态:
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,14)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          后门状态:
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,15)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          驾驶席门状态:
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,16)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          是否使用GPS定位:
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,18)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          是否使用北斗定位:
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,19)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          是否使用GLONASS定位:
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,20)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          是否使用Galileo定位:
-          <span class="_on" v-if="$utils.getState(mapData.vehicle.state,21)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
+          <el-col :span="12">
+            ACC 开/关
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,0)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            是否定位
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,1)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            纬度类型
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,2)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            经度类型
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,3)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            运营状态
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,4)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            实载状态：{{ $utils.getStateLoad(mapData.vehicle.state) }}
+          </el-col>
+          <el-col :span="12">
+            油路状态:{{$utils.getState(mapData.vehicle.state,10) ? "正常":"断开"}}
+          </el-col>
+          <el-col :span="12">
+            电路状态:{{$utils.getState(mapData.vehicle.state,11) ? "正常":"断开"}}
+          </el-col>
+          <el-col :span="12">
+            车门状态:{{$utils.getState(mapData.vehicle.state,12) ? "加锁":"解锁"}}
+          </el-col>
+          <el-col :span="12">
+            前门状态:
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,13)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            中门状态:
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,14)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            后门状态:
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,15)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            驾驶席门状态:
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,16)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            是否使用GPS定位:
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,18)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            是否使用北斗定位:
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,19)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            是否使用GLONASS定位:
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,20)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            是否使用Galileo定位:
+            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,21)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
 
-        <!-- 扩展车辆信号状态位 -->
-        <el-col :span="12">
-          近光灯信号:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,0)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          远光灯信号:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,1)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          右转向灯信号:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,2)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          左转向灯信号:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,3)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          制动信号:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,4)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          倒档信号:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,5)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          雾灯信号:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,6)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          示廓灯:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,7)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          喇叭信号:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,8)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          空调状态:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,9)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          空挡信号:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,10)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          缓速器工作:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,11)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          ABS 工作:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,12)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          加热器工作:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,13)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          离合器状态:
-          <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,14)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <!-- IO 状态位 -->
-        <el-col :span="12">
-          深度休眠状态:
-          <span class="_on" v-if="$utils.getIOState(mapData.vehicle.IO,0)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <el-col :span="12">
-          休眠状态:
-          <span class="_on" v-if="$utils.getIOState(mapData.vehicle.IO,1)"></span>
-          <span class="_off" v-else></span>
-        </el-col>
-        <!-- 模拟量 -->
-      </el-row>
+          <!-- 扩展车辆信号状态位 -->
+          <el-col :span="12">
+            近光灯信号:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,0)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            远光灯信号:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,1)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            右转向灯信号:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,2)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            左转向灯信号:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,3)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            制动信号:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,4)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            倒档信号:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,5)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            雾灯信号:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,6)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            示廓灯:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,7)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            喇叭信号:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,8)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            空调状态:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,9)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            空挡信号:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,10)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            缓速器工作:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,11)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            ABS 工作:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,12)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            加热器工作:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,13)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            离合器状态:
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,14)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <!-- IO 状态位 -->
+          <el-col :span="12">
+            深度休眠状态:
+            <span class="_on" v-if="$utils.getIOState(mapData.vehicle.IO,0)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <el-col :span="12">
+            休眠状态:
+            <span class="_on" v-if="$utils.getIOState(mapData.vehicle.IO,1)"></span>
+            <span class="_off" v-else></span>
+          </el-col>
+          <!-- 模拟量 -->
+        </el-row>
+      </div>
+      <div class="_footer">
+        <!-- <i class="iconfont icon-idcard"></i> -->
+        <i class="iconfont icon-boxplot-fill" @click="showCard('deviceCard','设备信息')" title="设备信息"></i>
+        <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')" title="sim卡信息"></i>
+        <i class="iconfont icon-wifi" @click="showCard('audio')" title="语音对讲"></i>
+        <i class="iconfont icon-error-fill _error" @click="openCard('error')" title="异常信息"></i>
+        <i class="iconfont icon-camera" title="抓拍"></i>
+        <i class="iconfont icon-video" title="视频信息"></i>
+        <el-badge :value="parseInt(mapData.vehicle.alarm_count)||''" :max="99" class="alarm-badge" :class="{'no-alarm':!mapData.vehicle.alarm_count}">
+          <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
+        </el-badge>
+      </div>
+      <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%">
+        <div :is="card.component" :vehicle="$props.vehicle"></div>
+      </el-dialog>
     </div>
-    <div class="_footer">
-      <!-- <i class="iconfont icon-idcard"></i> -->
-      <i class="iconfont icon-boxplot-fill" @click="showCard('deviceCard','设备信息')" title="设备信息"></i>
-      <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')" title="sim卡信息"></i>
-      <i class="iconfont icon-wifi" @click="showCard('audio')" title="语音对讲"></i>
-      <i class="iconfont icon-error-fill _error" @click="openCard('error')" title="异常信息"></i>
-      <i class="iconfont icon-camera" title="抓拍"></i>
-      <i class="iconfont icon-video" title="视频信息"></i>
-      <el-badge :value="200" :max="99" class="alarm-badge">
-        <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
-      </el-badge>
-    </div>
-    <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%">
-      <div :is="card.component" :vehicle="$props.vehicle"></div>
-    </el-dialog>
   </div>
+
 </template>
 <script>
 import { getVehicle } from "@/api/index.js";
@@ -432,9 +438,116 @@ export default {
     }
   }
 }
-.single {
-  height: auto !important;
+.vehicle-info-box {
+  font-size: 12px;
+  position: absolute;
+  width: 350px;
+  background: #fff;
+  z-index: 10;
+  &.open {
+    height: 360px;
+    ._map {
+      height: 160px;
+      background: #999;
+    }
+  }
+  ._header {
+    box-sizing: border-box;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 0 15px;
+    position: relative;
+    height: 40px;
+    line-height: 40px;
+    ._title {
+      padding-right: 1em;
+      font-size: 16px;
+    }
+    ._text {
+      font-size: 12px;
+      color: #999;
+    }
+    ._close {
+      cursor: pointer;
+      right: 15px;
+      top: 50%;
+      transform: translate3d(0, -50%, 0);
+      font-size: 20px;
+      position: absolute;
+    }
+  }
+  ._map {
+    position: relative;
+    min-height: 25px;
+    height: 150px;
+    ._map-btn {
+      position: absolute;
+      bottom: 0;
+      font-size: 12px;
+      width: 100px;
+      left: 50%;
+      margin-left: -50px;
+      border: 1px solid #f0f0f0;
+      border-top: 0;
+      text-align: center;
+      height: 25px;
+      line-height: 25px;
+      background: #fff;
+    }
+    ._map-container {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  ._body {
+    height: 120px;
+    box-sizing: border-box;
+    padding: 15px;
+    line-height: 1.8;
+  }
+  ._footer {
+    height: 40px;
+    line-height: 40px;
+    border-top: 1px solid #f0f0f0;
+    ._error {
+      position: absolute;
+      right: 15px;
+      color: #ff8d00;
+    }
+    i {
+      font-size: 25px;
+      display: inline-block;
+      width: 40px;
+      cursor: pointer;
+      text-align: center;
+    }
+  }
+  ._other {
+    border-top: 1px solid @b4;
+    box-sizing: border-box;
+    padding: 15px;
+    line-height: 1.8;
+  }
 }
+.vehicle-info-container {
+  position: absolute;
+  &.single {
+    height: 100% !important;
+    width: 100%;
+    position: static;
+    margin: 0;
+    ._map {
+      position: absolute;
+      width: 100%;
+      height: 100% !important;
+      top: 0;
+      bottom: 0;
+    }
+    ._map-container {
+      height: 100%;
+    }
+  }
+}
+
 .alarm-badge {
   i {
     width: auto;
@@ -445,6 +558,11 @@ export default {
   .el-badge__content.is-fixed {
     right: 20px;
     top: 3px;
+  }
+  &.no-alarm {
+    i {
+      color: @t1;
+    }
   }
 }
 </style>

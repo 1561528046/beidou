@@ -18,7 +18,7 @@
         <div class="monitor">
           <div id="container" style="width:100%;height:100%;"></div>
           <div class="vehicle-search shadow-box">
-            <el-autocomplete v-model="searchVehicle" :fetch-suggestions="vehicleSearch" placeholder="搜索车辆（车牌号、终端ID）" @select="vehicleSelected" size="small" prefix-icon="el-icon-search" style="width:100%;">
+            <el-autocomplete v-model="searchVehicle" clearable :fetch-suggestions="vehicleSearch" placeholder="搜索车辆车牌号" @select="vehicleSelected" size="small" prefix-icon="el-icon-search" style="width:100%;">
             </el-autocomplete>
           </div>
           <transition-group name="list-complete" tag="div" class="current-vehicle-container">
@@ -152,7 +152,6 @@ export default {
         type: "",
         sub_title: ""
       },
-      maps: [],
       alarmList: {},
       errorList: {},
       onlineList: {},
@@ -346,7 +345,6 @@ export default {
               tmpArr.push(monitor.data.get(key));
             }
             distCluster.setData(tmpArr);
-            console.log(distCluster);
             setInterval(() => {
               tmpArr = [];
               for (let key of monitor.dict.offline) {
@@ -417,9 +415,7 @@ export default {
     };
   },
   destroyed() {
-    this.maps.map(map => {
-      console.log(map.destroy);
-    });
+    this.maps.map(map => {});
   },
   methods: {
     init() {
@@ -666,6 +662,7 @@ export default {
     transform: translate(0, -30%);
     visibility: hidden;
     a {
+      cursor: pointer;
       padding-left: 5px;
       display: block;
       position: relative;
@@ -684,6 +681,7 @@ export default {
       }
     }
     a:hover {
+      color: @pirmary;
       span {
         transform: translate(-100%, 0);
         opacity: 1;
