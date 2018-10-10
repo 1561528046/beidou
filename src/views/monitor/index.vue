@@ -129,6 +129,7 @@ import vehicleSingle from "./components/vehicle-single.vue";
 import vehicleArea from "./components/vehicle-area.vue";
 import vehicleTrack from "./components/vehicle-track.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
+import moment from "moment";
 window.monitor = {};
 export default {
   name: "monitor",
@@ -211,8 +212,8 @@ export default {
           if (vehicle.lng - 0 < vehicle.lat - 0) {
             [vehicle.lng, vehicle.lat] = [vehicle.lat, vehicle.lng];
           }
-          vehicle.lat = 36 + Math.random() * 5;
-          vehicle.lng = 115 + Math.random() * 10;
+          // vehicle.lat = 36 + Math.random() * 5;
+          // vehicle.lng = 115 + Math.random() * 10;
           this.data.set(vehicle.sim_id, vehicle);
 
           if (vehicle.alarm_count != "0") {
@@ -236,13 +237,13 @@ export default {
           }
         });
         vm.initLoader.close();
-        // initMap(() => {
-        //   vm.$nextTick(() => {
-        //     initAMapUI();
-        //     this.initMap();
-        //   });
-        // });
-        setInterval(() => {
+        initMap(() => {
+          vm.$nextTick(() => {
+            initAMapUI();
+            this.initMap();
+          });
+        });
+        monitor.countInterval = setInterval(() => {
           this.setCount();
           this.setUserCount();
           // this.setCurrentGroup();
@@ -341,13 +342,14 @@ export default {
               }
             });
             var tmpArr = [];
-            for (let key of monitor.dict.offline) {
+            for (let key of monitor.dict.online) {
               tmpArr.push(monitor.data.get(key));
             }
             distCluster.setData(tmpArr);
             setInterval(() => {
+              this.checkOffline();
               tmpArr = [];
-              for (let key of monitor.dict.offline) {
+              for (let key of monitor.dict.online) {
                 tmpArr.push(monitor.data.get(key));
               }
               distCluster.setData(tmpArr);
@@ -355,7 +357,21 @@ export default {
           }
         );
       },
-
+      checkOffline() {
+        //检测离线
+        console.log("检测离线");
+        for (let key of this.dict.online) {
+          let vehicleData = this.data.get(key);
+          if (
+            new Date() - new Date(vehicleData.time) >
+            vm.$dict.ONLINE_TIMEOUT
+          ) {
+            this.setOffline(vehicleData);
+            console.log("设置" + key + "离线");
+          }
+        }
+        console.log("检测离线完成");
+      },
       setUserCount() {
         vm.userList.map(user => {
           var groupDict = this.dict.groups.get(user.group_id);
@@ -366,11 +382,12 @@ export default {
         });
       },
       setVehicleData(vehicleData) {
-        // debugger;
+        vehicleData.alarm = parseInt(Math.random() * 500);
         if (this.data.has(vehicleData.sim_id)) {
-          if (vehicleData.alarm != "") {
+          if (vehicleData.alarm != "0" || vehicleData.alarm != "") {
             this.setAlarm(vehicleData);
           }
+          // debugger;
           if (
             new Date() - new Date(vehicleData.time) <
             vm.$dict.ONLINE_TIMEOUT
@@ -411,12 +428,16 @@ export default {
         vm.vehicleCount.error = this.dict.error.size;
         vm.vehicleCount.alarm = this.dict.alarm.size;
       },
-      setAlarm() {}
+      setAlarm(vehicleData) {
+        var vehicle = this.data.get(vehicleData.sim_id);
+        vehicle.alarm_count = parseInt(vehicle.alarm_count || 0) + 1;
+        this.dict.alarm.add(vehicle.sim_id);
+        var groups = vehicle.group_path;
+        this.setGroupDict(groups, "alarm", vehicle.sim_id);
+      }
     };
   },
-  destroyed() {
-    this.maps.map(map => {});
-  },
+
   methods: {
     init() {
       this.initLoader = this.$loading({ text: "初始化分组数据" });
@@ -431,19 +452,20 @@ export default {
     },
     initWS() {
       var ws = new WebSocket("ws://192.168.88.88:5002");
+      window.ws = ws;
       var socketDataWorker = new Worker("/map/worker-socket.js");
       ws.binaryType = "arraybuffer";
       ws.onopen = function() {
         ws.send("^login|admin|49ba59abbe56e057$");
+        monitor.wsHeartInterval = setInterval(() => {
+          ws.send("^heart$");
+        }, 20000);
       };
       ws.onmessage = function(evt) {
         socketDataWorker.postMessage(new Uint8Array(evt.data));
       };
       socketDataWorker.onmessage = event => {
         event.data.sim_id = parseInt(event.data.sim_id).toString();
-        if (event.data.sim_id == "10000120030") {
-          console.log(event.data);
-        }
         var position = GPS.gcj_encrypt(
           event.data.lat || 0,
           event.data.lng || 0
@@ -459,7 +481,7 @@ export default {
         .then(res => {
           var res2 = [];
           res.data.data.map(item => {
-            var position = GPS.gcj_encrypt(item[4] || 0, item[5] || 0); //GPS转高德
+            var position = GPS.gcj_encrypt(item[5] || 0, item[4] || 0); //GPS转高德
             res2.push({
               sim_id: item[0],
               license: item[1],
@@ -478,9 +500,22 @@ export default {
               angle: "", //方向
               wifiSignal: "", //信号强度
               GNSSCount: "", //卫星数
-              inoutAlarm: "", //进出区域报警
+              inoutAlarm: [], //进出区域报警
               mileage: "", //总里程
-              address: ""
+              address: "",
+              state: "",
+              oil: "",
+              alarmId: "",
+              overSpeedPositionType: "",
+              overSpeedAreaId: "",
+              runTimeAlarm: {
+                routeID: "",
+                time: "",
+                type: ""
+              },
+              vehicleSignal: "",
+              IO: "",
+              analog: ""
             });
           });
           window.monitor.init(res2, groups);
@@ -633,6 +668,10 @@ export default {
           this.closeTab(tabName);
       }
     }
+  },
+  destroyed() {
+    clearInterval(monitor.wsHeartInterval);
+    clearInterval(monitor.countInterval);
   }
 };
 </script>

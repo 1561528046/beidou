@@ -1,5 +1,25 @@
 <template>
   <div class="vehicle-info-container" :class="{'single':$props.single}" :style="{left:position.left+'px',top:position.top+'px'}">
+    <div class="_tools shadow-box">
+      <el-radio-group v-model="mapTools" @change="changeTools" size="mini">
+        <el-radio-button label="rule" title="测距工具"><i class="iconfont icon-ruler"></i></el-radio-button>
+        <el-radio-button label="hand" title="移动工具"> <i class="iconfont icon-hand"></i></el-radio-button>
+      </el-radio-group>
+      <label class="el-radio-button el-radio-button--mini" @click="openOtherVehicle">
+        <span class="el-radio-button__inner">
+          <i class="iconfont icon-column-width" title="多车测距"></i>
+        </span>
+      </label>
+      <label class="el-radio-button el-radio-button--mini" @click="clearOtherVehicle">
+        <span class="el-radio-button__inner">
+          <i class="el-icon-refresh" title="清除其他车辆" style="height:25px;"></i>
+        </span>
+      </label>
+
+    </div>
+    <el-dialog title="选择车辆" :visible.sync="otherVehicleDialog" append-to-body>
+      <choose-vehicle @button="addOtherVehicle"></choose-vehicle>
+    </el-dialog>
     <div class="_map" v-if="$props.single">
       <div class="_map-container" ref="vehicle_map"></div>
     </div>
@@ -31,12 +51,16 @@
             里程：{{mapData.vehicle.mileage||"--"}}
           </el-col>
           <el-col :span="24">
-            地理位置：{{mapData.vehicle.address||"--"}}
+            地理位置：{{mapData.vehicleAddress||"--"}}
           </el-col>
         </el-row>
       </div>
       <div class="_other" v-if="$props.single">
         <el-row>
+          <el-col :span="24">
+            当前报警信息 {{$dict.getAlarm(mapData.vehicle.alarm)||"--"}}
+          </el-col>
+
           <el-col :span="12">
             车头方向 {{mapData.vehicle.angle||"--"}}
           </el-col>
@@ -237,10 +261,13 @@ import { location2address } from "@/utils/map-tools.js";
 import { initMap, createMarker, setMarker } from "@/utils/map.js";
 import deviceCard from "./card-device.vue";
 import simCard from "./card-sim.vue";
+import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { deviceCard, simCard },
+  components: { deviceCard, simCard, chooseVehicle },
   data() {
     return {
+      otherVehicleDialog: false,
+      mapTools: "hand",
       card: {
         show: false,
         component: "",
@@ -248,11 +275,15 @@ export default {
       },
       mapData: {
         //注释属性为动态添加，为非响应式数据！
+        //rule:{},
         // map:{},
         // marker:{},
+        vehicleAddress: "",
         vehicle: {
           info: {}
-        } //车辆数据
+        }, //车辆数据
+        otherVehicle: {}
+        //otherMarker:{}
       },
       bodyWidth: "",
       bodyHeight: ""
@@ -263,6 +294,12 @@ export default {
     "mapData.vehicle": {
       handler: function() {
         this.updateVehicle();
+      },
+      deep: true
+    },
+    "mapData.otherVehicle": {
+      handler: function() {
+        this.updateOtherVehicle();
       },
       deep: true
     }
@@ -282,6 +319,7 @@ export default {
     this.bodyWidth = this.$el.parentElement.scrollWidth;
     this.bodyHeight = this.$el.parentElement.scrollHeight;
     var monitorData = this.$props.vehicle;
+
     if (!monitorData.info) {
       //如果没有联系人等信息
       getVehicle({ vehicle_id: monitorData.vehicle_id })
@@ -289,34 +327,34 @@ export default {
           if (res.data.code == 0) {
             var lastData = res.data.data[0];
             monitorData.info = lastData;
-            var tpl = {
-              alarm: "",
-              state: "",
-              lat: "",
-              lng: "",
-              altitude: "",
-              speed: "",
-              angle: "",
-              time: "",
-              mileage: "",
-              oil: "",
-              speed1: "",
-              alarmId: "",
-              overSpeedPositionType: "",
-              overSpeedAreaId: "",
-              inoutAlarm: [],
-              runTimeAlarm: {
-                routeID: "",
-                time: "",
-                type: ""
-              },
-              vehicleSignal: "",
-              IO: "",
-              analog: "",
-              wifiSignal: "",
-              GNSSCount: ""
-            };
-            Object.assign(monitorData, tpl);
+            // var tpl = {
+            //   alarm: "",
+            //   state: "",
+            //   lat: "",
+            //   lng: "",
+            //   altitude: "",
+            //   speed: "",
+            //   angle: "",
+            //   time: "",
+            //   mileage: "",
+            //   oil: "",
+            //   speed1: "",
+            //   alarmId: "",
+            //   overSpeedPositionType: "",
+            //   overSpeedAreaId: "",
+            //   inoutAlarm: [],
+            //   runTimeAlarm: {
+            //     routeID: "",
+            //     time: "",
+            //     type: ""
+            //   },
+            //   vehicleSignal: "",
+            //   IO: "",
+            //   analog: "",
+            //   wifiSignal: "",
+            //   GNSSCount: ""
+            // };
+            // Object.assign(monitorData, tpl);
 
             if (!monitorData.time) {
               //如果监控数据中 没有定为时间，则把请求到的最后一条定为数据赋值到监控数据中
@@ -373,10 +411,58 @@ export default {
         });
         this.mapData.marker = createMarker(this.mapData.vehicle, AMap);
         this.mapData.marker.setMap(this.mapData.map);
-        this.mapData.map.on("zoomchange", () => {
-          this.mapData.map.setCenter(this.mapData.marker.getPosition());
-        });
+        if (!this.$props.single) {
+          this.mapData.map.on("zoomchange", () => {
+            this.mapData.map.setCenter(this.mapData.marker.getPosition());
+          });
+        }
       });
+    },
+    changeTools(name) {
+      switch (name) {
+        case "rule":
+          if (!this.mapData.rule) {
+            this.mapData.map.plugin(["AMap.RangingTool"], () => {
+              this.mapData.ruler = new window.AMap.RangingTool(
+                this.mapData.map
+              );
+              this.mapData.ruler.turnOn();
+            });
+          }
+          break;
+        case "hand":
+          this.mapData.ruler.turnOff();
+          break;
+        case "multi":
+          this.openOtherVehicle();
+          break;
+      }
+    },
+    openOtherVehicle() {
+      this.otherVehicleDialog = true;
+    },
+    addOtherVehicle({ row }) {
+      if (row.sim_id == this.mapData.vehicle.sim_id) {
+        //不能选择同一辆车
+        this.$message.warning("地图中已经存在选择车辆！");
+        return false;
+      } else {
+        var otherVehicle = window.monitor.data.get(row.sim_id);
+        if (otherVehicle) {
+          this.mapData.otherVehicle = otherVehicle;
+          this.otherVehicleDialog = false;
+          if (!this.mapData.otherMarker) {
+            //地图中创建marker
+            this.mapData.otherMarker = createMarker(
+              this.mapData.otherVehicle,
+              window.AMap
+            );
+          }
+          this.mapData.otherMarker.setMap(this.mapData.map);
+        } else {
+          this.$message.warning("监控数据中没有找到对应车辆！");
+        }
+      }
     },
     updateVehicle() {
       if (this.mapData.marker) {
@@ -386,10 +472,25 @@ export default {
           longKey: "lng",
           latKey: "lat"
         }).then(res => {
-          this.mapData.vehicle.address = res[0];
+          this.mapData.vehicleAddress = res[0];
           setMarker(this.mapData.marker, vehicleData, window.AMap);
-          this.mapData.map.setCenter(this.mapData.marker.getPosition());
+          if (!this.$props.single) {
+            this.mapData.map.setCenter(this.mapData.marker.getPosition());
+          }
         });
+      }
+    },
+    updateOtherVehicle() {
+      if (this.mapData.otherMarker) {
+        var vehicleData = this.mapData.otherVehicle;
+        setMarker(this.mapData.otherMarker, vehicleData, window.AMap);
+      }
+    },
+    clearOtherVehicle() {
+      if (this.mapData.otherMarker) {
+        this.mapData.otherMarker.setMap(null);
+        this.mapData.otherVehicle = null;
+        delete this.mapData.otherMarker;
       }
     },
     openCard(type) {
@@ -544,6 +645,18 @@ export default {
     }
     ._map-container {
       height: 100%;
+    }
+    ._tools {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      z-index: 10;
+      background: #fff;
+      i {
+        margin: 0 10px;
+        font-size: 25px;
+        cursor: pointer;
+      }
     }
   }
 }
