@@ -28,6 +28,7 @@
         </el-row>
         <div style="width:150px;margin:0 auto;">
           <el-button @click="save" type="primary">保存</el-button>
+          <!-- <el-button @click="administrative" type="primary">保存</el-button> -->
           <el-button @click="down(2)" type="primary">关闭</el-button>
         </div>
       </el-form>
@@ -129,12 +130,11 @@
         <el-table-column prop="time" label="时间 " :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column width="150" label="操作 ">
           <template slot-scope="scope ">
-
             <label @click="delForm(scope)" style="margin-right:3px; ">删除</label>
             <el-dialog width="15%" :visible.sync="delDialog" :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-              <div style="width:142px;margin:0 auto;margin-top:-25px;">
+              <div>
                 <el-button @click="del" type="primary">确定</el-button>
-                <el-button @click="delDialog=false" type="primary">取消</el-button>
+                <el-button style="float:right" @click="delDialog=false" type="primary">取消</el-button>
               </div>
             </el-dialog>
             <label @click="selceForm(scope)">查看</label>
@@ -201,8 +201,6 @@ export default {
         vm.$set(vm.mapData, "district", district);
         vm.$set(vm.mapData, "polygons", polygons);
       });
-      // 绘制圆
-      // 绘制矩形
     });
   },
   data() {
@@ -286,7 +284,6 @@ export default {
       } else if (scope.row.Type == "2") {
         this.mapData.map.clearMap();
         // 矩形
-        console.log(scope.row);
         var leftlng = Number(scope.row.RightBottomLongitude);
         var leftlat = Number(scope.row.LeftTopLatitude);
         var rightlng = Number(scope.row.LeftTopLongitude);
@@ -311,6 +308,25 @@ export default {
         rectangle.setMap(this.mapData.map);
         // 缩放地图到合适的视野级别
         this.mapData.map.setFitView([rectangle]);
+      } else {
+        this.mapData.map.clearMap();
+        var latitude = scope.row.Latitude.split(",");
+        var longitude = scope.row.Longitude.split(",");
+        console.log(latitude);
+        console.log(longitude);
+        // var path = [];
+        // var polygon = new AMap.Polygon({
+        //   path: path,
+        //   isOutline: true,
+        //   borderWeight: 3,
+        //   strokeColor: "#FF33FF",
+        //   strokeWeight: 6,
+        //   strokeOpacity: 0.2,
+        //   fillOpacity: 0.4,
+        //   // 线样式还支持 'dashed'
+        //   fillColor: "#1791fc",
+        //   zIndex: 50
+        // });
       }
     },
     // 删除区域
@@ -400,6 +416,8 @@ export default {
         RegionName: this.formdata.name,
         StartTime: this.formdata.start_time,
         EndTime: this.formdata.stop_time,
+        Latitude: areaobj.Latitude,
+        Longitude: areaobj.Longitude,
         Type: Type
       };
       AddRegion(data).then(res => {
@@ -492,7 +510,7 @@ export default {
         var lng = "";
         this.mapData.overlays[0].map(item => {
           lat = lat + item.lat + ",";
-          lng = lng + item.lng + ";";
+          lng = lng + item.lng + ",";
         });
         lat = lat.substring(0, lat.lastIndexOf(","));
         lng = lng.substring(0, lng.lastIndexOf(","));
