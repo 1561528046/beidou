@@ -13,7 +13,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="报警类型" prop="alarm_type">
-              <el-select size="small" v-model="formdata.alarm_type" style="width:100%;">
+              <el-select v-model="formdata.alarm_type" style="width:100%;">
                 <el-option label="禁入" value="3">禁入</el-option>
                 <el-option label="禁出" value="5">禁出</el-option>
               </el-select>
@@ -52,7 +52,8 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="地区" style="margin-bottom:0">
-              <el-input size="small" v-model="xingzheng" type="text"></el-input>
+              <!-- <el-input size="small" v-model="xingzheng" type="text"></el-input> -->
+              <select-city-input v-model="xingzheng"></select-city-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -153,7 +154,9 @@
 import { initMap } from "@/utils/map.js";
 import moment from "moment";
 import { AddRegion, GetRegionByPage, DeleteRegion } from "@/api/index.js";
+import selectCityInput from "@/components/select-city-input.vue";
 export default {
+  components: { selectCityInput },
   created() {
     this.getTable();
     this.socket = new WebSocket("ws://127.0.0.1:5000");
@@ -309,7 +312,6 @@ export default {
         // 缩放地图到合适的视野级别
         this.mapData.map.setFitView([rectangle]);
       } else {
-        console.log(scope.row);
         this.mapData.map.clearMap();
         var latitude = scope.row.Latitude.split(",");
         var longitude = scope.row.Longitude.split(",");
@@ -378,18 +380,11 @@ export default {
       var vs = this;
       var data = {};
       var Type = "3";
-      var Latitude = "";
-      var Longitude = "";
+      console.log(this.xingzheng);
       this.mapData.district.search(this.xingzheng, function(status, result) {
         if (result.districtList[0].boundaries.length > 1) {
           Type = "4";
         }
-        result.districtList[0].boundaries.map(item => {
-          item.map(my => {
-            Latitude = Latitude + my.lat + ",";
-            Longitude = Longitude + my.lng + ",";
-          });
-        });
         Latitude = Latitude.substring(0, Latitude.length - 1);
         Longitude = Longitude.substring(0, Longitude.length - 1);
         vs.formdata.start_time =
@@ -401,14 +396,12 @@ export default {
           RegionName: vs.formdata.name,
           StartTime: vs.formdata.start_time,
           EndTime: vs.formdata.stop_time,
-          Latitude: Latitude,
-          Longitude: Longitude,
           Type: Type
         };
         AddRegion(data).then(res => {
           if (res.data.code == 0) {
             vs.getTable();
-            vs.down();
+            vs.down(1);
             vs.mapData.map.clearMap();
             return vs.$notify({
               message: res.data.msg,
@@ -548,6 +541,7 @@ export default {
     down(type) {
       if (type == 1) {
         this.nocustom = false;
+        this.xingzheng = "";
         this.mapData.map.remove(this.mapData.polygons);
       } else {
         this.custom = false;

@@ -157,7 +157,7 @@ export default {
     },
     handleClick(tab) {
       if (tab.label == "通讯设置") {
-        this.parameter_type == 1;
+        this.parameter_type = 1;
       } else if (tab.label == "车辆信息设置") {
         this.parameter_type = 2;
       } else if (tab.label == "行车报警设置") {
