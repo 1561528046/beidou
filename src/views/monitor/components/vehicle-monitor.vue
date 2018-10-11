@@ -1,6 +1,6 @@
 <template>
   <div class="vehicle-info-container" :class="{'single':$props.single}" :style="{left:position.left+'px',top:position.top+'px'}">
-    <div class="_tools shadow-box">
+    <div class="_tools shadow-box" v-if="$props.single">
       <el-radio-group v-model="mapTools" @change="changeTools" size="mini">
         <el-radio-button label="rule" title="测距工具"><i class="iconfont icon-ruler"></i></el-radio-button>
         <el-radio-button label="hand" title="移动工具"> <i class="iconfont icon-hand"></i></el-radio-button>
