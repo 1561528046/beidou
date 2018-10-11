@@ -9,7 +9,7 @@
         </a>
         <a href="#" @click="openTab('fence')">
           <i class="iconfont icon-weilan"></i>
-          <span>围栏管理</span>
+          <span>围栏管理 </span>
         </a>
       </div>
     </div>
