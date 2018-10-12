@@ -28,7 +28,6 @@
         </el-row>
         <div style="width:150px;margin:0 auto;">
           <el-button @click="save" type="primary">保存</el-button>
-          <!-- <el-button @click="administrative" type="primary">保存</el-button> -->
           <el-button @click="down(2)" type="primary">关闭</el-button>
         </div>
       </el-form>
@@ -53,7 +52,7 @@
           <el-col :span="24">
             <el-form-item label="地区" style="margin-bottom:0">
               <!-- <el-input size="small" v-model="xingzheng" type="text"></el-input> -->
-              <select-city-input v-model="xingzheng"></select-city-input>
+              <select-city-input v-model="area_id"></select-city-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -97,6 +96,7 @@
                 <el-option label="圆形" value="1">圆形</el-option>
                 <el-option label="矩形" value="2">矩形</el-option>
                 <el-option label="多边形" value="3">多边形</el-option>
+                <el-option label="行政区域" value="4">行政区域</el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -113,12 +113,13 @@
         </router-link>
       </el-form>
       <el-table height="200" :data="tableData.data" size="small">
-        <el-table-column prop="AreaId" label="序号 " :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="RegionId" label="序号 " :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="Type" label="管理类型 " :formatter="$utils.baseFormatter ">
           <template slot-scope="scope">
             <label v-if="scope.row.Type=='1'">圆形</label>
             <label v-if="scope.row.Type=='2'">矩形</label>
             <label v-if="scope.row.Type=='3'">多边形</label>
+            <label v-if="scope.row.Type=='4'">行政区域</label>
           </template>
         </el-table-column>
         <el-table-column prop="RegionName" label="名称 " :formatter="$utils.baseFormatter "> </el-table-column>
@@ -215,7 +216,7 @@ export default {
       areaType: true,
       custom: false,
       nocustom: false,
-      xingzheng: "",
+      area_id: "",
       addDialog: false,
       delDialog: false,
       addKey: 0,
@@ -376,46 +377,32 @@ export default {
     },
     // 行政区域
     administrative() {
-      this.mapData.district.setLevel(this.xingzheng);
-      var vs = this;
       var data = {};
-      var Type = "3";
-      console.log(this.xingzheng);
-      this.mapData.district.search(this.xingzheng, function(status, result) {
-        if (result.districtList[0].boundaries.length > 1) {
-          Type = "4";
+      data = {
+        AreaProperty: this.formdata.alarm_type,
+        RegionName: this.formdata.name,
+        StartTime: this.formdata.start_time,
+        EndTime: this.formdata.stop_time,
+        area_id: this.area_id,
+        Type: "4"
+      };
+      AddRegion(data).then(res => {
+        if (res.data.code == 0) {
+          this.getTable();
+          this.down(1);
+          this.mapData.map.clearMap();
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "success"
+          });
+        } else {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
         }
-        Latitude = Latitude.substring(0, Latitude.length - 1);
-        Longitude = Longitude.substring(0, Longitude.length - 1);
-        vs.formdata.start_time =
-          "000000" + moment(vs.formdata.time[0]).format("HHmmss");
-        vs.formdata.stop_time =
-          "000000" + moment(vs.formdata.time[1]).format("HHmmss");
-        data = {
-          AreaProperty: vs.formdata.alarm_type,
-          RegionName: vs.formdata.name,
-          StartTime: vs.formdata.start_time,
-          EndTime: vs.formdata.stop_time,
-          Type: Type
-        };
-        AddRegion(data).then(res => {
-          if (res.data.code == 0) {
-            vs.getTable();
-            vs.down(1);
-            vs.mapData.map.clearMap();
-            return vs.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "success"
-            });
-          } else {
-            return vs.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        });
       });
     },
     // 弹出块保存发送指令
@@ -541,7 +528,7 @@ export default {
     down(type) {
       if (type == 1) {
         this.nocustom = false;
-        this.xingzheng = "";
+        this.area_id = "";
         this.mapData.map.remove(this.mapData.polygons);
       } else {
         this.custom = false;
