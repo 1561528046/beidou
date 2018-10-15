@@ -1,12 +1,14 @@
 var BASE_URL = "http://192.168.88.100:725/";
 var API_URL = "http://192.168.88.100:725/api";
+var MONITOR_URL = "ws://192.168.88.88:5002";
 // var BASE_URL = "http://192.168.88.88:10462/";
 // var API_URL = "http://192.168.88.88:10462/api";
-var INSTRUCTION_URL = "127.0.0.1:5000";
+var INSTRUCTION_URL = "ws://192.168.88.88:5000";
 if (process.env.NODE_ENV == "production") {
   BASE_URL = "http://192.168.88.6:827/";
   API_URL = "http://192.168.88.6:827/api";
-  INSTRUCTION_URL = "http://127.0.0.1:5000";
+  INSTRUCTION_URL = "ws://192.168.88.88:5000";
+  MONITOR_URL = "ws://192.168.88.88:5002";
 }
 export const dict = {
   //全局字典
@@ -14,6 +16,7 @@ export const dict = {
   BMAP_KEY: "E6CTjsauEoavEzCYG4WM1zt0S5OB6dAf", //百度key
   BASE_URL: BASE_URL, //web站点路径
   API_URL: API_URL, //API具体路径
+  MONITOR_URL: MONITOR_URL, //监控端websocket地址
   INSTRUCTION_URL: INSTRUCTION_URL, //指令websocket地址
   ONLINE_TIMEOUT: "300000", //上线超时时间（当前系统时间-定为时间 < 5分钟  即为上线）
   license_color: {

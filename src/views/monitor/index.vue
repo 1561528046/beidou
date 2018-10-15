@@ -451,7 +451,7 @@ export default {
         });
     },
     initWS() {
-      var ws = new WebSocket("ws://192.168.88.88:5002");
+      var ws = new WebSocket(this.$dict.MONITOR_URL);
       window.ws = ws;
       var socketDataWorker = new Worker("/map/worker-socket.js");
       ws.binaryType = "arraybuffer";

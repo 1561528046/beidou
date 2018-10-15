@@ -54,7 +54,7 @@ export default {
   },
   created() {
     // 192.168.88.88:5000
-    this.socket = new WebSocket("ws://192.168.88.88:5000");
+    this.socket = new WebSocket(this.$dict.INSTRUCTION_URL);
     // 服务端返回数据回调
     var vm = this;
     this.timerOpen();
