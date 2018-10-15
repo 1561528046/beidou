@@ -175,3 +175,9 @@ export const checkUserRenewAndActive = query => {
     params: query
   });
 };
+// 根据车牌号单车查询
+export const GetVehicleByLicense = query => {
+  return ajax.get("/vehicle/GetVehicleByLicense", {
+    params: query
+  });
+};

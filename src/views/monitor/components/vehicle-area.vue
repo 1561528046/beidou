@@ -312,7 +312,7 @@ export default {
         rectangle.setMap(this.mapData.map);
         // 缩放地图到合适的视野级别
         this.mapData.map.setFitView([rectangle]);
-      } else {
+      } else if (scope.row.Type == "3") {
         this.mapData.map.clearMap();
         var latitude = scope.row.Latitude.split(",");
         var longitude = scope.row.Longitude.split(",");
@@ -334,6 +334,35 @@ export default {
         });
         polygon.setMap(this.mapData.map);
         this.mapData.map.setFitView([polygon]);
+      } else {
+        this.mapData.map.clearMap();
+        var polygons = [];
+        var vh = this;
+        var district = new AMap.DistrictSearch({
+          subdistrict: 0, //获取边界不需要返回下级行政区
+          extensions: "all", //返回行政区边界坐标组等具体信息
+          level: "district" //查询行政级别为 市
+        });
+        district.search(scope.row.RegionName, function(status, result) {
+          vh.mapData.map.remove(polygons); //清除上次结果
+          polygons = [];
+          var bounds = result.districtList[0].boundaries;
+          if (bounds) {
+            for (var i = 0, l = bounds.length; i < l; i++) {
+              //生成行政区划polygon
+              var polygon = new AMap.Polygon({
+                strokeWeight: 1,
+                path: bounds[i],
+                fillOpacity: 0.4,
+                fillColor: "#80d8ff",
+                strokeColor: "#0091ea"
+              });
+              polygons.push(polygon);
+            }
+          }
+          vh.mapData.map.add(polygons);
+          vh.mapData.map.setFitView(polygons); //视口自适应
+        });
       }
     },
     // 删除区域
@@ -625,7 +654,7 @@ export default {
     border-radius: 4px;
     position: fixed;
     right: 10px;
-    bottom: 10px;
+    top: 166px;
     background-color: #fff;
     box-shadow: 0 2px 6px 0 rgba(114, 124, 245, 0.5);
     padding: 9px 15px;
