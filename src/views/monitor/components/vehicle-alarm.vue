@@ -1,7 +1,7 @@
 <template>
   <div style="height:100%">
     <div style="width:50%;height:100%" ref="tableParent">
-      <el-table style="height:100%" :data="list" :max-height="tableHeight" size="small">
+      <el-table style="height:100%" highlight-current-row :data="list" @row-click="showPosition" :max-height="tableHeight" size="small" v-loading="alarmLoading" element-loading-text="载入当天报警记录">
         <el-table-column prop="License" label="车牌号" :formatter="formatLicense"> </el-table-column>
         <el-table-column prop="" label="报警类型" :formatter="formatAlarm"> </el-table-column>
         <el-table-column prop="" label="报警时间" :formatter="formatTime "> </el-table-column>
@@ -16,20 +16,28 @@
 <script>
 /*eslint-disable*/
 import { initMap } from "@/utils/map.js";
+import { location2address } from "@/utils/map-tools.js";
+import { createMarker, setMarker } from "@/utils/map.js";
 import { getTodayVehicleAlarm } from "@/api/index.js";
 export default {
   mounted() {
     window.vehicle = this.$props.vehicle;
     initMap(() => {
-      var map = new AMap.Map(this.$refs.map, {
+      this.$map = new AMap.Map(this.$refs.map, {
         zoom: 14
       });
-      getTodayVehicleAlarm({ sim_id: this.$props.vehicle.sim_id }).then(res => {
-        if (res.data.code == 0) {
-          res.data.data = res.data.data.reverse();
-          this.$set(this.$data, "list", Object.freeze(res.data.data));
-        }
-      });
+      this.alarmLoading = true;
+      getTodayVehicleAlarm({ sim_id: this.$props.vehicle.sim_id })
+        .then(res => {
+          this.alarmLoading = false;
+          if (res.data.code == 0) {
+            res.data.data = res.data.data.reverse();
+            this.initAddress(res.data.data);
+          }
+        })
+        .catch(() => {
+          this.alarmLoading = false;
+        });
     });
     this.$nextTick(() => {
       this.getTableHeight();
@@ -42,16 +50,57 @@ export default {
         //监控vehicle的time变化 ，如果alarm不为0 则list增加一条记录
         this.addAlarm();
       }
+    },
+    "$props.actived": function(newVal, oldVal) {
+      if (newVal == true) {
+        this.$nextTick(() => {
+          this.getTableHeight();
+        });
+      }
     }
   },
-  props: ["vehicle"],
+  props: ["vehicle", "actived"],
   data() {
     return {
       tableHeight: 0,
-      list: []
+      list: [],
+      alarmLoading: false
     };
   },
+
   methods: {
+    showPosition(row) {
+      var vehicleData = {
+        lng: row.Longitude,
+        lat: row.Latitude,
+        alarm: row.AlarmSign,
+        angle: row.Direction
+      };
+
+      if (!this.$marker) {
+        this.$marker = createMarker(vehicleData, window.AMap);
+        this.$marker.setMap(this.$map);
+      } else {
+        setMarker(this.$marker, vehicleData, window.AMap);
+      }
+      this.$map.setCenter(new AMap.LngLat(vehicleData.lng, vehicleData.lat));
+    },
+    initAddress(list) {
+      location2address({
+        data: list,
+        longKey: "Longitude",
+        latKey: "Latitude"
+      })
+        .then(res => {
+          res.map((item, index) => {
+            list[index].address = item;
+            this.$set(this.$data, "list", Object.freeze(list));
+          });
+        })
+        .catch(() => {
+          this.$set(this.$data, "list", Object.freeze(list));
+        });
+    },
     addAlarm() {
       var vehilce = this.$props.vehicle;
       var newAlarm = {
@@ -70,7 +119,9 @@ export default {
       this.$set(this.$data, "list", list);
     },
     getTableHeight() {
-      this.tableHeight = this.$refs.tableParent.clientHeight;
+      if (this.actived) {
+        this.tableHeight = this.$refs.tableParent.clientHeight;
+      }
     },
     formatLicense() {
       return this.$props.vehicle.license;
@@ -86,8 +137,8 @@ export default {
       return this.$utils.formatDate14(row.Time) || "--";
     }
   },
-  beforeDestroyed() {
-    window.removeEventListener("resize", this.geetTableHeight);
+  beforeDestroy() {
+    window.removeEventListener("resize", this.getTableHeight);
   }
 };
 </script>

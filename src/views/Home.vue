@@ -9,11 +9,11 @@
 export default {
   created() {
     var that = this;
-    var x = new Uint8Array(
-      "126, 2, 0, 0, 59, 1, 0, 0, 5, 130, 152, 20, 117, 0, 0, 0, 0, 0, 12, 0, 3, 2, 80, 69, 192, 6, 247, 105, 65, 0, 0, 1, 104, 0, 88, 24, 16, 1, 1, 4, 32, 1, 4, 0, 9, 4, 131, 2, 2, 0, 150, 3, 2, 1, 94, 37, 4, 0, 0, 0, 0, 42, 2, 0, 0, 48, 1, 31, 225, 2, 10, 214, 1, 126".split(
-        ","
-      )
-    );
+    // var x = new Uint8Array(
+    //   "126, 2, 0, 0, 59, 1, 0, 0, 5, 130, 152, 20, 117, 0, 0, 0, 0, 0, 12, 0, 3, 2, 80, 69, 192, 6, 247, 105, 65, 0, 0, 1, 104, 0, 88, 24, 16, 1, 1, 4, 32, 1, 4, 0, 9, 4, 131, 2, 2, 0, 150, 3, 2, 1, 94, 37, 4, 0, 0, 0, 0, 42, 2, 0, 0, 48, 1, 31, 225, 2, 10, 214, 1, 126".split(
+    //     ","
+    //   )
+    // );
     // var x0704 = new Uint8Array(
     //   JSON.parse(
     //     "[126,7,4,1,57,1,68,1,72,65,130,1,2,0,5,1,0,60,0,0,0,0,0,12,0,195,2,91,32,236,6,244,196,16,0,81,0,0,0,245,24,8,41,21,17,50,1,4,1,19,235,151,2,2,0,0,3,2,0,0,37,4,0,0,0,0,43,4,0,0,0,0,48,1,31,49,1,17,0,60,0,0,0,0,0,12,0,195,2,91,32,236,6,244,196,16,0,81,0,0,0,245,24,8,41,21,18,3,1,4,1,19,235,151,2,2,0,0,3,2,0,0,37,4,0,0,0,0,43,4,0,0,0,0,48,1,31,49,1,18,0,60,0,0,0,0,0,12,0,195,2,91,32,236,6,244,196,16,0,81,0,0,0,245,24,8,41,21,18,50,1,4,1,19,235,151,2,2,0,0,3,2,0,0,37,4,0,0,0,0,43,4,0,0,0,0,48,1,31,49,1,15,0,60,0,0,0,0,0,12,0,195,2,91,32,236,6,244,196,16,0,81,0,0,0,245,24,8,41,21,19,3,1,4,1,19,235,151,2,2,0,0,3,2,0,0,37,4,0,0,0,0,43,4,0,0,0,0,48,1,31,49,1,15,0,60,0,0,0,0,0,12,0,195,2,91,32,236,6,244,196,16,0,81,0,0,0,245,24,8,41,21,19,50,1,4,1,19,235,151,2,2,0,0,3,2,0,0,37,4,0,0,0,0,43,4,0,0,0,0,48,1,31,49,1,15,110,126]"
@@ -81,15 +81,15 @@ export default {
     //   this.$set(this.$data, "alarm", online);
     // }, 1000);
 
-    var socketDataWorker = new Worker("/map/worker-socket.js");
+    // var socketDataWorker = new Worker("/map/worker-socket.js");
     // socketDataWorker.postMessage(new Uint8Array(uint8array));
     // socketDataWorker.postMessage(new Uint8Array(uint8array1));
-    socketDataWorker.postMessage(new Uint8Array(x));
+    // socketDataWorker.postMessage(new Uint8Array(x));
     // socketDataWorker.postMessage(x0704);
 
-    socketDataWorker.onmessage = event => {
-      console.log(event.data);
-    };
+    // socketDataWorker.onmessage = event => {
+    //   console.log(event.data);
+    // };
 
     // var request = window.indexedDB.open("BEIDOU", 1);
     // var db = null;
@@ -141,11 +141,12 @@ export default {
     // window.ll = [];
     // var socketDataWorker = new Worker("/map/worker-socket.js");
 
-    // var ws = new WebSocket("ws://localhost:9999/");
-    // ws.binaryType = "arraybuffer";
-    // ws.onmessage = msg => {
-    //   socketDataWorker.postMessage(new Uint8Array(msg.data));
-    // };
+    var ws = new WebSocket("ws://localhost:9999/");
+    ws.binaryType = "arraybuffer";
+    var socketDataWorker = new Worker("/map/worker-socket.js");
+    ws.onmessage = msg => {
+      socketDataWorker.postMessage(new Uint8Array(msg.data));
+    };
     // socketDataWorker.postMessage(new Uint8Array(uint8array));
     // socketDataWorker.postMessage(new Uint8Array(uint8array1));
     // socketDataWorker.onmessage = event => {

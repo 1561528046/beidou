@@ -95,7 +95,7 @@
         <vehicle-area></vehicle-area>
       </el-tab-pane>
       <el-tab-pane label="报警车辆" :closable="true" name="alarm" v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1">
-        <vehicle-alarm :vehicle="$store.state.monitor.monitorAlarmVehicle"></vehicle-alarm>
+        <vehicle-alarm :vehicle="$store.state.monitor.monitorAlarmVehicle" :actived="$store.state.monitor.currentTab=='alarm'"></vehicle-alarm>
       </el-tab-pane>
       <el-tab-pane label="轨迹回放" :closable="true" name="track" v-if="$store.state.monitor.tabs.indexOf('track') !=-1">
         <vehicle-track :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-track>
