@@ -9,9 +9,7 @@ export const GetRegionByPage = query => {
 // 添加围栏
 export const AddRegion = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("/vehicle/AddRegion", queryQS, {
-    params: query
-  });
+  return ajax.post("/vehicle/AddRegion", queryQS);
 };
 // 删除围栏
 export const DeleteRegion = query => {
