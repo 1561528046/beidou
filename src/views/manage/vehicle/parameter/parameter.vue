@@ -19,7 +19,7 @@
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <choose-report :respond="respond" :message="report" @instruction="instruction" @setting="setting"></choose-report>
           </el-tab-pane>
-          <el-tab-pane label="终端通讯设置">
+          <el-tab-pane label="终端通话设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <choose-device :respond="respond" :message="device" @instruction="instruction" @setting="setting"></choose-device>
           </el-tab-pane>
@@ -164,7 +164,7 @@ export default {
         this.parameter_type = 3;
       } else if (tab.label == "终端上报时间间隔设置") {
         this.parameter_type = 4;
-      } else if (tab.label == "终端通讯设置") {
+      } else if (tab.label == "终端通话设置") {
         this.parameter_type = 5;
       } else if (tab.label == "拍照设置") {
         this.parameter_type = 6;

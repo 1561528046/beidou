@@ -181,3 +181,9 @@ export const GetVehicleByLicense = query => {
     params: query
   });
 };
+// 获取车辆历史轨迹
+export const GetVehicleLocation = query => {
+  return ajax.get("/report/GetVehicleLocation", {
+    params: query
+  });
+};
