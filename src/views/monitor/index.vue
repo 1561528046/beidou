@@ -95,7 +95,7 @@
         <vehicle-area></vehicle-area>
       </el-tab-pane>
       <el-tab-pane label="报警车辆" :closable="true" name="alarm" v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1">
-        <vehicle-alarm :vehicle="$store.state.monitor.monitorAlarmVehicle" :actived="$store.state.monitor.currentTab=='alarm'"></vehicle-alarm>
+        <vehicle-alarm :vehicle="$store.state.monitor.monitorAlarmVehicle" :actived="$store.state.monitor.currentTab=='alarm'" :key="$store.state.monitor.monitorAlarmVehicle.sim_id"></vehicle-alarm>
       </el-tab-pane>
       <el-tab-pane label="轨迹回放" :closable="true" name="track" v-if="$store.state.monitor.tabs.indexOf('track') !=-1">
         <vehicle-track :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-track>
@@ -119,7 +119,8 @@ import {
   getInitVehicle,
   getUserList,
   getGroupByUser,
-  getUser
+  getUser,
+  GetRegionByPage
 } from "@/api/index.js";
 import { initMap } from "@/utils/map.js";
 import { GPS } from "@/utils/map-tools.js";
@@ -194,6 +195,7 @@ export default {
       data: new Map(), //所有数据
       dict: {
         //字典
+        fence: new Map(),
         alarm: new Set(), //报警
         online: new Set(), //在线
         offline: new Set(), //离线
@@ -241,6 +243,8 @@ export default {
           vm.$nextTick(() => {
             initAMapUI();
             this.initMap();
+            //建立围栏字典
+            this.initFence();
           });
         });
         monitor.countInterval = setInterval(() => {
@@ -249,6 +253,133 @@ export default {
           // this.setCurrentGroup();
         }, 20);
         vm.initWS();
+      },
+      initFence() {
+        //请求围栏数据
+        GetRegionByPage({
+          page: 1,
+          size: 9999
+        }).then(res => {
+          if (res.data.code == 0) {
+            res.data.data.map(fence => {
+              switch (fence.Type) {
+                case "1": //区域类型：1自定义圆形，2自定义矩形，3自定义多边形，4行政区域
+                  fence.polygon = new AMap.Circle({
+                    center: new AMap.LngLat(
+                      fence.CenterLongitude,
+                      fence.CenterLatitude
+                    ),
+                    radius: fence.Radius
+                  });
+                  break;
+                case "2":
+                  fence.ring = [
+                    [fence.LeftTopLongitude, fence.LeftTopLatitude],
+                    [fence.LeftTopLongitude, fence.RightBottomLatitude],
+                    [fence.RightBottomLongitude, fence.LeftTopLatitude],
+                    [fence.RightBottomLongitude, fence.RightBottomLatitude]
+                  ];
+                  break;
+                case "3":
+                  fence.ring = [];
+                  var arrLats = fence.Latitude.split(",");
+                  fence.Longitude.split(",").map((item, index) => {
+                    fence.ring.push([item, arrLats[index]]);
+                  });
+                  break;
+                case "4":
+                  var rings = fence.rings;
+                  fence.rings = [];
+                  rings.split(";").map((ring, index) => {
+                    fence.rings.push(
+                      ring.split(",").map(item => {
+                        return item.split(" ");
+                      })
+                    );
+                  });
+                  break;
+              }
+
+              this.dict.fence.set(fence.RegionId, fence);
+            });
+            console.log(this.dict.fence);
+          }
+        });
+      },
+      checkFence(vehicleData) {
+        //检测围栏 inoutAlarm
+        // Region==fence 围栏
+        //AreaProperty 3禁入 5禁出
+        //StartTime ` EndTime 限制时间
+        //Type 区域类型：1自定义圆形，2自定义矩形，3自定义多边形，4行政区域
+        var sim_id = vehicleData.sim_id;
+        var vehicle = this.data.get(sim_id);
+        var inAlarm = false; //禁入报警  如果为true就不做判断了
+        var isInSafeArea = false; //是否在安全区
+        var outAlarm = false; //禁出报警(只要在符合规范的地区中的一个，就不做判断了)
+        if (!vehicle.fence_ids) {
+          return false;
+        }
+        vehicle.fence_ids.map(fence_id => {
+          if (this.dict.fence.has(fence_id)) {
+            var fence = this.dict.fence.get(fence_id);
+            if (inAlarm && fence.AreaProperty == "3") {
+              //禁入报警  如果为true就不做判断了
+              return false;
+            }
+            if (isInSafeArea && fence.AreaProperty == "5") {
+              //禁出报警(只要有符合一个围栏规范，就不做判断了)
+              return false;
+            }
+            //先判断围栏生效时间
+            var startSetting = fence.StartTime.split(":");
+            var endSetting = fence.EndTime.split(":");
+            if (startSetting.length == 3 && endSetting.length == 3) {
+              var start = new Date().setHours(
+                startSetting[0],
+                startSetting[1],
+                startSetting[2]
+              );
+              var end = new Date().setHours(
+                endSetting[0],
+                endSetting[1],
+                endSetting[2]
+              );
+              var now = new Date(vehicle.time);
+              if ((start < now && end > now) == false) {
+                //如果不在范围时间内
+                return false;
+              }
+            }
+            var isInArea = false;
+            var point = new AMap.LngLat(vehicleData.lng, vehicleData.lat);
+            switch (fence.Type) {
+              case "1":
+                isInArea = fence.polygon.contains(point);
+                break;
+              case "2":
+                isInArea = AMap.GeometryUtil.isPointInRing(point, fence.ring);
+                break;
+              case "3":
+                isInArea = AMap.GeometryUtil.isPointInRing(point, fence.ring);
+                break;
+              case "4":
+                isInArea = AMap.GeometryUtil.isPointInPolygon(
+                  point,
+                  fence.rings
+                );
+                break;
+            }
+            if (fence.AreaProperty == "3") {
+              inAlarm = isInArea;
+            }
+            if (fence.AreaProperty == "5") {
+              outAlarm = !isInArea;
+              isInSafeArea = isInArea;
+            }
+          }
+        });
+        return { inAlarm: inAlarm, outAlarm: outAlarm };
       },
       initGroupDict(groups) {
         //后台接口、根据当前用户分组 获取所有分组（平铺）
@@ -359,7 +490,7 @@ export default {
       },
       checkOffline() {
         //检测离线
-        console.log("检测离线");
+        // console.log("检测离线");
         for (let key of this.dict.online) {
           let vehicleData = this.data.get(key);
           if (
@@ -370,7 +501,7 @@ export default {
             console.log("设置" + key + "离线");
           }
         }
-        console.log("检测离线完成");
+        // console.log("检测离线完成");
       },
       setUserCount() {
         vm.userList.map(user => {
@@ -382,10 +513,30 @@ export default {
         });
       },
       setVehicleData(vehicleData) {
-        vehicleData.alarm = parseInt(Math.random() * 500);
         if (this.data.has(vehicleData.sim_id)) {
-          if (vehicleData.alarm != "0" || vehicleData.alarm != "") {
+          var vehicle = this.data.get(vehicleData.sim_id);
+          var fence_alarm = this.checkFence(vehicleData);
+          if (
+            vehicleData.alarm != "0" ||
+            vehicleData.alarm != "" ||
+            fence_alarm.inAlarm ||
+            fence_alarm.outAlarm
+          ) {
+            //进出围栏报警、或者车机自身报警
             this.setAlarm(vehicleData);
+          }
+          if (fence_alarm.inAlarm || fence_alarm.outAlarm) {
+            //检测围栏
+            var fence_alarm_arr = [];
+            if (fence_alarm.inAlarm) {
+              fence_alarm_arr.push("进围栏(平台)");
+            }
+            if (fence_alarm.outAlarm) {
+              fence_alarm_arr.push("出围栏(平台)");
+            }
+            vehicle.fence_alarm_text = fence_alarm_arr.join(",");
+            vehicle.fence_alarm.inAlarm = fence_alarm.inAlarm;
+            vehicle.fence_alarm.outAlarm = fence_alarm.outAlarm;
           }
           // debugger;
           if (
@@ -434,6 +585,13 @@ export default {
         this.dict.alarm.add(vehicle.sim_id);
         var groups = vehicle.group_path;
         this.setGroupDict(groups, "alarm", vehicle.sim_id);
+      },
+      setFenceAlarm(vehicleData) {
+        // var vehicle = this.data.get(vehicleData.sim_id);
+        // vehicle.alarm_count = parseInt(vehicle.alarm_count || 0) + 1;
+        // this.dict.alarm.add(vehicle.sim_id);
+        // var groups = vehicle.group_path;
+        // this.setGroupDict(groups, "alarm", vehicle.sim_id);
       }
     };
   },
@@ -493,6 +651,9 @@ export default {
               error_count: parseInt(item[7] || 0), //当天异常次数
               vehicle_id: item[8],
               group_path: item[9].split(","), //车辆对应分组路径 [path1,path2,path3....]
+              fence_ids: item[10] ? item[10].split(",") : [], //围栏ID列表
+              fence_alarm: [], //围栏报警信息
+              fence_alarm_text: "", // 出围栏，进围栏
               speed: 0,
               speed1: 0,
               alarm: 0,

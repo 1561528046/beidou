@@ -141,12 +141,12 @@ export default {
     // window.ll = [];
     // var socketDataWorker = new Worker("/map/worker-socket.js");
 
-    var ws = new WebSocket("ws://localhost:9999/");
-    ws.binaryType = "arraybuffer";
-    var socketDataWorker = new Worker("/map/worker-socket.js");
-    ws.onmessage = msg => {
-      socketDataWorker.postMessage(new Uint8Array(msg.data));
-    };
+    // var ws = new WebSocket("ws://localhost:9999/");
+    // ws.binaryType = "arraybuffer";
+    // var socketDataWorker = new Worker("/map/worker-socket.js");
+    // ws.onmessage = msg => {
+    //   socketDataWorker.postMessage(new Uint8Array(msg.data));
+    // };
     // socketDataWorker.postMessage(new Uint8Array(uint8array));
     // socketDataWorker.postMessage(new Uint8Array(uint8array1));
     // socketDataWorker.onmessage = event => {
