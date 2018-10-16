@@ -4,9 +4,11 @@
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="operating" label="操作状态"></el-table-column>
       <el-table-column prop="Ox0040" label="监控平台电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0041" label="复位电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0043" label="监控平台SMS电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0044" label="接受终端SMS文本报警号码" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0045" label="终端电话接听策略" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0046" label="每次最长通话时间" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0048" label="监听电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0049" label="监管平台特权短信号码" :formatter="$utils.baseFormatter"> </el-table-column>
     </el-table>
@@ -20,6 +22,16 @@
               </template>
             </el-input>
             <el-button @click="collect('0x0040')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="复位电话号码">
+            <el-input style="width:60%" v-model="communication.Ox0041">
+              <template slot="append">
+                <el-button @click="setup('0x0041')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0041')" style="margin-left:31px">采集</el-button>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -50,6 +62,16 @@
             </el-select>
             <el-button style="background-color:#f5f7fa;color:#909399;font-size: inherit" @click="setup('0x0045')">设置</el-button>
             <el-button @click="collect('0x0045')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="每次最长通话时间">
+            <el-input style="width:60%" v-model="communication.Ox0046">
+              <template slot="append">
+                <el-button @click="setup('0x0046')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0046')" style="margin-left:31px">采集</el-button>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -89,9 +111,11 @@ export default {
       vehicleDialog: false,
       communication: {
         Ox0040: "",
+        Ox0041: "",
         Ox0043: "",
         Ox0044: "",
         Ox0045: "",
+        Ox0046: "",
         Ox0048: "",
         Ox0049: "",
         data: []
@@ -115,9 +139,11 @@ export default {
         this.communication.data.map(item => {
           if (item.Ox0040 == undefined) {
             this.$set(item, "Ox0040", ""),
+              this.$set(item, "Ox0041", ""),
               this.$set(item, "Ox0043", ""),
               this.$set(item, "Ox0044", ""),
               this.$set(item, "Ox0045", ""),
+              this.$set(item, "Ox0046", ""),
               this.$set(item, "Ox0048", ""),
               this.$set(item, "Ox0049", "");
           }
@@ -127,7 +153,7 @@ export default {
     },
     respond: {
       handler: function() {
-        var limit = ["64", "67", "68", "69", "72", "73"];
+        var limit = ["64", "65", "67", "68", "69", "70", "72", "73"];
         this.$set(this.$data, "str", this.$props.respond);
         this.str = this.str.split("|");
         if (!limit.includes(this.str[1])) {

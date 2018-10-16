@@ -3,6 +3,7 @@
         <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
             <el-table-column fixed prop="license" label="车牌号" width="100" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column fixed prop="operating" label="操作状态" width="150"></el-table-column>
+            <el-table-column width="180" prop="Ox0001" label="终端心跳发送间隔" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column width="180" prop="Ox0002" label="TCP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column width="180" prop="Ox0003" label="TCP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column width="180" prop="Ox0004" label="UDP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -20,6 +21,16 @@
         </el-table>
         <el-form label-width="170px" label-position="left" class="table-search" size="small">
             <el-row :gutter="30">
+                <el-col :span="8">
+                    <el-form-item label="终端心跳发送间隔(s)">
+                        <el-input style="width:60%" v-model="communication.Ox0001">
+                            <template slot="append">
+                                <el-button @click="setup('0x0001')">设置</el-button>
+                            </template>
+                        </el-input>
+                        <el-button @click="collect('0x0001')" style="margin-left:31px">采集</el-button>
+                    </el-form-item>
+                </el-col>
                 <el-col :span="8">
                     <el-form-item label="TCP消息应答超时时间(s)">
                         <el-input style="width:60%" v-model="communication.Ox0002">
@@ -177,6 +188,7 @@ export default {
       length: 0,
       vehicleDialog: false,
       communication: {
+        Ox0001: "",
         Ox0002: "",
         Ox0003: "",
         Ox0004: "",
@@ -210,7 +222,8 @@ export default {
       handler: function() {
         this.$set(this.communication, "data", this.$props.message);
         this.communication.data.map(item => {
-          if (item.Ox0002 == undefined) {
+          if (item.Ox0001 == undefined) {
+            this.$set(item, "Ox0001", "");
             this.$set(item, "Ox0002", "");
             this.$set(item, "Ox0003", "");
             this.$set(item, "Ox0004", "");
@@ -233,6 +246,7 @@ export default {
     respond: {
       handler: function() {
         var limit = [
+          "1",
           "2",
           "3",
           "4",

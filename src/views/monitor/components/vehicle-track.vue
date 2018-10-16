@@ -3,37 +3,41 @@
   <div>
     <div style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
     <div class="vehicle_select">
-      <el-input size="small" v-model="formData.license" placeholder="请输入车牌号/终端ID">
+      <el-autocomplete class="inline-input" size="small" style="width:90%" :popper-class="autoplate" v-model="formData.license" :fetch-suggestions="querySearch" placeholder="请输入车牌号/终端ID" :trigger-on-focus="false" @select="handleSelect">
         <el-button @click="selectVehicle" slot="append" icon="el-icon-search"></el-button>
-      </el-input>
+      </el-autocomplete>
+      <el-button v-if="tableType" @click="tableType=false" style="position:absolute;left:451px;top:9px;z-index:99;" size="small" icon="el-icon-arrow-right"></el-button>
+      <el-button v-if="!tableType" @click="tableType=true" style="position:absolute;left:451px;top:9px;z-index:99;" size="small" icon="el-icon-arrow-down"></el-button>
     </div>
+    <!-- 查询栏 -->
     <div v-if="vtype" class="vehicle_data">
       <div style="margin-top:45px;">
-        <el-date-picker size="small" value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-        </el-date-picker>
-        <el-button type="primary" @click="selectForm" style="margin-left:68px;" size="small">查询</el-button>
-        <label style="position:absolute;left:230px;top:15px">车牌号</label>
-        <i @click="down()" class="el-icon-circle-close-outline" style="font-size:20px;position:absolute;right:15px;top:10px;margin-top:5px;"></i>
-        <div style="margin-top:10px;">
-          <el-checkbox>过滤无效数据</el-checkbox>
-          <el-checkbox>过滤无效定位</el-checkbox>
-        </div>
-        <div style="position: relative;padding-top:26px;">
-          <el-button size="small" @click="speed_up" style="position:absolute;top:30px;">加速</el-button>
-          <el-button size="small" @click="speed_down" style="position:absolute;top:30px;left:58px;">减速</el-button>
-          <!-- <el-button size="small" @click="stop_action" style="position:absolute;right:20px;">停止</el-button> -->
+        <el-form :model="trackForm" ref="baseForm" :rules="rules" size="small">
+          <el-form-item prop="time">
+            <el-date-picker size="small" v-model="trackForm.time" value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-checkbox v-model="trackForm.invalid_type">过滤无效数据</el-checkbox>
+            <el-checkbox v-model="trackForm.position_type">过滤无效定位</el-checkbox>
+          </el-form-item>
+          <el-button type="primary" @click="selectForm" style="position:absolute;right:17px;top:55px;" size="small">查询</el-button>
+          <label style="position:absolute;left:230px;top:15px">{{vehicle_license}}</label>
+          <i @click="down()" class="el-icon-circle-close-outline" style="font-size:20px;position:absolute;right:15px;top:10px;margin-top:5px;"></i>
+        </el-form>
+        <div style="position: relative;">
+          <el-button size="small" @click="speed_up" style="position:absolute;top:0;">加速</el-button>
+          <el-button size="small" @click="speed_down" style="position:absolute;top:0;left:58px;">减速</el-button>
           <div style="width:36px;margin:0 auto;">
-            <i v-if="!playType" @click="play" style="display: block;width: 36px;height: 36px;border-radius: 50%;border: solid 1px;line-height: 36px;text-align: center;" class="iconfont icon-bofangqibofang"></i>
-            <i v-if="playType" @click="suspended" style="display: block; width: 36px;height: 36px;border-radius: 50%;border: solid 1px;line-height: 36px;text-align: center;" class="iconfont icon-bofangqi-zanting"></i>
+            <el-button size="small" v-if="!playType" @click="play" style="border-radius: 50%;border: solid 1px;" icon="iconfont icon-bofangqibofang"></el-button>
+            <el-button size="small" v-if="playType" @click="suspended" style="border-radius: 50%;border: solid 1px;" icon="iconfont icon-bofangqi-zanting"></el-button>
           </div>
         </div>
         <el-slider :min="addkey" :max="tableData.total" v-model="currentIndex"></el-slider>
       </div>
     </div>
-    <el-button v-if="tableType" @click="tableType=false" style="position:absolute;left:520px;top:20px;z-index:99;" size="small" icon="el-icon-arrow-right"></el-button>
-    <el-button v-if="!tableType" @click="tableType=true" style="position:absolute;left:520px;top:20px;z-index:99;" size="small" icon="el-icon-arrow-down"></el-button>
-    <div v-if="!tableType" style=" width:1000px; height:195px;background-color:#fff;position:absolute;left:520px;top:64px;z-index:99;">
-      <el-table height="222" border style="width: 100%">
+    <div v-if="!tableType" style=" width:1000px; height:276px;background-color:#fff;position:absolute;left:520px;top:10px;z-index:99;">
+      <el-table height="276" border style="width: 100%">
         <el-table-column label="序号">
         </el-table-column>
         <el-table-column label="时间">
@@ -46,30 +50,39 @@
         </el-table-column>
       </el-table>
     </div>
-    <!-- <el-menu default-active="2" class=" track_menu" @open="handleOpen" @close="handleClose">
-      <el-submenu index="1">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>导航一</span>
-        </template>
-        <el-menu-item-group>
-   
-        </el-menu-item-group>
-      </el-submenu>
-    </el-menu> -->
   </div>
-
 </template>
 <script>
 /*eslint-disable*/
+import { rules } from "@/utils/rules.js";
 import { initMap } from "@/utils/map.js";
-import { GetVehicleByLicense } from "@/api/index.js";
+import { GetVehicleByLicense, GetVehicleLocation } from "@/api/index.js";
 export default {
   data() {
     return {
+      trackForm: {
+        sim_id: "",
+        time: [],
+        start_time: "",
+        stop_time: "",
+        invalid_type: false,
+        position_type: false,
+        filter_invalid: "", //无效数据
+        filter_position: "" //无效定位
+      },
+      rules: {
+        time: [
+          {
+            required: true,
+            trigger: "change",
+            validator: this.validateTime
+          }
+        ]
+      },
+      vehicle_license: "",
+      autoplate: "",
       formData: {
-        license: "",
-        device_no: ""
+        license: ""
       },
       tableType: true,
       currentIndex: 0, //当前播放的第几条数据
@@ -81,21 +94,8 @@ export default {
         marker: {}
       },
       tableData: {
-        total: 11,
-        data: [
-          { lng: 116.405289, lat: 39.904987 },
-          { lng: 113.964458, lat: 40.54664 },
-          { lng: 111.47836, lat: 41.135964 },
-          { lng: 108.949297, lat: 41.670904 },
-          { lng: 106.380111, lat: 42.149509 },
-          { lng: 103.774185, lat: 42.56996 },
-          { lng: 101.135432, lat: 38.930601 },
-          { lng: 98.46826, lat: 43.229964 },
-          { lng: 95.777529, lat: 43.466798 },
-          { lng: 93.068486, lat: 43.64009 },
-          { lng: 90.34669, lat: 43.749086 },
-          { lng: 87.61792, lat: 43.793308 }
-        ]
+        total: 0,
+        data: []
       },
       addkey: 0,
       timer: {},
@@ -107,21 +107,24 @@ export default {
       vtype: false
     };
   },
+  watch: {},
   mounted() {
     var vm = this;
     initMap(() => {
       var map = new AMap.Map(this.$refs.map, {
         zoom: 14
       }); //实例化地图
-      var lineArr = [vm.tableData.data[0].lng, vm.tableData.data[0].lat];
-      var marker = new AMap.Marker({
-        map: map,
-        position: lineArr, //小车起始位置
-        icon: "https://webapi.amap.com/images/car.png",
-        offset: new AMap.Pixel(-26, -13),
-        autoRotation: true
-      }); //实例化Marker
-
+      var lineArr = [];
+      if (vm.tableData.data.length > 0) {
+        lineArr = [vm.tableData.data[0].lng, vm.tableData.data[0].lat];
+        var marker = new AMap.Marker({
+          map: map,
+          position: lineArr, //小车起始位置
+          icon: "https://webapi.amap.com/images/car.png",
+          offset: new AMap.Pixel(-26, -13),
+          autoRotation: true
+        }); //实例化Marker
+      }
       var path = [];
       vm.tableData.data.map(item => {
         path.push(new AMap.LngLat(item.lng, item.lat));
@@ -137,10 +140,29 @@ export default {
       vm.$set(vm.mapData, "map", map);
       vm.$set(vm.mapData, "marker", marker);
       vm.$set(vm.mapData, "polyline", polyline);
-      // vm.$set(vm.$data, "nexData", nextData);
     });
   },
   methods: {
+    validateTime(rule, value) {
+      console.log(rule);
+      console.log(value);
+    },
+    querySearch(queryString, cb) {
+      if (queryString.length < 7) {
+        this.autoplate = "";
+        GetVehicleByLicense({ license: queryString }).then(res => {
+          if (res.data.code == 0) {
+            res.data.data.map(item => {
+              item.value = item.license;
+            });
+            cb(res.data.data);
+          }
+        });
+      } else {
+        this.autoplate = "autoplate";
+      }
+    },
+    handleSelect() {},
     //移动位置(初始化位置)
     nextData() {
       var currentData = this.tableData.data[this.currentIndex];
@@ -152,15 +174,36 @@ export default {
     selectVehicle() {
       GetVehicleByLicense(this.formData).then(res => {
         if (res.data.code == 0) {
-          console.log(res.data.data);
+          this.vehicle_license = res.data.data[0].license;
+          this.vtype = true;
+        } else {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
         }
       });
-      this.vtype = true;
     },
     // 查询轨迹信息
     selectForm() {
-      this.mapData.marker.setMap(this.mapData.map);
-      this.mapData.polyline.setMap(this.mapData.map);
+      if (this.trackForm.position_type) {
+        this.trackForm.filter_position = 1;
+      } else {
+        this.trackForm.filter_position = 0;
+      }
+      if (this.trackForm.invalid_type) {
+        this.trackForm.filter_invalid = 1;
+      } else {
+        this.trackForm.filter_invalid = 0;
+      }
+      GetVehicleLocation().then(res => {
+        if (res.data.code == 0) {
+          console.log(res.data.data);
+        }
+      });
+      this.mapData.marker.setMap(this.mapData.map); //将点标注在地图上
+      this.mapData.polyline.setMap(this.mapData.map); //将轨迹显示在地图上
       this.mapData.map.setFitView([this.mapData.marker]);
       this.mapData.map.setFitView([this.mapData.polyline]);
       this.dialogVisible = true;
@@ -213,6 +256,9 @@ export default {
 };
 </script>
 <style>
+.autoplate {
+  display: none;
+}
 .el-submenu__title {
   height: 55px;
 }
