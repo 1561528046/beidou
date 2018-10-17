@@ -48,10 +48,23 @@ export default {
         return area.area_id == area_id;
       });
     },
+    checkAdult(item) {
+      var special = ["110000", "120000", "500000", "310000"];
+      if (item.area_level == "1") {
+        if (special.includes(item.area_id)) {
+          return item;
+        }
+      } else {
+        return item;
+      }
+    },
     remoteMethod(query) {
       if (query) {
         getAreaByName({ area_name: query }).then(res => {
           if (res.data.code == 0) {
+            if (this.$props.filter == 0) {
+              res.data.data = res.data.data.filter(this.checkAdult);
+            }
             this.$set(this.$data, "areas", res.data.data);
           } else {
             this.$set(this.$data, "areas", []);

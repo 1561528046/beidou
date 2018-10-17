@@ -94,7 +94,9 @@ export default {
     );
   },
   formatDate14(date, separator = "-") {
-    date = date.toString();
+    if (date) {
+      date = date.toString();
+    }
     if (!date) {
       return "--";
     }

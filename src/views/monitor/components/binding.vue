@@ -1,5 +1,11 @@
 <template>
   <div class="admin-table-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
+    <!-- 返回 -->
+    <router-link :to="{name:'map'}">
+      <el-button style="position:absolute;top:-30px;right:31px;" size="small" icon="el-icon-arrow-left">
+        <span>返回</span>
+      </el-button>
+    </router-link>
     <el-card shadow="always" class="full-box">
       <div class="bind-box">
         <div class="user-box">
