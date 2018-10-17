@@ -55,6 +55,7 @@
 <script>
 /*eslint-disable*/
 import { rules } from "@/utils/rules.js";
+import moment from "moment";
 import { initMap } from "@/utils/map.js";
 import { GetVehicleByLicense, GetVehicleLocation } from "@/api/index.js";
 export default {
@@ -70,7 +71,11 @@ export default {
         filter_invalid: "", //无效数据
         filter_position: "" //无效定位
       },
+      formData: {
+        license: ""
+      },
       rules: {
+        ...rules,
         time: [
           {
             required: true,
@@ -81,9 +86,7 @@ export default {
       },
       vehicle_license: "",
       autoplate: "",
-      formData: {
-        license: ""
-      },
+      selectType: false,
       tableType: true,
       currentIndex: 0, //当前播放的第几条数据
       speed: 1000, //速度(定时器时间)
@@ -143,9 +146,20 @@ export default {
     });
   },
   methods: {
-    validateTime(rule, value) {
-      console.log(rule);
-      console.log(value);
+    validateTime(rule, value, callback) {
+      var date = moment(value[0]).add(3, "days")._d;
+      date = moment(date).format("YYYY-MM-DD HH:mm:ss");
+      if (value == "") {
+        callback(new Error("请选择时间!"));
+        return false;
+      } else if (!moment(value[1]).isBefore(date)) {
+        callback(new Error("选择时间不能大于3天!"));
+        return false;
+      } else {
+        this.trackForm.start_time = value[0] + "000000";
+        this.trackForm.stop_time = value[1] + "000000";
+        callback();
+      }
     },
     querySearch(queryString, cb) {
       if (queryString.length < 7) {
@@ -162,7 +176,11 @@ export default {
         this.autoplate = "autoplate";
       }
     },
-    handleSelect() {},
+    handleSelect(item) {
+      if (item.license != "") {
+        this.selectType = true;
+      }
+    },
     //移动位置(初始化位置)
     nextData() {
       var currentData = this.tableData.data[this.currentIndex];
@@ -172,18 +190,21 @@ export default {
     },
     // 查询车辆
     selectVehicle() {
-      GetVehicleByLicense(this.formData).then(res => {
-        if (res.data.code == 0) {
-          this.vehicle_license = res.data.data[0].license;
-          this.vtype = true;
-        } else {
-          return this.$notify({
-            message: res.data.msg,
-            title: "提示",
-            type: "error"
-          });
-        }
-      });
+      if (this.selectType) {
+        GetVehicleByLicense(this.formData).then(res => {
+          if (res.data.code == 0) {
+            this.vehicle_license = res.data.data[0].license;
+            this.trackForm.sim_id = res.data.data[0].sim_id;
+            this.vtype = true;
+          } else {
+            return this.$notify({
+              message: res.data.msg,
+              title: "提示",
+              type: "error"
+            });
+          }
+        });
+      }
     },
     // 查询轨迹信息
     selectForm() {
@@ -197,20 +218,35 @@ export default {
       } else {
         this.trackForm.filter_invalid = 0;
       }
-      GetVehicleLocation().then(res => {
-        if (res.data.code == 0) {
-          console.log(res.data.data);
-        }
-      });
-      this.mapData.marker.setMap(this.mapData.map); //将点标注在地图上
-      this.mapData.polyline.setMap(this.mapData.map); //将轨迹显示在地图上
-      this.mapData.map.setFitView([this.mapData.marker]);
-      this.mapData.map.setFitView([this.mapData.polyline]);
-      this.dialogVisible = true;
+      if (this.trackForm.time.length > 0) {
+        GetVehicleLocation(this.trackForm).then(res => {
+          if (res.data.code == 0) {
+            console.log(res.data.data);
+            this.mapData.marker.setMap(this.mapData.map); //将点标注在地图上
+            this.mapData.polyline.setMap(this.mapData.map); //将轨迹显示在地图上
+            this.mapData.map.setFitView([this.mapData.marker]);
+            this.mapData.map.setFitView([this.mapData.polyline]);
+          }
+        });
+      } else {
+        return this.$notify({
+          message: "请选择时间!",
+          title: "提示",
+          type: "error"
+        });
+      }
     },
     // 关闭弹出框
     down() {
       this.vtype = false;
+      this.trackForm.sim_id = "";
+      this.trackForm.time = [];
+      this.trackForm.start_time = "";
+      this.trackForm.stop_time = "";
+      this.trackForm.invalid_type = false;
+      this.trackForm.position_type = false;
+      this.trackForm.filter_invalid = ""; //无效数据
+      this.trackForm.filter_position = ""; //无效定位
     },
     // 播放
     play() {
