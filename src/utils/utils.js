@@ -93,6 +93,32 @@ export default {
       d.getSeconds()
     );
   },
+  formatDateBCD(date, separator = "-") {
+    //BDC码解析时间 如 181010233322 -> 2018-10-10 23:33:22
+    if (date) {
+      date = date.toString();
+    }
+    if (!date) {
+      return "--";
+    }
+    if (date.length == 12) {
+      var result =
+        "20" +
+        date.substring(0, 2) +
+        separator +
+        date.substring(2, 4) +
+        separator +
+        date.substring(4, 6) +
+        " " +
+        date.substring(6, 8) +
+        ":" +
+        date.substring(8, 10) +
+        ":" +
+        date.substring(10, 12);
+      return result;
+    }
+    return date;
+  },
   formatDate14(date, separator = "-") {
     if (date) {
       date = date.toString();

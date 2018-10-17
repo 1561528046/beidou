@@ -307,7 +307,6 @@ export default {
         });
       },
       checkFence(vehicleData) {
-        debugger;
         //检测围栏 inoutAlarm
         // Region==fence 围栏
         //AreaProperty 3禁入 5禁出
@@ -333,8 +332,17 @@ export default {
               return false;
             }
             //先判断围栏生效时间
-            var startSetting = fence.StartTime.split(":");
-            var endSetting = fence.EndTime.split(":");
+            var startSetting, endSetting;
+            if (fence.StartTime && fence.EndTime) {
+              startSetting = vm.$utils
+                .formatDateBCD(fence.StartTime)
+                .split(" ")[1]
+                .split(":"); //000000161211
+              endSetting = vm.$utils
+                .formatDateBCD(fence.EndTime)
+                .split(" ")[1]
+                .split(":");
+            }
             if (startSetting.length == 3 && endSetting.length == 3) {
               var start = new Date().setHours(
                 startSetting[0],
