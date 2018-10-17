@@ -87,12 +87,12 @@
         <el-row :gutter="30 ">
           <el-col :span="10 ">
             <el-form-item label="名称 " prop="name ">
-              <el-input v-model="tableQuery.RegionName" size="small "></el-input>
+              <el-input v-model="tableQuery.RegionName" size="small"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="10 ">
             <el-form-item label="管理类型 " prop="type ">
-              <el-select style="width:100%;" v-model="tableQuery.Type" clearable>
+              <el-select style="width:100%;" v-model="tableQuery.Type" clearable size="small">
                 <el-option label="圆形" value="1">圆形</el-option>
                 <el-option label="矩形" value="2">矩形</el-option>
                 <el-option label="多边形" value="3">多边形</el-option>
@@ -102,7 +102,7 @@
           </el-col>
           <el-col :span="4 ">
             <el-form-item style="text-align:center;margin-top:40px; ">
-              <el-button type="primary " native-type="submit" @click="getTable" size="small ">查询</el-button>
+              <el-button type="primary " native-type="submit" @click="getTable" size="small">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>

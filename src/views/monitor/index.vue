@@ -26,7 +26,7 @@
           </transition-group>
 
           <el-collapse accordion class="status-container shadow-box" @change="toggleUserList">
-            <el-collapse-item class="group-container">
+            <el-collapse-item>
               <template slot="title">
                 <div class="_header">
                   <span class="_global-status" @click.stop="showVehicleAll('total')">平台车辆总数：
@@ -307,6 +307,7 @@ export default {
         });
       },
       checkFence(vehicleData) {
+        debugger;
         //检测围栏 inoutAlarm
         // Region==fence 围栏
         //AreaProperty 3禁入 5禁出
@@ -459,7 +460,7 @@ export default {
           //pitch: 55,
           // rotation: -45,
           // features: ["bg", "road"],
-          zoom: 4
+          zoom: 5
         });
         AMapUI.load(
           ["ui/geo/DistrictCluster", "lib/$"],
