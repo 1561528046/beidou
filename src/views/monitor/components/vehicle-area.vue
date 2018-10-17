@@ -82,7 +82,7 @@
       </div>
     </div>
     <!-- 列表 -->
-    <div v-show="areaType" style="width:760px;height:420px; position:absolute;left:0;right:0;top:0;bottom:0;border:1px solid #777; z-index:99;background-color:#fff; ">
+    <div v-show="areaType" style="width:760px;height:420px; position:absolute;left:2px;right:0;top:0;bottom:0;border:1px solid #777; z-index:99;background-color:#fff; ">
       <el-form :model="tableQuery" @submit.native.prevent ref="baseForm ">
         <el-row :gutter="30 ">
           <el-col :span="10 ">
@@ -413,6 +413,10 @@ export default {
     // 行政区域
     administrative() {
       var data = {};
+      this.formdata.start_time =
+        "000000" + moment(this.formdata.time[0]).format("HHmmss");
+      this.formdata.stop_time =
+        "000000" + moment(this.formdata.time[1]).format("HHmmss");
       data = {
         AreaProperty: this.formdata.alarm_type,
         RegionName: this.formdata.name,
