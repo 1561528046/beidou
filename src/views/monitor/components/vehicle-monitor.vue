@@ -48,7 +48,7 @@
             时速：{{mapData.vehicle.speed1 || mapData.vehicle.speed }} km/h
           </el-col>
           <el-col :span="12">
-            里程：{{mapData.vehicle.mileage||"--"}}
+            里程：{{mapData.vehicle.mileage/10||"--"}} km
           </el-col>
           <el-col :span="24">
             地理位置：{{mapData.vehicleAddress||"--"}}
@@ -58,14 +58,16 @@
       <div class="_other" v-if="$props.single">
         <el-row>
           <el-col :span="24">
-            当前报警信息 {{$dict.getAlarm(mapData.vehicle.alarm)||"--"}}
+            当前报警信息 {{$dict.getAlarm(mapData.vehicle.alarm)||"--"}} {{mapData.vehicle.fence_alarm_text}}
           </el-col>
-
+          <el-col :span="12">
+            高程 {{mapData.vehicle.altitude||"--"}} （米）
+          </el-col>
           <el-col :span="12">
             车头方向 {{mapData.vehicle.angle||"--"}}
           </el-col>
           <el-col :span="12">
-            油量 {{mapData.vehicle.oil||"--"}} 1/10L
+            油量 {{mapData.vehicle.oil/10||"--"}} L
           </el-col>
 
           <el-col :span="12">
@@ -80,13 +82,13 @@
           </el-col>
           <el-col :span="12">
             纬度类型
-            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,2)"></span>
-            <span class="_off" v-else></span>
+            <span v-if="$utils.getState(mapData.vehicle.state,2)">南纬</span>
+            <span v-else>北纬</span>
           </el-col>
           <el-col :span="12">
             经度类型
-            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,3)"></span>
-            <span class="_off" v-else></span>
+            <span v-if="$utils.getState(mapData.vehicle.state,3)">西经</span>
+            <span v-else>东经</span>
           </el-col>
 
           <el-col :span="12">
@@ -232,17 +234,17 @@
 
           <el-col :span="12">
             运营状态
-            <span class="_on" v-if="$utils.getState(mapData.vehicle.state,4)"></span>
-            <span class="_off" v-else></span>
+            <span v-if="$utils.getState(mapData.vehicle.state,4)">停运</span>
+            <span v-else>运营</span>
           </el-col>
           <el-col :span="12">
             实载状态：{{ $utils.getStateLoad(mapData.vehicle.state) }}
           </el-col>
           <el-col :span="12">
-            油路状态:{{$utils.getState(mapData.vehicle.state,10) ? "正常":"断开"}}
+            油路状态:{{$utils.getState(mapData.vehicle.state,10) ? "断开":"正常"}}
           </el-col>
           <el-col :span="12">
-            电路状态:{{$utils.getState(mapData.vehicle.state,11) ? "正常":"断开"}}
+            电路状态:{{$utils.getState(mapData.vehicle.state,11) ? "断开":"正常"}}
           </el-col>
         </el-row>
       </div>

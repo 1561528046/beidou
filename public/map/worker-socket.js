@@ -250,16 +250,17 @@ function x0200(buffer) {
       switch (msgid) {
         case 0x01:
           result.mileage =
-            SHL(buffer[i + 2], 24) +
-            (buffer[i + 3] << 16) +
-            (buffer[i + 4] << 8) +
-            buffer[i + 5];
+            (SHL(buffer[i + 2], 24) +
+              (buffer[i + 3] << 16) +
+              (buffer[i + 4] << 8) +
+              buffer[i + 5]) /
+            10;
           break;
         case 0x02:
           result.oil = (buffer[i + 2] << 8) + buffer[i + 3];
           break;
         case 0x03:
-          result.speed1 = (buffer[i + 2] << 8) + buffer[i + 3];
+          result.speed1 = ((buffer[i + 2] << 8) + buffer[i + 3]) / 10;
           break;
         case 0x04:
           result.alarmId = (buffer[i + 2] << 8) + buffer[i + 3];

@@ -18,7 +18,7 @@ export const dict = {
   API_URL: API_URL, //API具体路径
   MONITOR_URL: MONITOR_URL, //监控端websocket地址
   INSTRUCTION_URL: INSTRUCTION_URL, //指令websocket地址
-  ONLINE_TIMEOUT: "300000", //上线超时时间（当前系统时间-定为时间 < 5分钟  即为上线）
+  ONLINE_TIMEOUT: "30000000", //300000 = 5分钟上线超时时间（当前系统时间-定为时间 < 5分钟  即为上线）
   license_color: {
     "1": {
       backgroundColor: "#006DD9",
