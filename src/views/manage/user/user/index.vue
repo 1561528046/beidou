@@ -166,7 +166,6 @@ export default {
       this.tableLoading = true;
       var query = Object.assign({}, this.tableQuery, this.tableQuery.area);
       delete query.area;
-      console.log(query);
       getUserList(query)
         .then(res => {
           if (res.data.code == 0) {

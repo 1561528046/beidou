@@ -52,7 +52,7 @@
           <el-col :span="24">
             <el-form-item label="地区" style="margin-bottom:0">
               <!-- <el-input size="small" v-model="xingzheng" type="text"></el-input> -->
-              <select-city-input v-model="area_id"></select-city-input>
+              <select-city-input :area.sync="formdata.area" :filter="filterType" clearable></select-city-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -209,6 +209,7 @@ export default {
   },
   data() {
     return {
+      filterType: 0,
       RegionId: "",
       radio: false,
       label: "",
@@ -216,7 +217,6 @@ export default {
       areaType: true,
       custom: false,
       nocustom: false,
-      area_id: "",
       addDialog: false,
       delDialog: false,
       addKey: 0,
@@ -237,6 +237,7 @@ export default {
         size: 10
       },
       formdata: {
+        area: {},
         name: "",
         type: "",
         time: "",
@@ -337,32 +338,55 @@ export default {
       } else {
         this.mapData.map.clearMap();
         var polygons = [];
-        var vh = this;
-        var district = new AMap.DistrictSearch({
-          subdistrict: 0, //获取边界不需要返回下级行政区
-          extensions: "all", //返回行政区边界坐标组等具体信息
-          level: "district" //查询行政级别为 市
+        var area = scope.row.rings.split(",");
+        area.map(item => {
+          item = item.split(" ");
+          item[0] = parseFloat(item[0]);
+          item[1] = parseFloat(item[1]);
+          item = new AMap.LngLat(item[0], item[1]);
+          polygons.push(item);
         });
-        district.search(scope.row.RegionName, function(status, result) {
-          vh.mapData.map.remove(polygons); //清除上次结果
-          polygons = [];
-          var bounds = result.districtList[0].boundaries;
-          if (bounds) {
-            for (var i = 0, l = bounds.length; i < l; i++) {
-              //生成行政区划polygon
-              var polygon = new AMap.Polygon({
-                strokeWeight: 1,
-                path: bounds[i],
-                fillOpacity: 0.4,
-                fillColor: "#80d8ff",
-                strokeColor: "#0091ea"
-              });
-              polygons.push(polygon);
-            }
-          }
-          vh.mapData.map.add(polygons);
-          vh.mapData.map.setFitView(polygons); //视口自适应
+        var poly = new AMap.Polygon({
+          path: polygons,
+          isOutline: true,
+          borderWeight: 3,
+          strokeColor: "#FF33FF",
+          strokeWeight: 6,
+          strokeOpacity: 0.2,
+          fillOpacity: 0.4,
+          // 线样式还支持 'dashed'
+          fillColor: "#1791fc",
+          zIndex: 50
         });
+        poly.setMap(this.mapData.map);
+        this.mapData.map.setFitView([poly]);
+        // var vh = this;
+        // var district = new AMap.DistrictSearch({
+        //   subdistrict: 0, //获取边界不需要返回下级行政区
+        //   extensions: "all", //返回行政区边界坐标组等具体信息
+        //   level: "district" //查询行政级别为 市
+        // });
+
+        // district.search(scope.row.RegionName, function(status, result) {
+        //   vh.mapData.map.remove(polygons); //清除上次结果
+        //   polygons = [];
+        //   var bounds = result.districtList[0].boundaries;
+        //   if (bounds) {
+        //     for (var i = 0, l = bounds.length; i < l; i++) {
+        //       //生成行政区划polygon
+        //       var polygon = new AMap.Polygon({
+        //         strokeWeight: 1,
+        //         path: bounds[i],
+        //         fillOpacity: 0.4,
+        //         fillColor: "#80d8ff",
+        //         strokeColor: "#0091ea"
+        //       });
+        //       polygons.push(polygon);
+        //     }
+        //   }
+        //   vh.mapData.map.add(polygons);
+        //   vh.mapData.map.setFitView(polygons); //视口自适应
+        // });
       }
     },
     // 删除区域
@@ -412,7 +436,7 @@ export default {
         RegionName: this.formdata.name,
         StartTime: this.formdata.start_time,
         EndTime: this.formdata.stop_time,
-        area_id: this.area_id,
+        area_id: this.formdata.area.area_id,
         Type: "4"
       };
       AddRegion(data).then(res => {
@@ -548,6 +572,7 @@ export default {
       this.mapData.map.clearMap();
       this.areaType = false;
       if (type == 1) {
+        this.filterType = 0;
         this.nocustom = true;
       } else {
         this.custom = true;
@@ -556,8 +581,8 @@ export default {
     // 关闭弹出块,关闭绘图
     down(type) {
       if (type == 1) {
+        this.filterType = 1;
         this.nocustom = false;
-        this.area_id = "";
         this.mapData.map.remove(this.mapData.polygons);
       } else {
         this.custom = false;
@@ -567,6 +592,7 @@ export default {
       this.radio = false;
       this.formdata.time = "";
       this.formdata.name = "";
+      this.formdata.area = {};
       this.formdata.alarm_type = "";
       this.mapData.mouseTool.close(true);
     },

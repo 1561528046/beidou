@@ -26,9 +26,15 @@ export default {
       area.city_id = area.city_id == 0 ? "" : area.city_id;
       area.county_id = area.county_id == 0 ? "" : area.county_id;
       this.$emit("update:area", this.getAreaObj(this.area_id)[0] || {});
+    },
+    filter: function() {
+      if (this.$props.filter == 1) {
+        this.area_id = "";
+      }
     }
   },
   props: {
+    filter: Number,
     clearable: Boolean,
     placeholder: {
       type: [String],
