@@ -83,7 +83,7 @@
     </div>
     <!-- 列表 -->
     <div v-show="areaType" style="width:760px;height:420px; position:absolute;left:0;right:0;top:0;bottom:0;border:1px solid #777; z-index:99;background-color:#fff; ">
-      <el-form :model="tableQuery " @submit.native.prevent ref="baseForm ">
+      <el-form :model="tableQuery" @submit.native.prevent ref="baseForm ">
         <el-row :gutter="30 ">
           <el-col :span="10 ">
             <el-form-item label="名称 " prop="name ">
@@ -129,17 +129,18 @@
             <label v-if="scope.row.AreaProperty=='5'">禁出</label>
           </template>
         </el-table-column>
-        <el-table-column prop="time" label="时间 " :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="Time" width="150" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(row.Time)}"> </el-table-column>
         <el-table-column width="150" label="操作 ">
           <template slot-scope="scope ">
-            <label @click="delForm(scope)" style="margin-right:3px; ">删除</label>
-            <el-dialog width="15%" :visible.sync="delDialog" :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-              <div style="width:70%; margin:0 auto;">
-                <el-button @click="del" type="primary">确定</el-button>
-                <el-button style="float:right" @click="delDialog=false" type="primary">取消</el-button>
+            <el-popover placement="top" width="160" v-model="scope.row.delDialog">
+              <p>确定删除吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="scope.row.delDialog = false">取消</el-button>
+                <el-button @click="del(scope)" type="primary" size="mini">确定</el-button>
               </div>
-            </el-dialog>
-            <label @click="selceForm(scope)">查看</label>
+              <el-button @click="delForm(scope)" size="small" style="margin-right:3px; " slot="reference">删除</el-button>
+            </el-popover>
+            <el-button size="small" @click="selceForm(scope)">查看</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -160,7 +161,6 @@ export default {
   components: { selectCityInput },
   created() {
     this.getTable();
-    this.socket = new WebSocket("ws://127.0.0.1:5000");
   },
   mounted() {
     var vm = this;
@@ -246,7 +246,7 @@ export default {
         stop_time: ""
       },
       tableData: {
-        total: 1,
+        total: 0,
         data: [
           {
             sequence: "1",
@@ -338,67 +338,45 @@ export default {
       } else {
         this.mapData.map.clearMap();
         var polygons = [];
-        var area = scope.row.rings.split(",");
-        area.map(item => {
-          item = item.split(" ");
-          item[0] = parseFloat(item[0]);
-          item[1] = parseFloat(item[1]);
-          item = new AMap.LngLat(item[0], item[1]);
-          polygons.push(item);
+        var area = scope.row.rings.split(";");
+        area.map((item, index) => {
+          item = item.split(",");
+          var arr = [];
+          item.map(it => {
+            it = it.split(" ");
+            it[0] = parseFloat(it[0]);
+            it[1] = parseFloat(it[1]);
+            it = new AMap.LngLat(it[0], it[1]);
+            arr.push(it);
+          });
+          var poly = new AMap.Polygon({
+            path: arr,
+            isOutline: true,
+            borderWeight: 3,
+            strokeColor: "#FF33FF",
+            strokeWeight: 6,
+            strokeOpacity: 0.2,
+            fillOpacity: 0.4,
+            // 线样式还支持 'dashed'
+            fillColor: "#1791fc",
+            zIndex: 50
+          });
+          poly.setMap(this.mapData.map);
+          this.mapData.map.setFitView([poly]);
+          arr = [];
         });
-        var poly = new AMap.Polygon({
-          path: polygons,
-          isOutline: true,
-          borderWeight: 3,
-          strokeColor: "#FF33FF",
-          strokeWeight: 6,
-          strokeOpacity: 0.2,
-          fillOpacity: 0.4,
-          // 线样式还支持 'dashed'
-          fillColor: "#1791fc",
-          zIndex: 50
-        });
-        poly.setMap(this.mapData.map);
-        this.mapData.map.setFitView([poly]);
-        // var vh = this;
-        // var district = new AMap.DistrictSearch({
-        //   subdistrict: 0, //获取边界不需要返回下级行政区
-        //   extensions: "all", //返回行政区边界坐标组等具体信息
-        //   level: "district" //查询行政级别为 市
-        // });
-
-        // district.search(scope.row.RegionName, function(status, result) {
-        //   vh.mapData.map.remove(polygons); //清除上次结果
-        //   polygons = [];
-        //   var bounds = result.districtList[0].boundaries;
-        //   if (bounds) {
-        //     for (var i = 0, l = bounds.length; i < l; i++) {
-        //       //生成行政区划polygon
-        //       var polygon = new AMap.Polygon({
-        //         strokeWeight: 1,
-        //         path: bounds[i],
-        //         fillOpacity: 0.4,
-        //         fillColor: "#80d8ff",
-        //         strokeColor: "#0091ea"
-        //       });
-        //       polygons.push(polygon);
-        //     }
-        //   }
-        //   vh.mapData.map.add(polygons);
-        //   vh.mapData.map.setFitView(polygons); //视口自适应
-        // });
       }
     },
     // 删除区域
     delForm(scope) {
       this.RegionId = scope.row.RegionId;
-      this.delDialog = true;
+      scope.row.delDialog = true;
     },
-    del() {
+    del(scope) {
       DeleteRegion({ RegionId: this.RegionId }).then(res => {
         if (res.data.code == 0) {
           this.getTable();
-          this.delDialog = false;
+          scope.row.delDialog = false;
           this.mapData.map.clearMap();
           return this.$notify({
             message: res.data.msg,
@@ -418,7 +396,11 @@ export default {
     getTable() {
       GetRegionByPage(this.tableQuery).then(res => {
         if (res.data.code == 0) {
+          res.data.data.map(item => {
+            item.delDialog = false;
+          });
           this.$set(this.tableData, "data", res.data.data);
+          this.$set(this.tableData, "total", res.data.total);
         } else {
           return this.$notify({
             message: res.data.msg,
