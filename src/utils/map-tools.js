@@ -28,6 +28,8 @@ export const GPS = {
 
   //WGS-84 to GCJ-02
   gcj_encrypt: function(wgsLat, wgsLon) {
+    wgsLat = parseFloat(wgsLat);
+    wgsLon = parseFloat(wgsLon);
     if (this.outOfChina(wgsLat, wgsLon)) return { lat: wgsLat, lon: wgsLon };
 
     var d = this.delta(wgsLat, wgsLon);
@@ -35,6 +37,8 @@ export const GPS = {
   },
   //GCJ-02 to WGS-84
   gcj_decrypt: function(gcjLat, gcjLon) {
+    gcjLat = parseFloat(gcjLat);
+    gcjLon = parseFloat(gcjLon);
     if (this.outOfChina(gcjLat, gcjLon)) return { lat: gcjLat, lon: gcjLon };
 
     var d = this.delta(gcjLat, gcjLon);
@@ -42,6 +46,8 @@ export const GPS = {
   },
   //GCJ-02 to WGS-84 exactly
   gcj_decrypt_exact: function(gcjLat, gcjLon) {
+    gcjLat = parseFloat(gcjLat);
+    gcjLon = parseFloat(gcjLon);
     var initDelta = 0.01;
     var threshold = 0.000000001;
     var dLat = initDelta,
@@ -73,6 +79,8 @@ export const GPS = {
   },
   //GCJ-02 to BD-09
   bd_encrypt: function(gcjLat, gcjLon) {
+    gcjLat = parseFloat(gcjLat);
+    gcjLon = parseFloat(gcjLon);
     var x = gcjLon,
       y = gcjLat;
     var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * this.x_pi);
@@ -83,6 +91,8 @@ export const GPS = {
   },
   //BD-09 to GCJ-02
   bd_decrypt: function(bdLat, bdLon) {
+    bdLat = parseFloat(bdLat);
+    bdLon = parseFloat(bdLon);
     var x = bdLon - 0.0065,
       y = bdLat - 0.006;
     var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * this.x_pi);
@@ -94,6 +104,8 @@ export const GPS = {
   //WGS-84 to Web mercator
   //mercatorLat -> y mercatorLon -> x
   mercator_encrypt: function(wgsLat, wgsLon) {
+    wgsLat = parseFloat(wgsLat);
+    wgsLon = parseFloat(wgsLon);
     var x = (wgsLon * 20037508.34) / 180;
     var y =
       Math.log(Math.tan(((90 + wgsLat) * this.PI) / 360)) / (this.PI / 180);
@@ -103,6 +115,8 @@ export const GPS = {
   // Web mercator to WGS-84
   // mercatorLat -> y mercatorLon -> x
   mercator_decrypt: function(mercatorLat, mercatorLon) {
+    mercatorLat = parseFloat(mercatorLat);
+    mercatorLon = parseFloat(mercatorLon);
     var x = (mercatorLon / 20037508.34) * 180;
     var y = (mercatorLat / 20037508.34) * 180;
     y =

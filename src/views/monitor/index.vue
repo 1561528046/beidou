@@ -302,7 +302,7 @@ export default {
 
               this.dict.fence.set(fence.RegionId, fence);
             });
-            console.log(this.dict.fence);
+            // console.log(this.dict.fence);
           }
         });
       },
@@ -332,8 +332,14 @@ export default {
               return false;
             }
             //先判断围栏生效时间
-            var startSetting, endSetting;
-            if (fence.StartTime && fence.EndTime) {
+            var startSetting = [],
+              endSetting = [];
+            if (
+              fence.StartTime &&
+              fence.EndTime &&
+              parseInt(fence.StartTime) > 0 &&
+              parseInt(fence.EndTime) > 0
+            ) {
               startSetting = vm.$utils
                 .formatDateBCD(fence.StartTime)
                 .split(" ")[1]
@@ -522,6 +528,7 @@ export default {
         });
       },
       setVehicleData(vehicleData) {
+        //设置车辆定位信息
         if (this.data.has(vehicleData.sim_id)) {
           var vehicle = this.data.get(vehicleData.sim_id);
           var fence_alarm = this.checkFence(vehicleData);
@@ -534,6 +541,10 @@ export default {
             //进出围栏报警、或者车机自身报警
             this.setAlarm(vehicleData);
           }
+          //初始化围栏报警数据
+          vehicle.fence_alarm_text = "";
+          vehicle.fence_alarm.inAlarm = false;
+          vehicle.fence_alarm.outAlarm = false;
           if (fence_alarm.inAlarm || fence_alarm.outAlarm) {
             //检测围栏
             var fence_alarm_arr = [];
@@ -618,8 +629,8 @@ export default {
         });
     },
     initWS() {
+      //定位数据socket
       var ws = new WebSocket(this.$dict.MONITOR_URL);
-      window.ws = ws;
       var socketDataWorker = new Worker("/map/worker-socket.js");
       ws.binaryType = "arraybuffer";
       ws.onopen = function() {
@@ -641,6 +652,25 @@ export default {
         event.data.lat = position.lat;
         monitor.setVehicleData(event.data);
       };
+      //指令数据socket
+      monitor.instructionWS = new WebSocket(this.$dict.INSTRUCTION_URL);
+      monitor.instructionWS.onopen = function() {
+        monitor.instructionWS.send("^heart$");
+      };
+      monitor.instructionWS.onmessage = evt => {
+        this.instructionWSMessage(evt);
+      };
+      monitor.instructionWSInterval = setInterval(() => {
+        monitor.instructionWS.send("^heart$");
+      }, 20000);
+    },
+    instructionWSMessage(evt) {
+      ////^x8106|1|018681892547|0$
+      var message = evt.data
+        .replace("$", "")
+        .replace("^", "")
+        .split("|");
+      console.log(message);
     },
     initVehicle(groups) {
       this.initLoader.setText("初始化车辆数据");
@@ -653,7 +683,7 @@ export default {
               sim_id: item[0],
               license: item[1],
               device_id: item[2],
-              time: item[3], //最后定位时间
+              time: this.$utils.formatDate14(item[3]), //最后定位时间
               lng: position.lon, //最后一次定位的经度
               lat: position.lat, //最后一次定位的纬度
               alarm_count: parseInt(item[6] || 0), //当天报警次数
@@ -841,6 +871,7 @@ export default {
   },
   destroyed() {
     clearInterval(monitor.wsHeartInterval);
+    clearInterval(monitor.instructionWSInterval);
     clearInterval(monitor.countInterval);
   }
 };

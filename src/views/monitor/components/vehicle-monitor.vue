@@ -254,7 +254,7 @@
         <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')" title="sim卡信息"></i>
         <i class="iconfont icon-wifi" @click="showCard('audio')" title="语音对讲"></i>
         <i class="iconfont icon-error-fill _error" @click="openCard('error')" title="异常信息"></i>
-        <i class="iconfont icon-camera" title="抓拍"></i>
+        <i class="iconfont icon-camera" title="抓拍" @click="snapshot"></i>
         <i class="iconfont icon-video" title="视频信息"></i>
         <el-badge :value="parseInt(mapData.vehicle.alarm_count)||''" :max="99" class="alarm-badge" :class="{'no-alarm':!mapData.vehicle.alarm_count}">
           <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
@@ -273,9 +273,10 @@ import { location2address } from "@/utils/map-tools.js";
 import { initMap, createMarker, setMarker } from "@/utils/map.js";
 import deviceCard from "./card-device.vue";
 import simCard from "./card-sim.vue";
+import snapshot from "./snapshot.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { deviceCard, simCard, chooseVehicle },
+  components: { deviceCard, simCard, chooseVehicle, snapshot },
   data() {
     return {
       otherVehicleDialog: false,
@@ -339,49 +340,27 @@ export default {
           if (res.data.code == 0) {
             var lastData = res.data.data[0];
             monitorData.info = lastData;
-            // var tpl = {
-            //   alarm: "",
-            //   state: "",
-            //   lat: "",
-            //   lng: "",
-            //   altitude: "",
-            //   speed: "",
-            //   angle: "",
-            //   time: "",
-            //   mileage: "",
-            //   oil: "",
-            //   speed1: "",
-            //   alarmId: "",
-            //   overSpeedPositionType: "",
-            //   overSpeedAreaId: "",
-            //   inoutAlarm: [],
-            //   runTimeAlarm: {
-            //     routeID: "",
-            //     time: "",
-            //     type: ""
-            //   },
-            //   vehicleSignal: "",
-            //   IO: "",
-            //   analog: "",
-            //   wifiSignal: "",
-            //   GNSSCount: ""
-            // };
-            // Object.assign(monitorData, tpl);
-
-            if (!monitorData.time) {
-              //如果监控数据中 没有定为时间，则把请求到的最后一条定为数据赋值到监控数据中
-              monitorData.time = lastData.time;
-              monitorData.alarm = lastData.AlarmSign;
-              monitorData.lng = lastData.Longitude || 0;
-              monitorData.lat = lastData.Latitude || 0;
-              monitorData.altitude = lastData.Altitude;
-              monitorData.speed = lastData.Speed;
-              monitorData.speed1 = lastData.Speed1;
-              monitorData.angle = lastData.Direction;
-              monitorData.mileage = lastData.Mileage;
-              monitorData.GNSSCount = lastData.GNSSCount;
-              monitorData.alarm_count = lastData.AlarmCount;
-              monitorData.error_count = lastData.ErrorCount;
+            if (
+              !monitorData.time ||
+              monitorData.time == this.$utils.formatDate14(lastData.Time1)
+            ) {
+              //如果监控数据中 如果没有定位时间或定位时间和请求到的时间一样，则把请求到的最后一条定为数据赋值到监控数据中
+              var newData = {};
+              newData.sim_id = monitorData.sim_id;
+              newData.time = this.$utils.formatDate14(lastData.Time1);
+              newData.state = lastData.State || 0;
+              newData.alarm = lastData.AlarmSign;
+              newData.lng = lastData.Longitude || 0;
+              newData.lat = lastData.Latitude || 0;
+              newData.altitude = lastData.Altitude;
+              newData.speed = lastData.Speed;
+              newData.speed1 = lastData.Speed1;
+              newData.angle = lastData.Direction;
+              newData.mileage = lastData.Mileage;
+              newData.GNSSCount = lastData.GNSSCount;
+              newData.alarm_count = lastData.AlarmCount;
+              newData.error_count = lastData.ErrorCount;
+              window.monitor.setVehicleData(newData);
             }
           } else {
             this.$message.error("获取车辆信息失败！");
@@ -505,6 +484,23 @@ export default {
         delete this.mapData.otherMarker;
       }
     },
+    snapshot() {
+      var arr = [
+        this.$props.vehicle.sim_id,
+        1, //通道 ID 1-255
+        1, //0 表示停止拍摄；0xFFFF 表示录像；其它表示拍照张数
+        0, //秒，0 表示按最小间隔拍照或一直录像
+        0, //1：保存；0：实时上传
+        0x02, //分辨率 0x01:320*240；0x02:640*480；0x03:800*600；0x04:1024*768;0x05:176*144;[Qcif];0x06:352*288;[Cif];0x07:704*288;[HALF D1];0x08:704*576;[D1];
+        5, //1-10，1 代表质量损失最小，10 表示压缩比最大
+        125, //亮度0-255
+        64, //对比度  0-127
+        64, //饱和度0-127
+        125 //色度 0-255
+      ];
+      //^x8106|1|018681892547|0$
+      window.monitor.instructionWS.send("^0x8801|" + arr.join("|") + "$");
+    },
     openCard(type) {
       this.$store.commit("openTab", type);
       switch (type) {
@@ -627,9 +623,9 @@ export default {
       color: #ff8d00;
     }
     i {
-      font-size: 25px;
+      font-size: 20px;
       display: inline-block;
-      width: 40px;
+      width: 35px;
       cursor: pointer;
       text-align: center;
     }
