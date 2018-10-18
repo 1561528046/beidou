@@ -24,7 +24,7 @@ var routers = [
     path: "fence-area",
     name: "fence-area",
     meta: { name: "区域添加车辆", hidden: true },
-    component: () => import("@/views/monitor/components/binding.vue")
+    component: () => import("@/views/monitor/components/area-binding.vue")
   },
   {
     path: "/monitor",
