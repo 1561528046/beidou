@@ -3,37 +3,50 @@
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="operating" label="操作状态"></el-table-column>
-      <el-table-column prop="Ox8300" label="文本信息下发" :formatter="$utils.baseFormatter"> </el-table-column>
     </el-table>
-    <el-form label-width="150px" label-position="left" class="table-search" size="small">
+    <div>
       <el-row :gutter="30">
-        <el-col :span="10">
-          <el-form-item label="文本信息下发">
-            <el-input style="width:40%" placeholder="标志"></el-input>
-            <el-input style="width:40%" placeholder="文本信息"></el-input>
-            <el-button @click="setup('0x0081')">设置</el-button>
-          </el-form-item>
+        <el-col :span="8">
+          <label style="display:block;margin-top:15px;">事件ID</label>
+          <el-input style="width:50%" size="small"></el-input>
+          <label style="display:block;margin-top:15px;">事件内容长度</label>
+          <el-input style="width:50%" size="small"></el-input>
+          <label style="display:block;margin-top:15px;">事件内容</label>
+          <el-input style="width:50%" size="small"></el-input>
+          <div style="width:50%;text-align:center;">
+            <el-button type="primary" size="small">添加</el-button>
+          </div>
+        </el-col>
+        <el-col :span="8">
+          <div style="width:50%; margin: 0 auto;">
+            <label style="display:block;margin-top:15px;">设置类型</label>
+            <el-select size="small">
+              <el-option></el-option>
+              <el-option></el-option>
+            </el-select>
+            <label style="display:block;margin-top:15px;">事件项列表</label>
+          </div>
+        </el-col>
+        <el-col :span="8">
         </el-col>
       </el-row>
-    </el-form>
+    </div>
   </div>
 </template>
 <script>
-import chooseParameter from "@/components/choose-parameter.vue";
 export default {
-  components: { chooseParameter },
-  //   name: "choose-communication",
   data() {
     return {
+      location: false,
+      event_report: false,
+      on_demand: false,
+      information_service: false,
+      parameter: "",
       str: "",
       selectedVehicles: [],
       length: 0,
       vehicleDialog: false,
       communication: {
-        Ox0081: "",
-        Ox0082: "",
-        Ox0083: "",
-        Ox0084: "",
         data: []
       },
       tableQuery: {
@@ -126,16 +139,29 @@ export default {
   },
   created() {},
   methods: {
-    vehicleClick() {
-      this.vehicleDialog = true;
-    },
-    vehicleArr(scope) {
-      this.vehicleDialog = false;
-      this.length = scope.length;
-      scope.map(item => {
-        item.operating = "--";
-      });
-      this.$set(this.communication, "data", scope);
+    //区域展示
+    chooseSetting(type) {
+      if (type == "1") {
+        this.location = true;
+        this.event_report = false;
+        this.on_demand = false;
+        this.information_service = false;
+      } else if (type == "2") {
+        this.location = false;
+        this.event_report = true;
+        this.on_demand = false;
+        this.information_service = false;
+      } else if (type == "3") {
+        this.location = false;
+        this.event_report = false;
+        this.on_demand = true;
+        this.information_service = false;
+      } else if (type == "4") {
+        this.location = false;
+        this.event_report = false;
+        this.on_demand = false;
+        this.information_service = true;
+      }
     },
     // 采集
     collect(num) {
@@ -157,29 +183,14 @@ export default {
       });
     },
     // 设置
-    setup(type) {
-      var key = "O" + type.slice(1);
-      var value = this.communication[key];
-      var instructionset;
-      var simid;
-      type = parseInt(type);
-      // ^set+参数id+设置的值+sim_id+ $
-      if (this.communication.data.length == 0) {
-        return this.$message.error("请选择车辆!");
+    setup() {
+      var parameter_id;
+      if (this.parameter == "1") {
+        parameter_id = "x8202";
+      } else if (this.parameter == "2") {
+        parameter_id = "x0301";
       }
-      if (value == "") {
-        return this.$message.error("设置项不能为空!");
-      }
-      this.communication.data.map(item => {
-        if (item.sim_id.length == 11) {
-          simid = "0" + item.sim_id;
-        } else {
-          simid = item.sim_id;
-        }
-        instructionset =
-          "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
-        this.$emit("setting", instructionset);
-      });
+      console.log(parameter_id);
     }
   }
 };

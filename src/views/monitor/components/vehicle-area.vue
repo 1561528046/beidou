@@ -4,7 +4,7 @@
     <div style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
     <!-- 自定义区域 -->
     <el-dialog width="20%" @close="down(2)" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <el-form :model="formdata">
+      <el-form :model="formdata" :key="addKey">
         <el-row :gutter="30">
           <el-col :span="24">
             <el-form-item label="名称" prop="name">
@@ -34,7 +34,7 @@
     </el-dialog>
     <!-- 行政区域 -->
     <el-dialog width="20%" @close="down(1)" :visible.sync="nocustom" :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <el-form :model="formdata">
+      <el-form :model="formdata" :key="addKey">
         <el-row :gutter="30">
           <el-col :span="24">
             <el-form-item label="名称" prop="name" style="margin-bottom:0">
@@ -413,10 +413,18 @@ export default {
     // 行政区域
     administrative() {
       var data = {};
-      this.formdata.start_time =
-        "000000" + moment(this.formdata.time[0]).format("HHmmss");
-      this.formdata.stop_time =
-        "000000" + moment(this.formdata.time[1]).format("HHmmss");
+      if (!this.formdata.time == "") {
+        this.formdata.start_time =
+          "000000" + moment(this.formdata.time[0]).format("HHmmss");
+        this.formdata.stop_time =
+          "000000" + moment(this.formdata.time[1]).format("HHmmss");
+      } else {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       data = {
         AreaProperty: this.formdata.alarm_type,
         RegionName: this.formdata.name,
@@ -555,6 +563,7 @@ export default {
     },
     // 添加自定义区域
     addForm(type) {
+      this.addKey++;
       this.mapData.map.clearMap();
       this.areaType = false;
       if (type == 1) {
@@ -580,6 +589,8 @@ export default {
       this.formdata.name = "";
       this.formdata.area = {};
       this.formdata.alarm_type = "";
+      this.formdata.start_time = "";
+      this.formdata.stop_time = "";
       this.mapData.mouseTool.close(true);
     },
     // 拖动

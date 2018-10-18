@@ -27,6 +27,16 @@
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <choose-picture :respond="respond" :message="picture" @instruction="instruction" @setting="setting"></choose-picture>
           </el-tab-pane>
+          <el-tab-pane label="其它设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <!--  :respond="respond" :message="picture" @instruction="instruction" @setting="setting" -->
+            <choose-other></choose-other>
+          </el-tab-pane>
+          <el-tab-pane label="事件设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <!--  :respond="respond" :message="picture" @instruction="instruction" @setting="setting" -->
+            <choose-event></choose-event>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </el-card>
@@ -39,8 +49,11 @@ import chooseCommunication from "./choose-communication.vue";
 import chooseInformation from "./choose-information.vue";
 import chooseAlarm from "./choose-alarm.vue";
 import chooseReport from "./choose-report.vue";
-import chooseDevice from "./choose-device";
-import choosePicture from "./choose-picture";
+import chooseDevice from "./choose-device.vue";
+import choosePicture from "./choose-picture.vue";
+import chooseText from "./choose-text.vue";
+import chooseOther from "./choose-other.vue";
+import chooseEvent from "./choose-event.vue";
 export default {
   components: {
     selectVehicle,
@@ -50,7 +63,10 @@ export default {
     chooseAlarm,
     chooseReport,
     chooseDevice,
-    choosePicture
+    choosePicture,
+    chooseText,
+    chooseOther,
+    chooseEvent
   },
   created() {
     // 192.168.88.88:5000
