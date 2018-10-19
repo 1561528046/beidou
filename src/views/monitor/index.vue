@@ -87,7 +87,7 @@
             </el-collapse-item>
           </el-collapse>
           <transition name="fade" enter-active-class="fadeInLeft" leave-active-class="fadeOutLeft">
-            <vehicle-details @close="closeShowVehicle" @open-single="addSingleVehicle" :vehicle="currentGroup" :show-vehicle="showVehicle"></vehicle-details>
+            <vehicle-details @instruction="contextmenuInstruction" @close="closeShowVehicle" @open-single="addSingleVehicle" :vehicle="currentGroup" :show-vehicle="showVehicle"></vehicle-details>
           </transition>
         </div>
       </el-tab-pane>
@@ -108,6 +108,9 @@
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
     </el-tabs>
+    <el-dialog :title="instructionCard.title" append-to-body :visible.sync="instructionCard.show" width="50%">
+      <div :is="instructionCard.component" @instruction="sendInstruction" :vehicle="instructionCard.vehicle"></div>
+    </el-dialog>
   </div>
 </template>
 
@@ -130,6 +133,7 @@ import vehicleSingle from "./components/vehicle-single.vue";
 import vehicleArea from "./components/vehicle-area.vue";
 import vehicleTrack from "./components/vehicle-track.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
+import x8202 from "./components/x8202.vue"; //临时位置跟踪控制
 import moment from "moment";
 window.monitor = {};
 export default {
@@ -140,10 +144,17 @@ export default {
     vehicleArea,
     vehicleSingle,
     vehicleAlarm,
-    vehicleTrack
+    vehicleTrack,
+    x8202
   },
   data() {
     return {
+      instructionCard: {
+        component: null,
+        show: false,
+        title: "",
+        vehicle: null
+      },
       searchVehicle: "",
       initLoader: {},
       currentGroup: {},
@@ -191,7 +202,14 @@ export default {
   created() {
     this.init();
     var vm = this;
+    //创建全局监控对象
     window.monitor = {
+      ws: {
+        position: null, //定位ws
+        positionHeartInterval: 0, //定位ws心跳interval
+        instruction: null, //指令ws
+        instructionHeartInterval: 0 //指令ws心跳interval
+      },
       data: new Map(), //所有数据
       dict: {
         //字典
@@ -250,9 +268,52 @@ export default {
         monitor.countInterval = setInterval(() => {
           this.setCount();
           this.setUserCount();
-          // this.setCurrentGroup();
         }, 20);
-        vm.initWS();
+        this.initWS();
+      },
+      initWS() {
+        /*初始化2个socket */
+        var wsList = this.ws;
+        //1 定位数据socket
+        wsList.position = new WebSocket(vm.$dict.MONITOR_URL);
+        var socketDataWorker = new Worker("/map/worker-socket.js");
+        wsList.position.binaryType = "arraybuffer";
+        wsList.position.onopen = () => {
+          wsList.position.send("^login|admin|49ba59abbe56e057$");
+          wsList.positionHeartInterval = setInterval(() => {
+            wsList.position.send("^heart$");
+          }, 20000);
+        };
+        wsList.position.onmessage = evt => {
+          socketDataWorker.postMessage(new Uint8Array(evt.data));
+        };
+        socketDataWorker.onmessage = evt => {
+          evt.data.sim_id = parseInt(evt.data.sim_id).toString();
+          var position = GPS.gcj_encrypt(evt.data.lat || 0, evt.data.lng || 0); //GPS转高德
+          evt.data.lng = position.lon;
+          evt.data.lat = position.lat;
+          this.setVehicleData(evt.data);
+        };
+        //2 指令数据socket
+        wsList.instruction = new WebSocket(vm.$dict.INSTRUCTION_URL);
+        wsList.instruction.onopen = () => {
+          wsList.instruction.send("^heart$");
+          wsList.instruction.send("^x8202|5|120|010000000004$");
+          wsList.instructionHeartInterval = setInterval(() => {
+            wsList.instruction.send("^heart$");
+          }, 20000);
+        };
+        wsList.instruction.addEventListener("message", evt => {
+          this.instructionWSMessage(evt);
+        });
+      },
+      instructionWSMessage(evt) {
+        //^x8106|1|018681892547|0$
+        var message = evt.data
+          .replace("$", "")
+          .replace("^", "")
+          .split("|");
+        console.log(message);
       },
       initFence() {
         //请求围栏数据
@@ -605,13 +666,6 @@ export default {
         this.dict.alarm.add(vehicle.sim_id);
         var groups = vehicle.group_path;
         this.setGroupDict(groups, "alarm", vehicle.sim_id);
-      },
-      setFenceAlarm(vehicleData) {
-        // var vehicle = this.data.get(vehicleData.sim_id);
-        // vehicle.alarm_count = parseInt(vehicle.alarm_count || 0) + 1;
-        // this.dict.alarm.add(vehicle.sim_id);
-        // var groups = vehicle.group_path;
-        // this.setGroupDict(groups, "alarm", vehicle.sim_id);
       }
     };
   },
@@ -628,49 +682,45 @@ export default {
           this.$alert("初始化分组失败！");
         });
     },
-    initWS() {
-      //定位数据socket
-      var ws = new WebSocket(this.$dict.MONITOR_URL);
-      var socketDataWorker = new Worker("/map/worker-socket.js");
-      ws.binaryType = "arraybuffer";
-      ws.onopen = function() {
-        ws.send("^login|admin|49ba59abbe56e057$");
-        monitor.wsHeartInterval = setInterval(() => {
-          ws.send("^heart$");
-        }, 20000);
-      };
-      ws.onmessage = function(evt) {
-        socketDataWorker.postMessage(new Uint8Array(evt.data));
-      };
-      socketDataWorker.onmessage = event => {
-        event.data.sim_id = parseInt(event.data.sim_id).toString();
-        var position = GPS.gcj_encrypt(
-          event.data.lat || 0,
-          event.data.lng || 0
-        ); //GPS转高德
-        event.data.lng = position.lon;
-        event.data.lat = position.lat;
-        monitor.setVehicleData(event.data);
-      };
-      //指令数据socket
-      monitor.instructionWS = new WebSocket(this.$dict.INSTRUCTION_URL);
-      monitor.instructionWS.onopen = function() {
-        monitor.instructionWS.send("^heart$");
-      };
-      monitor.instructionWS.onmessage = evt => {
-        this.instructionWSMessage(evt);
-      };
-      monitor.instructionWSInterval = setInterval(() => {
-        monitor.instructionWS.send("^heart$");
-      }, 20000);
+    sendInstruction(instruction) {
+      monitor.ws.instruction.send(instruction);
     },
-    instructionWSMessage(evt) {
-      ////^x8106|1|018681892547|0$
-      var message = evt.data
-        .replace("$", "")
-        .replace("^", "")
-        .split("|");
-      console.log(message);
+    contextmenuInstruction({ instruction, sim_id }) {
+      var instructionArr = instruction.split("|");
+      if (instructionArr[0] == "x8500") {
+        //无需设置、直接发送的命令车门解锁、上锁
+        monitor.ws.instruction.send(
+          this.makeInstruction(instructionArr, sim_id)
+        );
+      }
+      switch (instructionArr[0]) {
+        case "x8202":
+          this.instructionCard.title = "临时位置跟踪";
+          this.instructionCard.component = x8202;
+          break;
+        case "x8201":
+          this.instructionCard.title = "点名";
+          this.instructionCard.component = x8201;
+          break;
+        case "x8301":
+          this.instructionCard.title = "提问下发";
+          this.instructionCard.component = x8301;
+          break;
+        case "x8401":
+          this.instructionCard.title = "电话本";
+          this.instructionCard.component = x8401;
+          break;
+        case "x8400":
+          this.instructionCard.title = "电话回拨";
+          this.instructionCard.component = x8400;
+          break;
+      }
+      this.instructionCard.show = true;
+      this.instructionCard.vehicle = monitor.data.get(sim_id);
+    },
+    makeInstruction(arr, sim_id) {
+      sim_id = "0".repeat(12 - sim_id.length) + sim_id;
+      return "^" + arr.join("|") + "|" + sim_id + "$";
     },
     initVehicle(groups) {
       this.initLoader.setText("初始化车辆数据");

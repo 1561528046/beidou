@@ -1,5 +1,16 @@
 <template>
   <div class="details-container shadow-box" v-if="showVehicle.isShow">
+    <v-contextmenu ref="contextmenu">
+      <v-contextmenu-item @click="sendInstruction" data-index="x8202">临时位置跟踪</v-contextmenu-item>
+      <v-contextmenu-item @click="sendInstruction" data-index="x8201">点名</v-contextmenu-item>
+      <v-contextmenu-item @click="sendInstruction" data-index="x8301">提问下发</v-contextmenu-item>
+      <v-contextmenu-submenu title="车辆控制">
+        <v-contextmenu-item @click="sendInstruction" data-index="x8500|0">车辆解锁</v-contextmenu-item>
+        <v-contextmenu-item @click="sendInstruction" data-index="x8500|1">车辆加锁</v-contextmenu-item>
+      </v-contextmenu-submenu>
+      <v-contextmenu-item @click="sendInstruction" data-index="x8401">电话本</v-contextmenu-item>
+      <v-contextmenu-item @click="sendInstruction" data-index="x8400">电话回拨</v-contextmenu-item>
+    </v-contextmenu>
     <div class="_header">
       <div class="_title">
         {{getShowVehicleTitle()}}
@@ -11,8 +22,8 @@
         <i class="el-icon-close" @click="closeShowVehicle"></i>
       </div>
     </div>
-    <div class="_body" v-show="showVehicle.isShowAll">
-      <el-table :data="list" size="small" style="width: 100%" @row-click="openTab">
+    <div class="_body" v-show="showVehicle.isShowAll" v-contextmenu:contextmenu>
+      <el-table :data="list" size="small" style="width: 100%" @row-click="openTab" @row-contextmenu="showContextmenu" highlight-current-row ref="vehicleList">
         <el-table-column prop="license" label="车牌号">
         </el-table-column>
         <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="allalarm">
@@ -31,7 +42,7 @@
         </el-pagination>
       </div>
     </div>
-    <div class="_body" v-if="!showVehicle.isShowAll">
+    <div class="_body" v-if="!showVehicle.isShowAll" v-contextmenu:contextmenu>
       <el-collapse accordion v-model="currentGroup" @change="groupChange" :key="'other'+showVehicle.group_id" :name="'other'+showVehicle.group_id">
         <!-- <el-collapse-item class="group-container">
           <template slot="title">
@@ -51,7 +62,7 @@
               <el-option label="全部分组" value=""></el-option>
               <el-option :label="childrenGroup.group_name" :value="childrenGroup.group_id" v-for="childrenGroup in currentGroupSonChildrens" :key="'select'+childrenGroup.group_id"></el-option>
             </el-select>
-            <el-table :data="list" size="small" style="width: 100%" @row-click="openTab">
+            <el-table :data="list" size="small" style="width: 100%" @row-click="openTab" @row-contextmenu="showContextmenu" highlight-current-row ref="vehicleList">
               <el-table-column prop="license" label="车牌号">
               </el-table-column>
               <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="tablealarm">
@@ -90,7 +101,8 @@ export default {
         current: 1
       },
       dataVersion: 0,
-      timer: null
+      timer: null,
+      contextmenuVehicle: null //右键菜单选中的车辆
     };
   },
   props: ["showVehicle"],
@@ -158,6 +170,18 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    sendInstruction(vm, event) {
+      var instruction = event.target.dataset.index;
+      // instruction.split("|");
+      this.$emit("instruction", {
+        instruction: instruction,
+        sim_id: this.contextmenuVehicle.sim_id
+      });
+    },
+    showContextmenu(row) {
+      this.$refs.vehicleList.setCurrentRow(row);
+      this.contextmenuVehicle = row;
+    },
     openTab(row) {
       switch (this.showVehicle.type) {
         case "alarm":
@@ -336,6 +360,24 @@ export default {
       margin-right: 5px;
       border-radius: 6px;
       vertical-align: 1px;
+    }
+  }
+  .contextmenu {
+    position: absolute;
+    .el-popover {
+      padding: 0;
+    }
+    ._list {
+      li {
+        list-style-type: none;
+        height: 28px;
+        line-height: 28px;
+        border-bottom: 1px solid @b2;
+        a {
+          padding-left: 1.2em;
+          display: block;
+        }
+      }
     }
   }
 }

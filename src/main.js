@@ -1,6 +1,8 @@
 import Vue from "vue";
 import App from "./App.vue";
 import ElementUI from "element-ui";
+import contentmenu from "v-contextmenu";
+import "v-contextmenu/dist/index.css";
 import "normalize.css";
 import "element-ui/lib/theme-chalk/index.css";
 import "vue2-animate/dist/vue2-animate.min.css"; //demo:https://the-allstars.com/vue2-animate/
@@ -28,6 +30,7 @@ function createRouterMap(router, $parent) {
 createRouterMap(router.options.routes, router);
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
+Vue.use(contentmenu); //右键菜单
 new Vue({
   router,
   store,
