@@ -5,31 +5,40 @@
       <el-table-column prop="operating" label="操作状态"></el-table-column>
     </el-table>
     <div>
-      <el-row :gutter="30">
-        <el-col :span="8">
-          <label style="display:block;margin-top:15px;">事件ID</label>
-          <el-input style="width:50%" size="small"></el-input>
-          <label style="display:block;margin-top:15px;">事件内容长度</label>
-          <el-input style="width:50%" size="small"></el-input>
-          <label style="display:block;margin-top:15px;">事件内容</label>
-          <el-input style="width:50%" size="small"></el-input>
-          <div style="width:50%;text-align:center;">
-            <el-button type="primary" size="small">添加</el-button>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div style="width:50%; margin: 0 auto;">
-            <label style="display:block;margin-top:15px;">设置类型</label>
-            <el-select size="small">
-              <el-option></el-option>
-              <el-option></el-option>
-            </el-select>
-            <label style="display:block;margin-top:15px;">事件项列表</label>
-          </div>
-        </el-col>
-        <el-col :span="8">
-        </el-col>
-      </el-row>
+      <el-form label-width="100px" label-position="left" class="table-search" size="small">
+        <el-row :gutter="30">
+          <el-col :span="24">
+            <el-form-item label="设置类型">
+              <el-select v-model="event_type" size="small" clearable>
+                <el-option value="0" label="删除终端现有所有事件">删除终端现有所有事件</el-option>
+                <el-option value="1" label="更新事件">更新事件</el-option>
+                <el-option value="2" label="追加事件">追加事件</el-option>
+                <el-option value="3" label="修改事件">修改事件</el-option>
+                <el-option value="4" label="删除特定几项事件">删除特定几项事件</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="事件项列表" v-if="event_type!='0'">
+              <div>
+                <el-checkbox @change="cunchu('雷雨天气')" v-model="formData.rain">雷雨天气</el-checkbox>
+                <el-checkbox @change="cunchu('路面潮湿')" v-model="formData.wet_road">路面潮湿</el-checkbox>
+                <el-checkbox @change="cunchu('雾天')" v-model="formData.fog">雾天</el-checkbox>
+                <el-checkbox @change="cunchu('山体滑坡')" v-model="formData.landslides">山体滑坡</el-checkbox>
+                <el-checkbox @change="cunchu('台风')" v-model="formData.typhoon">台风</el-checkbox>
+                <el-checkbox @change="cunchu('地震')" v-model="formData.earthquake">地震</el-checkbox>
+                <el-checkbox @change="cunchu('隧道冒顶')" v-model="formData.tunnel">隧道冒顶</el-checkbox>
+                <el-checkbox @change="cunchu('洪水')" v-model="formData.flood">洪水</el-checkbox>
+                <el-checkbox @change="cunchu('风沙')" v-model="formData.sand">风沙</el-checkbox>
+                <el-checkbox @change="cunchu('泥石流')" v-model="formData.debris_flow">泥石流</el-checkbox>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-button type="primary" size="small" @click="setup">设置</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
     </div>
   </div>
 </template>
@@ -37,15 +46,26 @@
 export default {
   data() {
     return {
+      formData: {
+        rain: false,
+        wet_road: false,
+        fog: false,
+        landslides: false,
+        typhoon: false,
+        earthquake: false,
+        tunnel: false,
+        flood: false,
+        sand: false,
+        debris_flow: false
+      },
+      arr: [],
+      event_type: "",
       location: false,
       event_report: false,
       on_demand: false,
       information_service: false,
       parameter: "",
-      str: "",
-      selectedVehicles: [],
       length: 0,
-      vehicleDialog: false,
       communication: {
         data: []
       },
@@ -65,70 +85,11 @@ export default {
     message: {
       handler: function() {
         this.$set(this.communication, "data", this.$props.message);
-        this.communication.data.map(item => {
-          if (item.Ox0081 == undefined) {
-            this.$set(item, "Ox0081", ""),
-              this.$set(item, "Ox0082", ""),
-              this.$set(item, "Ox0083", ""),
-              this.$set(item, "Ox0084", "");
-          }
-        });
       },
       deep: true
     },
     respond: {
-      handler: function() {
-        var limit = ["129", "130", "131", "132"];
-        this.$set(this.$data, "str", this.$props.respond);
-        this.str = this.str.split("|");
-        if (!limit.includes(this.str[1])) {
-          return;
-        }
-        if (this.str[0] == "^x8106") {
-          if (this.str[3][0] == "0") {
-            this.str[1] = parseInt(this.str[1]).toString(16);
-            this.str[1] =
-              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-            this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (item.sim_id == this.str[2]) {
-                var utc = this.$dict.get_communication(this.str[1]);
-                item.operating = utc + "采集成功";
-              }
-            });
-          }
-        } else if (this.str[0] == "^x0104") {
-          this.str[3] = this.str[3].substring(0, this.str[3].length - 1);
-          this.str[1] = parseInt(this.str[1]).toString(16);
-          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-          this.communication.data.map(item => {
-            if (item.sim_id.length == 11) {
-              item.sim_id = "0" + item.sim_id;
-            }
-            if (item.sim_id == this.str[3]) {
-              item[this.str[1]] = this.str[2];
-            }
-          });
-        } else {
-          var state = this.str[4].substring(0, this.str[4].length - 1);
-          if (state == "0") {
-            this.str[1] = parseInt(this.str[1]).toString(16);
-            this.str[1] =
-              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-            this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (item.sim_id == this.str[3]) {
-                var utc = this.$dict.get_communication(this.str[1]);
-                item.operating = utc + "设置成功";
-              }
-            });
-          }
-        }
-      },
+      handler: function() {},
       deep: true
     }
   },
@@ -139,29 +100,9 @@ export default {
   },
   created() {},
   methods: {
-    //区域展示
-    chooseSetting(type) {
-      if (type == "1") {
-        this.location = true;
-        this.event_report = false;
-        this.on_demand = false;
-        this.information_service = false;
-      } else if (type == "2") {
-        this.location = false;
-        this.event_report = true;
-        this.on_demand = false;
-        this.information_service = false;
-      } else if (type == "3") {
-        this.location = false;
-        this.event_report = false;
-        this.on_demand = true;
-        this.information_service = false;
-      } else if (type == "4") {
-        this.location = false;
-        this.event_report = false;
-        this.on_demand = false;
-        this.information_service = true;
-      }
+    cunchu(label) {
+      console.log(label);
+      //  if(label=="雷雨天气"){}
     },
     // 采集
     collect(num) {
@@ -184,13 +125,10 @@ export default {
     },
     // 设置
     setup() {
-      var parameter_id;
-      if (this.parameter == "1") {
-        parameter_id = "x8202";
-      } else if (this.parameter == "2") {
-        parameter_id = "x0301";
-      }
-      console.log(parameter_id);
+      console.log(this.event_type);
+      console.log(this.formData);
+      // var instructionset;
+      // instructionset="x8301"+"|"+
     }
   }
 };
