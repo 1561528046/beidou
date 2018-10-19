@@ -37,17 +37,12 @@
       </div>
     </div>
     <div v-if="!tableType" style=" width:1000px; height:276px;background-color:#fff;position:absolute;left:520px;top:10px;z-index:99;">
-      <el-table height="276" border style="width: 100%">
-        <el-table-column label="序号">
-        </el-table-column>
-        <el-table-column label="时间">
-        </el-table-column>
-        <el-table-column label="速度">
-        </el-table-column>
-        <el-table-column label="当日里程">
-        </el-table-column>
-        <el-table-column label="位置" width="300px">
-        </el-table-column>
+      <el-table :data="tableQuery.data" height="276" border style="width: 100%">
+        <el-table-column label="序号" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
+        <el-table-column label="速度" prop="speed" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column label="当日里程" prop="em_0x01" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column label="位置" prop="address" :formatter="$utils.baseFormatter " width="300px"></el-table-column>
       </el-table>
     </div>
   </div>
@@ -58,6 +53,7 @@ import { rules } from "@/utils/rules.js";
 import moment from "moment";
 import { initMap } from "@/utils/map.js";
 import { GetVehicleByLicense, GetVehicleLocation } from "@/api/index.js";
+import { location2address, gps2amap } from "@/utils/map-tools.js";
 export default {
   data() {
     return {
@@ -83,6 +79,10 @@ export default {
             validator: this.validateTime
           }
         ]
+      },
+      tableQuery: {
+        total: 0,
+        data: []
       },
       vehicle_license: "",
       autoplate: "",
@@ -117,32 +117,7 @@ export default {
       var map = new AMap.Map(this.$refs.map, {
         zoom: 14
       }); //实例化地图
-      var lineArr = [];
-      if (vm.tableData.data.length > 0) {
-        lineArr = [vm.tableData.data[0].lng, vm.tableData.data[0].lat];
-        var marker = new AMap.Marker({
-          map: map,
-          position: lineArr, //小车起始位置
-          icon: "https://webapi.amap.com/images/car.png",
-          offset: new AMap.Pixel(-26, -13),
-          autoRotation: true
-        }); //实例化Marker
-      }
-      var path = [];
-      vm.tableData.data.map(item => {
-        path.push(new AMap.LngLat(item.lng, item.lat));
-      });
-      var polyline = new AMap.Polyline({
-        map: map,
-        path: path,
-        strokeColor: "#00A", //线颜色
-        // strokeOpacity: 1,     //线透明度
-        strokeWeight: 3 //线宽
-        // strokeStyle: "solid"  //线样式
-      });
       vm.$set(vm.mapData, "map", map);
-      vm.$set(vm.mapData, "marker", marker);
-      vm.$set(vm.mapData, "polyline", polyline);
     });
   },
   methods: {
@@ -206,6 +181,41 @@ export default {
         });
       }
     },
+    setMarker() {
+      var lineArr = [];
+      var hs = this;
+      if (this.tableData.data.length > 0) {
+        lineArr = [hs.tableData.data[0].lng, hs.tableData.data[0].lat];
+        var marker = new AMap.Marker({
+          map: hs.mapData.map,
+          position: lineArr, //小车起始位置
+          icon: "https://webapi.amap.com/images/car.png",
+          offset: new AMap.Pixel(-26, -13),
+          autoRotation: true
+        }); //实例化Marker
+        this.$set(this.mapData, "marker", marker);
+        marker.setMap(this.mapData.map); //将点标注在地图上
+        this.mapData.map.setFitView([marker]);
+      }
+    },
+    setPolyline() {
+      var path = [];
+      var hm = this;
+      this.tableData.data.map(item => {
+        path.push(new AMap.LngLat(item.lng, item.lat));
+      });
+      var polyline = new AMap.Polyline({
+        map: hm.mapData.map,
+        path: path,
+        strokeColor: "#00A", //线颜色
+        // strokeOpacity: 1,     //线透明度
+        strokeWeight: 3 //线宽
+        // strokeStyle: "solid"  //线样式
+      });
+      this.$set(this.mapData, "polyline", polyline);
+      polyline.setMap(this.mapData.map); //将轨迹显示在地图上
+      this.mapData.map.setFitView([polyline]);
+    },
     // 查询轨迹信息
     selectForm() {
       if (this.trackForm.position_type) {
@@ -221,11 +231,59 @@ export default {
       if (this.trackForm.time.length > 0) {
         GetVehicleLocation(this.trackForm).then(res => {
           if (res.data.code == 0) {
-            console.log(res.data.data);
-            this.mapData.marker.setMap(this.mapData.map); //将点标注在地图上
-            this.mapData.polyline.setMap(this.mapData.map); //将轨迹显示在地图上
-            this.mapData.map.setFitView([this.mapData.marker]);
-            this.mapData.map.setFitView([this.mapData.polyline]);
+            var arr = [];
+            res.data.data.map(item => {
+              arr.push({ lng: item.longitude, lat: item.latitude });
+            });
+            this.$set(this.tableQuery, "data", res.data.data);
+            this.$set(this.tableData, "data", arr);
+            this.setMarker();
+            this.setPolyline();
+            var loader = this.$loading({
+              text: "正在转换坐标"
+            });
+            var data = [];
+            data = res.data.data;
+            gps2amap({
+              data: data,
+              longKey: "longitude",
+              latKey: "latitude"
+            })
+              .then(res => {
+                data.map((item, index) => {
+                  item.amap_longitude = res[index].split(",")[0];
+                  item.amap_latitude = res[index].split(",")[1];
+                });
+              })
+              .catch(() => {
+                loader.close();
+              })
+              .then(() => {
+                loader.close();
+                loader = this.$loading({
+                  text: "正在转换地址"
+                });
+                location2address({
+                  data: data,
+                  longKey: "amap_longitude",
+                  latKey: "amap_latitude"
+                })
+                  .then(addressArr => {
+                    loader.close();
+                    data.map((item, index) => {
+                      item.address = addressArr[index];
+                    });
+                    this.$set(this.tableQuery, "data", Object.freeze(data));
+                    this.$set(
+                      this.tableQuery,
+                      "total",
+                      this.tableQuery.data.length
+                    );
+                  })
+                  .catch(() => {
+                    loader.close();
+                  });
+              });
           }
         });
       } else {
@@ -251,13 +309,15 @@ export default {
     // 播放
     play() {
       var vs = this;
+      var cun = 0;
       this.playType = true;
       this.timer = setInterval(function() {
         if (vs.currentIndex < vs.tableData.data.length - 1) {
-          vs.currentIndex++;
+          cun++;
+          vs.currentIndex = cun;
         } else {
           vs.currentIndex = 0;
-          vs.playType = false;
+          vs.playTypeplayType = false;
           clearInterval(vs.timer);
         }
         vs.nextData();

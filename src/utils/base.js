@@ -422,6 +422,21 @@ export const dict = {
   },
   get_communication: function(key) {
     return this.communication[key] || "";
+  },
+  special: {
+    "1": "雷雨天气",
+    "2": "路面潮湿",
+    "3": "雾天",
+    "4": "山体滑坡",
+    "5": "台风",
+    "6": "地震",
+    "7": "隧道冒顶",
+    "8": "洪水",
+    "9": "风沙",
+    "10": "泥石流"
+  },
+  get_special: function(key) {
+    return this.special[key] || "";
   }
 };
 import utils from "@/utils/utils";

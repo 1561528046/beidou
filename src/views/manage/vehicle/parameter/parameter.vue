@@ -34,8 +34,13 @@
           </el-tab-pane>
           <el-tab-pane label="事件设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <!--  :respond="respond" :message="picture" @instruction="instruction" @setting="setting" -->
-            <choose-event></choose-event>
+            <!--  :respond="respond" @instruction="instruction" @setting="setting" -->
+            <choose-event :message="event"></choose-event>
+          </el-tab-pane>
+          <el-tab-pane label="信息点播菜单设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <!--   @instruction="instruction"  -->
+            <choose-demand :respond="respond" :message="demand" @setting="setting"></choose-demand>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -54,6 +59,7 @@ import choosePicture from "./choose-picture.vue";
 import chooseText from "./choose-text.vue";
 import chooseOther from "./choose-other.vue";
 import chooseEvent from "./choose-event.vue";
+import chooseDemand from "./choose-demand.vue";
 export default {
   components: {
     selectVehicle,
@@ -66,7 +72,8 @@ export default {
     choosePicture,
     chooseText,
     chooseOther,
-    chooseEvent
+    chooseEvent,
+    chooseDemand
   },
   created() {
     // 192.168.88.88:5000
@@ -107,6 +114,8 @@ export default {
       device: [],
       report: [],
       picture: [],
+      event: [],
+      demand: [],
       tableLoading: true
     };
   },
@@ -158,6 +167,10 @@ export default {
         this.device = scope;
       } else if (this.parameter_type == 6) {
         this.picture = scope;
+      } else if (this.parameter_type == 7) {
+        this.event = scope;
+      } else if (this.parameter_type == 8) {
+        this.demand = scope;
       }
     },
     vehicleClick() {
@@ -184,6 +197,10 @@ export default {
         this.parameter_type = 5;
       } else if (tab.label == "拍照设置") {
         this.parameter_type = 6;
+      } else if (tab.label == "事件设置") {
+        this.parameter_type = 7;
+      } else if (tab.label == "信息点播菜单设置") {
+        this.parameter_type = 8;
       }
     },
     getTable() {

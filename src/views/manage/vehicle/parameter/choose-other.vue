@@ -1,58 +1,61 @@
 <template >
-    <div>
-        <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
-            <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="operating" label="操作状态"></el-table-column>
-            <!-- <el-table-column prop="Ox8300" label="文本信息下发" :formatter="$utils.baseFormatter"> </el-table-column> -->
-        </el-table>
-        <el-form label-width="150px" label-position="left" class="table-search" size="small">
-            <el-select @change="chooseSetting" v-model="parameter" style="margin-bottom:10px;">
-                <el-option value="1" label="临时位置跟踪控制">临时位置跟踪控制</el-option>
-                <el-option value="2" label="事件报告">事件报告</el-option>
-                <el-option value="3" label="信息点播/取消">信息点播/取消</el-option>
-                <el-option value="4" label="信息服务">信息服务</el-option>
-            </el-select>
-            <div v-if="location" style="width:30%;margin:0 auto; text-align:center;">
-                <el-form-item label="时间间隔">
-                    <el-input></el-input>
-                </el-form-item>
-                <el-form-item label="位置跟踪有效期">
-                    <el-input></el-input>
-                </el-form-item>
-                <el-button type="primary" @click="setup()" size="small">设置</el-button>
-            </div>
-            <div v-if="event_report" style="width:30%;margin:0 auto; text-align:center;">
-                <el-form-item label="事件ID">
-                    <el-input></el-input>
-                </el-form-item>
-                <el-button type="primary" @click="setup()" size="small">设置</el-button>
-            </div>
-            <div v-if="on_demand" style="width:30%;margin:0 auto; text-align:center;">
-                <el-form-item label="信息类型">
-                    <el-input></el-input>
-                </el-form-item>
-                <el-form-item label="点播/取消标志">
-                    <el-select style="width:100%;">
-                        <el-option value="0" label="取消">取消</el-option>
-                        <el-option value="1" label="点播">点播</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-button type="primary" @click="setup()" size="small">设置</el-button>
-            </div>
-            <div v-if="information_service" style="width:30%;margin:0 auto; text-align:center;">
-                <el-form-item label="信息类型">
-                    <el-input></el-input>
-                </el-form-item>
-                <el-form-item label="信息长度">
-                    <el-input></el-input>
-                </el-form-item>
-                <el-form-item label="信息内容">
-                    <el-input></el-input>
-                </el-form-item>
-                <el-button type="primary" @click="setup()" size="small">设置</el-button>
-            </div>
-        </el-form>
-    </div>
+  <div>
+    <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
+      <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="operating" label="操作状态"></el-table-column>
+      <!-- <el-table-column prop="Ox8300" label="文本信息下发" :formatter="$utils.baseFormatter"> </el-table-column> -->
+    </el-table>
+    <el-form label-width="150px" label-position="left" class="table-search" size="small">
+      <el-select @change="chooseSetting" v-model="parameter" style="margin-bottom:10px;">
+        <el-option value="1" label="文本信息下发">文本信息下发</el-option>
+        <el-option value="2" label="信息点播/取消">信息点播/取消</el-option>
+        <el-option value="3" label="信息服务">信息服务</el-option>
+        <el-option value="4" label="提问应答">提问应答</el-option>
+      </el-select>
+      <div v-if="text_Information" style="width:30%;margin:0 auto; text-align:center;">
+        <el-form-item label="标志">
+          <el-input></el-input>
+        </el-form-item>
+        <el-form-item label="文本信息">
+          <el-input></el-input>
+        </el-form-item>
+        <el-button type="primary" @click="setup()" size="small">设置</el-button>
+      </div>
+      <div v-if="demand" style="width:30%;margin:0 auto; text-align:center;">
+        <el-form-item label="信息类型">
+          <el-input></el-input>
+        </el-form-item>
+        <el-form-item label="点播/取消标志">
+          <el-select style="width:100%;">
+            <el-option value="0" label="取消">取消</el-option>
+            <el-option value="1" label="点播">点播</el-option>
+          </el-select>
+        </el-form-item>
+        <el-button type="primary" @click="setup()" size="small">设置</el-button>
+      </div>
+      <div v-if="service" style="width:30%;margin:0 auto; text-align:center;">
+        <el-form-item label="信息类型">
+          <el-input></el-input>
+        </el-form-item>
+        <el-form-item label="信息长度">
+          <el-input></el-input>
+        </el-form-item>
+        <el-form-item label="信息内容">
+          <el-input></el-input>
+        </el-form-item>
+        <el-button type="primary" @click="setup()" size="small">设置</el-button>
+      </div>
+      <div v-if="questions" style="width:30%;margin:0 auto; text-align:center;">
+        <el-form-item label="应答流水号">
+          <el-input></el-input>
+        </el-form-item>
+        <el-form-item label="答案ID">
+          <el-input></el-input>
+        </el-form-item>
+        <el-button type="primary" @click="setup()" size="small">设置</el-button>
+      </div>
+    </el-form>
+  </div>
 </template>
 <script>
 import chooseParameter from "@/components/choose-parameter.vue";
@@ -61,10 +64,10 @@ export default {
   //   name: "choose-communication",
   data() {
     return {
-      location: false,
-      event_report: false,
-      on_demand: false,
-      information_service: false,
+      text_Information: false,
+      demand: false,
+      service: false,
+      questions: false,
       parameter: "",
       str: "",
       selectedVehicles: [],
@@ -166,25 +169,25 @@ export default {
     //区域展示
     chooseSetting(type) {
       if (type == "1") {
-        this.location = true;
-        this.event_report = false;
-        this.on_demand = false;
-        this.information_service = false;
+        this.text_Information = true;
+        this.demand = false;
+        this.service = false;
+        this.questions = false;
       } else if (type == "2") {
-        this.location = false;
-        this.event_report = true;
-        this.on_demand = false;
-        this.information_service = false;
+        this.text_Information = false;
+        this.demand = true;
+        this.service = false;
+        this.questions = false;
       } else if (type == "3") {
-        this.location = false;
-        this.event_report = false;
-        this.on_demand = true;
-        this.information_service = false;
+        this.text_Information = false;
+        this.demand = false;
+        this.service = true;
+        this.questions = false;
       } else if (type == "4") {
-        this.location = false;
-        this.event_report = false;
-        this.on_demand = false;
-        this.information_service = true;
+        this.text_Information = false;
+        this.demand = false;
+        this.service = false;
+        this.questions = true;
       }
     },
     // 采集
