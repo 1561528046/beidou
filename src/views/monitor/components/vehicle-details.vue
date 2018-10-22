@@ -179,7 +179,14 @@ export default {
       });
     },
     showContextmenu(row) {
-      this.$refs.vehicleList.setCurrentRow(row);
+      if (this.$refs.vehicleList.length) {
+        this.$refs.vehicleList.map(item => {
+          item.setCurrentRow(row);
+        });
+      } else {
+        this.$refs.vehicleList.setCurrentRow(row);
+      }
+
       this.contextmenuVehicle = row;
     },
     openTab(row) {

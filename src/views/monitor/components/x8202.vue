@@ -24,19 +24,27 @@ export default {
     };
   },
   props: ["vehicle"],
-  created() {},
+  created() {
+    var sim =
+      "0".repeat(12 - this.$props.vehicle.sim_id.length) +
+      this.$props.vehicle.sim_id;
+    this.$instruction.on("x8202", sim, this.messageSuccess);
+  },
   methods: {
+    messageSuccess() {
+      this.$message.success("执行成功！");
+    },
     formSubmit() {
-      var arr = [
-        "^x8202",
-        this.form.step,
-        this.form.expires,
+      var sim =
         "0".repeat(12 - this.$props.vehicle.sim_id.length) +
-          this.$props.vehicle.sim_id
-      ];
-      this.$emit("instruction", arr.join("|") + "$");
-      this.form;
-    }
+        this.$props.vehicle.sim_id;
+      var arr = ["^x8202", this.form.step, this.form.expires, sim];
+      this.$instruction.send(arr.join("|") + "$");
+    },
+    response() {}
+  },
+  beforeDestroy() {
+    this.$instruction.off();
   }
 };
 </script>

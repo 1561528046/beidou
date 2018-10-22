@@ -13,10 +13,12 @@ import "@/utils/md5.js";
 import store from "./store";
 import { dict, utils } from "./utils/base";
 import "./utils/directive";
+import Instruction from "./utils/instruction.js";
 Vue.prototype.$monitor = {};
 Vue.prototype.$ajax = ajax;
 Vue.prototype.$dict = dict;
 Vue.prototype.$utils = utils;
+Vue.prototype.$instruction = new Instruction();
 window.routerDict = {};
 function createRouterMap(router, $parent) {
   router.map(route => {

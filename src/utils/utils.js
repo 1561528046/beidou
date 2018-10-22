@@ -208,5 +208,15 @@ export default {
     }
     var positionNum = Math.pow(2, position);
     return (stateCode & positionNum) == positionNum;
+  },
+  formatSim(sim_id) {
+    //sim_id补齐12位
+    return (sim_id = "0".repeat(12 - sim_id.length) + sim_id);
+  },
+  formatInstruction(message) {
+    return message
+      .replace("$", "")
+      .replace("^", "")
+      .split("|");
   }
 };

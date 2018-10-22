@@ -109,7 +109,7 @@
       </el-tab-pane>
     </el-tabs>
     <el-dialog :title="instructionCard.title" append-to-body :visible.sync="instructionCard.show" width="50%">
-      <div :is="instructionCard.component" @instruction="sendInstruction" :vehicle="instructionCard.vehicle"></div>
+      <div :is="instructionCard.component" :key="instructionCard.vehicle.sim_id" @instruction="sendInstruction" :vehicle="instructionCard.vehicle" v-if="instructionCard.vehicle"></div>
     </el-dialog>
   </div>
 </template>
@@ -135,6 +135,8 @@ import vehicleTrack from "./components/vehicle-track.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
 import x8202 from "./components/x8202.vue"; //临时位置跟踪控制
 import moment from "moment";
+// import Instruction from "@/utils/instruction.js";
+// console.log(new Instruction());
 window.monitor = {};
 export default {
   name: "monitor",
@@ -208,7 +210,8 @@ export default {
         position: null, //定位ws
         positionHeartInterval: 0, //定位ws心跳interval
         instruction: null, //指令ws
-        instructionHeartInterval: 0 //指令ws心跳interval
+        instructionHeartInterval: 0, //指令ws心跳interval
+        promiseList: new Map() //所有指令回复合集
       },
       data: new Map(), //所有数据
       dict: {
@@ -295,26 +298,34 @@ export default {
           this.setVehicleData(evt.data);
         };
         //2 指令数据socket
-        wsList.instruction = new WebSocket(vm.$dict.INSTRUCTION_URL);
-        wsList.instruction.onopen = () => {
-          wsList.instruction.send("^heart$");
-          wsList.instruction.send("^x8202|5|120|010000000004$");
-          wsList.instructionHeartInterval = setInterval(() => {
-            wsList.instruction.send("^heart$");
-          }, 20000);
-        };
-        wsList.instruction.addEventListener("message", evt => {
-          this.instructionWSMessage(evt);
-        });
+        // vm.$instruction.send("^x8801|1|1|0|0|1|10|150|64|64|150|013812345678$");
+        //                       ^x8801|13812345678|1|1|0|0|1|5|125|64|64|125$
+        // vm.$instruction.on("x8801", "013812345678", evt => {
+        //   console.log(evt);
+        // });
+        // wsList.instruction = new WebSocket(vm.$dict.INSTRUCTION_URL);
+        // wsList.instruction.onopen = () => {
+        //   wsList.instruction.send("^heart$");
+        //   wsList.instruction.send(
+        //     "^x8801|1|1|0|0|1|10|150|64|64|150|013812345678$"
+        //   );
+        //   wsList.instructionHeartInterval = setInterval(() => {
+        //     wsList.instruction.send("^heart$");
+        //   }, 20000);
+        // };
+        // wsList.instruction.addEventListener("message", evt => {
+        //   this.instructionWSMessage(evt);
+        // });
       },
-      instructionWSMessage(evt) {
-        //^x8106|1|018681892547|0$
-        var message = evt.data
-          .replace("$", "")
-          .replace("^", "")
-          .split("|");
-        console.log(message);
-      },
+      // instruction: new Instruction(),
+      // instructionWSMessage(evt) {
+      //   //^x8106|1|018681892547|0$
+      //   var message = evt.data
+      //     .replace("$", "")
+      //     .replace("^", "")
+      //     .split("|");
+      //   console.log(message);
+      // },
       initFence() {
         //请求围栏数据
         GetRegionByPage({

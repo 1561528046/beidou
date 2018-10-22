@@ -254,7 +254,21 @@
         <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')" title="sim卡信息"></i>
         <i class="iconfont icon-wifi" @click="showCard('audio')" title="语音对讲"></i>
         <i class="iconfont icon-error-fill _error" @click="openCard('error')" title="异常信息"></i>
-        <i class="iconfont icon-camera" title="抓拍" @click="snapshot"></i>
+        <el-popover placement="top" width="30" trigger="click" :disabled="[1,2,3].indexOf(snapshotState)!=-1">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-button round @click="snapshot(1)"><i class="iconfont icon-camera-fill"></i>1</el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button round @click="snapshot(2)"><i class="iconfont icon-camera-fill"></i>2</el-button>
+            </el-col>
+          </el-row>
+          <i class="iconfont icon-camera" title="抓拍" v-loading="[1,2,3].indexOf(snapshotState)!=-1" slot="reference"></i>
+        </el-popover>
+        <!-- <el-tooltip effect="dark" :content="snapshotTip" placement="top" :disabled="[1,2,3].indexOf(snapshotState)==-1">
+          
+        </el-tooltip> -->
+
         <i class="iconfont icon-video" title="视频信息"></i>
         <el-badge :value="parseInt(mapData.vehicle.alarm_count)||''" :max="99" class="alarm-badge" :class="{'no-alarm':!mapData.vehicle.alarm_count}">
           <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
@@ -263,6 +277,12 @@
       <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%">
         <div :is="card.component" :vehicle="$props.vehicle"></div>
       </el-dialog>
+      <el-dialog :title="$props.vehicle.license+'抓拍图片'" append-to-body :visible.sync="snapshotDialog" width="50%">
+        <div style="text-align:center;">
+          <img :src="snapshotUrl" v-if="snapshotUrl" />
+        </div>
+      </el-dialog>
+
     </div>
   </div>
 
@@ -279,6 +299,9 @@ export default {
   components: { deviceCard, simCard, chooseVehicle, snapshot },
   data() {
     return {
+      snapshotState: 0, //0默认状态 1指令成功 2指令失败 3拍照成功 4拍照完成
+      snapshotUrl: "", //照片路径
+      snapshotDialog: false,
       otherVehicleDialog: false,
       mapTools: "hand",
       card: {
@@ -318,6 +341,9 @@ export default {
     }
   },
   computed: {
+    snapshotTip: function() {
+      return ["", "指令成功", "指令失败", "拍照成功", ""][this.snapshotState];
+    },
     position: function() {
       var maxRow = Math.floor(this.bodyHeight / 360);
       var left = Math.floor(this.index / maxRow) * 350;
@@ -486,20 +512,44 @@ export default {
     },
     snapshot() {
       var arr = [
-        this.$props.vehicle.sim_id,
         1, //通道 ID 1-255
         1, //0 表示停止拍摄；0xFFFF 表示录像；其它表示拍照张数
         0, //秒，0 表示按最小间隔拍照或一直录像
         0, //1：保存；0：实时上传
-        0x02, //分辨率 0x01:320*240；0x02:640*480；0x03:800*600；0x04:1024*768;0x05:176*144;[Qcif];0x06:352*288;[Cif];0x07:704*288;[HALF D1];0x08:704*576;[D1];
-        5, //1-10，1 代表质量损失最小，10 表示压缩比最大
+        1, //分辨率 0x01:320*240；0x02:640*480；0x03:800*600；0x04:1024*768;0x05:176*144;[Qcif];0x06:352*288;[Cif];0x07:704*288;[HALF D1];0x08:704*576;[D1];
+        10, //1-10，1 代表质量损失最小，10 表示压缩比最大
         125, //亮度0-255
         64, //对比度  0-127
         64, //饱和度0-127
-        125 //色度 0-255
+        125, //色度 0-255
+        this.$utils.formatSim(this.$props.vehicle.sim_id)
       ];
       //^x8106|1|018681892547|0$
-      window.monitor.instructionWS.send("^0x8801|" + arr.join("|") + "$");
+      this.$instruction.on("x8801", this.$props.vehicle.sim_id, evt => {
+        var arr = this.$utils.formatInstruction(evt.data);
+        if (arr.pop() == 0) {
+          this.snapshotState = 1;
+        } else {
+          this.snapshotState = 2;
+        }
+      });
+      this.$instruction.on("x0800", this.$props.vehicle.sim_id, evt => {
+        var arr = this.$utils.formatInstruction(evt.data);
+        // this.snapshotMediaId = arr[1];
+        // setTimeout(()=>{
+        //   //如果30秒后没有收到8800 刷新图片
+        // },30000)
+        this.snapshotState = 3;
+      });
+      this.$instruction.on("x8800", this.$props.vehicle.sim_id, evt => {
+        var arr = this.$utils.formatInstruction(evt.data);
+        this.snapshotUrl =
+          this.$dict.BASE_URL +
+          `api/MultiMedia/GetImage?sim_id=${arr[2]}&media_id=${arr[1]}`;
+        this.snapshotState = 4;
+        this.snapshotDialog = true;
+      });
+      this.$instruction.send("^x8801|" + arr.join("|") + "$");
     },
     openCard(type) {
       this.$store.commit("openTab", type);
