@@ -17,7 +17,7 @@
             <el-date-picker size="small" v-model="trackForm.time" value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
             </el-date-picker>
           </el-form-item>
-          <el-form-item>
+          <el-form-item style="margin-bottom:18px;">
             <el-checkbox v-model="trackForm.invalid_type">过滤无效数据</el-checkbox>
             <el-checkbox v-model="trackForm.position_type">过滤无效定位</el-checkbox>
           </el-form-item>
@@ -25,15 +25,15 @@
           <label style="position:absolute;left:230px;top:15px">{{vehicle_license}}</label>
           <i @click="down()" class="el-icon-circle-close-outline" style="font-size:20px;position:absolute;right:15px;top:10px;margin-top:5px;"></i>
         </el-form>
-        <div style="position: relative;">
+        <div v-if="player" style="position: relative;">
           <el-button size="small" @click="speed_up" style="position:absolute;top:0;">加速</el-button>
           <el-button size="small" @click="speed_down" style="position:absolute;top:0;left:58px;">减速</el-button>
           <div style="width:36px;margin:0 auto;">
             <el-button size="small" v-if="!playType" @click="play" style="border-radius: 50%;border: solid 1px;" icon="iconfont icon-bofangqibofang"></el-button>
             <el-button size="small" v-if="playType" @click="suspended" style="border-radius: 50%;border: solid 1px;" icon="iconfont icon-bofangqi-zanting"></el-button>
           </div>
+          <el-slider v-model="currentIndex" :min="0" :max="tableData.total"></el-slider>
         </div>
-        <el-slider :min="addkey" :max="tableData.total" v-model="currentIndex"></el-slider>
       </div>
     </div>
     <div v-if="!tableType" style=" width:1000px; height:276px;background-color:#fff;position:absolute;left:520px;top:10px;z-index:99;">
@@ -84,6 +84,7 @@ export default {
         total: 0,
         data: []
       },
+      player: false,
       vehicle_license: "",
       autoplate: "",
       selectType: false,
@@ -181,6 +182,7 @@ export default {
         });
       }
     },
+    // 绘制点到地图上
     setMarker() {
       var lineArr = [];
       var hs = this;
@@ -198,6 +200,7 @@ export default {
         this.mapData.map.setFitView([marker]);
       }
     },
+    // 绘制轨迹到地图上
     setPolyline() {
       var path = [];
       var hm = this;
@@ -237,8 +240,10 @@ export default {
             });
             this.$set(this.tableQuery, "data", res.data.data);
             this.$set(this.tableData, "data", arr);
+            this.$set(this.tableData, "total", res.data.count);
             this.setMarker();
             this.setPolyline();
+            this.player = true;
             var loader = this.$loading({
               text: "正在转换坐标"
             });
@@ -279,6 +284,7 @@ export default {
                       "total",
                       this.tableQuery.data.length
                     );
+                    this.tableType = false;
                   })
                   .catch(() => {
                     loader.close();
@@ -296,7 +302,11 @@ export default {
     },
     // 关闭弹出框
     down() {
+      this.mapData.map.clearMap();
       this.vtype = false;
+      this.player = false;
+      this.tableType = true;
+      this.tableQuery.data = [];
       this.trackForm.sim_id = "";
       this.trackForm.time = [];
       this.trackForm.start_time = "";
@@ -308,19 +318,17 @@ export default {
     },
     // 播放
     play() {
-      var vs = this;
-      var cun = 0;
+      var that = this;
       this.playType = true;
       this.timer = setInterval(function() {
-        if (vs.currentIndex < vs.tableData.data.length - 1) {
-          cun++;
-          vs.currentIndex = cun;
+        if (that.currentIndex < that.tableData.total - 1) {
+          that.currentIndex++;
         } else {
-          vs.currentIndex = 0;
-          vs.playTypeplayType = false;
-          clearInterval(vs.timer);
+          that.currentIndex = 0;
+          that.playType = false;
+          clearInterval(that.timer);
         }
-        vs.nextData();
+        that.nextData();
       }, this.speed);
     },
     // 暂停

@@ -27,20 +27,20 @@
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <choose-picture :respond="respond" :message="picture" @instruction="instruction" @setting="setting"></choose-picture>
           </el-tab-pane>
-          <el-tab-pane label="其它设置">
-            <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <!--  :respond="respond" :message="picture" @instruction="instruction" @setting="setting" -->
-            <choose-other></choose-other>
-          </el-tab-pane>
           <el-tab-pane label="事件设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <!--  :respond="respond" @instruction="instruction" @setting="setting" -->
-            <choose-event :message="event"></choose-event>
+            <!--   @instruction="instruction"  -->
+            <choose-event :respond="respond" :message="event" @setting="setting"></choose-event>
           </el-tab-pane>
           <el-tab-pane label="信息点播菜单设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <!--   @instruction="instruction"  -->
             <choose-demand :respond="respond" :message="demand" @setting="setting"></choose-demand>
+          </el-tab-pane>
+          <el-tab-pane label="其它设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <!--  :respond="respond" :message="picture" @instruction="instruction" @setting="setting" -->
+            <choose-other></choose-other>
           </el-tab-pane>
         </el-tabs>
       </div>
