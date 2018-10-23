@@ -9,38 +9,48 @@
       <el-select @change="chooseSetting" v-model="parameter" style="margin-bottom:10px;">
         <el-option value="1" label="文本信息下发">文本信息下发</el-option>
         <el-option value="2" label="信息服务">信息服务</el-option>
-        <el-option value="3" label="提问应答">提问应答</el-option>
+        <!-- <el-option value="3" label="提问应答">提问应答</el-option> -->
       </el-select>
       <!-- 文本信息下发 -->
       <div v-if="text_Information" style="width:30%;margin:0 auto; text-align:center;">
         <el-form-item label="标志">
-          <el-input></el-input>
+          <div style="width:360px;">
+            <el-checkbox v-model="text.emergency" style="width:120px; margin-left:0;text-align:left;">紧急</el-checkbox>
+            <el-checkbox v-model="text.device_TTS" style="width:120px; margin-left:0;text-align:left;">终端TTS播读</el-checkbox>
+            <el-checkbox v-model="text.device_displayer" style="width:120px; margin-left:0;text-align:left;">终端显示器显示</el-checkbox>
+            <el-checkbox v-model="text.advertising" style="width:120px; margin-left:0;text-align:left;">广告屏显示</el-checkbox>
+            <el-radio v-model="text.navigation" style="width:120px; margin-left:0;text-align:left;">中心导航信息</el-radio>
+            <el-radio v-model="text.malfunction_CAN" style="width:120px; margin-left:0;text-align:left;">CAN故障码信息</el-radio>
+          </div>
         </el-form-item>
         <el-form-item label="文本信息">
-          <el-input></el-input>
+          <el-input v-model="text.text_content"></el-input>
         </el-form-item>
         <el-button type="primary" @click="setup()" size="small">设置</el-button>
       </div>
       <!-- 信息服务 -->
       <div v-if="service" style="width:30%;margin:0 auto; text-align:center;">
         <el-form-item label="信息类型">
-          <el-input></el-input>
+          <el-select v-model="information.information_type" style="width:100%;">
+            <el-option value="1" label="每日新闻">每日新闻</el-option>
+            <el-option value="2" label="天气预报">天气预报</el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="信息长度">
-          <el-input></el-input>
+          <el-input v-model="information.information_length"></el-input>
         </el-form-item>
         <el-form-item label="信息内容">
-          <el-input></el-input>
+          <el-input v-model="information.information_content"></el-input>
         </el-form-item>
         <el-button type="primary" @click="setup()" size="small">设置</el-button>
       </div>
       <!-- 提问应答 -->
       <div v-if="questions" style="width:30%;margin:0 auto; text-align:center;">
         <el-form-item label="应答流水号">
-          <el-input></el-input>
+          <el-input v-model="reply.serial_number"></el-input>
         </el-form-item>
         <el-form-item label="答案ID">
-          <el-input></el-input>
+          <el-input v-model="reply.answer_id"></el-input>
         </el-form-item>
         <el-button type="primary" @click="setup()" size="small">设置</el-button>
       </div>
@@ -54,6 +64,24 @@ export default {
   //   name: "choose-communication",
   data() {
     return {
+      information: {
+        information_type: "",
+        information_length: "",
+        information_content: ""
+      },
+      text: {
+        emergency: false, //紧急
+        device_TTS: false, //终端TTS播读
+        device_displayer: false, //终端显示器显示
+        advertising: false, //广告屏显示
+        navigation: false, //中心导航
+        malfunction_CAN: false, //CAN故障码
+        text_content: ""
+      },
+      reply: {
+        serial_number: "",
+        answer_id: ""
+      },
       text_Information: false,
       service: false,
       questions: false,
@@ -117,16 +145,63 @@ export default {
     // 设置
     setup() {
       var parameter_id;
-      // instructionset;
+      var instructionset;
+      var sim_id;
       if (this.parameter == "1") {
         parameter_id = "x8300";
+        var num = ["0", "0", "0", "0", "0", "0", "0", "0"];
+        if (this.text.emergency) {
+          num[7] = "1";
+          //紧急
+        }
+        if (this.text.device_TTS) {
+          num[4] = "1";
+          //终端TTS播读
+        }
+        if (this.text.device_displayer) {
+          num[5] = "1";
+          //终端显示器显示
+        }
+        if (this.text.advertising) {
+          num[3] = "1";
+          //广告屏显示
+        }
+        if (this.text.navigation) {
+          num[2] = "0";
+          //中心导航
+        }
+        if (this.text.malfunction_CAN) {
+          num[2] = "1";
+        }
+        console.log(num);
       } else if (this.parameter == "2") {
         parameter_id = "x8304";
+        var type = this.information.information_type;
+        var length = this.information.information_length;
+        var content = this.information.information_content;
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            sim_id = "0" + item.sim_id;
+          } else {
+            sim_id = item.sim_id;
+          }
+          instructionset =
+            "^" +
+            parameter_id +
+            "|" +
+            type +
+            "|" +
+            length +
+            "|" +
+            content +
+            "|" +
+            sim_id +
+            "$";
+          this.$emit("setting", instructionset);
+        });
       } else if (this.parameter == "3") {
         parameter_id = "x0302";
       }
-      console.log(parameter_id);
-      // instructionset = "^" + parameter_id + "|" + "$";
     }
   }
 };

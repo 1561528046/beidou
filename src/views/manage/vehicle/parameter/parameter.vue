@@ -39,8 +39,8 @@
           </el-tab-pane>
           <el-tab-pane label="其它设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <!--  :respond="respond" :message="picture" @instruction="instruction" @setting="setting" -->
-            <choose-other></choose-other>
+            <!--   @instruction="instruction" -->
+            <choose-other :respond="respond" :message="other" @setting="setting"></choose-other>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -116,6 +116,7 @@ export default {
       picture: [],
       event: [],
       demand: [],
+      other: [],
       tableLoading: true
     };
   },
@@ -171,6 +172,8 @@ export default {
         this.event = scope;
       } else if (this.parameter_type == 8) {
         this.demand = scope;
+      } else if (this.parameter_type == 9) {
+        this.other = scope;
       }
     },
     vehicleClick() {
@@ -201,6 +204,8 @@ export default {
         this.parameter_type = 7;
       } else if (tab.label == "信息点播菜单设置") {
         this.parameter_type = 8;
+      } else if (tab.label == "其它设置") {
+        this.parameter_type = 9;
       }
     },
     getTable() {

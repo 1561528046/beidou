@@ -241,7 +241,8 @@ export default {
         }
       });
       arr = arr.toString();
-      arr = arr.replace(",", ";");
+      var res = new RegExp(",", "g");
+      arr = arr.replace(res, ";");
       var reg = new RegExp(" ", "g");
       arr = arr.replace(reg, ",");
       this.communication.data.map(it => {
