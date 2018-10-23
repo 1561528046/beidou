@@ -19,8 +19,8 @@
             <el-checkbox v-model="text.device_TTS" style="width:120px; margin-left:0;text-align:left;">终端TTS播读</el-checkbox>
             <el-checkbox v-model="text.device_displayer" style="width:120px; margin-left:0;text-align:left;">终端显示器显示</el-checkbox>
             <el-checkbox v-model="text.advertising" style="width:120px; margin-left:0;text-align:left;">广告屏显示</el-checkbox>
-            <el-radio v-model="text.navigation" style="width:120px; margin-left:0;text-align:left;">中心导航信息</el-radio>
-            <el-radio v-model="text.malfunction_CAN" style="width:120px; margin-left:0;text-align:left;">CAN故障码信息</el-radio>
+            <el-radio v-model="text.information" label="0" style="width:120px; margin-left:0;text-align:left;">中心导航信息</el-radio>
+            <el-radio v-model="text.information" label="1" style="width:120px; margin-left:0;text-align:left;">CAN故障码信息</el-radio>
           </div>
         </el-form-item>
         <el-form-item label="文本信息">
@@ -74,8 +74,7 @@ export default {
         device_TTS: false, //终端TTS播读
         device_displayer: false, //终端显示器显示
         advertising: false, //广告屏显示
-        navigation: false, //中心导航
-        malfunction_CAN: false, //CAN故障码
+        information: "0",
         text_content: ""
       },
       reply: {
@@ -166,14 +165,33 @@ export default {
           num[3] = "1";
           //广告屏显示
         }
-        if (this.text.navigation) {
+        if (this.text.information == "0") {
           num[2] = "0";
           //中心导航
-        }
-        if (this.text.malfunction_CAN) {
+        } else {
           num[2] = "1";
         }
-        console.log(num);
+        num = parseInt(num.toString().replace(/,/g, ""), 2);
+        var textContent = this.text.text_content;
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            sim_id = "0" + item.sim_id;
+          } else {
+            sim_id = item.sim_id;
+          }
+          instructionset =
+            "^" +
+            parameter_id +
+            "|" +
+            num +
+            "|" +
+            textContent +
+            "|" +
+            sim_id +
+            "|" +
+            "$";
+          console.log(instructionset);
+        });
       } else if (this.parameter == "2") {
         parameter_id = "x8304";
         var type = this.information.information_type;
