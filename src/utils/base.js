@@ -12,7 +12,7 @@ if (process.env.NODE_ENV == "production") {
 }
 export const dict = {
   //全局字典
-  AMAP_KEY: "1effb3317ab25b91eb7b163d5febd226", //高德key
+  AMAP_KEY: "1effb3317ab25b91eb7b163d5febd226", //高德 key
   BMAP_KEY: "E6CTjsauEoavEzCYG4WM1zt0S5OB6dAf", //百度key
   BASE_URL: BASE_URL, //web站点路径
   API_URL: API_URL, //API具体路径
