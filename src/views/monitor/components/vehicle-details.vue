@@ -3,7 +3,7 @@
     <v-contextmenu ref="contextmenu">
       <v-contextmenu-item @click="sendInstruction" data-index="x8202">临时位置跟踪</v-contextmenu-item>
       <v-contextmenu-item @click="sendInstruction" data-index="x8201">点名</v-contextmenu-item>
-      <v-contextmenu-item @click="sendInstruction" data-index="x8301">提问下发</v-contextmenu-item>
+      <v-contextmenu-item @click="sendInstruction" data-index="x8302">提问下发</v-contextmenu-item>
       <v-contextmenu-submenu title="车辆控制">
         <v-contextmenu-item @click="sendInstruction" data-index="x8500|0">车辆解锁</v-contextmenu-item>
         <v-contextmenu-item @click="sendInstruction" data-index="x8500|1">车辆加锁</v-contextmenu-item>

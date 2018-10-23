@@ -1,4 +1,5 @@
 import { dict } from "./base.js";
+import utils from "./utils.js";
 export default class Instruction {
   constructor() {
     this.ws = new WebSocket(dict.INSTRUCTION_URL);
@@ -34,7 +35,49 @@ export default class Instruction {
     }
     this.handlers.get(key).add(fn);
   }
-  off() {}
+  off(ins, sim_id, handler) {
+    sim_id = "0".repeat(12 - sim_id.length) + sim_id;
+    //删除指定事件
+    var handers = this.handlers.get(ins + sim_id);
+    if (handers && handers.size) {
+      handers.delete(handler);
+      if (handers.size == 0) {
+        this.handlers.delete(ins + sim_id);
+      }
+    }
+  }
+  offAll(ins, sim_id) {
+    //in sim_id 参数不能少于一个
+    //注销所有对应监听
+    if (!ins && sim_id) {
+      sim_id = "0".repeat(12 - sim_id.length) + sim_id;
+      this.offAllWithSim(sim_id);
+      return false;
+    }
+    if (!sim_id && ins) {
+      this.offAllWithIns(ins);
+      return false;
+    }
+    sim_id = "0".repeat(12 - sim_id.length) + sim_id;
+    this.handlers.delete(ins + sim_id);
+  }
+  offAllWithSim(sim_id) {
+    //删除该SIM所有相关监听
+    sim_id = utils.formatSim(sim_id);
+    for (var [key] of this.handlers) {
+      if (key.slice(0, 5).indexOf(sim_id) != -1) {
+        this.handlers.delete(key);
+      }
+    }
+  }
+  offAllWithIns(ins) {
+    //删除该指令所有相关监听
+    for (var [key] of this.handlers) {
+      if (key.slice(5).indexOf(ins) != -1) {
+        this.handlers.delete(key);
+      }
+    }
+  }
   emit(evt) {
     var message = evt.data
       .replace("$", "")

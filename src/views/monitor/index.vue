@@ -134,6 +134,8 @@ import vehicleArea from "./components/vehicle-area.vue";
 import vehicleTrack from "./components/vehicle-track.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
 import x8202 from "./components/x8202.vue"; //临时位置跟踪控制
+import x8302 from "./components/x8302.vue"; //提问下发
+
 import moment from "moment";
 // import Instruction from "@/utils/instruction.js";
 // console.log(new Instruction());
@@ -147,7 +149,8 @@ export default {
     vehicleSingle,
     vehicleAlarm,
     vehicleTrack,
-    x8202
+    x8202,
+    x8302
   },
   data() {
     return {
@@ -700,22 +703,24 @@ export default {
       var instructionArr = instruction.split("|");
       if (instructionArr[0] == "x8500") {
         //无需设置、直接发送的命令车门解锁、上锁
-        monitor.ws.instruction.send(
-          this.makeInstruction(instructionArr, sim_id)
-        );
+        // monitor.ws.instruction.send(
+        //   this.makeInstruction(instructionArr, sim_id)
+        // );
+        // return false;
+      }
+      if (instructionArr[0] == "x8201") {
+        sim_id = this.$utils.formatSim(sim_id);
+        this.$instruction.send("^x8201|" + sim_id + "$");
+        return false;
       }
       switch (instructionArr[0]) {
         case "x8202":
           this.instructionCard.title = "临时位置跟踪";
           this.instructionCard.component = x8202;
           break;
-        case "x8201":
-          this.instructionCard.title = "点名";
-          this.instructionCard.component = x8201;
-          break;
-        case "x8301":
+        case "x8302":
           this.instructionCard.title = "提问下发";
-          this.instructionCard.component = x8301;
+          this.instructionCard.component = x8302;
           break;
         case "x8401":
           this.instructionCard.title = "电话本";
