@@ -135,10 +135,8 @@ import vehicleTrack from "./components/vehicle-track.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
 import x8202 from "./components/x8202.vue"; //临时位置跟踪控制
 import x8302 from "./components/x8302.vue"; //提问下发
-
+import x8400 from "./components/x8400.vue"; //电话回拨
 import moment from "moment";
-// import Instruction from "@/utils/instruction.js";
-// console.log(new Instruction());
 window.monitor = {};
 export default {
   name: "monitor",
@@ -150,7 +148,8 @@ export default {
     vehicleAlarm,
     vehicleTrack,
     x8202,
-    x8302
+    x8302,
+    x8400
   },
   data() {
     return {
@@ -703,10 +702,11 @@ export default {
       var instructionArr = instruction.split("|");
       if (instructionArr[0] == "x8500") {
         //无需设置、直接发送的命令车门解锁、上锁
-        // monitor.ws.instruction.send(
-        //   this.makeInstruction(instructionArr, sim_id)
-        // );
-        // return false;
+        sim_id = this.$utils.formatSim(sim_id);
+        this.$instruction.send(
+          "^x8500|" + instructionArr[1] + "|" + sim_id + "$"
+        );
+        return false;
       }
       if (instructionArr[0] == "x8201") {
         sim_id = this.$utils.formatSim(sim_id);
