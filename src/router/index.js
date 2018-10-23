@@ -139,7 +139,7 @@ function permissions(routers) {
 }
 
 var router = new Router({
-  mode: "history",
+  // mode: "history",
   routes: routers
 });
 router.beforeEach((to, from, next) => {
