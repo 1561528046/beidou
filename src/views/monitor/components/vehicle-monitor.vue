@@ -510,9 +510,9 @@ export default {
         delete this.mapData.otherMarker;
       }
     },
-    snapshot() {
+    snapshot(id) {
       var arr = [
-        1, //通道 ID 1-255
+        id || 1, //通道 ID 1-255
         1, //0 表示停止拍摄；0xFFFF 表示录像；其它表示拍照张数
         0, //秒，0 表示按最小间隔拍照或一直录像
         0, //1：保存；0：实时上传
@@ -533,8 +533,8 @@ export default {
           this.snapshotState = 2;
         }
       });
-      this.$instruction.on("x0800", this.$props.vehicle.sim_id, evt => {
-        var arr = this.$utils.formatInstruction(evt.data);
+      this.$instruction.on("x0800", this.$props.vehicle.sim_id, () => {
+        // var arr = this.$utils.formatInstruction(evt.data);
         // this.snapshotMediaId = arr[1];
         // setTimeout(()=>{
         //   //如果30秒后没有收到8800 刷新图片
@@ -568,6 +568,9 @@ export default {
   },
   beforeDestroyed() {
     this.mapData.map.destroy();
+    this.$instruction.offAll("x0800", this.$vehicle.sim_id);
+    this.$instruction.offAll("x8801", this.$vehicle.sim_id);
+    this.$instruction.offAll("x8800", this.$vehicle.sim_id);
   }
 };
 </script>

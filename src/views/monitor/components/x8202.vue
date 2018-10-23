@@ -9,7 +9,6 @@
 
     <el-form-item>
       <el-button type="primary" native-type="submit" @click="formSubmit">立即创建</el-button>
-      <el-button>取消</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -44,7 +43,7 @@ export default {
     response() {}
   },
   beforeDestroy() {
-    this.$instruction.off();
+    this.$instruction.offAll("x8202", this.$props.vehicle.sim_id);
   }
 };
 </script>
