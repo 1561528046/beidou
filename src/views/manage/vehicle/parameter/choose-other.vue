@@ -6,7 +6,7 @@
       <!-- <el-table-column prop="Ox8300" label="文本信息下发" :formatter="$utils.baseFormatter"> </el-table-column> -->
     </el-table>
     <el-form label-width="150px" label-position="left" class="table-search" size="small">
-      <el-select @change="chooseSetting" v-model="parameter" style="margin-bottom:10px;">
+      <el-select clearable @change="chooseSetting" v-model="parameter" style="margin-bottom:10px;">
         <el-option value="1" label="文本信息下发">文本信息下发</el-option>
         <el-option value="2" label="信息服务">信息服务</el-option>
         <!-- <el-option value="3" label="提问应答">提问应答</el-option> -->
@@ -105,6 +105,17 @@ export default {
     };
   },
   watch: {
+    parameter: function() {
+      this.text.emergency = false; //紧急
+      this.text.device_TTS = false; //终端TTS播读
+      this.text.device_displayer = false; //终端显示器显示
+      this.text.advertising = false; //广告屏显示
+      this.text.information = "0";
+      this.text.text_content = "";
+      this.information.information_type = "";
+      this.information.information_length = "";
+      this.information.information_content = "";
+    },
     message: {
       handler: function() {
         this.$set(this.communication, "data", this.$props.message);
