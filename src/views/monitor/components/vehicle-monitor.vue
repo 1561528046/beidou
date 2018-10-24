@@ -545,7 +545,9 @@ export default {
         var arr = this.$utils.formatInstruction(evt.data);
         this.snapshotUrl =
           this.$dict.BASE_URL +
-          `api/MultiMedia/GetImage?sim_id=${arr[2]}&media_id=${arr[1]}`;
+          `api/MultiMedia/GetMultiMediaByType?type=0&sim_id=${
+            arr[2]
+          }&media_id=${arr[1]}`;
         this.snapshotState = 4;
         this.snapshotDialog = true;
       });

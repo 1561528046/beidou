@@ -28,8 +28,14 @@ export default class Instruction {
     this.ws.send(instruction);
   }
   on(event, sim_id, fn) {
-    sim_id = "0".repeat(12 - sim_id.length) + sim_id;
-    var key = event + sim_id;
+    if (typeof sim_id === "function") {
+      fn = sim_id;
+    }
+    var key = event;
+    if (sim_id && typeof sim_id != "function") {
+      sim_id = "0".repeat(12 - sim_id.length) + sim_id;
+      key = event + sim_id;
+    }
     if (!this.handlers.has(key)) {
       this.handlers.set(key, new Set());
     }
@@ -79,22 +85,43 @@ export default class Instruction {
     }
   }
   emit(evt) {
-    var message = evt.data
-      .replace("$", "")
-      .replace("^", "")
-      .split("|");
-    if (message[0] != "heart") {
+    if (evt.data[0] == "^") {
+      var sim_id;
+      var messageId;
+      var message = evt.data
+        .replace("$", "")
+        .replace("^", "")
+        .split("|");
+      sim_id = message[message.length - 1];
+      if (sim_id.length != 12) {
+        sim_id = message[message.length - 2];
+      }
+      messageId = message[0];
+    } else {
+      var data = JSON.parse(evt.data);
+      sim_id = data.SimID;
+      messageId = data.MessageID;
+    }
+
+    if (messageId != "heart") {
       try {
-        var sim_id = message[message.length - 1];
-        if (sim_id.length != 12) {
-          sim_id = message[message.length - 2];
+        var key = messageId + sim_id || "";
+        if (this.handlers.has(key)) {
+          for (var fn of this.handlers.get(key)) {
+            try {
+              fn(evt);
+            } catch (err) {
+              console.warn(err);
+            }
+          }
         }
-        var key = message[0] + sim_id;
-        for (var fn of this.handlers.get(key)) {
-          try {
-            fn(evt);
-          } catch (err) {
-            console.warn(err);
+        if (this.handlers.has(messageId)) {
+          for (var fn1 of this.handlers.get(messageId)) {
+            try {
+              fn1(evt);
+            } catch (err) {
+              console.warn(err);
+            }
           }
         }
       } catch (err) {

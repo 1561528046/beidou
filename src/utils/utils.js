@@ -213,6 +213,13 @@ export default {
     //sim_id补齐12位
     return (sim_id = "0".repeat(12 - sim_id.length) + sim_id);
   },
+  unFormatSim(sim_id) {
+    //12位SIMID转11位
+    if (sim_id.length == 12) {
+      return sim_id.toString().slice(1);
+    }
+    return sim_id;
+  },
   formatInstruction(message) {
     return message
       .replace("$", "")

@@ -16,6 +16,8 @@
     <el-tabs v-model="$store.state.monitor.currentTab" style="height:100%;" class="monitor-tabs" @tab-remove="tabRemove">
       <el-tab-pane label="监控" :closable="false" name="index">
         <div class="monitor">
+          <!-- <qa-list></qa-list> -->
+          <monitor-info></monitor-info>
           <div id="container" style="width:100%;height:100%;"></div>
           <div class="vehicle-search shadow-box">
             <el-autocomplete v-model="searchVehicle" clearable :fetch-suggestions="vehicleSearch" placeholder="搜索车辆车牌号" @select="vehicleSelected" size="small" prefix-icon="el-icon-search" style="width:100%;">
@@ -111,6 +113,7 @@
     <el-dialog :title="instructionCard.title" append-to-body :visible.sync="instructionCard.show" width="50%">
       <div :is="instructionCard.component" :key="instructionCard.vehicle.sim_id" @instruction="sendInstruction" :vehicle="instructionCard.vehicle" v-if="instructionCard.vehicle"></div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -135,7 +138,9 @@ import vehicleTrack from "./components/vehicle-track.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
 import x8202 from "./components/x8202.vue"; //临时位置跟踪控制
 import x8302 from "./components/x8302.vue"; //提问下发
+import monitorInfo from "./components/monitor-info.vue"; //提问列表
 import x8400 from "./components/x8400.vue"; //电话回拨
+import x8401 from "./components/x8401.vue"; //电话本
 import moment from "moment";
 window.monitor = {};
 export default {
@@ -149,7 +154,9 @@ export default {
     vehicleTrack,
     x8202,
     x8302,
-    x8400
+    x8400,
+    x8401,
+    monitorInfo
   },
   data() {
     return {
@@ -275,6 +282,18 @@ export default {
           this.setUserCount();
         }, 20);
         this.initWS();
+        this.initInstructionListen(); //初始化电子运单/事件报告全局监听
+      },
+      initInstructionListen() {
+        vm.$instruction.on("x0701", evt => {
+          //电子运单数据
+          var data = JSON.parse(evt.data);
+          var sim_id = vm.$utils.unFormatSim(data.SimID);
+          if (this.data.has(sim_id)) {
+            //如果有当前车辆的监控权限,发送数据到$store
+            vm.$store.commit("x0701/add", data);
+          }
+        });
       },
       initWS() {
         /*初始化2个socket */
@@ -1093,10 +1112,7 @@ export default {
   position: relative;
   color: @t1;
 }
-.shadow-box {
-  box-shadow: 2px 2px 5px #ddd;
-  border-radius: 5px;
-}
+
 .vehicle-search {
   position: absolute;
   width: 350px;

@@ -1,20 +1,25 @@
 <template>
-  <el-form ref="form" :model="form" label-width="80px" @submit.native.prevent>
+  <el-form ref="baseForm" :model="form" label-width="80px" @submit.native.prevent>
     <el-form-item label="标志" required>
-      <el-select v-model="form.Body.AskFlag">
+      <el-checkbox-group v-model="flag">
+        <el-checkbox :label="1">紧急</el-checkbox>
+        <el-checkbox :label="8">终端 TTS 播读</el-checkbox>
+        <el-checkbox :label="16">广告屏显示</el-checkbox>
+      </el-checkbox-group>
+      <!-- <el-select v-model="form.AskFlag">
         <el-option label="紧急" value="1"></el-option>
         <el-option label="终端 TTS 播读" value="8"></el-option>
         <el-option label="广告屏显示" value="16"></el-option>
-      </el-select>
+      </el-select> -->
     </el-form-item>
-    <el-form-item label="问题标题">
-      <el-input v-model="form.Body.AskText"></el-input>
+    <el-form-item label="问题标题" required>
+      <el-input v-model="form.AskText"></el-input>
     </el-form-item>
 
     <ul class="anwser-list">
-      <li v-for="(anwser,index) in form.Body.CandidateAnswers" :key="index">
+      <li v-for="(anwser,index) in form.CandidateAnswers" :key="index">
         <el-form-item :label="'答案'+index">
-          <el-input v-model="form.Body.CandidateAnswers[index].AnswerContent">
+          <el-input v-model="form.CandidateAnswers[index].AnswerContent">
             <el-button slot="append" icon="el-icon-close" @click="remove(index)"></el-button>
           </el-input>
         </el-form-item>
@@ -45,53 +50,67 @@
 export default {
   data() {
     return {
+      flag: [],
       form: {
-        MessageId: "x8302",
-        Body: {
-          AskFlag: "1",
-          AskText: "123123",
-          CandidateAnswers: [
-            // {AnswerID:1,AnswerContent:"asf-|%12&^dasdf"},
-          ]
-        }
+        SimID: this.$utils.formatSim(this.vehicle.sim_id),
+        MessageID: "x8302",
+        AskFlag: "",
+        AskText: "",
+        CandidateAnswers: [
+          // {AnswerID:1,AnswerContent:"asf-|%12&^dasdf"},
+        ]
       }
     };
   },
+  watch: {
+    flag: function() {
+      var result = 0;
+      if (this.flag.length) {
+        result = this.flag.reduce((a, b) => {
+          return a + b;
+        });
+      }
+      this.form.AskFlag = result;
+    }
+  },
   props: ["vehicle"],
   created() {
-    this.$instruction.on("x0302", this.vehicle.sim_id, msg => {
-      console.log(msg);
+    this.$instruction.on("x8302", this.vehicle.sim_id, evt => {
+      var msg = JSON.parse(evt.data);
+      if (msg.code == 0) {
+        this.$message.success("执行成功！");
+        console.log(this.$store);
+        this.$store.commit("QA/addAsk", msg);
+      } else {
+        this.$message.warning("执行失败");
+      }
+      this.loading = false;
     });
   },
   methods: {
     add() {
-      this.form.Body.CandidateAnswers.push({
-        AnswerID: this.form.Body.CandidateAnswers.length,
+      this.form.CandidateAnswers.push({
+        AnswerID: this.form.CandidateAnswers.length,
         AnswerContent: ""
       });
     },
     remove(index) {
-      this.form.Body.CandidateAnswers.splice(index, 1);
+      this.form.CandidateAnswers.splice(index, 1);
     },
     messageSuccess() {
       this.$message.success("执行成功！");
     },
     formSubmit() {
-      //"x8302|1|afdasdfasfd|1,asdfasdfa;$"
-      // var sim_id = this.$utils.formatSim(this.vehicle.sim_id);
-      // var arr = [
-      //   "^x8302",
-      //   this.form.type,
-      //   this.form.Q,
-      //   this.formatAnwser(),
-      //   sim_id
-      // ];
-      // this.$instruction.send(arr.join("|") + "$");
       this.$instruction.send(JSON.stringify(this.form));
+      // this.$refs.baseForm.validate(isVaildate => {
+      //   if (isVaildate) {
+
+      //   }
+      // });
     }
   },
   beforeDestroy() {
-    this.$instruction.offAll("x8202", this.$props.vehicle.sim_id);
+    this.$instruction.offAll("x8302", this.$props.vehicle.sim_id);
   }
 };
 </script>
