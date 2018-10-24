@@ -21,10 +21,16 @@ var routers = [
     meta: { name: "首页" }
   },
   {
-    path: "fence-area",
-    name: "fence-area",
-    meta: { name: "区域添加车辆", hidden: true },
-    component: () => import("@/views/monitor/components/area-binding.vue")
+    path: "fence-platform",
+    name: "fence-platform",
+    meta: { name: "平台", hidden: true },
+    component: () => import("@/views/monitor/components/area-platform.vue")
+  },
+  {
+    path: "fence-vehicle",
+    name: "fence-vehicle",
+    meta: { name: "车机", hidden: true },
+    component: () => import("@/views/monitor/components/area-vehicle.vue")
   },
   {
     path: "/monitor",

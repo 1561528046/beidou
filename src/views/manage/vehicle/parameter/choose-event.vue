@@ -9,7 +9,7 @@
         <el-row :gutter="30">
           <el-col :span="24">
             <el-form-item label="设置类型">
-              <el-select v-model="event_type" size="small" clearable>
+              <el-select v-model="event_type" size="small">
                 <el-option value="0" label="删除终端现有所有事件">删除终端现有所有事件</el-option>
                 <el-option value="1" label="更新事件">更新事件</el-option>
                 <el-option value="2" label="追加事件">追加事件</el-option>

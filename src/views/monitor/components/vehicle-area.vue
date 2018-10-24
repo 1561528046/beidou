@@ -108,8 +108,11 @@
         </el-row>
         <el-button type="primary " @click="addForm(1)" size="small ">添加行政区域</el-button>
         <el-button type="primary " @click="addForm(2)" size="small ">添加自定义区域</el-button>
-        <router-link :to="{name:'fence-area'}">
-          <el-button style="margin-left:10px;" size="small" type="primary" icon="el-icon-edit">添加车辆</el-button>
+        <router-link :to="{name:'fence-platform'}">
+          <el-button style="margin-left:10px;" size="small" type="primary" icon="el-icon-edit">平台</el-button>
+        </router-link>
+        <router-link :to="{name:'fence-vehicle'}">
+          <el-button style="margin-left:10px;" size="small" type="primary" icon="el-icon-edit">车机</el-button>
         </router-link>
       </el-form>
       <el-table height="200" :data="tableData.data" size="small">

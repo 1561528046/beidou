@@ -2,11 +2,11 @@
   <div>
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="operating" label="操作状态"></el-table-column>
+      <el-table-column prop="operate" label="操作状态"></el-table-column>
       <!-- <el-table-column prop="Ox8300" label="文本信息下发" :formatter="$utils.baseFormatter"> </el-table-column> -->
     </el-table>
     <el-form label-width="150px" label-position="left" class="table-search" size="small">
-      <el-select clearable @change="chooseSetting" v-model="parameter" style="margin-bottom:10px;">
+      <el-select @change="chooseSetting" v-model="parameter" style="margin-bottom:10px;">
         <el-option value="1" label="文本信息下发">文本信息下发</el-option>
         <el-option value="2" label="信息服务">信息服务</el-option>
         <!-- <el-option value="3" label="提问应答">提问应答</el-option> -->
@@ -36,9 +36,6 @@
             <el-option value="2" label="天气预报">天气预报</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="信息长度">
-          <el-input v-model="information.information_length"></el-input>
-        </el-form-item>
         <el-form-item label="信息内容">
           <el-input v-model="information.information_content"></el-input>
         </el-form-item>
@@ -66,7 +63,6 @@ export default {
     return {
       information: {
         information_type: "",
-        information_length: "",
         information_content: ""
       },
       text: {
@@ -85,7 +81,7 @@ export default {
       service: false,
       questions: false,
       parameter: "",
-      str: "",
+      instruction: "",
       selectedVehicles: [],
       length: 0,
       vehicleDialog: false,
@@ -113,7 +109,6 @@ export default {
       this.text.information = "0";
       this.text.text_content = "";
       this.information.information_type = "";
-      this.information.information_length = "";
       this.information.information_content = "";
     },
     message: {
@@ -124,7 +119,38 @@ export default {
     },
     respond: {
       handler: function() {
-        console.log(this.$props.respond);
+        this.$set(this.$data, "instruction", this.$props.respond);
+        var str;
+        this.instruction = this.instruction.split("|");
+        if (this.instruction[0] == "^x8300") {
+          str = this.instruction[4];
+          str = str[0];
+          if (str == "0") {
+            this.communication.data.map(item => {
+              if (item.sim_id.length == 11) {
+                item.sim_id = "0" + item.sim_id;
+              }
+              if (this.instruction[3] == item.sim_id) {
+                this.$set(item, "operate", "文本信息下发设置成功");
+              }
+            });
+          }
+          //文本信息下发处理
+        } else if (this.instruction[0] == "^x8304") {
+          str = this.instruction[4];
+          str = str[0];
+          if (str == "0") {
+            this.communication.data.map(item => {
+              if (item.sim_id.length == 11) {
+                item.sim_id = "0" + item.sim_id;
+              }
+              if (this.instruction[3] == item.sim_id) {
+                this.$set(item, "operate", "信息服务设置成功");
+              }
+            });
+          }
+          //信息服务处理
+        }
       },
       deep: true
     }
@@ -154,10 +180,24 @@ export default {
     },
     // 设置
     setup() {
+      if (this.communication.data.length == 0) {
+        return this.$notify({
+          message: "请选择车辆!",
+          title: "提示",
+          type: "error"
+        });
+      }
       var parameter_id;
       var instructionset;
       var sim_id;
       if (this.parameter == "1") {
+        if (this.text.text_content == "") {
+          return this.$notify({
+            message: "请输入文本信息!",
+            title: "提示",
+            type: "error"
+          });
+        }
         parameter_id = "x8300";
         var num = ["0", "0", "0", "0", "0", "0", "0", "0"];
         if (this.text.emergency) {
@@ -199,14 +239,12 @@ export default {
             textContent +
             "|" +
             sim_id +
-            "|" +
             "$";
-          console.log(instructionset);
+          this.$emit("setting", instructionset);
         });
       } else if (this.parameter == "2") {
         parameter_id = "x8304";
         var type = this.information.information_type;
-        var length = this.information.information_length;
         var content = this.information.information_content;
         this.communication.data.map(item => {
           if (item.sim_id.length == 11) {
@@ -219,8 +257,6 @@ export default {
             parameter_id +
             "|" +
             type +
-            "|" +
-            length +
             "|" +
             content +
             "|" +
