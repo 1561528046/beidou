@@ -1,43 +1,76 @@
 <template>
-    <div class="admin-table-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
-        <!-- 返回 -->
-        <router-link :to="{name:'map'}">
-            <el-button style="position:absolute;top:-30px;right:31px;" size="small" icon="el-icon-arrow-left">
-                <span>返回</span>
-            </el-button>
-        </router-link>
-        <el-card shadow="always" class="full-box">
-            <el-form @submit.native.prevent ref="baseForm ">
-                <el-row :gutter="30 ">
-                    <el-col :span="10 ">
-                        <el-form-item label="选择车辆">
-                            <el-button style="margin-left:10px;" type="primary" size="small" @click="addForm">选择车辆</el-button>
-                            {{license}}
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="10 ">
-                        <el-form-item label="选择区域">
-                            <el-select @change="fenceItem" v-model="areaType" size="small" clearable>
-                                <el-option v-for="fence in fenceData" :key="fence.RegionId" :value="fence.Type" :label="fence.RegionName">{{fence.RegionName}}</el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="10 ">
-                        <el-form-item label="选择事件">
-                            <el-checkbox v-if="update_state" v-model="event_type.update" value="0" label="更新区域">更新区域</el-checkbox>
-                            <el-checkbox v-if="add_state" v-model="event_type.add" value="1" label="追加区域">追加区域</el-checkbox>
-                            <el-checkbox v-if="modify_state" v-model="event_type.modify" value="2" label="修改区域">修改区域</el-checkbox>
-                            <el-checkbox v-model="event_type.delete" value="3" label="删除区域">删除区域</el-checkbox>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
+  <div class="admin-table-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
+    <!-- 返回 -->
+    <router-link :to="{name:'map'}">
+      <el-button style="position:absolute;top:-30px;right:31px;" size="small" icon="el-icon-arrow-left">
+        <span>返回</span>
+      </el-button>
+    </router-link>
+    <el-card shadow="always" class="full-box">
+      <el-form label-width="120px" @submit.native.prevent ref="baseForm ">
+        <el-row :gutter="30 ">
+          <el-col :span="24">
+            <el-form-item label="选择车辆">
+              <el-button type="primary" size="small" @click="addForm">选择车辆</el-button>
+              {{license}}
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="选择区域">
+              <el-select style="width:20%;" v-model="areaType" size="small" clearable>
+                <el-option v-for="fence in fenceData" :key="fence.RegionId" :value="fence.RegionName" :label="fence.RegionName">{{fence.RegionName}}</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="选择事件">
+              <el-radio v-if="update_state" v-model="tableQuery.area" label="0">更新区域</el-radio>
+              <el-radio style="margin-left:12px;" v-if="add_state" v-model="tableQuery.area" label="1">追加区域</el-radio>
+              <el-radio style="margin-left:12px;" v-if="modify_state" v-model="tableQuery.area" label="2">修改区域</el-radio>
+              <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="3">删除区域</el-radio>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="区域属性">
+              <el-checkbox v-model="area_attribute.according_time">根据时间</el-checkbox>
+              <el-checkbox v-model="area_attribute.speed_limit">限速</el-checkbox>
+              <el-checkbox v-model="area_attribute.enter_driver">进区域报警给驾驶员</el-checkbox>;
+              <el-checkbox v-model="area_attribute.out_driver">出区域报警给驾驶员</el-checkbox>
+              <el-checkbox v-model="area_attribute.enter_platform">进区域报警给平台</el-checkbox>
+              <el-checkbox v-model="area_attribute.out_platform">出区域报警给平台</el-checkbox>
+              <br/>
+              <el-radio v-model="area_attribute.latitude" label="1">北纬</el-radio>
+              <el-radio v-model="area_attribute.latitude" label="2">南纬</el-radio>
+              <el-radio v-model="area_attribute.longitude" label="1">东经</el-radio>
+              <el-radio v-model="area_attribute.longitude" label="2">西经</el-radio>
+              <el-radio v-model="area_attribute.open_door" label="1">允许开门</el-radio>
+              <el-radio v-model="area_attribute.open_door" label="2">禁止开门</el-radio>
+              <el-radio v-model="area_attribute.communication_module" label="1">进区域开启通信模块</el-radio>
+              <el-radio v-model="area_attribute.communication_module" label="2">进区域关闭通信模块</el-radio>
+              <el-radio v-model="area_attribute.CNSS_data" label="1">进区域不采集CNSS详细定位数据</el-radio>
+              <el-radio v-model="area_attribute.CNSS_data" label="2">进区域采集CNSS详细定位数据</el-radio>
+            </el-form-item>
+          </el-col>
+          <el-col v-if="speed" :span="24">
+            <el-form-item label="最高速度(km/h)">
+              <el-input v-model="tableQuery.MaxSpeed" style="width:20%;" size="small"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col v-if="speed_limit" :span="24">
+            <el-form-item label="超速持续时间(秒)">
+              <el-input v-model="tableQuery.OverSpeedLastTime" style="width:20%;" size="small"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
             <el-button @click="setting" style="display:block; margin:0 auto;" size="small" type="primary">设置</el-button>
-        </el-card>
-        <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-            <choose-vehicle @button="vehicleCallback" @success=" () => {this.addDialog = false;}" :key="addKey"></choose-vehicle>
-        </el-dialog>
-    </div>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-card>
+    <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vehicle @button="vehicleCallback" @success=" () => {this.addDialog = false;}" :key="addKey"></choose-vehicle>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -48,52 +81,269 @@ export default {
   components: { chooseVehicle },
   created() {
     this.selectFence();
+    // this.$instruction.on("x8600", eve => {
+    //   console.log(eve);
+    // });
   },
   computed: {},
   data() {
     return {
+      area_attribute: {
+        according_time: false, //根据时间
+        speed_limit: false, //限速
+        enter_driver: false, //进区域报警给驾驶员
+        out_driver: false, //出区域报警给驾驶员
+        enter_platform: false, //进区域报警给平台
+        out_platform: false, //出区域报警给平台
+        latitude: "1", //纬度
+        longitude: "1", //经度
+        open_door: "1", //是否允许开门
+        communication_module: "1", //进区域是否开启通信模块
+        CNSS_data: "1" //进区域是否采集CNSS详细定位数据
+      },
+      tableQuery: {
+        MaxSpeed: "", //最高速度
+        OverSpeedLastTime: "", //超速持续时间
+        vehicleData: {}, //车辆信息
+        area: false, //事件
+        areaData: {}
+      },
+      formData: {
+        page: 1,
+        size: 9999,
+        RegionName: "",
+        Type: ""
+      },
+      speed: false,
+      speed_limit: false,
       update_state: true,
       add_state: true,
       modify_state: true,
       addKey: 0,
       addDialog: false,
-      event_type: {
-        update: false,
-        add: false,
-        modify: false,
-        delete: false
-      },
       license: "",
       areaType: "",
-      vehicleData: {},
-      fenceData: [],
-      formData: {
-        page: 1,
-        size: 9999
-      }
+      fenceData: []
     };
   },
   watch: {
+    area_attribute: {
+      handler: function() {
+        if (!this.area_attribute.speed_limit) {
+          this.speed = false;
+          this.speed_limit = false;
+        } else {
+          this.speed = true;
+          this.speed_limit = true;
+        }
+      },
+      deep: true
+    },
     areaType: function() {
-      if (this.areaType == "3") {
-        this.update_state = false;
-        this.add_state = false;
-        this.modify_state = false;
-      } else {
-        this.update_state = true;
-        this.add_state = true;
-        this.modify_state = true;
-      }
+      this.formData.RegionName = this.areaType;
+      this.tableQuery.area = false;
+      GetRegionByPage(this.formData).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.tableQuery, "areaData", res.data.data[0]);
+        }
+        if (this.tableQuery.areaData.Type == "3") {
+          this.update_state = false;
+          this.add_state = false;
+          this.modify_state = false;
+        } else {
+          this.update_state = true;
+          this.add_state = true;
+          this.modify_state = true;
+        }
+      });
     }
   },
   methods: {
-    fenceItem(row) {
-      console.log(row);
-    },
     setting() {
-      console.log(this.areaData);
-      console.log(this.vehicleData);
-      console.log(this.event_type);
+      var num = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      if (this.area_attribute.according_time) {
+        num[0] = 1;
+      }
+      if (this.area_attribute.speed_limit) {
+        num[1] = 1;
+      }
+      if (this.area_attribute.enter_driver) {
+        num[2] = 1;
+      }
+      if (this.area_attribute.enter_platform) {
+        num[3] = 1;
+      }
+      if (this.area_attribute.out_driver) {
+        num[4] = 1;
+      }
+      if (this.area_attribute.out_platform) {
+        num[5] = 1;
+      }
+      if (this.area_attribute.latitude == "1") {
+        num[6] = 0;
+      } else if ((this.area_attribute.latitude = "2")) {
+        num[6] = 1;
+      }
+      if (this.area_attribute.longitude == "1") {
+        num[7] = 0;
+      } else if (this.area_attribute.longitude == "2") {
+        num[7] = 1;
+      }
+      if (this.area_attribute.open_door == "1") {
+        num[8] = 0;
+      } else if (this.area_attribute.open_door == "2") {
+        num[8] = 1;
+      }
+      if (this.area_attribute.communication_module == "1") {
+        num[14] = 0;
+      } else if (this.area_attribute.communication_module == "2") {
+        num[14] = 1;
+      }
+      if (this.area_attribute.communication_module == "1") {
+        num[15] = 0;
+      } else if (this.area_attribute.communication_module == "2") {
+        num[15] = 1;
+      }
+      var reg = new RegExp(",", "g");
+      num = parseInt(num.toString().replace(reg, ""), 2);
+      // 0x8600 设置圆形区域
+      // 0x8601 删除圆形区域
+      // 0x8602 设置矩形区域
+      // 0x8603 删除矩形区域
+      // 0x8604 设置多边形区域
+      // 0x8605 删除多边形区域
+      if (this.license == "") {
+        return this.$notify({
+          message: "请选择车辆!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.formData.RegionName == "") {
+        return this.$notify({
+          message: "请选择区域!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (!this.tableQuery.area) {
+        return this.$notify({
+          message: "请选择事件!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.area_attribute.speed_limit) {
+        if (this.tableQuery.MaxSpeed == "") {
+          return this.$notify({
+            message: "请输入最高速度!",
+            title: "提示",
+            type: "error"
+          });
+        } else if (this.tableQuery.OverSpeedLastTime == "") {
+          return this.$notify({
+            message: "请输入超速持续时间!",
+            title: "提示",
+            type: "error"
+          });
+        }
+      }
+      //圆形区域
+      var instruction = {};
+      if (this.tableQuery.vehicleData.sim_id.length == 11) {
+        this.tableQuery.vehicleData.sim_id =
+          "0" + this.tableQuery.vehicleData.sim_id;
+      }
+      //{SimID:"",MessageID:", 设置属性 SetProperty,区域项 CircleAreas:[{区域id CircleAreaId,区域属性 CircleAreaProperty,中心点纬度 CenterLatitude,中心点经度 CenterLongitude,半径 Radius,起始时间 StartTime,结束时间 EndTime,最高速度 MaxSpeed,超速持续时间 OverSpeedLastTime}]}
+      if (this.tableQuery.areaData.Type == "1") {
+        if (this.tableQuery.area == "3") {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8601",
+            CircleAreaIDs: this.tableQuery.areaData.RegionId
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+          // 删除
+        } else {
+          // 更新 追加 修改
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8600",
+            SetProperty: this.tableQuery.area,
+            CircleAreas: {
+              CircleAreaId: this.tableQuery.areaData.RegionId,
+              CircleAreaProperty: num,
+              CenterLatitude: this.tableQuery.areaData.CenterLatitude,
+              CenterLongitude: this.tableQuery.areaData.CenterLongitude,
+              Radius: this.tableQuery.areaData.Radius,
+              StartTime: this.tableQuery.areaData.StartTime,
+              EndTime: this.tableQuery.areaData.EndTime,
+              MaxSpeed: this.tableQuery.MaxSpeed,
+              OverSpeedLastTime: this.tableQuery.OverSpeedLastTime
+            }
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+        }
+      } else if (this.tableQuery.areaData.Type == "2") {
+        if (this.tableQuery.area == "3") {
+          // 删除
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8603",
+            RectangleAreaIDs: this.tableQuery.areaData.RegionId
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+        } else {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8602",
+            SetProperty: this.tableQuery.area,
+            RectangleAreas: {
+              RectangleAreaId: this.tableQuery.areaData.RegionId,
+              RectangleAreaProperty: num,
+              LeftTopLatitude: this.tableQuery.areaData.LeftTopLatitude,
+              LeftTopLongitude: this.tableQuery.areaData.LeftTopLongitude,
+              RightBottomLatitude: this.tableQuery.areaData.RightBottomLatitude,
+              RightBottomLongitude: this.tableQuery.areaData
+                .RightBottomLongitude,
+              StartTime: this.tableQuery.areaData.StartTime,
+              EndTime: this.tableQuery.areaData.EndTime,
+              MaxSpeed: this.tableQuery.MaxSpeed,
+              OverSpeedLastTime: this.tableQuery.OverSpeedLastTime
+            }
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+        }
+      } else if (this.tableQuery.areaData.Type == "3") {
+        if (this.tableQuery.area == "3") {
+          // 删除
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8605",
+            PolygonAreaIDs: this.tableQuery.areaData.RegionId
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+        } else {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8604",
+            PolygonAreaId: this.tableQuery.areaData.RegionId,
+            PolygonAreaProperty: num,
+            StartTime: this.tableQuery.areaData.StartTime,
+            EndTime: this.tableQuery.areaData.EndTime,
+            MaxSpeed: this.tableQuery.MaxSpeed,
+            OverSpeedLastTime: this.tableQuery.OverSpeedLastTime,
+            Nodes: {
+              Latitude: "",
+              Longitude: ""
+            }
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+        }
+      }
     },
     addForm() {
       this.addKey++;
@@ -120,7 +370,7 @@ export default {
       });
     },
     vehicleCallback(scope) {
-      this.vehicleData = scope.row;
+      this.tableQuery.vehicleData = scope.row;
       this.license = scope.row.license;
       this.addDialog = false;
     }
