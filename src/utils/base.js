@@ -99,6 +99,15 @@ export const dict = {
     }
     return str.join(",");
   },
+  getAlarmKey: function(num) {
+    var keys = [];
+    for (var key in this.alarm) {
+      if ((num & key) == key) {
+        keys.push(key);
+      }
+    }
+    return keys;
+  },
   get_license_color: function(key) {
     return this.license_color[key] || {};
   },

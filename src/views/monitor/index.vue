@@ -294,6 +294,15 @@ export default {
             vm.$store.commit("x0701/add", data);
           }
         });
+        vm.$instruction.on("x0301", evt => {
+          //事件上报数据
+          var data = JSON.parse(evt.data);
+          var sim_id = vm.$utils.unFormatSim(data.SimID);
+          if (this.data.has(sim_id)) {
+            //如果有当前车辆的监控权限,发送数据到$store
+            vm.$store.commit("x0301/add", data);
+          }
+        });
       },
       initWS() {
         /*初始化2个socket */
@@ -633,6 +642,10 @@ export default {
           ) {
             //进出围栏报警、或者车机自身报警
             this.setAlarm(vehicleData);
+          }
+          if (vehicleData.alarm != "0" || vehicleData.alarm != "") {
+            //车辆需要人工确认的报警加入$store
+            vm.$store.commit("alarm/add", vehicleData);
           }
           //初始化围栏报警数据
           vehicle.fence_alarm_text = "";

@@ -2,7 +2,7 @@ import { dict } from "./base.js";
 import utils from "./utils.js";
 export default class Instruction {
   constructor() {
-    this.ws = new WebSocket(dict.INSTRUCTION_URL);
+    this.ws = null;
     this.wsInterval = null;
     this.handlers = new Map();
     /*handlers结构
@@ -11,17 +11,25 @@ export default class Instruction {
       }    
      */
 
-    this.ws.addEventListener("message", evt => {
-      this.emit(evt);
-    });
     this.init();
   }
   init() {
+    clearInterval(this.wsInterval);
+    this.ws = new WebSocket(dict.INSTRUCTION_URL);
     this.ws.onopen = () => {
       this.ws.send("^heart$");
       this.wsInterval = setInterval(() => {
         this.ws.send("^heart$");
       }, 20000);
+    };
+    this.ws.addEventListener("message", evt => {
+      this.emit(evt);
+    });
+    this.ws.onclose = () => {
+      //重连
+      setTimeout(() => {
+        this.init();
+      }, 2000);
     };
   }
   send(instruction) {

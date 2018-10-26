@@ -185,6 +185,7 @@ function serialize(buffer) {
   var result = {};
   result.msgId = (buffer[1] << 8) + buffer[2]; //消息ID
   result.sim_id = formatSim(buffer.slice(5, 11)); //终端手机号
+  result.serial_no = (buffer[11] << 8) + buffer[12]; //消息流水号
   switch (result.msgId) {
     case 0x0200:
       arr.push(
@@ -377,6 +378,9 @@ function formatTime(buffer) {
  * @param {int} step 左移的位数
  */
 function SHL(num, step) {
+  if (!parseInt(num) || num == undefined) {
+    return 0;
+  }
   var result = num.toString(2);
   result = "0".repeat(8 - result.length) + result;
   result += "0".repeat(parseInt(step));
