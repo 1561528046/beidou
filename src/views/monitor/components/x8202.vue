@@ -3,12 +3,12 @@
     <el-form-item label="时间间隔">
       <el-input v-model="form.step"></el-input>
     </el-form-item>
-    <el-form-item label="时间间隔">
+    <el-form-item label="位置跟踪有效期">
       <el-input v-model="form.expires"></el-input>
     </el-form-item>
 
     <el-form-item>
-      <el-button type="primary" native-type="submit" @click="formSubmit">立即创建</el-button>
+      <el-button type="primary" native-type="submit" @click="formSubmit">立即下发</el-button>
     </el-form-item>
   </el-form>
 </template>

@@ -252,7 +252,7 @@
         <!-- <i class="iconfont icon-idcard"></i> -->
         <i class="iconfont icon-boxplot-fill" @click="showCard('deviceCard','设备信息')" title="设备信息"></i>
         <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')" title="sim卡信息"></i>
-        <i class="iconfont icon-wifi" @click="showCard('audio')" title="语音对讲"></i>
+        <i class="iconfont icon-luyin" @click="showCard('x8804','录音')" title="录音"></i>
         <i class="iconfont icon-error-fill _error" @click="openCard('error')" title="异常信息"></i>
         <el-popover placement="top" width="30" trigger="click" :disabled="[1,2,3].indexOf(snapshotState)!=-1">
           <el-row :gutter="20">
@@ -269,13 +269,13 @@
           
         </el-tooltip> -->
 
-        <i class="iconfont icon-video" title="视频信息"></i>
+        <i class="iconfont icon-video" @click="showCard('x8801','视频录播')" title="视频录播"></i>
         <el-badge :value="parseInt(mapData.vehicle.alarm_count)||''" :max="99" class="alarm-badge" :class="{'no-alarm':!mapData.vehicle.alarm_count}">
           <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
         </el-badge>
       </div>
       <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%">
-        <div :is="card.component" :vehicle="$props.vehicle"></div>
+        <div :is="card.component" :vehicle="$props.vehicle" v-if="card.show"></div>
       </el-dialog>
       <el-dialog :title="$props.vehicle.license+'抓拍图片'" append-to-body :visible.sync="snapshotDialog" width="50%">
         <div style="text-align:center;">
@@ -293,12 +293,28 @@ import { location2address } from "@/utils/map-tools.js";
 import { initMap, createMarker, setMarker } from "@/utils/map.js";
 import deviceCard from "./card-device.vue";
 import simCard from "./card-sim.vue";
-import snapshot from "./snapshot.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
+import x8804 from "./x8804.vue";
+import x8801 from "./x8801.vue";
 export default {
-  components: { deviceCard, simCard, chooseVehicle, snapshot },
+  components: { deviceCard, simCard, chooseVehicle, x8804, x8801 },
   data() {
     return {
+      snapData: {
+        MessageID: "x8801",
+        SimID: this.$utils.formatSim(this.$props.vehicle.sim_id),
+        ChannelId: 1, //通道 ID 1-255
+        PhotoCommand: "1", //0 表示停止拍摄；0xFFFF 表示录像；其它表示拍照张数
+        PhotoTimeInterval: "0", //秒，0 表示按最小间隔拍照或一直录像
+        StoreFlag: "0", //1：保存；0：实时上传
+        Resolution: "1", //分辨率 0x01:320*240；0x02:640*480；0x03:800*600；0x04:1024*768;0x05:176*144;[Qcif];0x06:352*288;[Cif];0x07:704*288;[HALF D1];0x08:704*576;[D1];
+        Quality: "10", //1-10，1 代表质量损失最小，10 表示压缩比最大
+        Brightness: "125", //亮度0-255
+        Contrast: "64", //对比度  0-127
+        Saturation: "64", //饱和度0-127
+        Chroma: "125" //色度 0-255
+      },
+      snapTimeout: 0,
       snapshotState: 0, //0默认状态 1指令成功 2指令失败 3拍照成功 4拍照完成
       snapshotUrl: "", //照片路径
       snapshotDialog: false,
@@ -355,6 +371,10 @@ export default {
     }
   },
   mounted() {
+    this.$instruction.on("x8801", this.$props.vehicle.sim_id, this.x8801);
+    this.$instruction.on("x0800", this.$props.vehicle.sim_id, this.x0800);
+    this.$instruction.on("x8800", this.$props.vehicle.sim_id, this.x8800);
+
     this.bodyWidth = this.$el.parentElement.scrollWidth;
     this.bodyHeight = this.$el.parentElement.scrollHeight;
     var monitorData = this.$props.vehicle;
@@ -511,47 +531,46 @@ export default {
       }
     },
     snapshot(id) {
-      var arr = [
-        id || 1, //通道 ID 1-255
-        1, //0 表示停止拍摄；0xFFFF 表示录像；其它表示拍照张数
-        0, //秒，0 表示按最小间隔拍照或一直录像
-        0, //1：保存；0：实时上传
-        1, //分辨率 0x01:320*240；0x02:640*480；0x03:800*600；0x04:1024*768;0x05:176*144;[Qcif];0x06:352*288;[Cif];0x07:704*288;[HALF D1];0x08:704*576;[D1];
-        10, //1-10，1 代表质量损失最小，10 表示压缩比最大
-        125, //亮度0-255
-        64, //对比度  0-127
-        64, //饱和度0-127
-        125, //色度 0-255
-        this.$utils.formatSim(this.$props.vehicle.sim_id)
-      ];
-      //^x8106|1|018681892547|0$
-      this.$instruction.on("x8801", this.$props.vehicle.sim_id, evt => {
-        var arr = this.$utils.formatInstruction(evt.data);
-        if (arr.pop() == 0) {
-          this.snapshotState = 1;
-        } else {
-          this.snapshotState = 2;
-        }
-      });
-      this.$instruction.on("x0800", this.$props.vehicle.sim_id, () => {
-        // var arr = this.$utils.formatInstruction(evt.data);
-        // this.snapshotMediaId = arr[1];
-        // setTimeout(()=>{
-        //   //如果30秒后没有收到8800 刷新图片
-        // },30000)
-        this.snapshotState = 3;
-      });
-      this.$instruction.on("x8800", this.$props.vehicle.sim_id, evt => {
-        var arr = this.$utils.formatInstruction(evt.data);
-        this.snapshotUrl =
-          this.$dict.BASE_URL +
-          `api/MultiMedia/GetMultiMediaByType?type=0&sim_id=${
-            arr[2]
-          }&media_id=${arr[1]}`;
-        this.snapshotState = 4;
-        this.snapshotDialog = true;
-      });
-      this.$instruction.send("^x8801|" + arr.join("|") + "$");
+      this.snapData.ChannelId = id;
+      this.$instruction.send(JSON.stringify(this.snapData));
+    },
+    x8800(evt) {
+      if (this.card.show) {
+        return false;
+      }
+      clearTimeout(this.snapTimeout);
+      this.showImg(evt, true);
+    },
+    x0800(evt) {
+      if (this.card.show) {
+        return false;
+      }
+      this.snapshotState = 3;
+      this.snapTimeout = setTimeout(() => {
+        this.showImg(evt, true);
+      }, 25000);
+    },
+    x8801(evt) {
+      if (this.card.show) {
+        return false;
+      }
+      clearTimeout(this.snapTimeout);
+      var data = JSON.parse(evt.data);
+      if (data.code == 0) {
+        this.snapshotState = 1;
+      } else {
+        this.snapshotState = 2;
+      }
+    },
+    showImg(evt, isShow) {
+      var data = JSON.parse(evt.data);
+      this.snapshotUrl =
+        this.$dict.BASE_URL +
+        `api/MultiMedia/GetMultiMediaByType?type=0&sim_id=${
+          data.SimID
+        }&media_id=${data.MultimediaDataID}`;
+      this.snapshotState = 4;
+      this.snapshotDialog = isShow;
     },
     openCard(type) {
       this.$store.commit("openTab", type);
@@ -570,9 +589,9 @@ export default {
   },
   beforeDestroyed() {
     this.mapData.map.destroy();
-    this.$instruction.offAll("x0800", this.$vehicle.sim_id);
-    this.$instruction.offAll("x8801", this.$vehicle.sim_id);
-    this.$instruction.offAll("x8800", this.$vehicle.sim_id);
+    this.$instruction.offAll("x0800", this.$vehicle.sim_id, this.x0800);
+    this.$instruction.offAll("x8801", this.$vehicle.sim_id, this.x0800);
+    this.$instruction.offAll("x8800", this.$vehicle.sim_id, this.x0800);
   }
 };
 </script>

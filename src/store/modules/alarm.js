@@ -31,7 +31,6 @@ export default {
       }
     },
     remove(state, data) {
-      debugger;
       var sim_id = utils.unFormatSim(data.SimID);
       if (state.data.has(sim_id)) {
         var alarmObj = state.data.get(sim_id);
