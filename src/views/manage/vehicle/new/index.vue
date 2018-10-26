@@ -356,6 +356,9 @@ export default {
     }
   },
   watch: {
+    state: function() {
+      console.log(this.$props.state);
+    },
     contract_date: function(newVal) {
       if (newVal) {
         this.tableQuery.contract_startdate = newVal[0];
@@ -391,8 +394,8 @@ export default {
         if (res.data.code == 0) {
           var data = res.data.data[0];
           this.renew_platform = data.renew_platform == "False" ? false : true;
-          this.renew_company = data.renew_platform == "False" ? false : true;
-          this.active_company = data.renew_platform == "False" ? false : true;
+          this.renew_company = data.renew_company == "False" ? false : true;
+          this.active_company = data.active_company == "False" ? false : true;
         }
       });
     },
