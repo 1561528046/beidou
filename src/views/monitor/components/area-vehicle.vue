@@ -15,22 +15,32 @@
               {{license}}
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col v-if="!delType" :span="24">
             <el-form-item label="选择区域">
               <el-select style="width:20%;" v-model="areaType" size="small" clearable>
                 <el-option v-for="fence in fenceData" :key="fence.RegionId" :value="fence.RegionName" :label="fence.RegionName">{{fence.RegionName}}</el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="选择事件">
-              <el-radio v-if="update_state" v-model="tableQuery.area" label="0">更新区域</el-radio>
-              <el-radio style="margin-left:12px;" v-if="add_state" v-model="tableQuery.area" label="1">追加区域</el-radio>
-              <el-radio style="margin-left:12px;" v-if="modify_state" v-model="tableQuery.area" label="2">修改区域</el-radio>
-              <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="3">删除区域</el-radio>
+          <el-col v-if="delType" :span="24">
+            <el-form-item label="选择区域类型">
+              <el-select style="width:20%;" v-model="areaValue" size="small" clearable>
+                <el-option value="1" label="圆形">圆形</el-option>
+                <el-option value="2" label="矩形">矩形</el-option>
+                <el-option value="3" label="多边形">多边形</el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
+            <el-form-item label="选择事件">
+              <el-radio v-if="update_state" v-model="tableQuery.area" label="0">更新区域</el-radio>
+              <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="1">追加区域</el-radio>
+              <el-radio style="margin-left:12px;" v-if="modify_state" v-model="tableQuery.area" label="2">修改区域</el-radio>
+              <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="3">删除区域</el-radio>
+              <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="4">删除全部区域</el-radio>
+            </el-form-item>
+          </el-col>
+          <el-col v-if="areaState" :span="24">
             <el-form-item label="区域属性">
               <el-checkbox v-model="area_attribute.according_time">根据时间</el-checkbox>
               <el-checkbox v-model="area_attribute.speed_limit">限速</el-checkbox>
@@ -114,15 +124,17 @@ export default {
         RegionName: "",
         Type: ""
       },
+      areaValue: "",
       speed: false,
       speed_limit: false,
       update_state: true,
-      add_state: true,
       modify_state: true,
       addKey: 0,
       addDialog: false,
       license: "",
       areaType: "",
+      delType: false,
+      areaState: true,
       fenceData: []
     };
   },
@@ -139,6 +151,21 @@ export default {
       },
       deep: true
     },
+    tableQuery: {
+      handler: function() {
+        if (this.tableQuery.area == "3") {
+          this.areaState = false;
+          this.delType = false;
+        } else if (this.tableQuery.area == "4") {
+          this.areaState = false;
+          this.delType = true;
+        } else {
+          this.delType = false;
+          this.areaState = true;
+        }
+      },
+      deep: true
+    },
     areaType: function() {
       this.formData.RegionName = this.areaType;
       this.tableQuery.area = false;
@@ -148,11 +175,9 @@ export default {
         }
         if (this.tableQuery.areaData.Type == "3") {
           this.update_state = false;
-          this.add_state = false;
           this.modify_state = false;
         } else {
           this.update_state = true;
-          this.add_state = true;
           this.modify_state = true;
         }
       });
@@ -262,23 +287,29 @@ export default {
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
           // 删除
+        } else if (this.tableQuery.area == "4") {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8601",
+            CircleAreasCount: "0"
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
         } else {
           // 更新 追加 修改
           instruction = {
             SimID: this.tableQuery.vehicleData.sim_id,
             MessageID: "x8600",
             SetProperty: this.tableQuery.area,
-            CircleAreas: {
-              CircleAreaId: this.tableQuery.areaData.RegionId,
-              CircleAreaProperty: num,
-              CenterLatitude: this.tableQuery.areaData.CenterLatitude,
-              CenterLongitude: this.tableQuery.areaData.CenterLongitude,
-              Radius: this.tableQuery.areaData.Radius,
-              StartTime: this.tableQuery.areaData.StartTime,
-              EndTime: this.tableQuery.areaData.EndTime,
-              MaxSpeed: this.tableQuery.MaxSpeed,
-              OverSpeedLastTime: this.tableQuery.OverSpeedLastTime
-            }
+            CircleAreaId: this.tableQuery.areaData.RegionId,
+            CircleAreaProperty: num,
+            CenterLatitude: this.tableQuery.areaData.CenterLatitude,
+            CenterLongitude: this.tableQuery.areaData.CenterLongitude,
+            Radius: this.tableQuery.areaData.Radius,
+            StartTime: this.tableQuery.areaData.StartTime,
+            EndTime: this.tableQuery.areaData.EndTime,
+            MaxSpeed: this.tableQuery.MaxSpeed,
+            OverSpeedLastTime: this.tableQuery.OverSpeedLastTime
           };
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
@@ -293,24 +324,29 @@ export default {
           };
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
+        } else if (this.tableQuery.area == "4") {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8603",
+            RectangleAreasCount: "0"
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
         } else {
           instruction = {
             SimID: this.tableQuery.vehicleData.sim_id,
             MessageID: "x8602",
             SetProperty: this.tableQuery.area,
-            RectangleAreas: {
-              RectangleAreaId: this.tableQuery.areaData.RegionId,
-              RectangleAreaProperty: num,
-              LeftTopLatitude: this.tableQuery.areaData.LeftTopLatitude,
-              LeftTopLongitude: this.tableQuery.areaData.LeftTopLongitude,
-              RightBottomLatitude: this.tableQuery.areaData.RightBottomLatitude,
-              RightBottomLongitude: this.tableQuery.areaData
-                .RightBottomLongitude,
-              StartTime: this.tableQuery.areaData.StartTime,
-              EndTime: this.tableQuery.areaData.EndTime,
-              MaxSpeed: this.tableQuery.MaxSpeed,
-              OverSpeedLastTime: this.tableQuery.OverSpeedLastTime
-            }
+            RectangleAreaId: this.tableQuery.areaData.RegionId,
+            RectangleAreaProperty: num,
+            LeftTopLatitude: this.tableQuery.areaData.LeftTopLatitude,
+            LeftTopLongitude: this.tableQuery.areaData.LeftTopLongitude,
+            RightBottomLatitude: this.tableQuery.areaData.RightBottomLatitude,
+            RightBottomLongitude: this.tableQuery.areaData.RightBottomLongitude,
+            StartTime: this.tableQuery.areaData.StartTime,
+            EndTime: this.tableQuery.areaData.EndTime,
+            MaxSpeed: this.tableQuery.MaxSpeed,
+            OverSpeedLastTime: this.tableQuery.OverSpeedLastTime
           };
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
@@ -325,7 +361,21 @@ export default {
           };
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
+        } else if (this.tableQuery.area == "4") {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8603",
+            PolygonAreasCount: "0"
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
         } else {
+          var location = [];
+          var lat = this.tableQuery.areaData.Latitude.split(",");
+          var lng = this.tableQuery.areaData.Longitude.split(",");
+          lng.map((item, index) => {
+            location.push({ Latitude: lat[index], Longitude: item });
+          });
           instruction = {
             SimID: this.tableQuery.vehicleData.sim_id,
             MessageID: "x8604",
@@ -335,10 +385,7 @@ export default {
             EndTime: this.tableQuery.areaData.EndTime,
             MaxSpeed: this.tableQuery.MaxSpeed,
             OverSpeedLastTime: this.tableQuery.OverSpeedLastTime,
-            Nodes: {
-              Latitude: "",
-              Longitude: ""
-            }
+            Nodes: location
           };
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);

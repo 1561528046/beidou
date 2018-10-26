@@ -4,6 +4,7 @@ var MONITOR_URL = "ws://192.168.88.88:5002";
 // var BASE_URL = "http://192.168.88.88:10462/";
 // var API_URL = "http://192.168.88.88:10462/api";
 var INSTRUCTION_URL = "ws://192.168.88.88:5000";
+// || true
 if (process.env.NODE_ENV == "production") {
   BASE_URL = "http://60.10.139.113:1023/";
   API_URL = "http://60.10.139.113:1023/api";
