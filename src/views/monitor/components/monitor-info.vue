@@ -4,15 +4,22 @@
       <i class="iconfont icon-window-minimize window-ctrl" v-if="!smallSize" @click="smallSize = true" style="position:relative;top:-7px;"></i>
       <i class="iconfont icon-window-maximize window-ctrl" v-if="smallSize" @click="smallSize = false"></i>
     </div>
-    <el-tabs v-model="currentTab" type="border-card">
-      <el-tab-pane label="提问列表" :closable="false" name="QA">
+    <el-tabs v-model="currentTab" type="border-card" @tab-click="smallSize = false">
+      <el-tab-pane :closable="false" name="QA">
+        <span slot="label"> 提问列表<el-badge :value="$store.getters['QA/askList'].length" :max="99" class="monitor-badge"> </el-badge> </span>
         <qa-list></qa-list>
       </el-tab-pane>
-      <el-tab-pane label="电子运单" :closable="false" name="x0701">
+      <el-tab-pane :closable="false" name="x0701">
+        <span slot="label"> 电子运单<el-badge :value="$store.getters['x0701/list'].length" :max="99" class="monitor-badge"> </el-badge></span>
         <list-x0701></list-x0701>
       </el-tab-pane>
-      <el-tab-pane label="事件报告" :closable="false" name="x0301">
-        <!-- <qa-list></qa-list> -->
+      <el-tab-pane :closable="false" name="x0301">
+        <span slot="label"> 事件报告<el-badge :value="$store.getters['x0301/list'].length" :max="99" class="monitor-badge"> </el-badge></span>
+        <list-x0301></list-x0301>
+      </el-tab-pane>
+      <el-tab-pane :closable="false" name="x8203">
+        <span slot="label"> 报警消息<el-badge :value="$store.getters['alarm/list'].length" :max="99" class="monitor-badge"> </el-badge></span>
+        <list-x8203></list-x8203>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -20,14 +27,21 @@
 <script>
 import qaList from "./list-qa.vue"; //提问列表
 import listX0701 from "./list-x0701.vue"; //电子运单列表
+import listX0301 from "./list-x0301.vue"; //事件报告
+import listX8203 from "./list-x8203.vue"; //报警
 export default {
   components: {
     qaList,
-    listX0701
+    listX0701,
+    listX0301,
+    listX8203
   },
   data() {
     return {
-      smallSize: false, //最小化
+      tabCounts: {
+        QA: 0
+      },
+      smallSize: true, //最小化
       currentTab: "QA"
     };
   },
@@ -41,7 +55,12 @@ export default {
 </script>
 <style lang="less">
 @import "../../../style/var.less";
+
 .monitor-info {
+  .monitor-badge {
+    left: 3px;
+    top: 4px;
+  }
   position: absolute;
   bottom: 0;
 

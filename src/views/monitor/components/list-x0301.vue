@@ -1,8 +1,8 @@
 <template>
   <div class="QA">
-    <el-table :data="$store.getters['x0701/list']" size="mini">
+    <el-table :data="$store.getters['x0301/list']" size="mini">
       <el-table-column prop="SimID" label="sim id"></el-table-column>
-      <el-table-column prop="Ewaybillcontent" label="电子运单内容"></el-table-column>
+      <el-table-column :formatter="formatEvent" label="事件内容"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button size="mini" @click="remove(scope.row)">删除</el-button>
@@ -21,8 +21,11 @@ export default {
   },
   created() {},
   methods: {
+    formatEvent(row) {
+      return this.$dict.get_special(row.EventID) || "";
+    },
     remove(row) {
-      this.$store.commit("x0701/remove", row.id);
+      this.$store.commit("x0301/remove", row.id);
     }
   }
 };

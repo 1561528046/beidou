@@ -100,7 +100,7 @@ export default {
             validator: this.validateDeviceId
           },
           {
-            pattern: /^[0-9a-zA_Z]+$/,
+            pattern: /^[0-9a-zA-Z]+$/,
             message: "只能输入字母和数字！"
           }
         ],
