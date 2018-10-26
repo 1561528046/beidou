@@ -66,7 +66,7 @@
               <el-input v-model="tableQuery.MaxSpeed" style="width:20%;" size="small"></el-input>
             </el-form-item>
           </el-col>
-          <el-col v-if="speed_limit" :span="24">
+          <el-col v-if="speed" :span="24">
             <el-form-item label="超速持续时间(秒)">
               <el-input v-model="tableQuery.OverSpeedLastTime" style="width:20%;" size="small"></el-input>
             </el-form-item>
@@ -126,7 +126,6 @@ export default {
       },
       areaValue: "",
       speed: false,
-      speed_limit: false,
       update_state: true,
       modify_state: true,
       addKey: 0,
@@ -143,10 +142,8 @@ export default {
       handler: function() {
         if (!this.area_attribute.speed_limit) {
           this.speed = false;
-          this.speed_limit = false;
         } else {
           this.speed = true;
-          this.speed_limit = true;
         }
       },
       deep: true
@@ -156,10 +153,16 @@ export default {
         if (this.tableQuery.area == "3") {
           this.areaState = false;
           this.delType = false;
+          this.speed = false;
         } else if (this.tableQuery.area == "4") {
           this.areaState = false;
           this.delType = true;
         } else {
+          if (this.area_attribute.speed_limit) {
+            this.speed = true;
+          } else {
+            this.speed = false;
+          }
           this.delType = false;
           this.areaState = true;
         }
@@ -187,47 +190,47 @@ export default {
     setting() {
       var num = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       if (this.area_attribute.according_time) {
-        num[0] = 1;
+        num[15] = 1;
       }
       if (this.area_attribute.speed_limit) {
-        num[1] = 1;
-      }
-      if (this.area_attribute.enter_driver) {
-        num[2] = 1;
-      }
-      if (this.area_attribute.enter_platform) {
-        num[3] = 1;
-      }
-      if (this.area_attribute.out_driver) {
-        num[4] = 1;
-      }
-      if (this.area_attribute.out_platform) {
-        num[5] = 1;
-      }
-      if (this.area_attribute.latitude == "1") {
-        num[6] = 0;
-      } else if ((this.area_attribute.latitude = "2")) {
-        num[6] = 1;
-      }
-      if (this.area_attribute.longitude == "1") {
-        num[7] = 0;
-      } else if (this.area_attribute.longitude == "2") {
-        num[7] = 1;
-      }
-      if (this.area_attribute.open_door == "1") {
-        num[8] = 0;
-      } else if (this.area_attribute.open_door == "2") {
-        num[8] = 1;
-      }
-      if (this.area_attribute.communication_module == "1") {
-        num[14] = 0;
-      } else if (this.area_attribute.communication_module == "2") {
         num[14] = 1;
       }
+      if (this.area_attribute.enter_driver) {
+        num[13] = 1;
+      }
+      if (this.area_attribute.enter_platform) {
+        num[12] = 1;
+      }
+      if (this.area_attribute.out_driver) {
+        num[11] = 1;
+      }
+      if (this.area_attribute.out_platform) {
+        num[10] = 1;
+      }
+      if (this.area_attribute.latitude == "1") {
+        num[9] = 0;
+      } else if ((this.area_attribute.latitude = "2")) {
+        num[9] = 1;
+      }
+      if (this.area_attribute.longitude == "1") {
+        num[8] = 0;
+      } else if (this.area_attribute.longitude == "2") {
+        num[8] = 1;
+      }
+      if (this.area_attribute.open_door == "1") {
+        num[7] = 0;
+      } else if (this.area_attribute.open_door == "2") {
+        num[7] = 1;
+      }
       if (this.area_attribute.communication_module == "1") {
-        num[15] = 0;
+        num[1] = 0;
       } else if (this.area_attribute.communication_module == "2") {
-        num[15] = 1;
+        num[1] = 1;
+      }
+      if (this.area_attribute.communication_module == "1") {
+        num[0] = 0;
+      } else if (this.area_attribute.communication_module == "2") {
+        num[0] = 1;
       }
       var reg = new RegExp(",", "g");
       num = parseInt(num.toString().replace(reg, ""), 2);
@@ -243,7 +246,7 @@ export default {
           title: "提示",
           type: "error"
         });
-      } else if (this.formData.RegionName == "") {
+      } else if (this.areaType == "") {
         return this.$notify({
           message: "请选择区域!",
           title: "提示",
@@ -270,11 +273,60 @@ export default {
           });
         }
       }
+
+      // if (this.tableQuery.area == "3") {
+      //   if (this.areaType == "") {
+      //     return this.$notify({
+      //       message: "请选择区域!",
+      //       title: "提示",
+      //       type: "error"
+      //     });
+      //   }
+      // } else if (this.tableQuery.area == "4") {
+      //
+      // }
+
       //圆形区域
       var instruction = {};
       if (this.tableQuery.vehicleData.sim_id.length == 11) {
         this.tableQuery.vehicleData.sim_id =
           "0" + this.tableQuery.vehicleData.sim_id;
+      }
+      if (this.tableQuery.area == "4") {
+        if (this.areaValue == "") {
+          return this.$notify({
+            message: "请选择区域类型!",
+            title: "提示",
+            type: "error"
+          });
+        } else if (this.areaValue == "1") {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8601",
+            CircleAreasCount: "0"
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+          return;
+        } else if (this.areaValue == "2") {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8603",
+            RectangleAreasCount: "0"
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+          return;
+        } else if (this.areaValue == "3") {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8603",
+            PolygonAreasCount: "0"
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+          return;
+        }
       }
       //{SimID:"",MessageID:", 设置属性 SetProperty,区域项 CircleAreas:[{区域id CircleAreaId,区域属性 CircleAreaProperty,中心点纬度 CenterLatitude,中心点经度 CenterLongitude,半径 Radius,起始时间 StartTime,结束时间 EndTime,最高速度 MaxSpeed,超速持续时间 OverSpeedLastTime}]}
       if (this.tableQuery.areaData.Type == "1") {
@@ -287,14 +339,6 @@ export default {
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
           // 删除
-        } else if (this.tableQuery.area == "4") {
-          instruction = {
-            SimID: this.tableQuery.vehicleData.sim_id,
-            MessageID: "x8601",
-            CircleAreasCount: "0"
-          };
-          instruction = JSON.stringify(instruction);
-          this.$instruction.send(instruction);
         } else {
           // 更新 追加 修改
           instruction = {
@@ -324,14 +368,6 @@ export default {
           };
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
-        } else if (this.tableQuery.area == "4") {
-          instruction = {
-            SimID: this.tableQuery.vehicleData.sim_id,
-            MessageID: "x8603",
-            RectangleAreasCount: "0"
-          };
-          instruction = JSON.stringify(instruction);
-          this.$instruction.send(instruction);
         } else {
           instruction = {
             SimID: this.tableQuery.vehicleData.sim_id,
@@ -358,14 +394,6 @@ export default {
             SimID: this.tableQuery.vehicleData.sim_id,
             MessageID: "x8605",
             PolygonAreaIDs: this.tableQuery.areaData.RegionId
-          };
-          instruction = JSON.stringify(instruction);
-          this.$instruction.send(instruction);
-        } else if (this.tableQuery.area == "4") {
-          instruction = {
-            SimID: this.tableQuery.vehicleData.sim_id,
-            MessageID: "x8603",
-            PolygonAreasCount: "0"
           };
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
