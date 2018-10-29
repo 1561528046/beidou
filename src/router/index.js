@@ -30,7 +30,7 @@ var routers = [
     path: "fence-vehicle",
     name: "fence-vehicle",
     meta: { name: "车机", hidden: true },
-    component: () => import("@/views/monitor/components/area-vehicle.vue")
+    component: () => import("@/views/monitor/components/area-machine.vue")
   },
   {
     path: "/monitor",
