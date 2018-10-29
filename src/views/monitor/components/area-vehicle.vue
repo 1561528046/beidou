@@ -1,82 +1,74 @@
 <template>
-  <div class="admin-table-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
-    <!-- 返回 -->
-    <router-link :to="{name:'map'}">
-      <el-button style="position:absolute;top:-30px;right:31px;" size="small" icon="el-icon-arrow-left">
-        <span>返回</span>
-      </el-button>
-    </router-link>
-    <el-card shadow="always" class="full-box">
-      <el-form label-width="120px" @submit.native.prevent ref="baseForm ">
-        <el-row :gutter="30 ">
-          <el-col :span="24">
-            <el-form-item label="选择车辆">
-              <el-button type="primary" size="small" @click="addForm">选择车辆</el-button>
-              {{license}}
-            </el-form-item>
-          </el-col>
-          <el-col v-if="!delType" :span="24">
-            <el-form-item label="选择区域">
-              <el-select style="width:20%;" v-model="areaType" size="small" clearable>
-                <el-option v-for="fence in fenceData" :key="fence.RegionId" :value="fence.RegionName" :label="fence.RegionName">{{fence.RegionName}}</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col v-if="delType" :span="24">
-            <el-form-item label="选择区域类型">
-              <el-select style="width:20%;" v-model="areaValue" size="small" clearable>
-                <el-option value="1" label="圆形">圆形</el-option>
-                <el-option value="2" label="矩形">矩形</el-option>
-                <el-option value="3" label="多边形">多边形</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="选择事件">
-              <el-radio v-if="update_state" v-model="tableQuery.area" label="0">更新区域</el-radio>
-              <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="1">追加区域</el-radio>
-              <el-radio style="margin-left:12px;" v-if="modify_state" v-model="tableQuery.area" label="2">修改区域</el-radio>
-              <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="3">删除区域</el-radio>
-              <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="4">删除全部区域</el-radio>
-            </el-form-item>
-          </el-col>
-          <el-col v-if="areaState" :span="24">
-            <el-form-item label="区域属性">
-              <el-checkbox v-model="area_attribute.according_time">根据时间</el-checkbox>
-              <el-checkbox v-model="area_attribute.speed_limit">限速</el-checkbox>
-              <el-checkbox v-model="area_attribute.enter_driver">进区域报警给驾驶员</el-checkbox>;
-              <el-checkbox v-model="area_attribute.out_driver">出区域报警给驾驶员</el-checkbox>
-              <el-checkbox v-model="area_attribute.enter_platform">进区域报警给平台</el-checkbox>
-              <el-checkbox v-model="area_attribute.out_platform">出区域报警给平台</el-checkbox>
-              <br/>
-              <el-radio v-model="area_attribute.latitude" label="1">北纬</el-radio>
-              <el-radio v-model="area_attribute.latitude" label="2">南纬</el-radio>
-              <el-radio v-model="area_attribute.longitude" label="1">东经</el-radio>
-              <el-radio v-model="area_attribute.longitude" label="2">西经</el-radio>
-              <el-radio v-model="area_attribute.open_door" label="1">允许开门</el-radio>
-              <el-radio v-model="area_attribute.open_door" label="2">禁止开门</el-radio>
-              <el-radio v-model="area_attribute.communication_module" label="1">进区域开启通信模块</el-radio>
-              <el-radio v-model="area_attribute.communication_module" label="2">进区域关闭通信模块</el-radio>
-              <el-radio v-model="area_attribute.CNSS_data" label="1">进区域不采集CNSS详细定位数据</el-radio>
-              <el-radio v-model="area_attribute.CNSS_data" label="2">进区域采集CNSS详细定位数据</el-radio>
-            </el-form-item>
-          </el-col>
-          <el-col v-if="speed" :span="24">
-            <el-form-item label="最高速度(km/h)">
-              <el-input v-model="tableQuery.MaxSpeed" style="width:20%;" size="small"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col v-if="speed" :span="24">
-            <el-form-item label="超速持续时间(秒)">
-              <el-input v-model="tableQuery.OverSpeedLastTime" style="width:20%;" size="small"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-button @click="setting" style="display:block; margin:0 auto;" size="small" type="primary">设置</el-button>
-          </el-col>
-        </el-row>
-      </el-form>
-    </el-card>
+  <div class="admin-table-container">
+    <el-form label-width="120px" @submit.native.prevent ref="baseForm ">
+      <el-row :gutter="30 ">
+        <el-col :span="24">
+          <el-form-item label="选择车辆">
+            <el-button type="primary" size="small" @click="addForm">选择车辆</el-button>
+            {{license}}
+          </el-form-item>
+        </el-col>
+        <el-col v-if="!delType" :span="24">
+          <el-form-item label="选择区域">
+            <el-select style="width:20%;" v-model="areaType" size="small" clearable>
+              <el-option v-for="fence in fenceData" :key="fence.RegionId" :value="fence.RegionName" :label="fence.RegionName">{{fence.RegionName}}</el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="delType" :span="24">
+          <el-form-item label="选择区域类型">
+            <el-select style="width:20%;" v-model="areaValue" size="small" clearable>
+              <el-option value="1" label="圆形">圆形</el-option>
+              <el-option value="2" label="矩形">矩形</el-option>
+              <el-option value="3" label="多边形">多边形</el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="选择事件">
+            <el-radio v-if="update_state" v-model="tableQuery.area" label="0">更新区域</el-radio>
+            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="1">追加区域</el-radio>
+            <el-radio style="margin-left:12px;" v-if="modify_state" v-model="tableQuery.area" label="2">修改区域</el-radio>
+            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="3">删除区域</el-radio>
+            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="4">删除全部区域</el-radio>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="areaState" :span="24">
+          <el-form-item label="区域属性">
+            <el-checkbox v-model="area_attribute.according_time">根据时间</el-checkbox>
+            <el-checkbox v-model="area_attribute.speed_limit">限速</el-checkbox>
+            <el-checkbox v-model="area_attribute.enter_driver">进区域报警给驾驶员</el-checkbox>;
+            <el-checkbox v-model="area_attribute.out_driver">出区域报警给驾驶员</el-checkbox>
+            <el-checkbox v-model="area_attribute.enter_platform">进区域报警给平台</el-checkbox>
+            <el-checkbox v-model="area_attribute.out_platform">出区域报警给平台</el-checkbox>
+            <br/>
+            <el-radio v-model="area_attribute.latitude" label="1">北纬</el-radio>
+            <el-radio v-model="area_attribute.latitude" label="2">南纬</el-radio>
+            <el-radio v-model="area_attribute.longitude" label="1">东经</el-radio>
+            <el-radio v-model="area_attribute.longitude" label="2">西经</el-radio>
+            <el-radio v-model="area_attribute.open_door" label="1">允许开门</el-radio>
+            <el-radio v-model="area_attribute.open_door" label="2">禁止开门</el-radio>
+            <el-radio v-model="area_attribute.communication_module" label="1">进区域开启通信模块</el-radio>
+            <el-radio v-model="area_attribute.communication_module" label="2">进区域关闭通信模块</el-radio>
+            <el-radio v-model="area_attribute.CNSS_data" label="1">进区域不采集CNSS详细定位数据</el-radio>
+            <el-radio v-model="area_attribute.CNSS_data" label="2">进区域采集CNSS详细定位数据</el-radio>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="speed" :span="24">
+          <el-form-item label="最高速度(km/h)">
+            <el-input v-model="tableQuery.MaxSpeed" style="width:20%;" size="small"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="speed" :span="24">
+          <el-form-item label="超速持续时间(秒)">
+            <el-input v-model="tableQuery.OverSpeedLastTime" style="width:20%;" size="small"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-button @click="setting" style="display:block; margin:0 auto;" size="small" type="primary">设置</el-button>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <choose-vehicle @button="vehicleCallback" @success=" () => {this.addDialog = false;}" :key="addKey"></choose-vehicle>
     </el-dialog>
@@ -91,9 +83,16 @@ export default {
   components: { chooseVehicle },
   created() {
     this.selectFence();
-    // this.$instruction.on("x8600", eve => {
-    //   console.log(eve);
-    // });
+    this.$instruction.on("x8600", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "设置成功",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
   },
   computed: {},
   data() {

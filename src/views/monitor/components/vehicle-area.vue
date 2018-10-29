@@ -71,9 +71,10 @@
     <!-- 区域工具 -->
     <div v-show="custom" class="input-card">
       <div class="input-item" style="margin-top:15px;">
-        <el-radio style="margin-left:0;padding-left:0" @change="selectRadio" v-model="radio" label="circle">画圆</el-radio>
-        <el-radio style="margin-left:15px;padding-left:0" @change="selectRadio" v-model="radio" label="rectangle">画矩形</el-radio>
-        <el-radio style="margin-left:15px;padding-left:0" @change="selectRadio" v-model="radio" label="polygon">画多边形</el-radio>
+        <el-radio @change="selectRadio" v-model="radio" label="polyline">画线</el-radio>
+        <el-radio @change="selectRadio" v-model="radio" label="circle">画圆</el-radio>
+        <el-radio @change="selectRadio" v-model="radio" label="rectangle">画矩形</el-radio>
+        <el-radio style="margin-left:0;" @change="selectRadio" v-model="radio" label="polygon">画多边形</el-radio>
         <!-- <el-radio style="margin-left:0;" @change="selectRadio" v-model="radio" label="marker">画点</el-radio> -->
       </div>
       <div class="input-item item-btn" style="margin-top:24px; width:227px;margin:0 auto;">
@@ -604,6 +605,18 @@ export default {
     // 根据选择(画圆,画矩形,画多边形)调用工具
     draw(type) {
       switch (type) {
+        case "polyline": {
+          this.mapData.mouseTool.polyline({
+            strokeColor: "#3366FF",
+            strokeOpacity: 1,
+            strokeWeight: 6,
+            // 线样式还支持 'dashed'
+            strokeStyle: "solid"
+            // strokeStyle是dashed时有效
+            // strokeDasharray: [10, 5],
+          });
+          break;
+        }
         case "marker": {
           this.mapData.mouseTool.marker({
             //同Marker的Option设置
