@@ -1,10 +1,10 @@
 <template>
-  <el-form ref="form" :model="form" label-width="80px" @submit.native.prevent>
+  <el-form ref="form" :model="form" label-width="140px" @submit.native.prevent>
     <el-form-item label="时间间隔">
-      <el-input v-model="form.step"></el-input>
+      <el-input-number :min="1" v-model="form.TimeInterval"></el-input-number>
     </el-form-item>
     <el-form-item label="位置跟踪有效期">
-      <el-input v-model="form.expires"></el-input>
+      <el-input-number :min="1" v-model="form.TrackExpire"></el-input-number>
     </el-form-item>
 
     <el-form-item>
@@ -17,28 +17,28 @@ export default {
   data() {
     return {
       form: {
-        expires: 0,
-        step: 0
+        SimID: this.$utils.formatSim(this.vehicle.sim_id),
+        MessageID: "x8202",
+        TimeInterval: 0,
+        TrackExpire: 0
       }
     };
   },
   props: ["vehicle"],
   created() {
-    var sim =
-      "0".repeat(12 - this.$props.vehicle.sim_id.length) +
-      this.$props.vehicle.sim_id;
-    this.$instruction.on("x8202", sim, this.messageSuccess);
+    this.$instruction.on("x8202", this.vehicle.sim_id, this.messageSuccess);
   },
   methods: {
-    messageSuccess() {
-      this.$message.success("执行成功！");
+    messageSuccess(evt) {
+      var data = JSON.parse(evt.data);
+      if (data.code == 0) {
+        this.$message.success("执行成功！");
+      } else {
+        this.$message.warning("执行失败");
+      }
     },
     formSubmit() {
-      var sim =
-        "0".repeat(12 - this.$props.vehicle.sim_id.length) +
-        this.$props.vehicle.sim_id;
-      var arr = ["^x8202", this.form.step, this.form.expires, sim];
-      this.$instruction.send(arr.join("|") + "$");
+      this.$instruction.send(JSON.stringify(this.form));
     },
     response() {}
   },

@@ -105,13 +105,16 @@
       <el-tab-pane label="数据异常" :closable="true" name="error" v-if="$store.state.monitor.tabs.indexOf('error') !=-1">
         <!-- <vehicle-error :vehicle="$store.state.monitor.monitorErrorVehicle"></vehicle-error> -->
       </el-tab-pane>
+      <el-tab-pane label="媒体列表" :closable="true" name="media" v-if="$store.state.monitor.tabs.indexOf('media') !=-1">
+        <vehicle-media :vehicle="$store.state.monitor.monitorMediaVehicle"></vehicle-media>
+      </el-tab-pane>
       <!-- 单车标签 -->
       <el-tab-pane :label="vehicle.license" :closable="true" v-for="vehicle in $store.getters.singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
     </el-tabs>
     <el-dialog :title="instructionCard.title" append-to-body :visible.sync="instructionCard.show" width="50%">
-      <div :is="instructionCard.component" :key="instructionCard.vehicle.sim_id" @instruction="sendInstruction" :vehicle="instructionCard.vehicle" v-if="instructionCard.vehicle"></div>
+      <div :is="instructionCard.component" :key="instructionCard.vehicle.sim_id" :vehicle="instructionCard.vehicle" v-if="instructionCard.vehicle"></div>
     </el-dialog>
 
   </div>
@@ -136,6 +139,7 @@ import vehicleSingle from "./components/vehicle-single.vue";
 import vehicleArea from "./components/vehicle-area.vue";
 import vehicleTrack from "./components/vehicle-track.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
+import vehicleMedia from "./components/vehicle-media.vue";
 import x8202 from "./components/x8202.vue"; //临时位置跟踪控制
 import x8302 from "./components/x8302.vue"; //提问下发
 import monitorInfo from "./components/monitor-info.vue"; //提问列表
@@ -152,6 +156,7 @@ export default {
     vehicleSingle,
     vehicleAlarm,
     vehicleTrack,
+    vehicleMedia,
     x8202,
     x8302,
     x8400,
@@ -727,17 +732,24 @@ export default {
           this.$alert("初始化分组失败！");
         });
     },
-    sendInstruction(instruction) {
-      monitor.ws.instruction.send(instruction);
-    },
     contextmenuInstruction({ instruction, sim_id }) {
       var instructionArr = instruction.split("|");
       if (instructionArr[0] == "x8500") {
         //无需设置、直接发送的命令车门解锁、上锁
-        sim_id = this.$utils.formatSim(sim_id);
-        this.$instruction.send(
-          "^x8500|" + instructionArr[1] + "|" + sim_id + "$"
-        );
+        var obj = {
+          SimID: this.$utils.formatSim(sim_id),
+          MessageID: "x8500",
+          ControlFlag: instructionArr[1]
+        };
+        this.$instruction.send(JSON.stringify(obj));
+        this.$instruction.once("x8500", evt => {
+          var data = JSON.parse(evt.data);
+          if (data.code == 0) {
+            this.$message.success("下发成功");
+          } else {
+            this.$message.warning("下发失败");
+          }
+        });
         return false;
       }
       if (instructionArr[0] == "x8201") {

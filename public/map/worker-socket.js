@@ -192,6 +192,11 @@ function serialize(buffer) {
         Object.assign(result, x0200(buffer.slice(13, buffer.length - 1)))
       );
       break;
+    case 0x0201:
+      arr.push(
+        Object.assign(result, x0200(buffer.slice(15, buffer.length - 1)))
+      );
+      break;
     case 0x0704:
       var results = x0704(buffer.slice(13, buffer.length - 1));
       results.map(item => {

@@ -2,6 +2,7 @@ import { dict } from "./base.js";
 import utils from "./utils.js";
 export default class Instruction {
   constructor() {
+    this.onceList = new Map();
     this.ws = null;
     this.wsInterval = null;
     this.handlers = new Map();
@@ -47,6 +48,22 @@ export default class Instruction {
     if (!this.handlers.has(key)) {
       this.handlers.set(key, new Set());
     }
+    this.handlers.get(key).add(fn);
+  }
+  once(event, sim_id, fn) {
+    //执行一次后删除监听函数
+    if (typeof sim_id === "function") {
+      fn = sim_id;
+    }
+    var key = event;
+    if (sim_id && typeof sim_id != "function") {
+      sim_id = "0".repeat(12 - sim_id.length) + sim_id;
+      key = event + sim_id;
+    }
+    if (!this.handlers.has(key)) {
+      this.handlers.set(key, new Set());
+    }
+    this.onceList.set(fn, this.handlers.get(key));
     this.handlers.get(key).add(fn);
   }
   off(ins, sim_id, handler) {
@@ -118,6 +135,10 @@ export default class Instruction {
           for (var fn of this.handlers.get(key)) {
             try {
               fn(evt);
+              if (this.onceList.has(fn)) {
+                this.onceList.get(fn).delete(fn);
+                this.onceList.delete(fn);
+              }
             } catch (err) {
               console.warn(err);
             }
@@ -127,6 +148,10 @@ export default class Instruction {
           for (var fn1 of this.handlers.get(messageId)) {
             try {
               fn1(evt);
+              if (this.onceList.has(fn1)) {
+                this.onceList.get(fn1).delete(fn1);
+                this.onceList.delete(fn1);
+              }
             } catch (err) {
               console.warn(err);
             }

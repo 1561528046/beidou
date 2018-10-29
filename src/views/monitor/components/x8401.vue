@@ -3,8 +3,9 @@
     <el-form-item label="设置方式" required>
       <el-select v-model="form.SetType">
         <el-option label="覆盖" value="1"></el-option>
-        <el-option label="追加" value="4"></el-option>
-        <el-option label="修改" value="8"></el-option>
+        <el-option label="追加" value="2"></el-option>
+        <el-option label="修改" value="3"></el-option>
+        <el-option label="全部删除" value="0"></el-option>
       </el-select>
     </el-form-item>
 
@@ -35,13 +36,13 @@
           </template>
         </el-table-column>
       </el-table>
-      <li class="add">
+      <li class="add" style="padding-top:15px;">
         <el-button @click="add"><i class="el-icon-plus"></i>添加联系人</el-button>
       </li>
     </ul>
 
     <el-form-item>
-      <el-button type="primary" native-type="submit" @click="formSubmit" :loading="loading">立即发布</el-button>
+      <el-button type="primary" native-type="submit" @click="formSubmit" :loading="loading">立即下发</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -63,9 +64,9 @@ export default {
     return {
       loading: false,
       form: {
-        MessageID: "x8302",
+        MessageID: "x8401",
         SimID: this.$utils.formatSim(this.vehicle.sim_id),
-        SetType: "4",
+        SetType: "2",
         LinkManItems: [
           // {CallFlag:"",PhoneNumber:"",LinkMan:""},
         ]
@@ -74,10 +75,9 @@ export default {
   },
   props: ["vehicle"],
   created() {
-    this.$instruction.on("x8302", this.vehicle.sim_id, evt => {
+    this.$instruction.on("x8401", this.vehicle.sim_id, evt => {
       var msg = JSON.parse(evt.data);
       if (msg.code == 0) {
-        debugger;
         this.$message.success("执行成功！");
       } else {
         this.$message.warning("执行失败");
@@ -102,7 +102,7 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$instruction.offAll("x8302", this.$props.vehicle.sim_id);
+    this.$instruction.offAll("x8401", this.$props.vehicle.sim_id);
   }
 };
 </script>

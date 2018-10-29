@@ -30,7 +30,7 @@
     </ul>
 
     <el-form-item>
-      <el-button type="primary" native-type="submit" @click="formSubmit">立即创建</el-button>
+      <el-button type="primary" native-type="submit" @click="formSubmit">立即下发</el-button>
     </el-form-item>
   </el-form>
 </template>

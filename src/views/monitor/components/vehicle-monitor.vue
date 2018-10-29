@@ -273,6 +273,7 @@
         <el-badge :value="parseInt(mapData.vehicle.alarm_count)||''" :max="99" class="alarm-badge" :class="{'no-alarm':!mapData.vehicle.alarm_count}">
           <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
         </el-badge>
+        <i class="iconfont icon-video" @click="openCard('media')" title="媒体列表"></i>
       </div>
       <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%">
         <div :is="card.component" :vehicle="$props.vehicle" v-if="card.show"></div>
@@ -580,6 +581,9 @@ export default {
           break;
         case "alarm":
           this.$store.commit("setMonitorAlarmVehicle", this.$props.vehicle);
+          break;
+        case "media":
+          this.$store.commit("setMonitorMediaVehicle", this.$props.vehicle);
           break;
       }
     },

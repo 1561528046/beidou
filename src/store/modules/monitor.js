@@ -6,7 +6,8 @@ export default {
     tabs: [], //标签管理（单车监控标签通过singleVehicle管理）
     monitorAlarmVehicle: {}, //报警对应的车辆
     monitorErrorVehicle: {}, //异常对应的车辆
-    monitorTrackVehicle: {} //轨迹对应的车辆
+    monitorTrackVehicle: {}, //轨迹对应的车辆
+    setMonitorMediaVehicle: {} //媒体列表对应车辆
   },
   mutations: {
     openSingleVehicle(state, vehicle) {
@@ -46,6 +47,10 @@ export default {
     setMonitorTrackVehicle(state, vehicle) {
       state.monitorTrackVehicle = vehicle;
       this.commit("openTab", "track");
+    },
+    setMonitorMediaVehicle(state, vehicle) {
+      state.monitorMediaVehicle = vehicle;
+      this.commit("openTab", "media");
     }
   },
   actions: {},
