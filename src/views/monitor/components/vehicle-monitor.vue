@@ -301,13 +301,14 @@ export default {
   components: { deviceCard, simCard, chooseVehicle, x8804, x8801 },
   data() {
     return {
+      x8801Sim: "", //记录发送出去的x8801 来判断是否需要在此组件接受 x0800 x8800
       snapData: {
         MessageID: "x8801",
         SimID: this.$utils.formatSim(this.$props.vehicle.sim_id),
         ChannelId: 1, //通道 ID 1-255
         PhotoCommand: "1", //0 表示停止拍摄；0xFFFF 表示录像；其它表示拍照张数
         PhotoTimeInterval: "0", //秒，0 表示按最小间隔拍照或一直录像
-        StoreFlag: "0", //1：保存；0：实时上传
+        StoreFlag: "1", //1：保存；0：实时上传
         Resolution: "1", //分辨率 0x01:320*240；0x02:640*480；0x03:800*600；0x04:1024*768;0x05:176*144;[Qcif];0x06:352*288;[Cif];0x07:704*288;[HALF D1];0x08:704*576;[D1];
         Quality: "10", //1-10，1 代表质量损失最小，10 表示压缩比最大
         Brightness: "125", //亮度0-255
@@ -532,18 +533,21 @@ export default {
       }
     },
     snapshot(id) {
+      this.x8801Sim = this.$utils.formatSim(this.vehicle.sim_id);
       this.snapData.ChannelId = id;
       this.$instruction.send(JSON.stringify(this.snapData));
     },
     x8800(evt) {
-      if (this.card.show) {
+      var data = JSON.parse(evt.data);
+      if (this.card.show || this.x8801Sim != data.SimID) {
         return false;
       }
       clearTimeout(this.snapTimeout);
       this.showImg(evt, true);
     },
     x0800(evt) {
-      if (this.card.show) {
+      var data = JSON.parse(evt.data);
+      if (this.card.show || this.x8801Sim != data.SimID) {
         return false;
       }
       this.snapshotState = 3;
@@ -552,11 +556,11 @@ export default {
       }, 25000);
     },
     x8801(evt) {
-      if (this.card.show) {
+      var data = JSON.parse(evt.data);
+      if (this.card.show || this.x8801Sim != data.SimID) {
         return false;
       }
       clearTimeout(this.snapTimeout);
-      var data = JSON.parse(evt.data);
       if (data.code == 0) {
         this.snapshotState = 1;
       } else {
@@ -594,8 +598,8 @@ export default {
   beforeDestroyed() {
     this.mapData.map.destroy();
     this.$instruction.offAll("x0800", this.$vehicle.sim_id, this.x0800);
-    this.$instruction.offAll("x8801", this.$vehicle.sim_id, this.x0800);
-    this.$instruction.offAll("x8800", this.$vehicle.sim_id, this.x0800);
+    this.$instruction.offAll("x8801", this.$vehicle.sim_id, this.x8801);
+    this.$instruction.offAll("x8800", this.$vehicle.sim_id, this.x8800);
   }
 };
 </script>
