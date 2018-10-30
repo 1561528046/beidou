@@ -8,8 +8,40 @@
       <el-table-column prop="Ox0083" label="机动车号牌" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0084" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
     </el-table>
-    <el-form label-width="170px" label-position="left" class="table-search" size="small">
+    <el-form label-width="130px" label-position="left" class="table-search" size="small">
       <el-row :gutter="30">
+        <el-col :span="6">
+          <el-form-item label-width="130px" label="机动车号牌">
+            <el-input style="width:80%" v-model="communication.Ox0083">
+              <!-- <template slot="append">
+                <el-button @click="setup('0x0083')">设置</el-button>
+              </template> -->
+            </el-input>
+            <!-- <el-button @click="collect('0x0083')" style="margin-left:31px">采集</el-button> -->
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label-width="130px" label="车牌颜色">
+            <el-input style="width:80%" v-model="communication.Ox0084">
+              <!-- <template slot="append">
+                <el-button @click="setup('0x0084')">设置</el-button>
+              </template> -->
+            </el-input>
+            <!-- <el-button @click="collect('0x0084')" style="margin-left:31px">采集</el-button> -->
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label-width="130px" label="车辆识别码(VIN)">
+            <el-input style="width:80%" v-model="communication.vehicle_code">
+            </el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <div>
+            <el-button size="small" @click="setNational('82H')">设置</el-button>
+            <el-button size="small" @click="collectNational('05H')" style="margin-left:31px">采集</el-button>
+          </div>
+        </el-col>
         <el-col :span="8">
           <el-form-item label="车辆所在的省域ID">
             <el-input style="width:60%" v-model="communication.Ox0081">
@@ -28,26 +60,6 @@
               </template>
             </el-input>
             <el-button @click="collect('0x0082')" style="margin-left:31px">采集</el-button>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="机动车号牌">
-            <el-input style="width:60%" v-model="communication.Ox0083">
-              <template slot="append">
-                <el-button @click="setup('0x0083')">设置</el-button>
-              </template>
-            </el-input>
-            <el-button @click="collect('0x0083')" style="margin-left:31px">采集</el-button>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="车牌颜色">
-            <el-input style="width:60%" v-model="communication.Ox0084">
-              <template slot="append">
-                <el-button @click="setup('0x0084')">设置</el-button>
-              </template>
-            </el-input>
-            <el-button @click="collect('0x0084')" style="margin-left:31px">采集</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -71,6 +83,7 @@ export default {
         Ox0082: "",
         Ox0083: "",
         Ox0084: "",
+        vehicle_code: "",
         data: []
       },
       tableQuery: {
@@ -217,6 +230,82 @@ export default {
           "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
         this.$emit("setting", instructionset);
       });
+    },
+    setNational(type) {
+      if (this.communication.data.length == 0) {
+        return this.$notify({
+          message: "请选择车辆!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.communication.data.length > 1) {
+        return this.$notify({
+          message: "无法进行批量设置!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.communication.vehicle_code == "") {
+        return this.$notify({
+          message: "请输入车辆识别码!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.communication.Ox0083 == "") {
+        return this.$notify({
+          message: "请输入车牌号!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.communication.Ox0084 == "") {
+        return this.$notify({
+          message: "请输入车牌颜色!",
+          title: "提示",
+          type: "error"
+        });
+      }
+      var data = {};
+      var sim_id = "";
+      if (this.communication.data[0].sim_id.length == 11) {
+        sim_id = "0" + this.communication.data[0].sim_id;
+      }
+      if (type == "82H") {
+        //车辆信息
+        type = parseInt(type, 16);
+        data = {
+          SimID: sim_id,
+          MessageID: "x8701",
+          CommandWord: type, //命令字
+          VIN: this.communication.vehicle_code, //车架号
+          PlateNo: this.communication.Ox0083, //车牌号
+          PlateClassify: this.communication.Ox0084 //车牌颜色
+        };
+        data = JSON.stringify(data);
+        this.$instruction.send(data);
+      }
+    },
+    collectNational(type) {
+      if (this.communication.data.length == 0) {
+        return this.$notify({
+          message: "请选择车辆!",
+          title: "提示",
+          type: "error"
+        });
+      }
+      var sim_id = "";
+      var data = {};
+      if (this.communication.data[0].sim_id.length == 11) {
+        sim_id = "0" + this.communication.data[0].sim_id;
+      }
+      if (type == "05H") {
+        type = parseInt(type, 16);
+        data = {
+          SimID: sim_id,
+          MessageID: "x8700",
+          CommandWord: type
+        };
+        data = JSON.stringify(data);
+        this.$instruction.send(data);
+      }
     }
   }
 };

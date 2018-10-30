@@ -42,6 +42,10 @@
             <!--   @instruction="instruction" -->
             <choose-other :respond="respond" :message="other" @setting="setting"></choose-other>
           </el-tab-pane>
+          <el-tab-pane label="采集指定记录">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <choose-collect></choose-collect>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </el-card>
@@ -60,6 +64,7 @@ import chooseText from "./choose-text.vue";
 import chooseOther from "./choose-other.vue";
 import chooseEvent from "./choose-event.vue";
 import chooseDemand from "./choose-demand.vue";
+import chooseCollect from "./choose-collect.vue";
 export default {
   components: {
     selectVehicle,
@@ -73,7 +78,8 @@ export default {
     chooseText,
     chooseOther,
     chooseEvent,
-    chooseDemand
+    chooseDemand,
+    chooseCollect
   },
   created() {
     // 192.168.88.88:5000

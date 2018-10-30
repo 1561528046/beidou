@@ -1,7 +1,7 @@
 <template>
   <div style="margin-bottom:15px;">
     <el-button type="primary" size="small" @click="vehicleClick" style="margin-right:10px;">选择车辆</el-button>
-    <label>已选择车辆{{length}}条</label>
+    <label>已选择车辆{{length}}</label>
     <el-dialog width="60%" title="车辆信息" :visible.sync="vehicleDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
       <choose-parameter :selected="selectedVehicles" @choose="vehicleArr"></choose-parameter>
     </el-dialog>

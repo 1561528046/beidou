@@ -35,7 +35,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="缺省时间汇报时间间隔(s)">
+          <el-form-item label="缺省时间汇报间隔(s)">
             <el-input style="width:60%" v-model="communication.Ox0029">
               <template slot="append">
                 <el-button @click="setup('0x0029')">设置</el-button>
@@ -45,7 +45,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="缺省距离汇报距离间隔(m)">
+          <el-form-item label="缺省距离汇报间隔(m)">
             <el-input style="width:60%" v-model="communication.Ox002C">
               <template slot="append">
                 <el-button @click="setup('0x002C')">设置</el-button>

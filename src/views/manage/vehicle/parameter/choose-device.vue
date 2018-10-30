@@ -5,10 +5,12 @@
       <el-table-column prop="operating" label="操作状态"></el-table-column>
       <el-table-column prop="Ox0040" label="监控平台电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0041" label="复位电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0042" label="恢复出厂设置电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0043" label="监控平台SMS电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0044" label="接受终端SMS文本报警号码" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0045" label="终端电话接听策略" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0046" label="每次最长通话时间" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0047" label="当月最长通话时间" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0048" label="监听电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0049" label="监管平台特权短信号码" :formatter="$utils.baseFormatter"> </el-table-column>
     </el-table>
@@ -32,6 +34,16 @@
               </template>
             </el-input>
             <el-button @click="collect('0x0041')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="恢复出厂设置电话号码">
+            <el-input style="width:60%" v-model="communication.Ox0042">
+              <template slot="append">
+                <el-button @click="setup('0x0042')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0042')" style="margin-left:31px">采集</el-button>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -75,6 +87,16 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+          <el-form-item label="当月最长通话时间">
+            <el-input style="width:60%" v-model="communication.Ox0047">
+              <template slot="append">
+                <el-button @click="setup('0x0047')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0047')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="监听电话号码">
             <el-input style="width:60%" v-model="communication.Ox0048">
               <template slot="append">
@@ -112,10 +134,12 @@ export default {
       communication: {
         Ox0040: "",
         Ox0041: "",
+        Ox0042: "",
         Ox0043: "",
         Ox0044: "",
         Ox0045: "",
         Ox0046: "",
+        Ox0047: "",
         Ox0048: "",
         Ox0049: "",
         data: []
@@ -140,10 +164,12 @@ export default {
           if (item.Ox0040 == undefined) {
             this.$set(item, "Ox0040", ""),
               this.$set(item, "Ox0041", ""),
+              this.$set(item, "Ox0042", ""),
               this.$set(item, "Ox0043", ""),
               this.$set(item, "Ox0044", ""),
               this.$set(item, "Ox0045", ""),
               this.$set(item, "Ox0046", ""),
+              this.$set(item, "Ox0047", ""),
               this.$set(item, "Ox0048", ""),
               this.$set(item, "Ox0049", "");
           }
@@ -153,7 +179,18 @@ export default {
     },
     respond: {
       handler: function() {
-        var limit = ["64", "65", "67", "68", "69", "70", "72", "73"];
+        var limit = [
+          "64",
+          "65",
+          "66",
+          "67",
+          "68",
+          "69",
+          "70",
+          "71",
+          "72",
+          "73"
+        ];
         this.$set(this.$data, "str", this.$props.respond);
         this.str = this.str.split("|");
         if (!limit.includes(this.str[1])) {
