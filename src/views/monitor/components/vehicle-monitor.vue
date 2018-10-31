@@ -2,8 +2,12 @@
   <div class="vehicle-info-container" :class="{'single':$props.single}" :style="{left:position.left+'px',top:position.top+'px'}">
     <div class="_tools shadow-box" v-if="$props.single">
       <el-radio-group v-model="mapTools" @change="changeTools" size="mini">
-        <el-radio-button label="rule" title="测距工具"><i class="iconfont icon-ruler"></i></el-radio-button>
-        <el-radio-button label="hand" title="移动工具"> <i class="iconfont icon-hand"></i></el-radio-button>
+        <el-radio-button label="rule" title="测距工具">
+          <i class="iconfont icon-ruler"></i>
+        </el-radio-button>
+        <el-radio-button label="hand" title="移动工具">
+          <i class="iconfont icon-hand"></i>
+        </el-radio-button>
       </el-radio-group>
       <label class="el-radio-button el-radio-button--mini" @click="openOtherVehicle">
         <span class="el-radio-button__inner">
@@ -228,8 +232,7 @@
           </el-col>
           <!-- 模拟量 -->
           <el-col :span="12">
-            模拟量:
-            {{mapData.vehicle.analog}}
+            模拟量: {{mapData.vehicle.analog}}
           </el-col>
 
           <el-col :span="12">
@@ -257,10 +260,12 @@
         <el-popover placement="top" width="30" trigger="click" :disabled="[1,2,3].indexOf(snapshotState)!=-1">
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-button round @click="snapshot(1)"><i class="iconfont icon-camera-fill"></i>1</el-button>
+              <el-button round @click="snapshot(1)">
+                <i class="iconfont icon-camera-fill"></i>1</el-button>
             </el-col>
             <el-col :span="12">
-              <el-button round @click="snapshot(2)"><i class="iconfont icon-camera-fill"></i>2</el-button>
+              <el-button round @click="snapshot(2)">
+                <i class="iconfont icon-camera-fill"></i>2</el-button>
             </el-col>
           </el-row>
           <i class="iconfont icon-camera" title="抓拍" v-loading="[1,2,3].indexOf(snapshotState)!=-1" slot="reference"></i>
