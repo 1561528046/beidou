@@ -21,6 +21,10 @@
         <span slot="label"> 报警消息<el-badge :value="$store.getters['alarm/list'].length" :max="99" class="monitor-badge"> </el-badge></span>
         <list-x8203></list-x8203>
       </el-tab-pane>
+      <el-tab-pane :closable="false" name="x0900">
+        <span slot="label"> 上行透传<el-badge :value="$store.getters['x0900/list'].length" :max="99" class="monitor-badge"> </el-badge></span>
+        <list-x0900></list-x0900>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -29,12 +33,14 @@ import qaList from "./list-qa.vue"; //提问列表
 import listX0701 from "./list-x0701.vue"; //电子运单列表
 import listX0301 from "./list-x0301.vue"; //事件报告
 import listX8203 from "./list-x8203.vue"; //报警
+import listX0900 from "./list-x0900.vue"; //数据上行透传
 export default {
   components: {
     qaList,
     listX0701,
     listX0301,
-    listX8203
+    listX8203,
+    listX0900
   },
   data() {
     return {

@@ -10,6 +10,8 @@
       </v-contextmenu-submenu>
       <v-contextmenu-item @click="sendInstruction" data-index="x8401">电话本</v-contextmenu-item>
       <v-contextmenu-item @click="sendInstruction" data-index="x8400">电话回拨</v-contextmenu-item>
+      <v-contextmenu-item @click="sendInstruction" data-index="x8802">媒体查询</v-contextmenu-item>
+
     </v-contextmenu>
     <div class="_header">
       <div class="_title">

@@ -123,7 +123,6 @@ export default {
       var data = JSON.parse(evt.data);
       data.DataItems = JSON.parse(data.DataItems);
       this.$set(this.$data, "list", data.DataItems);
-      console.log(data);
       //MultimediaDataID MultimediaType ChannelId EventCode事件项编码
     });
     this.$instruction.on("x8800", this.x8800);
@@ -132,7 +131,7 @@ export default {
     x8800(evt) {
       var data = JSON.parse(evt.data);
       this.list.map(item => {
-        if (parseInt(item.MultimediaDataID) + 1 == data.MultimediaDataID) {
+        if (item.MultimediaDataID == data.MultimediaDataID) {
           this.getMediaUrl(item);
           var index = this.getMeidaList.indexOf(item);
           this.getMeidaList.replace(index, 1);
@@ -180,8 +179,8 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$instruction.off("x8804", this.vehicle.sim_id, this.x8804);
-    this.$instruction.off("x0800", this.vehicle.sim_id, this.x0800);
+    this.$instruction.offAll("x0802", this.vehicle.sim_id);
+    this.$instruction.offAll("x8802", this.vehicle.sim_id);
     this.$instruction.off("x8800", this.vehicle.sim_id, this.x8800);
   }
 };

@@ -299,6 +299,15 @@ export default {
             vm.$store.commit("x0701/add", data);
           }
         });
+        vm.$instruction.on("x0900", evt => {
+          //上行透传
+          var data = JSON.parse(evt.data);
+          var sim_id = vm.$utils.unFormatSim(data.SimID);
+          if (this.data.has(sim_id)) {
+            //如果有当前车辆的监控权限,发送数据到$store
+            vm.$store.commit("x0900/add", data);
+          }
+        });
         vm.$instruction.on("x0301", evt => {
           //事件上报数据
           var data = JSON.parse(evt.data);
@@ -755,6 +764,13 @@ export default {
       if (instructionArr[0] == "x8201") {
         sim_id = this.$utils.formatSim(sim_id);
         this.$instruction.send("^x8201|" + sim_id + "$");
+        return false;
+      }
+      if (instructionArr[0] == "x8802") {
+        this.$store.commit(
+          "setMonitorMediaVehicle",
+          window.monitor.data.get(sim_id)
+        );
         return false;
       }
       switch (instructionArr[0]) {
