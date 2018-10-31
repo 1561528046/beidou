@@ -113,7 +113,7 @@
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog :title="instructionCard.title" append-to-body :visible.sync="instructionCard.show" width="50%">
+    <el-dialog :title="instructionCard.title" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="instructionCard.show" width="50%">
       <div :is="instructionCard.component" :key="instructionCard.vehicle.sim_id" :vehicle="instructionCard.vehicle" v-if="instructionCard.vehicle"></div>
     </el-dialog>
 
@@ -308,6 +308,15 @@ export default {
             vm.$store.commit("x0900/add", data);
           }
         });
+        vm.$instruction.on("x0500", evt => {
+          //车辆控制应答数据，通过PositionReport（0200）状态位State 判断枷锁解锁是否成功
+          var data = JSON.parse(evt.data);
+          var sim_id = vm.$utils.unFormatSim(data.SimID);
+          if (this.data.has(sim_id)) {
+            this.data.get(sim_id).state = JSON.parse(data.PositionReport).State;
+          }
+        });
+
         vm.$instruction.on("x0301", evt => {
           //事件上报数据
           var data = JSON.parse(evt.data);
