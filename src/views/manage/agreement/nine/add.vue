@@ -62,6 +62,11 @@
           <el-input v-model="formData.version_flag" placeholder="版本号"></el-input>
         </el-form-item>
       </el-col>
+      <el-col :span="12">
+        <el-form-item label="有效时间(h)" prop="no_transmit_hour">
+          <el-input v-model="formData.no_transmit_hour" placeholder="有效时间"></el-input>
+        </el-form-item>
+      </el-col>
       <el-col :span="24">
         <el-form-item label="是否加密" prop="is_encryption_type">
           <el-checkbox v-model="formData.is_encryption_type" size="medium"></el-checkbox>
@@ -96,6 +101,7 @@ export default {
         IC1: "",
         key_value: "",
         version_flag: "",
+        no_transmit_hour: "",
         is_encryption_type: false,
         is_encryption: 2,
         enable_type: true,
@@ -186,6 +192,9 @@ export default {
         this.formData.enable = 1;
       } else {
         this.formData.enable = 2;
+      }
+      if (this.formData.no_transmit_hour == "") {
+        this.formData.no_transmit_hour = 0;
       }
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

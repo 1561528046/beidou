@@ -39,6 +39,7 @@
         <el-table-column prop="access_code" label="接入码" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="key_value" label="Keys" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="version_flag" label="版本号" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="no_transmit_hour" label="有效时间" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="enable" label="状态">
           <template slot-scope="scope">
             <label v-if="scope.row.enable=='1'">启用</label>
