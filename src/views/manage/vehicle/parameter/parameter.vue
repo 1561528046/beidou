@@ -44,7 +44,11 @@
           </el-tab-pane>
           <el-tab-pane label="采集指定记录">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-collect></choose-collect>
+            <choose-collect :message="specified"></choose-collect>
+          </el-tab-pane>
+          <el-tab-pane label="行车记录仪">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <choose-recorder :message="recorder"></choose-recorder>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -65,6 +69,7 @@ import chooseOther from "./choose-other.vue";
 import chooseEvent from "./choose-event.vue";
 import chooseDemand from "./choose-demand.vue";
 import chooseCollect from "./choose-collect.vue";
+import chooseRecorder from "./choose-recorder.vue";
 export default {
   components: {
     selectVehicle,
@@ -79,7 +84,8 @@ export default {
     chooseOther,
     chooseEvent,
     chooseDemand,
-    chooseCollect
+    chooseCollect,
+    chooseRecorder
   },
   created() {
     // 192.168.88.88:5000
@@ -123,6 +129,8 @@ export default {
       event: [],
       demand: [],
       other: [],
+      specified: [],
+      recorder: [],
       tableLoading: true
     };
   },
@@ -180,6 +188,10 @@ export default {
         this.demand = scope;
       } else if (this.parameter_type == 9) {
         this.other = scope;
+      } else if (this.parameter_type == 10) {
+        this.specified = scope;
+      } else if (this.parameter_type == 11) {
+        this.recorder = scope;
       }
     },
     vehicleClick() {
@@ -212,6 +224,10 @@ export default {
         this.parameter_type = 8;
       } else if (tab.label == "其它设置") {
         this.parameter_type = 9;
+      } else if (tab.label == "采集指定记录") {
+        this.parameter_type = 10;
+      } else if (tab.label == "行车记录仪") {
+        this.parameter_type = 11;
       }
     },
     getTable() {

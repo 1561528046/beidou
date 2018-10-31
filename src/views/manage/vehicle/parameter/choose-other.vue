@@ -9,7 +9,7 @@
       <el-select @change="chooseSetting" v-model="parameter" style="margin-bottom:10px;">
         <el-option value="1" label="文本信息下发">文本信息下发</el-option>
         <el-option value="2" label="信息服务">信息服务</el-option>
-        <!-- <el-option value="3" label="提问应答">提问应答</el-option> -->
+        <el-option value="3" label="数据下行透传">数据下行透传</el-option>
       </el-select>
       <!-- 文本信息下发 -->
       <div v-if="text_Information" style="width:30%;margin:0 auto; text-align:center;">
@@ -41,13 +41,19 @@
         </el-form-item>
         <el-button type="primary" @click="setup()" size="small">设置</el-button>
       </div>
-      <!-- 提问应答 -->
-      <div v-if="questions" style="width:30%;margin:0 auto; text-align:center;">
-        <el-form-item label="应答流水号">
-          <el-input v-model="reply.serial_number"></el-input>
+      <!-- 数据下行透传 -->
+      <div v-if="passthrough" style="width:30%;margin:0 auto; text-align:center;">
+        <el-form-item label="透传消息类型">
+          <el-select v-model="reply.message_type" style="width:100%;">
+            <el-option value="0x00" label="CNSS模块详细定位数据">CNSS模块详细定位数据</el-option>
+            <el-option value="0x0B" label="道路运输证IC卡信息">道路运输证IC卡信息</el-option>
+            <el-option value="0x41" label="串口1透传">串口1透传</el-option>
+            <el-option value="0x42" label="串口2透传">串口2透传</el-option>
+            <!-- <el-option>用户自定义透传</el-option> -->
+          </el-select>
         </el-form-item>
-        <el-form-item label="答案ID">
-          <el-input v-model="reply.answer_id"></el-input>
+        <el-form-item label="透传消息内容">
+          <el-input v-model="reply.content"></el-input>
         </el-form-item>
         <el-button type="primary" @click="setup()" size="small">设置</el-button>
       </div>
@@ -74,12 +80,12 @@ export default {
         text_content: ""
       },
       reply: {
-        serial_number: "",
-        answer_id: ""
+        message_type: "",
+        content: ""
       },
       text_Information: false,
       service: false,
-      questions: false,
+      passthrough: false,
       parameter: "",
       instruction: "",
       selectedVehicles: [],
@@ -100,6 +106,24 @@ export default {
       tableLoading: true
     };
   },
+  created() {
+    this.$instruction.on("x8900", evs => {
+      var data = JSON.parse(evs.data);
+      var sim_id;
+      if (data.code == 0) {
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            sim_id = "0" + item.sim_id;
+          } else {
+            sim_id = item.sim_id;
+          }
+          if (data.SimID == sim_id) {
+            this.$set(item, "operate", "数据下行透传设置成功");
+          }
+        });
+      }
+    });
+  },
   watch: {
     parameter: function() {
       this.text.emergency = false; //紧急
@@ -110,6 +134,8 @@ export default {
       this.text.text_content = "";
       this.information.information_type = "";
       this.information.information_content = "";
+      this.reply.message_type = "";
+      this.reply.content = "";
     },
     message: {
       handler: function() {
@@ -160,22 +186,21 @@ export default {
     message: Array,
     respond: String
   },
-  created() {},
   methods: {
     //区域展示
     chooseSetting(type) {
       if (type == "1") {
         this.text_Information = true;
         this.service = false;
-        this.questions = false;
+        this.passthrough = false;
       } else if (type == "2") {
         this.text_Information = false;
         this.service = true;
-        this.questions = false;
+        this.passthrough = false;
       } else if (type == "3") {
         this.text_Information = false;
         this.service = false;
-        this.questions = true;
+        this.passthrough = true;
       }
     },
     // 设置
@@ -189,7 +214,10 @@ export default {
       }
       var parameter_id;
       var instructionset;
-      var sim_id;
+      var sim_id = "";
+      var type = "";
+      var content = "";
+      var data = {};
       if (this.parameter == "1") {
         if (this.text.text_content == "") {
           return this.$notify({
@@ -223,7 +251,7 @@ export default {
           num[2] = "1";
         }
         num = parseInt(num.toString().replace(/,/g, ""), 2);
-        var textContent = this.text.text_content;
+        content = this.text.text_content;
         this.communication.data.map(item => {
           if (item.sim_id.length == 11) {
             sim_id = "0" + item.sim_id;
@@ -231,21 +259,13 @@ export default {
             sim_id = item.sim_id;
           }
           instructionset =
-            "^" +
-            parameter_id +
-            "|" +
-            num +
-            "|" +
-            textContent +
-            "|" +
-            sim_id +
-            "$";
+            "^" + parameter_id + "|" + num + "|" + content + "|" + sim_id + "$";
           this.$emit("setting", instructionset);
         });
       } else if (this.parameter == "2") {
         parameter_id = "x8304";
-        var type = this.information.information_type;
-        var content = this.information.information_content;
+        type = this.information.information_type;
+        content = this.information.information_content;
         this.communication.data.map(item => {
           if (item.sim_id.length == 11) {
             sim_id = "0" + item.sim_id;
@@ -265,7 +285,24 @@ export default {
           this.$emit("setting", instructionset);
         });
       } else if (this.parameter == "3") {
-        parameter_id = "x0302";
+        parameter_id = "x8900";
+        type = parseInt(this.reply.message_type, 16);
+        content = this.reply.content;
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            sim_id = "0" + item.sim_id;
+          } else {
+            sim_id = item.sim_id;
+          }
+          data = {
+            SimID: sim_id,
+            MessageID: parameter_id,
+            TransportType: type, //透传消息类型
+            TransportContent: content //透传消息内容
+          };
+          data = JSON.stringify(data);
+          this.$instruction.send(data);
+        });
       }
     }
   }

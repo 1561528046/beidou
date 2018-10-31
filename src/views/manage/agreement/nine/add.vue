@@ -57,6 +57,11 @@
           <el-input v-model="formData.key_value" placeholder="keys"></el-input>
         </el-form-item>
       </el-col>
+      <el-col :span="12">
+        <el-form-item label="版本号" prop="version_flag">
+          <el-input v-model="formData.version_flag" placeholder="版本号"></el-input>
+        </el-form-item>
+      </el-col>
       <el-col :span="24">
         <el-form-item label="是否加密" prop="is_encryption_type">
           <el-checkbox v-model="formData.is_encryption_type" size="medium"></el-checkbox>
@@ -90,6 +95,7 @@ export default {
         IA1: "",
         IC1: "",
         key_value: "",
+        version_flag: "",
         is_encryption_type: false,
         is_encryption: 2,
         enable_type: true,
@@ -117,6 +123,13 @@ export default {
             trigger: "blur",
             validator: this.validateLocalDuankou
           }
+        ],
+        version_flag: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: this.validateVersion
+          }
         ]
       }
     };
@@ -124,6 +137,14 @@ export default {
   watch: {},
   created() {},
   methods: {
+    validateVersion(rule, value, callback) {
+      if (value == "") {
+        callback(new Error("请输入版本号"));
+        return false;
+      } else {
+        callback();
+      }
+    },
     validateIp(rule, value, callback) {
       var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
       var reg = value.match(exp);

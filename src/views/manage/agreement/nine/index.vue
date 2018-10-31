@@ -27,17 +27,18 @@
         </router-link>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="title" label="标注"></el-table-column>
-        <el-table-column prop="remote_ip" label="远程IP"></el-table-column>
-        <el-table-column prop="remote_port" label="远程端口"></el-table-column>
-        <el-table-column prop="user_name" label="用户ID"></el-table-column>
-        <el-table-column prop="password" label="密码"></el-table-column>
-        <el-table-column prop="local_port" label="本地端口"></el-table-column>
-        <el-table-column prop="M1" label="M1"></el-table-column>
-        <el-table-column prop="IA1" label="IA1"></el-table-column>
-        <el-table-column prop="IC1" label="IC1"></el-table-column>
-        <el-table-column prop="access_code" label="接入码"></el-table-column>
-        <el-table-column prop="key_value" label="Keys"></el-table-column>
+        <el-table-column prop="title" label="标注" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="remote_ip" label="远程IP" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="remote_port" label="远程端口" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="user_name" label="用户ID" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="password" label="密码" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="local_port" label="本地端口" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="M1" label="M1" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="IA1" label="IA1" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="IC1" label="IC1" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="access_code" label="接入码" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="key_value" label="Keys" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="version_flag" label="版本号" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="enable" label="状态">
           <template slot-scope="scope">
             <label v-if="scope.row.enable=='1'">启用</label>

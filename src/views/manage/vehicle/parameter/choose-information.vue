@@ -12,7 +12,7 @@
       <el-row :gutter="30">
         <el-col :span="6">
           <el-form-item label-width="130px" label="机动车号牌">
-            <el-input style="width:80%" v-model="communication.Ox0083">
+            <el-input style="width:90%" v-model="communication.Ox0083">
               <!-- <template slot="append">
                 <el-button @click="setup('0x0083')">设置</el-button>
               </template> -->
@@ -22,7 +22,7 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label-width="130px" label="车牌颜色">
-            <el-input style="width:80%" v-model="communication.Ox0084">
+            <el-input style="width:90%" v-model="communication.Ox0084">
               <!-- <template slot="append">
                 <el-button @click="setup('0x0084')">设置</el-button>
               </template> -->
@@ -32,7 +32,7 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label-width="130px" label="车辆识别码(VIN)">
-            <el-input style="width:80%" v-model="communication.vehicle_code">
+            <el-input style="width:90%" v-model="communication.vehicle_code">
             </el-input>
           </el-form-item>
         </el-col>
