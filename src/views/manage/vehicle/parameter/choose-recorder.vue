@@ -1,96 +1,99 @@
 <template>
-    <div style="width:100%;">
-        <el-table height="300" :data="communication.data" style="width:100%" class="admin-table-list">
-            <el-table-column fixed prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column fixed prop="operating" label="操作状态"></el-table-column>
-        </el-table>
-        <div style="width:50%;float:left">
-            <div style="margin-top:10px; margin-left:15px;">
-                <label style="display:inline-block;width:140px; ">采集类型：</label>
-                <el-select style="width:60%;" v-model="collect_type" size="small">
-                    <el-option value="00H" label="记录仪执行标准版本">记录仪执行标准版本</el-option>
-                    <el-option value="01H" label="当前驾驶人信息">当前驾驶人信息</el-option>
-                    <el-option value="02H" label="记录仪实时时间">记录仪实时时间</el-option>
-                    <el-option value="03H" label="累计行驶里程">累计行驶里程</el-option>
-                    <el-option value="04H" label="记录仪脉冲系数">记录仪脉冲系数</el-option>
-                    <el-option value="06H" label="状态信号配置信息">状态信号配置信息</el-option>
-                    <el-option value="07H" label="唯一性编号">唯一性编号</el-option>
-                </el-select>
-                <el-button size="small" type="primary" style="float:right">采集</el-button>
-            </div>
-            <el-form label-position="left" style="margin-top:20px;margin-left:15px;" label-width="140px">
-                <el-row>
-                    <el-col v-if="collect_state.standard" :span="24">
-                        <!-- 记录仪执行标准版本 -->
-                        <el-form-item label="年号：">
-                        </el-form-item>
-                        <el-form-item label="修改单号：">
-                        </el-form-item>
-                    </el-col>
-                    <el-col v-if="collect_state.driver" :span="24">
-                        <!-- 当前驾驶人信息 -->
-                        <el-form-item label="机动车驾驶证号码：">
-                        </el-form-item>
-                    </el-col>
-                    <el-col v-if="collect_state.real_time" :span="24">
-                        <!-- 记录仪实时时间 -->
-                        <el-form-item label="时间：">
-                        </el-form-item>
-                    </el-col>
-                    <el-col v-if="collect_state.cumulative_mileage" :span="24">
-                        <!-- 累计行驶里程 -->
-                        <el-form-item label="时间：">
-                        </el-form-item>
-                        <el-form-item label="初始里程：">
-                        </el-form-item>
-                        <el-form-item label="累计行驶里程：">
-                        </el-form-item>
-                    </el-col>
-                    <el-col v-if="collect_state.pulse" :span="24">
-                        <!-- 记录仪脉冲系数 -->
-                        <el-form-item label="时间：">
-                        </el-form-item>
-                        <el-form-item label="脉冲系数：">
-                        </el-form-item>
-                    </el-col>
-                    <el-col v-if="collect_state.state_signal" :span="24">
-                        <!-- 状态信号配置信息 -->
-                        <div></div>
-                    </el-col>
-                    <el-col v-if="collect_state.serial_number" :span="24">
-                        <!-- 唯一性编号 -->
-                        <el-form-item label="唯一性编号：">
-                        </el-form-item>
-                        <el-form-item label="初始安装日期：">
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
-        </div>
-        <div style="width:50%;float:right">
-        </div>
+  <div style="width:100%;">
+    <el-table height="300" :data="communication.data" style="width:100%" class="admin-table-list">
+      <el-table-column fixed prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column fixed prop="operating" label="操作状态"></el-table-column>
+    </el-table>
+    <div style="width:50%;float:left">
+      <div style="padding: 10px 200px;">
+        <label style="display:inline-block;width:110px; ">采集类型：</label>
+        <el-select style="width:60%;" v-model="collect_type" size="small">
+          <el-option value="00H" label="记录仪执行标准版本">记录仪执行标准版本</el-option>
+          <el-option value="01H" label="当前驾驶人信息">当前驾驶人信息</el-option>
+          <el-option value="02H" label="记录仪实时时间">记录仪实时时间</el-option>
+          <el-option value="03H" label="累计行驶里程">累计行驶里程</el-option>
+          <el-option value="04H" label="记录仪脉冲系数">记录仪脉冲系数</el-option>
+          <!-- <el-option value="06H" label="状态信号配置信息">状态信号配置信息</el-option> -->
+          <el-option value="07H" label="唯一性编号">唯一性编号</el-option>
+        </el-select>
+        <el-button size="small" @click="collect" type="primary" style="margin-left:20px;">采集</el-button>
+      </div>
+      <div :is="collect_name"></div>
     </div>
+    <div style="width:50%;float:right;">
+      <div style="padding:10px 200px;">
+        <label style="display:inline-block;width:82px;">设置类型：</label>
+        <el-select style="width:59%;" v-model="set_type" size="small">
+          <el-option value="83H" label="记录仪初次安装日期">记录仪初次安装日期</el-option>
+          <!-- <el-option value="84H" label="状态量配置信息">状态量配置信息</el-option> -->
+          <el-option value="C2H" label="记录仪时间">记录仪时间</el-option>
+          <el-option value="C3H" label="记录仪脉冲系数">记录仪脉冲系数</el-option>
+          <el-option value="C4H" label="初始里程">初始里程</el-option>
+        </el-select>
+      </div>
+      <div :is="set_name" :type="set_type" :vehicle="communication.data"></div>
+    </div>
+  </div>
 </template>
 <script>
+import collectStandard from "./components/collect-standard.vue";
+import collectDriver from "./components/collect-driver.vue";
+import collectRealtime from "./components/collect-realtime.vue";
+import collectMileage from "./components/collect-mileage.vue";
+import collectPulse from "./components/collect-pulse.vue";
+import collectUniqueness from "./components/collect-uniqueness.vue";
+import settingInstall from "./components/setting-install.vue";
+import settingState from "./components/setting-state.vue";
+import settingTime from "./components/setting-time.vue";
+import settingPulse from "./components/setting-pulse.vue";
+import settingMileage from "./components/setting-mileage";
 export default {
+  components: {
+    collectStandard,
+    collectDriver,
+    collectRealtime,
+    collectMileage,
+    collectPulse,
+    collectUniqueness,
+    settingInstall,
+    settingState,
+    settingTime,
+    settingPulse,
+    settingMileage
+  },
   data() {
     return {
+      collect_name: "",
       collect_type: "",
+      set_name: "",
+      set_type: "",
       communication: {
         data: []
-      },
-      collect_state: {
-        standard: false, //记录仪执行标准版本
-        driver: false, //当前驾驶人信息
-        real_time: false, //记录仪实时时间
-        cumulative_mileage: false, //累计行驶里程
-        pulse: false, //记录仪脉冲系数
-        state_signal: false, //状态信号配置信息
-        serial_number: false //唯一性编号
       }
     };
   },
   watch: {
+    set_type: {
+      handler: function() {
+        switch (this.set_type) {
+          case "83H":
+            this.set_name = settingInstall;
+            break;
+          case "84H":
+            this.set_name = settingState;
+            break;
+          case "C2H":
+            this.set_name = settingTime;
+            break;
+          case "C3H":
+            this.set_name = settingPulse;
+            break;
+          case "C4H":
+            this.set_name = settingMileage;
+            break;
+        }
+      }
+    },
     message: {
       handler: function() {
         this.$set(this.communication, "data", this.$props.message);
@@ -99,6 +102,68 @@ export default {
   },
   props: {
     message: Array
+  },
+  methods: {
+    collect() {
+      if (this.communication.data.length == 0) {
+        return this.$notify({
+          message: "请选择车辆!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.communication.data.length > 1) {
+        return this.$notify({
+          message: "无法进行批量采集!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.collect_type == "") {
+        return this.$notify({
+          message: "请选择采集类型!",
+          title: "提示",
+          type: "error"
+        });
+      }
+      switch (this.collect_type) {
+        //记录仪执行标准版本
+        case "00H":
+          this.collect_name = collectStandard;
+          break;
+        case "01H":
+          this.collect_name = collectDriver;
+          break;
+        case "02H":
+          this.collect_name = collectRealtime;
+          break;
+        case "03H":
+          this.collect_name = collectMileage;
+          break;
+        case "04H":
+          this.collect_name = collectPulse;
+          break;
+        case "06H":
+          this.collect_name = "";
+          break;
+        case "07H":
+          this.collect_name = collectUniqueness;
+          break;
+      }
+      var data = {};
+      var sim_id;
+      var type = parseInt(this.collect_type, 16);
+      if (this.communication.data[0].sim_id.length == 11) {
+        sim_id = "0" + this.communication.data[0].sim_id;
+      } else {
+        sim_id = this.communication.data[0].sim_id;
+      }
+      data = {
+        SimID: sim_id,
+        MessageID: "x8700",
+        CommandWord: type
+      };
+      data = JSON.stringify(data);
+      this.$instruction.send(data);
+    }
   }
 };
 </script>
