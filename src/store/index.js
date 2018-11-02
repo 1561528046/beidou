@@ -7,6 +7,7 @@ import x0701 from "./modules/x0701";
 import x0301 from "./modules/x0301";
 import alarm from "./modules/alarm";
 import x0900 from "./modules/x0900";
+import x0901 from "./modules/x0901";
 Vue.use(Vuex);
 const store = new Vuex.Store({
   modules: {
@@ -16,7 +17,8 @@ const store = new Vuex.Store({
     x0701,
     x0301,
     alarm,
-    x0900
+    x0900,
+    x0901
   }
 });
 

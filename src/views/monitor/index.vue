@@ -308,6 +308,25 @@ export default {
             vm.$store.commit("x0900/add", data);
           }
         });
+        vm.$instruction.on("x0702", evt => {
+          //驾驶员信息上报处理（插入司机卡设备会发送该消息）； 存入监控车辆数据中
+          var data = JSON.parse(evt.data);
+          var sim_id = vm.$utils.unFormatSim(data.SimID);
+          if (this.data.has(sim_id)) {
+            var vehicle = this.data.get(sim_id);
+            vehicle.driver = data;
+            vm.$set(vehicle);
+          }
+        });
+        vm.$instruction.on("x0901", evt => {
+          //数据压缩上报
+          var data = JSON.parse(evt.data);
+          var sim_id = vm.$utils.unFormatSim(data.SimID);
+          if (this.data.has(sim_id)) {
+            //如果有当前车辆的监控权限,发送数据到$store
+            vm.$store.commit("x0901/add", data);
+          }
+        });
         vm.$instruction.on("x0500", evt => {
           //车辆控制应答数据，通过PositionReport（0200）状态位State 判断枷锁解锁是否成功
           var data = JSON.parse(evt.data);

@@ -252,15 +252,15 @@
         </el-row>
       </div>
       <div class="_footer">
-        <!-- <i class="iconfont icon-idcard"></i> -->
+        <i class="iconfont icon-idcard" @click="showCard('x0702','驾驶员信息')" title="驾驶员信息"></i>
         <i class="iconfont icon-boxplot-fill" @click="showCard('deviceCard','设备信息')" title="设备信息"></i>
         <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')" title="sim卡信息"></i>
         <i class="iconfont icon-luyin" @click="showCard('x8804','录音')" title="录音"></i>
-        <i class="iconfont icon-error-fill _error" @click="openCard('error')" title="异常信息"></i>
         <i class="iconfont icon-video" @click="showCard('x8801','拍摄')" title="拍摄"></i>
         <el-badge :value="parseInt(mapData.vehicle.alarm_count)||''" :max="99" class="alarm-badge" :class="{'no-alarm':!mapData.vehicle.alarm_count}">
           <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
         </el-badge>
+        <!-- <i class="iconfont icon-error-fill _error" @click="openCard('error')" title="异常信息"></i> -->
         <!-- <i class="iconfont icon-video" @click="openCard('media')" title="媒体列表"></i> -->
       </div>
       <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%" :close-on-click-modal="false" :close-on-press-escape="false">
@@ -279,8 +279,10 @@ import simCard from "./card-sim.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 import x8804 from "./x8804.vue";
 import x8801 from "./x8801.vue";
+import x0702 from "./x0702.vue";
+
 export default {
-  components: { deviceCard, simCard, chooseVehicle, x8804, x8801 },
+  components: { deviceCard, simCard, chooseVehicle, x8804, x8801, x0702 },
   data() {
     return {
       otherVehicleDialog: false,
