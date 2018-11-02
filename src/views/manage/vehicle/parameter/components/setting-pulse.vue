@@ -23,6 +23,15 @@ export default {
       set_type: ""
     };
   },
+  created() {
+    this.$instruction.on("x8101", evs => {
+      var data = JSON.parse(evs.data);
+      this.$emit("message", data);
+    });
+  },
+  beforeDestroy() {
+    this.$instruction.off("x8101");
+  },
   watch: {},
   props: ["vehicle", "type"],
   methods: {
@@ -41,7 +50,7 @@ export default {
           }
           data = {
             SimID: sim_id,
-            MessageID: "x8701",
+            MessageID: "x8101",
             CommandWord: type,
             PulseFactor: this.pulse
           };

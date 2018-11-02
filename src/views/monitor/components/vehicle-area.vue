@@ -96,6 +96,7 @@
               <el-select style="width:100%;" v-model="tableQuery.Type" clearable size="small">
                 <el-option label="圆形" value="1">圆形</el-option>
                 <el-option label="矩形" value="2">矩形</el-option>
+                <el-option label="线路" value="5">线路</el-option>
                 <el-option label="多边形" value="3">多边形</el-option>
                 <el-option label="行政区域" value="4">行政区域</el-option>
               </el-select>
@@ -124,6 +125,7 @@
             <label v-if="scope.row.Type=='2'">矩形</label>
             <label v-if="scope.row.Type=='3'">多边形</label>
             <label v-if="scope.row.Type=='4'">行政区域</label>
+            <label v-if="scope.row.Type=='5'">线路</label>
           </template>
         </el-table-column>
         <el-table-column prop="RegionName" label="名称 " :formatter="$utils.baseFormatter "> </el-table-column>
@@ -193,6 +195,9 @@ export default {
             overlays[0] = Polygon;
           } else if (vm.label == "marker") {
             var Marker = e.obj.getPosition();
+          } else if (vm.label == "polyline") {
+            var Polyline = e.obj.getPath();
+            overlays[0] = Polyline;
           }
           map.remove(overlays);
           vm.addDialog = true;
@@ -339,7 +344,7 @@ export default {
         });
         polygon.setMap(this.mapData.map);
         this.mapData.map.setFitView([polygon]);
-      } else {
+      } else if (scope.row.Type == "4") {
         this.mapData.map.clearMap();
         var polygons = [];
         var area = scope.row.rings.split(";");
@@ -369,6 +374,28 @@ export default {
           this.mapData.map.setFitView([poly]);
           arr = [];
         });
+      } else {
+        this.mapData.map.clearMap();
+        console.log(scope.row);
+        // var line = [];
+        // var polyline = new AMap.Polyline({
+        //   path: line,
+        //   isOutline: true,
+        //   outlineColor: "#ffeeff",
+        //   borderWeight: 3,
+        //   strokeColor: "#3366FF",
+        //   strokeOpacity: 1,
+        //   strokeWeight: 6,
+        //   // 折线样式还支持 'dashed'
+        //   strokeStyle: "solid",
+        //   // strokeStyle是dashed时有效
+        //   strokeDasharray: [10, 5],
+        //   lineJoin: "round",
+        //   lineCap: "round",
+        //   zIndex: 50
+        // });
+        // polyline.setMap(this.mapData.map);
+        // this.mapData.map.setFitView([polyline]);
       }
     },
     // 删除区域
@@ -539,6 +566,40 @@ export default {
           Latitude: lat,
           Longitude: lng,
           Type: "3"
+        };
+        AddRegion(data).then(res => {
+          if (res.data.code == 0) {
+            this.getTable();
+            this.down();
+            this.mapData.map.clearMap();
+            return this.$notify({
+              message: res.data.msg,
+              title: "提示",
+              type: "success"
+            });
+          } else {
+            return this.$notify({
+              message: res.data.msg,
+              title: "提示",
+              type: "error"
+            });
+          }
+        });
+      } else if (this.label == "polyline") {
+        var polyline = [];
+        this.mapData.overlays[0].map(item => {
+          polyline.push({
+            TurnPointLatitude: item.lat,
+            TurnPointLongitude: item.lng
+          });
+        });
+        data = {
+          AreaProperty: this.formdata.alarm_type,
+          RegionName: this.formdata.name,
+          StartTime: this.formdata.start_time,
+          EndTime: this.formdata.stop_time,
+          Type: "5",
+          TurnPoints: polyline
         };
         AddRegion(data).then(res => {
           if (res.data.code == 0) {

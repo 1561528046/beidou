@@ -3,7 +3,9 @@
     <el-form>
       <el-row>
         <el-col>
-          <el-form-item label="时间："></el-form-item>
+          <el-form-item label="时间：">
+            {{time}}
+          </el-form-item>
         </el-col>
       </el-row>
     </el-form>
@@ -11,8 +13,25 @@
 </template>
 <script>
 export default {
+  created() {
+    this.getTable();
+  },
   data() {
-    return {};
+    return {
+      collectData: {},
+      time: ""
+    };
+  },
+  props: ["collect"],
+  methods: {
+    getTable() {
+      this.$set(this.$data, "collectData", this.$props.collect);
+      if (this.collectData.CommandWord == 2) {
+        this.time = this.collectData.RealTimeClock;
+      } else {
+        this.time = "";
+      }
+    }
   }
 };
 </script>
