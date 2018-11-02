@@ -6,7 +6,8 @@
       <!-- <el-table-column prop="Ox8300" label="文本信息下发" :formatter="$utils.baseFormatter"> </el-table-column> -->
     </el-table>
     <el-form label-width="150px" label-position="left" class="table-search" size="small">
-      <el-select @change="chooseSetting" v-model="parameter" style="margin-bottom:10px;">
+      <label>设置类型：</label>
+      <el-select @change="chooseSetting" size="small" v-model="parameter" style="margin-bottom:10px;">
         <el-option value="1" label="文本信息下发">文本信息下发</el-option>
         <el-option value="2" label="信息服务">信息服务</el-option>
         <el-option value="3" label="数据下行透传">数据下行透传</el-option>
@@ -123,6 +124,9 @@ export default {
         });
       }
     });
+  },
+  beforeDestroy() {
+    this.$instruction.off("x8900");
   },
   watch: {
     parameter: function() {

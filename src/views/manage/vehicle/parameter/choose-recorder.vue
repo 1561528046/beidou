@@ -18,7 +18,7 @@
         </el-select>
         <el-button size="small" @click="collect" type="primary" style="margin-left:20px;">采集</el-button>
       </div>
-      <div :is="collect_name"></div>
+      <div :is="collect_name" :collect="collectData"></div>
     </div>
     <div style="width:50%;float:right;">
       <div style="padding:10px 200px;">
@@ -31,7 +31,7 @@
           <el-option value="C4H" label="初始里程">初始里程</el-option>
         </el-select>
       </div>
-      <div :is="set_name" :type="set_type" :vehicle="communication.data"></div>
+      <div :is="set_name" @message="setData" :type="set_type" :vehicle="communication.data"></div>
     </div>
   </div>
 </template>
@@ -67,10 +67,20 @@ export default {
       collect_type: "",
       set_name: "",
       set_type: "",
+      collectData: {},
       communication: {
         data: []
       }
     };
+  },
+  created() {
+    this.$instruction.on("x0700", eve => {
+      var data = JSON.parse(eve.data);
+      this.$set(this.$data, "collectData", data);
+    });
+  },
+  beforeDestroy() {
+    this.$instruction.off("x0700");
   },
   watch: {
     set_type: {
@@ -97,6 +107,9 @@ export default {
     message: {
       handler: function() {
         this.$set(this.communication, "data", this.$props.message);
+        this.communication.data.map(item => {
+          this.$set(item, "operating", "");
+        });
       }
     }
   },
@@ -163,6 +176,35 @@ export default {
       };
       data = JSON.stringify(data);
       this.$instruction.send(data);
+    },
+    setData(data) {
+      var sim_id = "";
+      if (data.code == "0") {
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            sim_id = "0" + item.sim_id;
+          } else {
+            sim_id = item.sim_id;
+          }
+          if (data.CommandWord == 131) {
+            if (data.SimID == sim_id) {
+              this.$set(item, "operating", "记录仪初次安装日期设置成功");
+            }
+          } else if (data.CommandWord == 194) {
+            if (data.SimID == sim_id) {
+              this.$set(item, "operating", "记录仪时间设置成功");
+            }
+          } else if (data.CommandWord == 195) {
+            if (data.SimID == sim_id) {
+              this.$set(item, "operating", "记录仪脉冲系数设置成功");
+            }
+          } else if (data.CommandWord == 196) {
+            if (data.SimID == sim_id) {
+              this.$set(item, "operating", "初始里程设置成功");
+            }
+          }
+        });
+      }
     }
   }
 };
