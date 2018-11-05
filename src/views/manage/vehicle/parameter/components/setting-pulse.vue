@@ -24,13 +24,13 @@ export default {
     };
   },
   created() {
-    this.$instruction.on("x8101", evs => {
+    this.$instruction.on("x8701", evs => {
       var data = JSON.parse(evs.data);
       this.$emit("message", data);
     });
   },
   beforeDestroy() {
-    this.$instruction.off("x8101");
+    this.$instruction.off("x8701");
   },
   watch: {},
   props: ["vehicle", "type"],
@@ -50,7 +50,7 @@ export default {
           }
           data = {
             SimID: sim_id,
-            MessageID: "x8101",
+            MessageID: "x8701",
             CommandWord: type,
             PulseFactor: this.pulse
           };
