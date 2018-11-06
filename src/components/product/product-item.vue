@@ -6,13 +6,13 @@
         </el-table-column>
         <el-table-column prop="detail_name" label="名称" width="120">
         </el-table-column>
-        <el-table-column prop="original_price" label="单价">
+        <el--column prop="original_price" label="单价">
           <template slot-scope="scope">
             <el-form-item :class="{error:scope.row.error}">
               <el-input v-on:input="inputFunc(scope)" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" v-model="formData.detail[scope.$index].original_price" placeholder="0" size="mini"></el-input>
             </el-form-item>
           </template>
-        </el-table-column>
+        </el--column>
         <el-table-column prop="discount_price" label="优惠金额(元)">
           <template slot-scope="scope">
             <el-form-item :class="{error:scope.row.error}">

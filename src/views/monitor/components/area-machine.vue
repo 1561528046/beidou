@@ -11,7 +11,7 @@
           <area-vehicle></area-vehicle>
         </el-tab-pane>
         <el-tab-pane label="设置路线" name="machine">
-          <area-route></area-route>
+          <area-limit></area-limit>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -20,8 +20,9 @@
 <script>
 import areaVehicle from "./area-vehicle.vue";
 import areaRoute from "./area-route.vue";
+import areaLimit from "./area-limit.vue";
 export default {
-  components: { areaVehicle, areaRoute },
+  components: { areaVehicle, areaRoute, areaLimit },
   data() {
     return {
       activeName: "area"

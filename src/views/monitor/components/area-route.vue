@@ -1,27 +1,27 @@
 <template>
-  <div style="width:760px; height:520px;">
-    <div style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:0; width:100%;height:100%;" ref="map"></div>
+  <div style="width:760px; height:550px;">
+    <div style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:0; width:100%;height:80%;" ref="map"></div>
     <div style="position:absolute;bottom:0; z-index:99;margin-left:-21px;" class="admin-dialog">
       <div style="width:100%;height:100%;background-color:#fff;">
-        <el-form label-position="left" v-model="formData" ref="baseForm">
+        <el-form label-position="left" :model="formData" ref="baseForm">
           <el-row :gutter="30 ">
             <el-col :span="8">
               <el-form-item label="开始位置">
-                <el-select size="small">
-                  <el-option></el-option>
+                <el-select v-model="formData.start" size="small">
+                  <el-option v-for="(item,index) in location" :key="item.id" :value="item.id" :label="index+1">{{index +1}},{{item.lng}} {{item.lat}}</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="结束位置">
-                <el-select size="small">
-                  <el-option></el-option>
+                <el-select v-model="formData.end" size="small">
+                  <el-option v-for="(item,index) in location" :key="item.id" :value="item.id" :label="index+1">{{index +1}},{{item.lng}} {{item.lat}}</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="路段宽度">
-                <el-input size="small" style="width:60%;"></el-input>
+                <el-input size="small" v-model="formData.road_width" style="width:60%;"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -54,7 +54,7 @@
                 <el-input v-model="formData.OverMaxSpeedLastTime" style="width:60%" size="small"></el-input>
               </el-form-item>
             </el-col>
-            <el-button type="primary" style="display:block;margin:0 auto;" size="small">设置</el-button>
+            <el-button type="primary" style="display:block;margin:0 auto;" @click="setItem" size="small">设置</el-button>
           </el-row>
         </el-form>
       </div>
@@ -67,6 +67,9 @@ import moment from "moment";
 import { initMap } from "@/utils/map.js";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
+  created() {
+    // this.getTable();
+  },
   components: { chooseVehicle },
   data() {
     return {
@@ -76,31 +79,33 @@ export default {
       addKey: 0,
       addDialog: false,
       vehicleData: {},
+      roadData: [],
+      location: [],
       mapData: {
         map: {},
         mouseTool: {},
         path: []
       },
       formData: {
-        time: "",
-        start_time: "",
-        end_time: "",
-        type: "1",
-        license: "",
-
         travel_time: false,
         speed_limit: false,
         latitude: "1",
         longitude: "1",
+        start: "",
+        end: "",
+        start_location: "",
+        end_location: "",
         road_width: "",
-        long_threshold: "",
-        lack_threshold: "",
+        road: "",
+        long_threshold: "", //路段行驶过长阈值
+        lack_threshold: "", //路段行驶不足阈值
         MaxSpeed: "", //最高速度
         OverMaxSpeedLastTime: "" //超速持续时间
       }
     };
   },
   watch: {},
+  props: ["road"],
   mounted() {
     var that = this;
     initMap(() => {
@@ -108,12 +113,150 @@ export default {
         zoom: 14
       });
       that.$set(that.mapData, "map", map);
-      map.plugin(["AMap.MouseTool"], function() {
-        var mouseTool = new AMap.MouseTool(map);
-        that.$set(that.mapData, "mouseTool", mouseTool);
-      });
     });
+    this.getTable();
   },
-  methods: {}
+  methods: {
+    getTable() {
+      this.$set(this.$data, "roadData", this.$props.road);
+      var path = [];
+      this.location = [];
+      var lat = "";
+      var lng = "";
+      this.roadData[0].TurnPoints.map((item, index) => {
+        lng = parseFloat(item.TurnPointLongitude);
+        lat = parseFloat(item.TurnPointLatitude);
+        path.push([lng, lat]);
+        this.location.push({ id: index, lng: lng, lat: lat });
+      });
+      var polyline = new AMap.Polyline({
+        path: path,
+        isOutline: true,
+        outlineColor: "#ffeeff",
+        borderWeight: 3,
+        strokeColor: "#3366FF",
+        strokeOpacity: 1,
+        strokeWeight: 6,
+        // 折线样式还支持 'dashed'
+        strokeStyle: "solid",
+        // strokeStyle是dashed时有效
+        strokeDasharray: [10, 5],
+        lineJoin: "round",
+        lineCap: "round",
+        zIndex: 50
+      });
+      polyline.setMap(this.mapData.map);
+      this.mapData.map.setFitView([polyline]);
+    },
+    setItem() {
+      if (this.formData.start == "") {
+        return this.$notify({
+          message: "请选择开始位置!",
+          title: "提示",
+          type: "error"
+        });
+      }
+      if (this.formData.end == "") {
+        return this.$notify({
+          message: "请选择结束位置!",
+          title: "提示",
+          type: "error"
+        });
+      }
+      if (this.road_width == "") {
+        return this.$notify({
+          message: "请输入路段宽度!",
+          title: "提示",
+          type: "error"
+        });
+      }
+      if (this.formData.travel_time) {
+        if (this.formData.long_threshold == "") {
+          return this.$notify({
+            message: "请输入路段行驶过长阈值!",
+            title: "提示",
+            error: "error"
+          });
+        } else if (this.formData.lack_threshold == "") {
+          return this.$notify({
+            message: "请输入路段行驶不足阈值!",
+            title: "提示",
+            error: "error"
+          });
+        }
+      }
+      if (this.formData.speed_limit) {
+        if (this.formData.MaxSpeed == "") {
+          return this.$notify({
+            message: "请输入路段最高速度!",
+            title: "提示",
+            error: "error"
+          });
+        } else if (this.formData.OverMaxSpeedLastTime == "") {
+          return this.$notify({
+            message: "请输入路段超速持续时间!",
+            title: "提示",
+            error: "error"
+          });
+        }
+      }
+      var num = [0, 0, 0, 0, 0, 0, 0, 0];
+      if (this.formData.travel_time) {
+        num[7] = 1;
+      }
+      if (this.formData.speed_limit) {
+        num[6] = 1;
+      }
+      if (this.formData.latitude == "1") {
+        num[5] = 0;
+      } else {
+        num[5] = 1;
+      }
+      if (this.formData.longitude == "1") {
+        num[4] = 0;
+      } else {
+        num[4] = 1;
+      }
+      var reg = new RegExp(",", "g");
+      num = parseInt(num.toString().replace(reg, ""), 2);
+      this.formData.road = num;
+      var start = parseInt(this.formData.start);
+      var end = parseInt(this.formData.end);
+      if (!end > start) {
+        return this.$notify({
+          message: "结束位置必须大于开始位置!",
+          title: "提示",
+          type: "error"
+        });
+      }
+      var point = [];
+      var data = [];
+      var arr = [];
+      this.formData.start_location = this.location[start];
+      this.formData.end_location = this.location[end];
+      this.location.map(item => {
+        arr.push(item.id);
+        if (item.id >= start) {
+          if (item.id <= end) {
+            point.push(item);
+          }
+        }
+      });
+      data = [
+        {
+          start: start,
+          end: end,
+          point: point,
+          RouteSegmentWidth: this.formData.road_width,
+          RouteSegmentProperty: this.formData.road,
+          MaxDriveTimeLimited: this.formData.long_threshold,
+          MinDriveTimeLimited: this.formData.lack_threshold,
+          MaxSpeedLimited: this.formData.MaxSpeed,
+          OverMaxSpeedLastTime: this.formData.OverMaxSpeedLastTime
+        }
+      ];
+      this.$emit("reply", data);
+    }
+  }
 };
 </script>
