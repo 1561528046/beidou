@@ -1,9 +1,10 @@
 var BASE_URL = "http://192.168.88.100:725/";
 var API_URL = "http://192.168.88.100:725/api";
-var MONITOR_URL = "ws://192.168.88.88:5002";
+var MONITOR_URL = "ws://192.168.88.125:5002";
+var INSTRUCTION_URL = "ws://192.168.88.125:5000";
 // var BASE_URL = "http://192.168.88.88:10462/";
 // var API_URL = "http://192.168.88.88:10462/api";
-var INSTRUCTION_URL = "ws://192.168.88.88:5000";
+
 // || true
 if (process.env.NODE_ENV == "production") {
   BASE_URL = "http://60.10.139.113:1023/";
@@ -19,7 +20,7 @@ export const dict = {
   API_URL: API_URL, //API具体路径
   MONITOR_URL: MONITOR_URL, //监控端websocket地址
   INSTRUCTION_URL: INSTRUCTION_URL, //指令websocket地址
-  ONLINE_TIMEOUT: "30000000", //300000 = 5分钟上线超时时间（当前系统时间-定为时间 < 5分钟  即为上线）
+  ONLINE_TIMEOUT: "300000", //300000 = 5分钟上线超时时间（当前系统时间-定为时间 < 5分钟  即为上线）
   license_color: {
     "1": {
       backgroundColor: "#006DD9",

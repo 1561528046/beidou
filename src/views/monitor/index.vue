@@ -354,7 +354,11 @@ export default {
         var socketDataWorker = new Worker("/map/worker-socket.js");
         wsList.position.binaryType = "arraybuffer";
         wsList.position.onopen = () => {
-          wsList.position.send("^login|admin|49ba59abbe56e057$");
+          // wsList.position.send(`^login|admin|49ba59abbe56e057$`);
+          var userInfo = JSON.parse(localStorage.getItem("BEIDOU"));
+          wsList.position.send(
+            `^login|${userInfo.user_name}|${userInfo.pass_word}$`
+          );
           wsList.positionHeartInterval = setInterval(() => {
             wsList.position.send("^heart$");
           }, 20000);
@@ -369,35 +373,7 @@ export default {
           evt.data.lat = position.lat;
           this.setVehicleData(evt.data);
         };
-        //2 指令数据socket
-        // vm.$instruction.send("^x8801|1|1|0|0|1|10|150|64|64|150|013812345678$");
-        //                       ^x8801|13812345678|1|1|0|0|1|5|125|64|64|125$
-        // vm.$instruction.on("x8801", "013812345678", evt => {
-        //   console.log(evt);
-        // });
-        // wsList.instruction = new WebSocket(vm.$dict.INSTRUCTION_URL);
-        // wsList.instruction.onopen = () => {
-        //   wsList.instruction.send("^heart$");
-        //   wsList.instruction.send(
-        //     "^x8801|1|1|0|0|1|10|150|64|64|150|013812345678$"
-        //   );
-        //   wsList.instructionHeartInterval = setInterval(() => {
-        //     wsList.instruction.send("^heart$");
-        //   }, 20000);
-        // };
-        // wsList.instruction.addEventListener("message", evt => {
-        //   this.instructionWSMessage(evt);
-        // });
       },
-      // instruction: new Instruction(),
-      // instructionWSMessage(evt) {
-      //   //^x8106|1|018681892547|0$
-      //   var message = evt.data
-      //     .replace("$", "")
-      //     .replace("^", "")
-      //     .split("|");
-      //   console.log(message);
-      // },
       initFence() {
         //请求围栏数据
         GetRegionByPage({
