@@ -65,7 +65,11 @@ export default {
                 this.$message.success("登陆成功！");
                 this.$store.commit(
                   "loginIn",
-                  Object.assign({ token: res.data.token }, res.data.data[0])
+                  Object.assign(
+                    { token: res.data.token },
+                    res.data.data[0],
+                    postData
+                  )
                 );
                 if (document.referrer) {
                   location.href = document.referrer;

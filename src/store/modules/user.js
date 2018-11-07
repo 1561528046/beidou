@@ -5,7 +5,9 @@ const user = {
     rights: userData.rights || [], //用户权限范围
     loginTime: "", //登陆日期 判断用户失效
     user_id: userData.user_id || "", //用户ID
-    real_name: userData.real_name || "" //昵称
+    real_name: userData.real_name || "", //昵称
+    pass_word: "",
+    user_name: ""
   },
   mutations: {
     loginIn(state, userInfo) {
@@ -13,6 +15,8 @@ const user = {
       state.rights = userInfo.rights.split(",");
       state.user_id = userInfo.user_id;
       state.token = userInfo.token;
+      state.pass_word = userInfo.pass_word;
+      state.user_name = userInfo.user_name;
       localStorage.setItem("BEIDOU", JSON.stringify(state));
     },
     clearLoginInfo() {
