@@ -1,10 +1,10 @@
 <template>
   <div style="padding:10px 198px;">
     <el-form>
-      <el-row>
+      <el-row v-if="collectData.CommandWord==2">
         <el-col>
           <el-form-item label="时间：">
-            {{time}}
+            {{collectData.RealTimeClock}}
           </el-form-item>
         </el-col>
       </el-row>
@@ -13,25 +13,21 @@
 </template>
 <script>
 export default {
-  created() {
-    this.getTable();
-  },
+  created() {},
   data() {
     return {
-      collectData: {},
-      time: ""
+      collectData: {}
     };
   },
   props: ["collect"],
-  methods: {
-    getTable() {
-      this.$set(this.$data, "collectData", this.$props.collect);
-      if (this.collectData.CommandWord == 2) {
-        this.time = this.collectData.RealTimeClock;
-      } else {
-        this.time = "";
-      }
+  watch: {
+    collect: {
+      handler: function() {
+        this.$set(this.$data, "collectData", this.$props.collect);
+      },
+      deep: true
     }
-  }
+  },
+  methods: {}
 };
 </script>

@@ -1,67 +1,67 @@
 <template>
-    <div class="admin-table-container">
-        <el-form :model="speed_limit" label-width="100px">
-            <el-row>
-                <el-col :span="24">
-                    <el-form-item label="选择车辆">
-                        <el-button type="primary" size="small" @click="addForm">选择车辆</el-button>
-                        {{license}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item label="规则名称：">
-                        <el-input size="small" v-model="speed_limit.rules" style="width:20%"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item label="线路：">
-                        <el-select @change="selectRoad" style="width:20%" v-model="line" size="small">
-                            <el-option v-for="line in lineData" :key="line.RegionId" :value="line.RegionName" :label="line.RegionName"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <!-- <el-col :span="24">
+  <div class="admin-table-container">
+    <el-form :model="speed_limit" label-width="100px">
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="选择车辆">
+            <el-button type="primary" size="small" @click="addForm">选择车辆</el-button>
+            {{license}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="规则名称：">
+            <el-input size="small" v-model="speed_limit.rules" style="width:20%"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="线路：">
+            <el-select @change="selectRoad" style="width:20%" v-model="line" size="small">
+              <el-option v-for="line in lineData" :key="line.RegionId" :value="line.RegionName" :label="line.RegionName"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <!-- <el-col :span="24">
                     <el-form-item label="时间范围：">
                         <el-date-picker v-model="speed_limit.time" value-format="yyyy-MM-DD HH:mm:ss" style="width:20%;" size="small" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
                         </el-date-picker>
                     </el-form-item>
                 </el-col> -->
-                <el-col :span="24">
-                    <el-form-item style="margin:0" label="路线属性:">
-                        <el-checkbox v-model="according_time" style="margin-left:0px;">根据时间</el-checkbox>
-                        <el-checkbox v-model="enter_driver" style="margin-left:5px;">进路线报警给驾驶员</el-checkbox>
-                        <el-checkbox v-model="outer_driver" style="margin-left:5px;">进路线报警给平台</el-checkbox>
-                        <el-checkbox v-model="enter_platform" style="margin-left:0px;">出路线报警给驾驶员</el-checkbox>
-                        <el-checkbox v-model="outer_platform" style="margin-left:5px;">出路线报警给平台</el-checkbox>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item label="限速路段：">
-                        <el-button size="mini" type="primary" @click="addRoad" icon="el-icon-plus"></el-button>
-                        <el-table height="200" :data="limit_road" style="width:40%;">
-                            <el-table-column prop="start" label="起点位置" :formatter="(row)=>{return row.start + 1}"></el-table-column>
-                            <el-table-column prop="end" label="结束位置" :formatter="(row)=>{return row.end + 1}"></el-table-column>
-                            <el-table-column prop="MaxSpeedLimited" label="最高速度" :formatter="$utils.baseFormatter"></el-table-column>
-                            <el-table-column label="操作">
-                                <template slot-scope="scope">
-                                    <el-button @click="deleteItem(scope.row)" type="danger" icon="el-icon-delete" size="mini" circle></el-button>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    </el-form-item>
-                </el-col>
-                <el-col style="text-align:center;">
-                    <el-button type="primary" @click="sendInstruction" size="small">设置</el-button>
-                </el-col>
-            </el-row>
-        </el-form>
-        <el-dialog width="60%" title="分段限速" :visible.sync="itemDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="true" :center="true" class="admin-dialog">
-            <area-route @reply="storageItem" :road="roadData" :key="addKey"></area-route>
-        </el-dialog>
-        <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-            <choose-vehicle @button="vehicleCallback" @success=" () => {this.addDialog = false;}" :key="addKey"></choose-vehicle>
-        </el-dialog>
-    </div>
+        <el-col :span="24">
+          <el-form-item style="margin:0" label="路线属性:">
+            <el-checkbox v-model="according_time" style="margin-left:0px;">根据时间</el-checkbox>
+            <el-checkbox v-model="enter_driver" style="margin-left:5px;">进路线报警给驾驶员</el-checkbox>
+            <el-checkbox v-model="outer_driver" style="margin-left:5px;">进路线报警给平台</el-checkbox>
+            <el-checkbox v-model="enter_platform" style="margin-left:0px;">出路线报警给驾驶员</el-checkbox>
+            <el-checkbox v-model="outer_platform" style="margin-left:5px;">出路线报警给平台</el-checkbox>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="限速路段：">
+            <el-button size="mini" type="primary" @click="addRoad" icon="el-icon-plus"></el-button>
+            <el-table height="200" :data="limit_road" style="width:40%;">
+              <el-table-column prop="start" label="起点位置" :formatter="(row)=>{return row.start + 1}"></el-table-column>
+              <el-table-column prop="end" label="结束位置" :formatter="(row)=>{return row.end + 1}"></el-table-column>
+              <el-table-column prop="MaxSpeedLimited" label="最高速度" :formatter="$utils.baseFormatter"></el-table-column>
+              <el-table-column label="操作">
+                <template slot-scope="scope">
+                  <el-button @click="deleteItem(scope.row)" type="danger" icon="el-icon-delete" size="mini" circle></el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-form-item>
+        </el-col>
+        <el-col style="text-align:center;">
+          <el-button type="primary" @click="sendInstruction" size="small">设置</el-button>
+        </el-col>
+      </el-row>
+    </el-form>
+    <el-dialog width="60%" title="分段限速" :visible.sync="itemDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="true" :center="true" class="admin-dialog">
+      <area-route @down="closeInterface" @reply="storageItem" :road="roadData" :key="addKey"></area-route>
+    </el-dialog>
+    <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <choose-vehicle @button="vehicleCallback" @success=" () => {this.addDialog = false;}" :key="addKey"></choose-vehicle>
+    </el-dialog>
+  </div>
 </template>
 <script>
 /*eslint-disable*/
@@ -135,6 +135,9 @@ export default {
     };
   },
   methods: {
+    closeInterface() {
+      this.itemDialog = false;
+    },
     // 区域列表
     getTable() {
       GetRegionByPage(this.tableQuery).then(res => {
@@ -278,10 +281,12 @@ export default {
         arr.push(item);
       });
       this.$set(this.$data, "limit_road", arr);
+      console.log(this.limit_road);
       // this.limit_road = data;
     },
     // 查询所选择的路线
     selectRoad(name) {
+      this.limit_road = [];
       var data = {};
       data = {
         page: 1,

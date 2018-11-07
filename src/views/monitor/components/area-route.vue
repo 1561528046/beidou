@@ -54,7 +54,10 @@
                 <el-input v-model="formData.OverMaxSpeedLastTime" style="width:60%" size="small"></el-input>
               </el-form-item>
             </el-col>
-            <el-button type="primary" style="display:block;margin:0 auto;" @click="setItem" size="small">设置</el-button>
+            <div style="width:123px;margin:0 auto;">
+              <el-button type="primary" @click="setItem" size="small">设置</el-button>
+              <el-button type="primary" @click="down" size="small">关闭</el-button>
+            </div>
           </el-row>
         </el-form>
       </div>
@@ -73,6 +76,7 @@ export default {
   components: { chooseVehicle },
   data() {
     return {
+      copy_road: [],
       machine_type: true,
       route_type: false,
       label: "",
@@ -81,6 +85,7 @@ export default {
       vehicleData: {},
       roadData: [],
       location: [],
+      arrData: [],
       mapData: {
         map: {},
         mouseTool: {},
@@ -117,6 +122,9 @@ export default {
     this.getTable();
   },
   methods: {
+    down() {
+      this.$emit("down", 1);
+    },
     getTable() {
       this.$set(this.$data, "roadData", this.$props.road);
       var path = [];
@@ -128,6 +136,9 @@ export default {
         lat = parseFloat(item.TurnPointLatitude);
         path.push([lng, lat]);
         this.location.push({ id: index, lng: lng, lat: lat });
+      });
+      this.location.map(icar => {
+        icar.id = JSON.stringify(icar.id);
       });
       var polyline = new AMap.Polyline({
         path: path,
@@ -155,22 +166,25 @@ export default {
           title: "提示",
           type: "error"
         });
-      }
-      if (this.formData.end == "") {
+      } else if (this.formData.end == "") {
         return this.$notify({
           message: "请选择结束位置!",
           title: "提示",
           type: "error"
         });
-      }
-      if (this.road_width == "") {
+      } else if (this.formData.end <= this.formData.start) {
+        return this.$notify({
+          message: "结束位置必须大于开始位置!",
+          title: "提示",
+          type: "error"
+        });
+      } else if (this.formData.road_width == "") {
         return this.$notify({
           message: "请输入路段宽度!",
           title: "提示",
           type: "error"
         });
-      }
-      if (this.formData.travel_time) {
+      } else if (this.formData.travel_time) {
         if (this.formData.long_threshold == "") {
           return this.$notify({
             message: "请输入路段行驶过长阈值!",
@@ -184,8 +198,7 @@ export default {
             error: "error"
           });
         }
-      }
-      if (this.formData.speed_limit) {
+      } else if (this.formData.speed_limit) {
         if (this.formData.MaxSpeed == "") {
           return this.$notify({
             message: "请输入路段最高速度!",
@@ -217,24 +230,20 @@ export default {
       } else {
         num[4] = 1;
       }
+      var point = [];
+      var data = [];
+      var arr = [];
       var reg = new RegExp(",", "g");
       num = parseInt(num.toString().replace(reg, ""), 2);
       this.formData.road = num;
       var start = parseInt(this.formData.start);
       var end = parseInt(this.formData.end);
-      if (!end > start) {
-        return this.$notify({
-          message: "结束位置必须大于开始位置!",
-          title: "提示",
-          type: "error"
-        });
-      }
-      var point = [];
-      var data = [];
-      var arr = [];
       this.formData.start_location = this.location[start];
       this.formData.end_location = this.location[end];
       this.location.map(item => {
+        if (item.id >= start && item.id <= end) {
+          this.copy_road.push(item.id);
+        }
         arr.push(item.id);
         if (item.id >= start) {
           if (item.id <= end) {

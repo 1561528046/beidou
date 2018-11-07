@@ -43,7 +43,6 @@ import collectMileage from "./components/collect-mileage.vue";
 import collectPulse from "./components/collect-pulse.vue";
 import collectUniqueness from "./components/collect-uniqueness.vue";
 import settingInstall from "./components/setting-install.vue";
-import settingState from "./components/setting-state.vue";
 import settingTime from "./components/setting-time.vue";
 import settingPulse from "./components/setting-pulse.vue";
 import settingMileage from "./components/setting-mileage";
@@ -56,7 +55,6 @@ export default {
     collectPulse,
     collectUniqueness,
     settingInstall,
-    settingState,
     settingTime,
     settingPulse,
     settingMileage
@@ -67,6 +65,7 @@ export default {
       collect_type: "",
       set_name: "",
       set_type: "",
+      add: "",
       collectData: {},
       communication: {
         data: []
@@ -89,9 +88,6 @@ export default {
           case "83H":
             this.set_name = settingInstall;
             break;
-          case "84H":
-            this.set_name = settingState;
-            break;
           case "C2H":
             this.set_name = settingTime;
             break;
@@ -110,6 +106,11 @@ export default {
         this.communication.data.map(item => {
           this.$set(item, "operating", "");
         });
+      }
+    },
+    collect_type: {
+      handler: function() {
+        this.collectData = {};
       }
     }
   },

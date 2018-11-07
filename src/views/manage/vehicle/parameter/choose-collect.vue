@@ -9,10 +9,10 @@
               <el-option value="09H" label="位置信息记录">位置信息记录</el-option>
               <el-option value="10H" label="事故疑点记录">事故疑点记录</el-option>
               <el-option value="11H" label="超时驾驶记录">超时驾驶记录</el-option>
-              <el-option value="12H" label="外部供电记录">外部供电记录</el-option>
-              <el-option value="13H" label="参数修改记录">参数修改记录</el-option>
-              <el-option value="14H" label="速度状态日志">速度状态日志</el-option>
-              <el-option value="15H" label="驾驶人身份记录">驾驶人身份记录</el-option>
+              <el-option value="13H" label="外部供电记录">外部供电记录</el-option>
+              <el-option value="14H" label="参数修改记录">参数修改记录</el-option>
+              <el-option value="15H" label="速度状态日志">速度状态日志</el-option>
+              <el-option value="12H" label="驾驶人身份记录">驾驶人身份记录</el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -43,7 +43,7 @@ import collectTimeout from "./specified/collect-timeout.vue";
 import collectSupply from "./specified/collect-supply.vue";
 import collectParameter from "./specified/collect-parameter.vue";
 import collectSpeed from "./specified/collect-speed.vue";
-import collectDriver from "./specified/collect-driver.vue";
+import collectDrive from "./specified/collect-drive.vue";
 export default {
   components: {
     collectDriving,
@@ -53,7 +53,7 @@ export default {
     collectSupply,
     collectParameter,
     collectSpeed,
-    collectDriver
+    collectDrive
   },
   created() {
     this.$instruction.on("x0700", evs => {
@@ -158,7 +158,7 @@ export default {
           this.collect_name = collectSpeed;
           break;
         case "15H":
-          this.collect_name = collectDriver;
+          this.collect_name = collectDrive;
           break;
       }
     }

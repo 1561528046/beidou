@@ -1,12 +1,13 @@
+
 <template>
-  <!-- 行驶速度记录 -->
+  <!-- 驾驶人身份记录 -->
   <div>
     <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="StartTime" label="开始时间">
+      <el-table-column prop="EventHappenTime" label="事件发生时间">
       </el-table-column>
-      <el-table-column prop="AverageSpeed" label="平局速度">
+      <el-table-column prop="LicenseNo" label="机动车驾驶证号码">
       </el-table-column>
-      <el-table-column prop="StateSignal" label="状态信号">
+      <el-table-column prop="EventType" label="事件类型">
       </el-table-column>
     </el-table>
   </div>
@@ -24,12 +25,11 @@ export default {
   watch: {
     message: {
       handler: function() {
+        console.log(this.$props.message);
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 8) {
-          var UnitMinutesSpeeds = JSON.parse(
-            this.collectData.UnitMinutesSpeeds
-          );
-          this.$set(this.$data, "tableData", UnitMinutesSpeeds);
+        if (this.collectData.CommandWord == 18) {
+          var DriverIDRecords = JSON.parse(this.collectData.DriverIDRecords);
+          this.$set(this.$data, "tableData", DriverIDRecords);
         }
       },
       deep: true

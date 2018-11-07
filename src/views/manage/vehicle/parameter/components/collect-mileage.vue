@@ -1,18 +1,18 @@
 <template>
   <div style="padding:10px 198px;">
     <el-form>
-      <el-row>
+      <el-row v-if="collectData.CommandWord==3">
         <el-col>
-          <el-form-item label="实时时间：">{{RealTime}}</el-form-item>
+          <el-form-item label="实时时间：">{{collectData.RealTime}}</el-form-item>
         </el-col>
         <el-col>
-          <el-form-item label="记录仪初次安装时间：">{{SetupTime}}</el-form-item>
+          <el-form-item label="记录仪初次安装时间：">{{collectData.SetupTime}}</el-form-item>
         </el-col>
         <el-col>
-          <el-form-item label="初始里程：">{{BeginMileage}}</el-form-item>
+          <el-form-item label="初始里程：">{{collectData.BeginMileage}}</el-form-item>
         </el-col>
         <el-col>
-          <el-form-item label="累计行驶里程：">{{EndMileage}}</el-form-item>
+          <el-form-item label="累计行驶里程：">{{collectData.EndMileage}}</el-form-item>
         </el-col>
       </el-row>
     </el-form>
@@ -20,34 +20,21 @@
 </template>
 <script>
 export default {
-  created() {
-    this.getTable();
-  },
+  created() {},
   data() {
     return {
-      collectData: {},
-      RealTime: "",
-      SetupTime: "",
-      BeginMileage: "",
-      EndMileage: ""
+      collectData: {}
     };
   },
   props: ["collect"],
-  methods: {
-    getTable() {
-      this.$set(this.$data, "collectData", this.$props.collec);
-      if (this.collectData.CommandWord == 3) {
-        this.RealTime = this.collectData.RealTime;
-        this.SetupTime = this.collectData.SetupTime;
-        this.BeginMileage = this.collectData.BeginMileage;
-        this.EndMileage = this.collectData.EndMileage;
-      } else {
-        this.RealTime = "";
-        this.SetupTime = "";
-        this.BeginMileage = "";
-        this.EndMileage = "";
-      }
+  watch: {
+    collect: {
+      handler: function() {
+        this.$set(this.$data, "collectData", this.$props.collect);
+      },
+      deep: true
     }
-  }
+  },
+  methods: {}
 };
 </script>

@@ -1,10 +1,10 @@
 <template>
   <div style="padding:10px 198px;">
     <el-form>
-      <el-row>
+      <el-row v-if="collectData.CommandWord == 1">
         <el-col>
           <el-form-item label="机动车驾驶证：">
-            {{license}}
+            {{collectData.LicenseNo}}
           </el-form-item>
         </el-col>
       </el-row>
@@ -13,25 +13,21 @@
 </template>
 <script>
 export default {
-  created() {
-    this.getTable();
-  },
+  created() {},
   data() {
     return {
-      collectData: {},
-      license: ""
+      collectData: {}
     };
   },
   props: ["collect"],
-  methods: {
-    getTable() {
-      this.$set(this.$data, "collectData", this.$props.collect);
-      if (this.collectData.CommandWord == 1) {
-        this.license = this.collectData.LicenseNo;
-      } else {
-        this.license = "";
-      }
+  watch: {
+    collect: {
+      handler: function() {
+        this.$set(this.$data, "collectData", this.$props.collect);
+      },
+      deep: true
     }
-  }
+  },
+  methods: {}
 };
 </script>

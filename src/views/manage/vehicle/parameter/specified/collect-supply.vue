@@ -1,32 +1,38 @@
 <template>
   <!-- 外部供电记录 -->
   <div>
-    <el-table :data="tableData.data" style="width: 100%">
-      <el-table-column label="事件发生时间">
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column prop="EventHappenTime" label="事件发生时间">
       </el-table-column>
-      <el-table-column label="事件类型">
+      <el-table-column prop="EventType" label="事件类型">
       </el-table-column>
     </el-table>
   </div>
 </template>
 <script>
 export default {
-  created() {
-    this.getTable();
-  },
+  created() {},
   data() {
     return {
-      tableData: {
-        data: []
-      },
+      tableData: [],
       collectData: {}
     };
   },
   props: ["message"],
-  methods: {
-    getTable() {
-      this.$set(this.$data, "collectData", this.$props.message);
+  watch: {
+    message: {
+      handler: function() {
+        this.$set(this.$data, "collectData", this.$props.message);
+        if (this.collectData.CommandWord == 19) {
+          var ExternalPowerRecords = JSON.parse(
+            this.collectData.ExternalPowerRecords
+          );
+          this.$set(this.$data, "tableData", ExternalPowerRecords);
+        }
+      },
+      deep: true
     }
-  }
+  },
+  methods: {}
 };
 </script>
