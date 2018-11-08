@@ -145,6 +145,8 @@ import x8302 from "./components/x8302.vue"; //提问下发
 import monitorInfo from "./components/monitor-info.vue"; //提问列表
 import x8400 from "./components/x8400.vue"; //电话回拨
 import x8401 from "./components/x8401.vue"; //电话本
+import x81051 from "./components/x8105-2.vue"; //无限升级
+import x81052 from "./components/x8105-2.vue"; //指定服务器
 import moment from "moment";
 window.monitor = {};
 export default {
@@ -161,6 +163,8 @@ export default {
     x8302,
     x8400,
     x8401,
+    x81051,
+    x81052,
     monitorInfo
   },
   data() {
@@ -590,6 +594,7 @@ export default {
       },
       initMap() {
         var map = new AMap.Map("container", {
+          mapStyle: "amap://styles/eca30d0b0912c5e6154b32dd369f8524",
           //viewMode: "3D",
           //pitch: 55,
           // rotation: -45,
@@ -765,6 +770,25 @@ export default {
         });
         return false;
       }
+      if (instructionArr[0] == "x8105" && instructionArr[1] > 2) {
+        //终端控制
+        var obj = {
+          SimID: this.$utils.formatSim(sim_id),
+          MessageID: "x8105",
+          CommandWord: instructionArr[1],
+          CommandParameters: ""
+        };
+        this.$instruction.send(JSON.stringify(obj));
+        this.$instruction.once("x8105", evt => {
+          var data = JSON.parse(evt.data);
+          if (data.code == 0) {
+            this.$message.success("下发成功");
+          } else {
+            this.$message.warning("下发失败");
+          }
+        });
+        return false;
+      }
       if (instructionArr[0] == "x8201") {
         sim_id = this.$utils.formatSim(sim_id);
         this.$instruction.send("^x8201|" + sim_id + "$");
@@ -793,6 +817,15 @@ export default {
         case "x8400":
           this.instructionCard.title = "电话回拨";
           this.instructionCard.component = x8400;
+          break;
+        case "x8105":
+          if (instructionArr[1] == 1) {
+            this.instructionCard.title = "无线升级";
+            this.instructionCard.component = x81051;
+          } else {
+            this.instructionCard.title = "指定服务器";
+            this.instructionCard.component = x81052;
+          }
           break;
       }
       this.instructionCard.show = true;
