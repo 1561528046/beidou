@@ -281,7 +281,7 @@ export default {
         arr.push(item);
       });
       this.$set(this.$data, "limit_road", arr);
-      this.$roadData.copy = arr.copy;
+      this.roadData.copy = arr.copy;
     },
     // 查询所选择的路线
     selectRoad(name) {
@@ -294,7 +294,9 @@ export default {
       };
       GetRegionByPage(data).then(res => {
         if (res.data.code == 0) {
-          res.data.data[0].copy = [];
+          res.data.data.map(item => {
+            item.copy = [];
+          });
           this.$set(this.$data, "roadData", res.data.data);
         }
       });

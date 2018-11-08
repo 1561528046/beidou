@@ -213,6 +213,13 @@ export default {
           });
         }
       }
+      if (this.roadData[0].copy.includes(this.formData.start)) {
+        return this.$notify({
+          message: "请检查您当前设置路段是否存在被其他路段占用的情况",
+          title: "提示",
+          type: "error"
+        });
+      }
       var num = [0, 0, 0, 0, 0, 0, 0, 0];
       if (this.formData.travel_time) {
         num[7] = 1;
@@ -240,7 +247,6 @@ export default {
       var end = parseInt(this.formData.end);
       this.formData.start_location = this.location[start];
       this.formData.end_location = this.location[end];
-      console.log(this.roadData.copy);
       this.location.map(item => {
         if (item.id >= start && item.id <= end) {
           this.copy_road.push(item.id);
@@ -252,15 +258,8 @@ export default {
           }
         }
       });
-      if (this.roadData.copy.includes(start)) {
-        return this.$notify({
-          message: "请检查您当前设置路段是否存在被其他路段占用的情况",
-          title: "提示",
-          type: "error"
-        });
-      }
       this.copy_road.map(icc => {
-        this.roadData.copy.push(icc);
+        this.roadData[0].copy.push(icc);
       });
       data = [
         {
