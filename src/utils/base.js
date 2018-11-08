@@ -1,7 +1,18 @@
+<<<<<<< HEAD
 var BASE_URL = "http://192.168.88.100:725/";
 var API_URL = "http://192.168.88.100:725/api";
 var MONITOR_URL = "ws://192.168.88.88:5002";
 var INSTRUCTION_URL = "ws://192.168.88.88:5000";
+=======
+// var BASE_URL = "http://192.168.88.100:725/";
+// var API_URL = "http://192.168.88.100:725/api";
+// var MONITOR_URL = "ws://192.168.88.88:5002";
+// var INSTRUCTION_URL = "ws://192.168.88.88:5000";
+var BASE_URL = "http://60.10.139.113:1023/";
+var API_URL = "http://60.10.139.113:1023/api";
+var INSTRUCTION_URL = "ws://60.10.139.112:5000";
+var MONITOR_URL = "ws://60.10.139.112:5002";
+>>>>>>> 1918a238c8c38b4a8c73464a01fee091ce4f23d4
 // var BASE_URL = "http://192.168.88.88:10462/";
 // var API_URL = "http://192.168.88.88:10462/api";
 
