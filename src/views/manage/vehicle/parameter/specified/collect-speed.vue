@@ -12,10 +12,6 @@
       </el-table-column>
       <el-table-column prop="ReferenceSpeed" label="开始时间对应的参考速度">
       </el-table-column>
-      <el-table-column prop="" label="开始时间后对应的参考速度">
-      </el-table-column>
-      <el-table-column prop="" label="开始时间后对应的参考速度">
-      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -33,7 +29,7 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 20) {
+        if (this.collectData.CommandWord == 21) {
           var SpeedStateLogs = JSON.parse(this.collectData.SpeedStateLogs);
           this.$set(this.$data, "tableData", SpeedStateLogs);
         }

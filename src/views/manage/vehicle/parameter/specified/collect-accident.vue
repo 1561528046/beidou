@@ -6,8 +6,6 @@
       </el-table-column>
       <el-table-column prop="LicenseNo" label="机动车驾驶证号码">
       </el-table-column>
-      <el-table-column prop="" label="行驶结束时的速度">
-      </el-table-column>
       <el-table-column prop="Speed" label="行驶结束时间前的速度">
       </el-table-column>
       <el-table-column prop="StateSignal" label="行驶结束时间前的状态信号">

@@ -257,6 +257,7 @@
         <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')" title="sim卡信息"></i>
         <i class="iconfont icon-luyin" @click="showCard('x8804','录音')" title="录音"></i>
         <i class="iconfont icon-video" @click="showCard('x8801','拍摄')" title="拍摄"></i>
+        <i class="iconfont icon-zhongduan" @click="getTerminal" title="终端属性"></i>
         <el-badge :value="parseInt(mapData.vehicle.alarm_count)||''" :max="99" class="alarm-badge" :class="{'no-alarm':!mapData.vehicle.alarm_count}">
           <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
         </el-badge>
@@ -265,6 +266,9 @@
       </div>
       <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%" :close-on-click-modal="false" :close-on-press-escape="false">
         <div :is="card.component" :vehicle="$props.vehicle" v-if="card.show"></div>
+      </el-dialog>
+      <el-dialog title="终端属性" :visible.sync="terminalDialog" append-to-body width="50%" :close-on-click-modal="false" :close-on-press-escape="false">
+        <terminal-card></terminal-card>
       </el-dialog>
     </div>
   </div>
@@ -276,13 +280,22 @@ import { location2address } from "@/utils/map-tools.js";
 import { initMap, createMarker, setMarker } from "@/utils/map.js";
 import deviceCard from "./card-device.vue";
 import simCard from "./card-sim.vue";
+import terminalCard from "./card-terminal.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 import x8804 from "./x8804.vue";
 import x8801 from "./x8801.vue";
 import x0702 from "./x0702.vue";
 
 export default {
-  components: { deviceCard, simCard, chooseVehicle, x8804, x8801, x0702 },
+  components: {
+    deviceCard,
+    simCard,
+    terminalCard,
+    chooseVehicle,
+    x8804,
+    x8801,
+    x0702
+  },
   data() {
     return {
       otherVehicleDialog: false,
@@ -305,7 +318,8 @@ export default {
         //otherMarker:{}
       },
       bodyWidth: "",
-      bodyHeight: ""
+      bodyHeight: "",
+      terminalDialog: false
     };
   },
   props: ["index", "vehicle", "single"],
@@ -384,6 +398,23 @@ export default {
     }
   },
   methods: {
+    // 查询终端属性
+    getTerminal() {
+      var data = {};
+      var sim_id = "";
+      if (this.mapData.vehicle.sim_id.length == 11) {
+        sim_id = "0" + this.mapData.vehicle.sim_id;
+      } else {
+        sim_id = this.mapData.vehicle.sim_id;
+      }
+      data = {
+        SimID: sim_id,
+        MessageID: "x8107"
+      };
+      data = JSON.stringify(data);
+      this.$instruction.send(data);
+      this.terminalDialog = true;
+    },
     showCard(componentName, title) {
       this.card.show = true;
       this.card.component = componentName;

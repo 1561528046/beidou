@@ -32,7 +32,7 @@
         </el-col>
       </el-row>
     </el-form>
-    <div :is="collect_name" :message="collect_data"></div>
+    <div :is="collect_name" :message="collectData"></div>
   </div>
 </template>
 <script>
@@ -43,7 +43,7 @@ import collectTimeout from "./specified/collect-timeout.vue";
 import collectSupply from "./specified/collect-supply.vue";
 import collectParameter from "./specified/collect-parameter.vue";
 import collectSpeed from "./specified/collect-speed.vue";
-import collectDrive from "./specified/collect-drive.vue";
+import collectDriver from "./specified/collect-driver.vue";
 export default {
   components: {
     collectDriving,
@@ -53,17 +53,17 @@ export default {
     collectSupply,
     collectParameter,
     collectSpeed,
-    collectDrive
+    collectDriver
   },
   created() {
-    this.$instruction.on("x0700", evs => {
-      var data = JSON.parse(evs.data);
-      this.$set(this.$data, "collect_data", data);
+    this.$instruction.on("x0700", eve => {
+      var data = JSON.parse(eve.data);
+      this.$set(this.$data, "collectData", data);
     });
   },
-  beforeDestroy() {
-    this.$instruction.off("x0700");
-  },
+  // beforeDestroy() {
+  //   this.$instruction.off("x0700");
+  // },
   data() {
     return {
       time: "",
@@ -73,7 +73,7 @@ export default {
       },
       collect_type: "",
       collect_name: "",
-      collect_data: {}
+      collectData: {}
     };
   },
   watch: {
@@ -148,17 +148,17 @@ export default {
         case "11H":
           this.collect_name = collectTimeout;
           break;
-        case "12H":
+        case "13H":
           this.collect_name = collectSupply;
           break;
-        case "13H":
+        case "14H":
           this.collect_name = collectParameter;
           break;
-        case "14H":
+        case "15H":
           this.collect_name = collectSpeed;
           break;
-        case "15H":
-          this.collect_name = collectDrive;
+        case "12H":
+          this.collect_name = collectDriver;
           break;
       }
     }

@@ -78,9 +78,9 @@ export default {
       this.$set(this.$data, "collectData", data);
     });
   },
-  beforeDestroy() {
-    this.$instruction.off("x0700");
-  },
+  // beforeDestroy() {
+  //   this.$instruction.off("x0700");
+  // },
   watch: {
     set_type: {
       handler: function() {

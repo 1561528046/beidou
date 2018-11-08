@@ -125,9 +125,9 @@ export default {
       }
     });
   },
-  beforeDestroy() {
-    this.$instruction.off("x8900");
-  },
+  // beforeDestroy() {
+  //   this.$instruction.off("x8900");
+  // },
   watch: {
     parameter: function() {
       this.text.emergency = false; //紧急

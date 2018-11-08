@@ -25,7 +25,6 @@ export default {
   watch: {
     message: {
       handler: function() {
-        console.log(this.$props.message);
         this.$set(this.$data, "collectData", this.$props.message);
         if (this.collectData.CommandWord == 18) {
           var DriverIDRecords = JSON.parse(this.collectData.DriverIDRecords);

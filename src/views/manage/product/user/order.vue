@@ -86,6 +86,7 @@
         <el-table-column prop="order_amount" label="订单金额" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="pay_type" label="支付方式" :formatter="(row)=>{return this.$dict.get_order_paytype(row.pay_type)}"> </el-table-column>
         <el-table-column prop="fees_detail_name" label="收费单项" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="reason" label="审核原因" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="state" label="订单状态" :formatter="(row)=>{return this.$dict.get_order_state(row.state)}"> </el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
