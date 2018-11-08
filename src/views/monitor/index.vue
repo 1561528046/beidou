@@ -145,7 +145,7 @@ import x8302 from "./components/x8302.vue"; //提问下发
 import monitorInfo from "./components/monitor-info.vue"; //提问列表
 import x8400 from "./components/x8400.vue"; //电话回拨
 import x8401 from "./components/x8401.vue"; //电话本
-import x81051 from "./components/x8105-2.vue"; //无限升级
+import x81051 from "./components/x8105-1.vue"; //无限升级
 import x81052 from "./components/x8105-2.vue"; //指定服务器
 import moment from "moment";
 window.monitor = {};
