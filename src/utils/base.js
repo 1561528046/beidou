@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // var BASE_URL = "http://192.168.88.100:725/";
 // var API_URL = "http://192.168.88.100:725/api";
 // var MONITOR_URL = "ws://192.168.88.88:5002";
@@ -6,6 +7,12 @@ var BASE_URL = "http://60.10.139.113:1023/";
 var API_URL = "http://60.10.139.113:1023/api";
 var INSTRUCTION_URL = "ws://60.10.139.112:5000";
 var MONITOR_URL = "ws://60.10.139.112:5002";
+=======
+var BASE_URL = "http://192.168.88.100:725/";
+var API_URL = "http://192.168.88.100:725/api";
+var MONITOR_URL = "ws://192.168.88.88:5002";
+var INSTRUCTION_URL = "ws://192.168.88.88:5000";
+>>>>>>> b53677737c412a8acc487a89b573ca9ed1db21a1
 // var BASE_URL = "http://192.168.88.88:10462/";
 // var API_URL = "http://192.168.88.88:10462/api";
 
@@ -18,7 +25,7 @@ if (process.env.NODE_ENV == "production") {
 }
 export const dict = {
   //全局字典
-  AMAP_KEY: "1effb3317ab25b91eb7b163d5febd226", //高德 key
+  AMAP_KEY: "bce86b9b523a60714211899fa89b072c", //高德 key
   BMAP_KEY: "E6CTjsauEoavEzCYG4WM1zt0S5OB6dAf", //百度key
   BASE_URL: BASE_URL, //web站点路径
   API_URL: API_URL, //API具体路径

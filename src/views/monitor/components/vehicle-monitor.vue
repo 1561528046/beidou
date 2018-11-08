@@ -433,6 +433,7 @@ export default {
           // pitch: 55,
           // rotation: -45,
           center: position,
+          mapStyle: "amap://styles/eca30d0b0912c5e6154b32dd369f8524",
           // dragEnable: false,
           // keyboardEnable: false,
           zoom: 15

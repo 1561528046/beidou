@@ -13,7 +13,7 @@ export const initMap = function(callback) {
       callbackFunc && callbackFunc();
     };
     var url =
-      "https://webapi.amap.com/maps?v=1.4.8&key=f072355e3506769b671d67d9b8287468&callback=mapOnLoad";
+      "https://webapi.amap.com/maps?v=1.4.10&key=f072355e3506769b671d67d9b8287468&callback=mapOnLoad";
     var jsapi = document.createElement("script");
     jsapi.charset = "utf-8";
     jsapi.src = url;

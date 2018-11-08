@@ -11,6 +11,15 @@
       <v-contextmenu-item @click="sendInstruction" data-index="x8401">电话本</v-contextmenu-item>
       <v-contextmenu-item @click="sendInstruction" data-index="x8400">电话回拨</v-contextmenu-item>
       <v-contextmenu-item @click="sendInstruction" data-index="x8802">媒体查询</v-contextmenu-item>
+      <v-contextmenu-submenu title="终端控制">
+        <v-contextmenu-item @click="sendInstruction" data-index="x8105|1">无线升级</v-contextmenu-item>
+        <v-contextmenu-item @click="sendInstruction" data-index="x8105|2">指定服务器</v-contextmenu-item>
+        <v-contextmenu-item @click="sendInstruction" data-index="x8105|3">终端关机</v-contextmenu-item>
+        <v-contextmenu-item @click="sendInstruction" data-index="x8105|4">终端复位</v-contextmenu-item>
+        <v-contextmenu-item @click="sendInstruction" data-index="x8105|5">恢复出厂设置</v-contextmenu-item>
+        <v-contextmenu-item @click="sendInstruction" data-index="x8105|6">关闭数据通信</v-contextmenu-item>
+        <v-contextmenu-item @click="sendInstruction" data-index="x8105|7">关闭所有无线通信</v-contextmenu-item>
+      </v-contextmenu-submenu>
 
     </v-contextmenu>
     <div class="_header">
