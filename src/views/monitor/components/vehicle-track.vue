@@ -38,7 +38,7 @@
     </div>
     <div v-if="!tableType" style=" width:1000px; height:276px;background-color:#fff;position:absolute;left:520px;top:10px;z-index:99;">
       <el-table :data="tableQuery.data" height="276" border style="width: 100%">
-        <el-table-column label="序号" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column width="80px" prop="index" label="序号" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
         <el-table-column label="速度" prop="speed" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column label="当日里程" prop="em_0x01" :formatter="$utils.baseFormatter "></el-table-column>
@@ -191,7 +191,7 @@ export default {
         var marker = new AMap.Marker({
           map: hs.mapData.map,
           position: lineArr, //小车起始位置
-          icon: "https://webapi.amap.com/images/car.png",
+          icon: "/static/online.png",
           offset: new AMap.Pixel(-26, -13),
           autoRotation: true
         }); //实例化Marker
@@ -235,7 +235,8 @@ export default {
         GetVehicleLocation(this.trackForm).then(res => {
           if (res.data.code == 0) {
             var arr = [];
-            res.data.data.map(item => {
+            res.data.data.map((item, index) => {
+              item.index = index + 1;
               arr.push({ lng: item.longitude, lat: item.latitude });
             });
             this.$set(this.tableQuery, "data", res.data.data);
@@ -243,7 +244,11 @@ export default {
             this.$set(this.tableData, "total", res.data.count);
             this.setMarker();
             this.setPolyline();
-            this.player = true;
+            if (this.tableQuery.data.length > 0) {
+              this.player = true;
+            } else {
+              this.player = false;
+            }
             var loader = this.$loading({
               text: "正在转换坐标"
             });
@@ -276,7 +281,8 @@ export default {
                   .then(addressArr => {
                     loader.close();
                     data.map((item, index) => {
-                      item.address = addressArr[index];
+                      this.$set(item, "address", addressArr[index]);
+                      // item.address =
                     });
                     this.$set(this.tableQuery, "data", Object.freeze(data));
                     this.$set(

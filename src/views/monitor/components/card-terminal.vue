@@ -1,5 +1,5 @@
 <template slot-scope="scope">
-  <div v-loading="true">
+  <div v-loading="loading">
     <el-form :model="formData" size="small">
       <div slot="header" class="clearfix">
         <span style="font-size:16px">终端属性</span>
@@ -68,6 +68,7 @@
 export default {
   created() {
     this.$instruction.on("x0107", eve => {
+      this.loading = false;
       var data = JSON.parse(eve.data);
       this.$set(this.$data, "formData", data);
       this.$set(this.$data, "device_type", this.formData.TerminalType);
@@ -84,6 +85,7 @@ export default {
       TerminalType: "",
       GNSSProperty: "",
       COMMProperty: "",
+      loading: true,
       formData: {}
     };
   },
