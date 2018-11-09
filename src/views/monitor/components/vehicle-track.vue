@@ -196,6 +196,7 @@ export default {
           icon: "/static/online.png",
           offset: new AMap.Pixel(-26, -13),
           autoRotation: true
+          // angle: 0
         }); //实例化Marker
         this.$set(this.mapData, "marker", marker);
         marker.setMap(this.mapData.map); //将点标注在地图上
