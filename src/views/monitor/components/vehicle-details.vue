@@ -34,6 +34,7 @@
       </div>
     </div>
     <div class="_body" v-show="showVehicle.isShowAll" v-contextmenu:contextmenu>
+      <el-input v-model="searchText" placeholder="请输入车牌号进行搜索"></el-input>
       <el-table :data="list" size="small" style="width: 100%" @row-click="openTab" @row-contextmenu="showContextmenu" highlight-current-row ref="vehicleList">
         <el-table-column prop="license" label="车牌号">
         </el-table-column>
@@ -102,6 +103,7 @@ import { getGroupChildrens } from "@/api/index.js";
 export default {
   data() {
     return {
+      searchText: "",
       currentGroup: "",
       currentGroupSon: [], //儿子级别组
       currentGroupSonChildrens: [],
@@ -157,6 +159,11 @@ export default {
       this.pager.total = list.length;
       var start = (this.pager.current - 1) * this.pager.size;
       var end = this.pager.current * this.pager.size;
+      if (this.searchText) {
+        list = list.filter(vehicle => {
+          return vehicle.license.indexOf(this.searchText) != -1;
+        });
+      }
       return list.slice(start, end);
     }
   },

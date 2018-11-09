@@ -47,10 +47,10 @@ export default {
     return day + hours + minutes + seconds;
   },
   formatDate(date, separator = "-") {
-    date = date.toString();
     if (!date || date == 0) {
       return "--";
     }
+    date = date.toString();
     if (date.length == 8 || date.length == 14) {
       return (
         date.substring(0, 4) +

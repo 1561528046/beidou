@@ -23,9 +23,7 @@ export default {
   created() {},
   methods: {
     getLicense(row) {
-      var vehicle = window.monitor.data.get(
-        this.$utils.unFormatSim(row.sim_id)
-      );
+      var vehicle = window.monitor.data.get(this.$utils.unFormatSim(row.SimID));
       if (vehicle) {
         return vehicle.license;
       } else {
