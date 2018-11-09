@@ -79,8 +79,6 @@ export default {
 <style lang="less" scoped>
 @import "../../../style/var.less";
 .QA {
-  .body {
-  }
   .anwser-box {
     margin: -20px -50px;
     padding: 15px 20px;
