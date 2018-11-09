@@ -14,7 +14,7 @@
       <div style="margin-top:45px;">
         <el-form :model="trackForm" ref="baseForm" :rules="rules" size="small">
           <el-form-item prop="time">
-            <el-date-picker size="small" v-model="trackForm.time" value-format="yyyyMMdd" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+            <el-date-picker size="small" v-model="trackForm.time" value-format="yyyy-MM-dd HH:mm:ss" type="datetimerange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
             </el-date-picker>
           </el-form-item>
           <el-form-item style="margin-bottom:18px;">
@@ -29,15 +29,15 @@
           <el-button size="small" @click="speed_up" style="position:absolute;top:0;">加速</el-button>
           <el-button size="small" @click="speed_down" style="position:absolute;top:0;left:58px;">减速</el-button>
           <div style="width:36px;margin:0 auto;">
-            <el-button size="small" v-if="!playType" @click="play" style="border-radius: 50%;border: solid 1px;" icon="iconfont icon-bofangqibofang"></el-button>
-            <el-button size="small" v-if="playType" @click="suspended" style="border-radius: 50%;border: solid 1px;" icon="iconfont icon-bofangqi-zanting"></el-button>
+            <el-button size="small" v-if="!playType" @click="play" style="width:36px;height:36px; border-radius: 100%;border: solid 1px; padding:9px 12px;" icon="iconfont icon-bofangqibofang"></el-button>
+            <el-button size="small" v-if="playType" @click="suspended" style="width:36px;height:36px;border-radius: 100%;border: solid 1px;padding:9px 12px;" icon="iconfont icon-bofangqi-zanting"></el-button>
           </div>
           <el-slider v-model="currentIndex" :min="0" :max="tableData.total"></el-slider>
         </div>
       </div>
     </div>
     <div v-if="!tableType" style=" width:1000px; height:276px;background-color:#fff;position:absolute;left:520px;top:10px;z-index:99;">
-      <el-table :data="tableQuery.data" height="276" border style="width: 100%">
+      <el-table :header-cell-style="{background:'#fafafa'}" :data="tableQuery.data" height="276" border style="width: 100%">
         <el-table-column width="80px" prop="index" label="序号" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
         <el-table-column label="速度" prop="speed" :formatter="$utils.baseFormatter "></el-table-column>
@@ -123,7 +123,9 @@ export default {
   },
   methods: {
     validateTime(rule, value, callback) {
-      var date = moment(value[0]).add(3, "days")._d;
+      // value[0] = moment(value[0]).format("YYYY-MM-DD HH:mm:ss");
+
+      var date = moment(value[0]).add(3, "days");
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
         callback(new Error("请选择时间!"));
@@ -132,8 +134,8 @@ export default {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
-        this.trackForm.start_time = value[0] + "000000";
-        this.trackForm.stop_time = value[1] + "000000";
+        this.trackForm.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.trackForm.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
         callback();
       }
     },
