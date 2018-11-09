@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-table :data="$store.getters['x0901/list']" size="mini">
-      <el-table-column prop="SimID" label="sim id"></el-table-column>
+      <el-table-column label="车牌号" :formatter="getLicense"></el-table-column>
       <el-table-column prop="CompressMessage" label="压缩上传内容"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -21,6 +21,16 @@ export default {
   },
   created() {},
   methods: {
+    getLicense(row) {
+      var vehicle = window.monitor.data.get(
+        this.$utils.unFormatSim(row.sim_id)
+      );
+      if (vehicle) {
+        return vehicle.license;
+      } else {
+        return "--";
+      }
+    },
     remove(row) {
       this.$store.commit("x0901/remove", row.id);
     }

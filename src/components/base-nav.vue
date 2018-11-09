@@ -1,9 +1,9 @@
 <template>
 
   <el-row type="flex" class="row-bg" style="background:#001529;box-shadow: 0 0 4px #333;z-index: 9999;">
-    <el-col :span="3">
+    <el-col :span="4">
       <div class="admin-header-left">
-        <a href="/" class="brand">Logo</a>
+        <a href="/" class="brand">&#x3000;中交天枢动态车辆监控系统</a>
       </div>
     </el-col>
     <el-col :span="8+5" style="text-align:center;">

@@ -1,7 +1,7 @@
 <template>
   <div class="QA">
     <el-table :data="$store.getters['x0301/list']" size="mini">
-      <el-table-column prop="SimID" label="sim id"></el-table-column>
+      <el-table-column label="车牌号" :formatter="getLicense"></el-table-column>
       <el-table-column :formatter="formatEvent" label="事件内容"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -21,6 +21,16 @@ export default {
   },
   created() {},
   methods: {
+    getLicense(row) {
+      var vehicle = window.monitor.data.get(
+        this.$utils.unFormatSim(row.sim_id)
+      );
+      if (vehicle) {
+        return vehicle.license;
+      } else {
+        return "--";
+      }
+    },
     formatEvent(row) {
       return this.$dict.get_special(row.EventID) || "";
     },
@@ -33,8 +43,6 @@ export default {
 <style lang="less" scoped>
 @import "../../../style/var.less";
 .QA {
-  .body {
-  }
   .anwser-box {
     margin: -20px -50px;
     padding: 15px 20px;

@@ -43,16 +43,16 @@
             定位时间：{{mapData.vehicle.time}}
           </el-col>
           <el-col :span="12">
-            联系人：{{mapData.vehicle.info.linkman||"--"}}
+            <div style="height:1.5em;overflow:hidden;">联系人：{{mapData.vehicle.info.linkman||"--"}}</div>
           </el-col>
           <el-col :span="12">
             联系方式： {{mapData.vehicle.info.tel||"--"}}
           </el-col>
           <el-col :span="12">
-            时速：{{mapData.vehicle.speed1 || mapData.vehicle.speed }} km/h
+            时速：{{Number(mapData.vehicle.speed1|| mapData.vehicle.speed).toFixed(2) }} km/h
           </el-col>
           <el-col :span="12">
-            里程：{{mapData.vehicle.mileage/10||"--"}} km
+            里程：{{(mapData.vehicle.mileage/10).toFixed(2)||"--"}} km
           </el-col>
           <el-col :span="24">
             地理位置：{{mapData.vehicleAddress||"--"}}
@@ -68,7 +68,7 @@
             高程 {{mapData.vehicle.altitude||"--"}} （米）
           </el-col>
           <el-col :span="12">
-            车头方向 {{mapData.vehicle.angle||"--"}}
+            车头方向 {{$utils.getAngleText(mapData.vehicle.angle)}}
           </el-col>
           <el-col :span="12">
             油量 {{mapData.vehicle.oil/10||"--"}} L
@@ -251,7 +251,7 @@
           </el-col>
         </el-row>
       </div>
-      <div class="_footer">
+      <div class="_footer" v-loading="vehicleInfoLoading">
         <i class="iconfont icon-idcard" @click="showCard('x0702','驾驶员信息')" title="驾驶员信息"></i>
         <i class="iconfont icon-boxplot-fill" @click="showCard('deviceCard','设备信息')" title="设备信息"></i>
         <i class="iconfont icon-sim" @click="showCard('simCard','SIM卡信息')" title="sim卡信息"></i>
@@ -298,6 +298,7 @@ export default {
   },
   data() {
     return {
+      vehicleInfoLoading: true,
       otherVehicleDialog: false,
       mapTools: "hand",
       card: {
@@ -387,14 +388,17 @@ export default {
           }
           this.$set(this.mapData, "vehicle", monitorData);
           this.initMap();
+          this.vehicleInfoLoading = false;
         })
         .catch(err => {
+          this.vehicleInfoLoading = false;
           console.warn(err);
           this.$message.error("接口错误，获取车辆信息失败！");
         });
     } else {
       this.$set(this.mapData, "vehicle", monitorData);
       this.initMap();
+      this.vehicleInfoLoading = false;
     }
   },
   methods: {
@@ -503,9 +507,11 @@ export default {
         }).then(res => {
           this.mapData.vehicleAddress = res[0];
           setMarker(this.mapData.marker, vehicleData, window.AMap);
-          if (!this.$props.single) {
-            this.mapData.map.setCenter(this.mapData.marker.getPosition());
-          }
+          // if (!this.$props.single) {
+          //   this.mapData.map.setCenter(this.mapData.marker.getPosition());
+          // }
+          //大地图小地图都跟随车机
+          this.mapData.map.setCenter(this.mapData.marker.getPosition());
         });
       }
     },

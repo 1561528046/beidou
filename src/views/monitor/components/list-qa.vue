@@ -13,7 +13,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="SimID" label="sim id"></el-table-column>
+      <el-table-column label="车牌号" :formatter="getLicense"></el-table-column>
       <el-table-column prop="AskText" label="问题"></el-table-column>
       <el-table-column prop="AskFlag" label="问题标志" :formatter="formatAskFlag"></el-table-column>
       <el-table-column label="状态" :formatter="formatState"></el-table-column>
@@ -39,6 +39,16 @@ export default {
     });
   },
   methods: {
+    getLicense(row) {
+      var vehicle = window.monitor.data.get(
+        this.$utils.unFormatSim(row.sim_id)
+      );
+      if (vehicle) {
+        return vehicle.license;
+      } else {
+        return "--";
+      }
+    },
     remove(row) {
       this.$store.commit("QA/remove", row.SimID);
     },

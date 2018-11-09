@@ -225,5 +225,32 @@ export default {
       .replace("$", "")
       .replace("^", "")
       .split("|");
+  },
+  getAngleText(angle) {
+    if (angle == 0) {
+      return "正北";
+    }
+    if (angle == 90) {
+      return "正东";
+    }
+    if (angle == 180) {
+      return "正南";
+    }
+    if (angle == 270) {
+      return "正西";
+    }
+    if (angle > 0 && angle < 90) {
+      return "东北";
+    }
+    if (angle > 90 && angle < 180) {
+      return "东南";
+    }
+    if (angle > 180 && angle < 270) {
+      return "西南";
+    }
+    if (angle > 270 && angle < 360) {
+      return "西北";
+    }
+    return "--";
   }
 };

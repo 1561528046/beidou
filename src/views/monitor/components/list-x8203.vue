@@ -1,7 +1,7 @@
 <template>
   <div class="QA">
-    <el-table :data="$store.getters['alarm/list']" size="mini">
-      <el-table-column prop="sim_id" label="sim id"></el-table-column>
+    <el-table :data="list" size="mini">
+      <el-table-column label="车牌号" :formatter="getLicense"></el-table-column>
       <el-table-column prop="alarmText" label="报警信息"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -22,6 +22,10 @@
         </template>
       </el-table-column>
     </el-table>
+    <div style="text-align:center;padding-top:10px;">
+      <el-pagination background @current-change="changePager" small :page-size="pager.size" :pager-count="5" layout="prev, pager, next" :total="pager.total">
+      </el-pagination>
+    </div>
 
   </div>
 </template>
@@ -29,8 +33,26 @@
 export default {
   data() {
     return {
-      showBody: false
+      showBody: false,
+      pager: {
+        size: 20,
+        total: 0,
+        current: 1
+      }
     };
+  },
+  computed: {
+    list: function() {
+      var storeList = this.$store.getters["alarm/list"];
+      var start = (this.pager.current - 1) * this.pager.size;
+      var end = this.pager.current * this.pager.size;
+      return storeList.slice(start, end);
+    }
+  },
+  watch: {
+    "$store.state.alarm.dataVersion": function() {
+      this.pager.total = this.$store.getters["alarm/list"].length;
+    }
   },
   created() {
     this.$instruction.on("x8203", evt => {
@@ -44,6 +66,17 @@ export default {
     });
   },
   methods: {
+    getLicense(row) {
+      var vehicle = window.monitor.data.get(row.sim_id);
+      if (vehicle) {
+        return vehicle.license;
+      } else {
+        return "--";
+      }
+    },
+    changePager(current) {
+      this.pager.current = current;
+    },
     clearAlarm(command, row) {
       this.$instruction.send(
         JSON.stringify({
@@ -66,8 +99,6 @@ export default {
 <style lang="less" scoped>
 @import "../../../style/var.less";
 .QA {
-  .body {
-  }
   .anwser-box {
     margin: -20px -50px;
     padding: 15px 20px;

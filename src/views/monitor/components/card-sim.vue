@@ -1,6 +1,6 @@
 <template slot-scope="scope">
     <div>
-        <el-form :model="formData" size="small">
+        <el-form :model="formData" size="small" v-if="hasSimNo">
             <div slot="header" class="clearfix">
                 <span style="font-size:16px">SIM卡信息</span>
             </div>
@@ -32,35 +32,49 @@
                 </el-col>
             </el-row>
         </el-form>
+        <div v-if="!hasSimNo">
+            车辆没有绑定sim卡!
+        </div>
     </div>
 </template>
 <script>
 import { getSim } from "@/api/index.js";
 export default {
   created() {
-    this.getTable();
+    this.getSimInfo();
   },
   data() {
     return {
+      hasSimNo: true,
       sim_id: "",
       formData: {}
     };
   },
+  watch: {
+    "$props.vehicle.info.sim_no": function() {
+      this.getSimInfo();
+    }
+  },
   props: ["vehicle"],
   methods: {
-    getTable() {
+    getSimInfo() {
       this.$set(this.$data, "sim_id", this.$props.vehicle.sim_id);
-      getSim({ id: this.sim_id }).then(res => {
-        if (res.data.code == 0) {
-          if (res.data.data.length == 0) {
-            this.$set(this.$data, "formData", {});
+      if (this.$props.vehicle.info && this.$props.vehicle.info.sim_no) {
+        this.hasSimNo = true;
+        getSim({ id: this.$props.vehicle.info.sim_no }).then(res => {
+          if (res.data.code == 0) {
+            if (res.data.data.length == 0) {
+              this.$set(this.$data, "formData", {});
+            } else {
+              this.$set(this.$data, "formData", res.data.data[0]);
+            }
           } else {
-            this.$set(this.$data, "formData", res.data.data[0]);
+            this.$message.error(res.data.msg);
           }
-        } else {
-          this.$message.error(res.data.msg);
-        }
-      });
+        });
+      } else {
+        this.hasSimNo = false;
+      }
     }
   }
 };
