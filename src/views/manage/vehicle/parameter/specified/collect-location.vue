@@ -31,7 +31,13 @@ export default {
         this.$set(this.$data, "collectData", this.$props.message);
         if (this.collectData.CommandWord == 9) {
           var UnitHoursSpeeds = JSON.parse(this.collectData.UnitHoursSpeeds);
-          this.$set(this.$data, "tableData", UnitHoursSpeeds);
+          UnitHoursSpeeds.map(item => {
+            item.LocationItems.map(itca => {
+              itca.AverageSpeed = item.UnitHoursSpeeds;
+              itca.StartTime = item.StartTime;
+            });
+          });
+          this.$set(this.$data, "tableData", UnitHoursSpeeds.LocationItems);
         }
       },
       deep: true

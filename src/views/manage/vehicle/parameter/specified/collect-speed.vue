@@ -8,9 +8,9 @@
       </el-table-column>
       <el-table-column prop="EndTime" label="速度状态判定的结束时间">
       </el-table-column>
-      <el-table-column prop="RecordSpeed" label="开始时间对应的记录速度">
+      <el-table-column prop="record" label="记录速度">
       </el-table-column>
-      <el-table-column prop="ReferenceSpeed" label="开始时间对应的参考速度">
+      <el-table-column prop="reference" label="参考速度">
       </el-table-column>
     </el-table>
   </div>
@@ -32,6 +32,18 @@ export default {
         if (this.collectData.CommandWord == 21) {
           var SpeedStateLogs = JSON.parse(this.collectData.SpeedStateLogs);
           this.$set(this.$data, "tableData", SpeedStateLogs);
+          var speed = 0;
+          var state = 0;
+          this.tableData.map(item => {
+            item.RecordReferenceSpeeds.map(itca => {
+              speed = speed + itca.RecordSpeed;
+              state = state + itca.ReferenceSpeed;
+            });
+            speed = speed / 60;
+            state = state / 60;
+            this.$set(item, "record", speed);
+            this.$set(item, "reference", state);
+          });
         }
       },
       deep: true
