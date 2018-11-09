@@ -30,7 +30,7 @@
     <div class="vehicle-info-box shadow-box" ref="box">
       <div class="_header">
         <strong class="_title">{{mapData.vehicle.info.license}}</strong>
-        <small class="_text">服务到期日期：{{mapData.vehicle.info.contract_date}} </small>
+        <small class="_text">服务到期日期：{{$utils.formatDate(mapData.vehicle.info.contract_date)}} </small>
         <i class="_close el-icon-circle-close-outline" @click="close" v-if="!$props.single"></i>
       </div>
       <div class="_map" v-if="!$props.single">
@@ -49,7 +49,7 @@
             联系方式： {{mapData.vehicle.info.tel||"--"}}
           </el-col>
           <el-col :span="12">
-            时速：{{Number(mapData.vehicle.speed1|| mapData.vehicle.speed).toFixed(2) }} km/h
+            时速：{{Number(mapData.vehicle.speed1|| mapData.vehicle.speed).toFixed(2) ||"--"}} km/h
           </el-col>
           <el-col :span="12">
             里程：{{(mapData.vehicle.mileage/10).toFixed(2)||"--"}} km

@@ -40,9 +40,9 @@
                   <span class="_global-status _alarm" @click.stop="showVehicleAll('alarm')">报警车辆：
                     <strong>{{vehicleCount.alarm}}</strong>
                   </span>
-                  <span class="_global-status _error" @click.stop="showVehicleAll('error')">异常车辆：
+                  <!-- <span class="_global-status _error" @click.stop="showVehicleAll('error')">异常车辆：
                     <strong>{{vehicleCount.error}}</strong>
-                  </span>
+                  </span> -->
                   <span class="_global-status _offline" @click.stop="showVehicleAll('offline')">离线车辆：
                     <strong>{{vehicleCount.offline}}</strong>
                   </span>
@@ -74,8 +74,8 @@
                     </el-table-column>
                     <el-table-column prop="alarm" label="报警车辆  ">
                     </el-table-column>
-                    <el-table-column prop="error" label="异常车辆  ">
-                    </el-table-column>
+                    <!-- <el-table-column prop="error" label="异常车辆  ">
+                    </el-table-column> -->
                     <el-table-column prop="offline" label="离线车辆 ">
                     </el-table-column>
                   </el-table>
@@ -102,9 +102,9 @@
       <el-tab-pane label="轨迹回放" :closable="true" name="track" v-if="$store.state.monitor.tabs.indexOf('track') !=-1">
         <vehicle-track :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-track>
       </el-tab-pane>
-      <el-tab-pane label="数据异常" :closable="true" name="error" v-if="$store.state.monitor.tabs.indexOf('error') !=-1">
-        <!-- <vehicle-error :vehicle="$store.state.monitor.monitorErrorVehicle"></vehicle-error> -->
-      </el-tab-pane>
+      <!-- <el-tab-pane label="数据异常" :closable="true" name="error" v-if="$store.state.monitor.tabs.indexOf('error') !=-1">
+        <vehicle-error :vehicle="$store.state.monitor.monitorErrorVehicle"></vehicle-error>
+      </el-tab-pane> -->
       <el-tab-pane label="媒体列表" :closable="true" name="media" v-if="$store.state.monitor.tabs.indexOf('media') !=-1">
         <vehicle-media :vehicle="$store.state.monitor.monitorMediaVehicle"></vehicle-media>
       </el-tab-pane>
