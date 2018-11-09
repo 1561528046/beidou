@@ -29,8 +29,8 @@ export default {
     return {
       loading: false,
       formData: {
-        user_name: "zzz",
-        pass_word: "zzz"
+        user_name: "",
+        pass_word: ""
       },
       rules: {
         ...rules,

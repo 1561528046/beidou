@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    {{$store.user}} Hello! {{l}} {{online.length}} {{offline.length}} {{alarm.length}}
 
   </div>
 </template>

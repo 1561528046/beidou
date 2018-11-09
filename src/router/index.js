@@ -14,11 +14,18 @@ NProgress.configure({ showSpinner: false }); // 隐藏右上loading图标
 Vue.use(Router);
 
 var routers = [
+  // {
+  //   path: "/",
+  //   name: "home",
+  //   component: () => import("@/views/home.vue"),
+  //   meta: { name: "首页" }
+  // },
   {
     path: "/",
     name: "home",
+    redirect: "/manage",
     component: () => import("@/views/home.vue"),
-    meta: { name: "首页" }
+    meta: { name: "首页", hidden: true }
   },
   {
     path: "fence-platform",
