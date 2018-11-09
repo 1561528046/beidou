@@ -1,73 +1,74 @@
 <template slot-scope="scope">
-    <div>
-        <el-form :model="formData" size="small">
-            <div slot="header" class="clearfix">
-                <span style="font-size:16px">终端属性</span>
-            </div>
-            <el-row :gutter="30">
-                <el-col :span="8">
-                    <el-form-item prop="MakerID" label="制造商ID：">
-                        {{formData.MakerID}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item prop="TerminalModelNo" label="终端型号：">
-                        {{formData.TerminalModelNo}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item prop="TerminalID" label="终端ID：">
-                        {{formData.TerminalID}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item prop="ICCID" label="ICCID号：">
-                        {{formData.ICCID}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item prop="HardwareVersionLength" label="终端硬件版本号长度：">
-                        {{formData.HardwareVersionLength}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item prop="HardwareVersion" label="终端硬件版本号：">
-                        {{formData.HardwareVersion}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item prop="FirmwareVersionLength" label="终端固件版本号长度：">
-                        {{formData.FirmwareVersionLength}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item prop="FirmwareVersion" label="终端固件版本号：">
-                        {{formData.FirmwareVersion}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item prop="TerminalType" label="终端类型：">
-                        {{TerminalType}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item prop="GNSSProperty" label="CNSS模块属性：">
-                        {{GNSSProperty}}
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item prop="COMMProperty" label="通信模块属性：">
-                        {{COMMProperty}}
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </el-form>
-    </div>
+  <div v-loading="loading">
+    <el-form :model="formData" size="small">
+      <div slot="header" class="clearfix">
+        <span style="font-size:16px">终端属性</span>
+      </div>
+      <el-row :gutter="30">
+        <el-col :span="8">
+          <el-form-item prop="MakerID" label="制造商ID：">
+            {{formData.MakerID}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item prop="TerminalModelNo" label="终端型号：">
+            {{formData.TerminalModelNo}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item prop="TerminalID" label="终端ID：">
+            {{formData.TerminalID}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item prop="ICCID" label="ICCID号：">
+            {{formData.ICCID}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item prop="HardwareVersionLength" label="终端硬件版本号长度：">
+            {{formData.HardwareVersionLength}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item prop="HardwareVersion" label="终端硬件版本号：">
+            {{formData.HardwareVersion}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item prop="FirmwareVersionLength" label="终端固件版本号长度：">
+            {{formData.FirmwareVersionLength}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item prop="FirmwareVersion" label="终端固件版本号：">
+            {{formData.FirmwareVersion}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item prop="TerminalType" label="终端类型：">
+            {{TerminalType}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item prop="GNSSProperty" label="CNSS模块属性：">
+            {{GNSSProperty}}
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item prop="COMMProperty" label="通信模块属性：">
+            {{COMMProperty}}
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+  </div>
 </template>
 <script>
 export default {
   created() {
     this.$instruction.on("x0107", eve => {
+      this.loading = false;
       var data = JSON.parse(eve.data);
       this.$set(this.$data, "formData", data);
       this.$set(this.$data, "device_type", this.formData.TerminalType);
@@ -84,6 +85,7 @@ export default {
       TerminalType: "",
       GNSSProperty: "",
       COMMProperty: "",
+      loading: true,
       formData: {}
     };
   },

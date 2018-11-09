@@ -8,17 +8,17 @@
       </el-table-column>
       <el-table-column prop="EndTime" label="连续驾驶结束时间">
       </el-table-column>
-      <el-table-column prop="Longitude" label="连续驾驶开始时间所在的最近一次有效经度">
+      <el-table-column prop="StartLocationItems.Longitude" label="连续驾驶开始时间所在的最近一次有效经度">
       </el-table-column>
-      <el-table-column prop="Latitude" label="连续驾驶开始时间所在的最近一次有效纬度">
+      <el-table-column prop="StartLocationItems.Latitude" label="连续驾驶开始时间所在的最近一次有效纬度">
       </el-table-column>
-      <el-table-column prop="Altitude" label="连续驾驶开始时间所在的最近一次有效海拔高度">
+      <el-table-column prop="StartLocationItems.Altitude" label="连续驾驶开始时间所在的最近一次有效海拔高度">
       </el-table-column>
-      <el-table-column prop="Longitude" label="连续驾驶结束时间所在的最近一次有效经度">
+      <el-table-column prop="EndLocationItems.Longitude" label="连续驾驶结束时间所在的最近一次有效经度">
       </el-table-column>
-      <el-table-column prop="Latitude" label="连续驾驶结束时间所在的最近一次有效纬度">
+      <el-table-column prop="EndLocationItems.Latitude" label="连续驾驶结束时间所在的最近一次有效纬度">
       </el-table-column>
-      <el-table-column prop="Altitude" label="连续驾驶开始时间所在的最近一次有效海拔高度">
+      <el-table-column prop="EndLocationItems.Altitude" label="连续驾驶开始时间所在的最近一次有效海拔高度">
       </el-table-column>
     </el-table>
   </div>

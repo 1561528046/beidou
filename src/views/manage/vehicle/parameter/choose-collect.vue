@@ -88,31 +88,31 @@ export default {
   },
   methods: {
     collect() {
-      if (this.communication.data.length == 0) {
-        return this.$notify({
-          message: "请选择车辆!",
-          title: "提示",
-          type: "error"
-        });
-      } else if (this.collect_type == "") {
-        return this.$notify({
-          message: "请选择采集类型!",
-          title: "提示",
-          type: "error"
-        });
-      } else if (this.time == "" || this.time == null) {
-        return this.$notify({
-          message: "请选择时间!",
-          title: "提示",
-          type: "error"
-        });
-      } else if (this.block_data == "") {
-        return this.$notify({
-          message: "请输入最大单位数据块个数!",
-          title: "提示",
-          type: "error"
-        });
-      }
+      // if (this.communication.data.length == 0) {
+      //   return this.$notify({
+      //     message: "请选择车辆!",
+      //     title: "提示",
+      //     type: "error"
+      //   });
+      // } else if (this.collect_type == "") {
+      //   return this.$notify({
+      //     message: "请选择采集类型!",
+      //     title: "提示",
+      //     type: "error"
+      //   });
+      // } else if (this.time == "" || this.time == null) {
+      //   return this.$notify({
+      //     message: "请选择时间!",
+      //     title: "提示",
+      //     type: "error"
+      //   });
+      // } else if (this.block_data == "") {
+      //   return this.$notify({
+      //     message: "请输入最大单位数据块个数!",
+      //     title: "提示",
+      //     type: "error"
+      //   });
+      // }
       var data = {};
       var sim_id = "";
       var command_word = parseInt(this.collect_type, 16);

@@ -79,7 +79,6 @@
                     <el-table-column prop="offline" label="离线车辆 ">
                     </el-table-column>
                   </el-table>
-
                 </div>
                 <div class="_pager">
                   <el-pagination background layout="prev, pager, next" :total="userListQuery.total" @current-change="userListCurrentChange" :page-size="userListQuery.size">
