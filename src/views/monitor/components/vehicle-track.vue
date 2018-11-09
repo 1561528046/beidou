@@ -194,7 +194,7 @@ export default {
         var marker = new AMap.Marker({
           map: hs.mapData.map,
           position: lineArr, //小车起始位置
-          icon: "/static/online.png",
+          icon: "/static/online-small.png",
           offset: new AMap.Pixel(-26, -13),
           autoRotation: true
           // angle: 0
