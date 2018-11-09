@@ -54,6 +54,7 @@ import moment from "moment";
 import { initMap } from "@/utils/map.js";
 import { GetVehicleByLicense, GetVehicleLocation } from "@/api/index.js";
 import { location2address, gps2amap } from "@/utils/map-tools.js";
+import { GPS } from "@/utils/map-tools.js";
 export default {
   data() {
     return {
@@ -205,6 +206,9 @@ export default {
       var path = [];
       var hm = this;
       this.tableData.data.map(item => {
+        var position = GPS.gcj_encrypt(item.lat || 0, item.lng || 0); //GPS转高德
+        item.lng = position.lon;
+        item.lat = position.lat;
         path.push(new AMap.LngLat(item.lng, item.lat));
       });
       var polyline = new AMap.Polyline({
