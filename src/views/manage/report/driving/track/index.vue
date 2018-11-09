@@ -175,9 +175,9 @@ export default {
       this.dialog = scope.row.dialog;
       this.tableQuery.license = scope.row.license;
       if (scope.row.sim_id.length == 11) {
-        this.tableQuery.sim_ids = "0" + scope.row.sim_id;
+        this.tableQuery.sim_id = "0" + scope.row.sim_id;
       } else {
-        this.tableQuery.sim_ids = scope.row.sim_id;
+        this.tableQuery.sim_id = scope.row.sim_id;
       }
       this.tableQuery.license_color = scope.row.license_color;
     },
@@ -217,7 +217,6 @@ export default {
         if (isVaildate) {
           this.tableLoading = true;
           var query = Object.assign({}, this.tableQuery);
-          console.log(query);
           getReport(query)
             .then(res => {
               this.tableLoading = false;
