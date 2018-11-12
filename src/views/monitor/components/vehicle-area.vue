@@ -297,130 +297,6 @@ export default {
       });
       this.$set(this.$data, "limit_road", limit);
     },
-    // 发送分段限速指令
-    sendInstruction() {
-      console.log(this.speed_limit.time);
-      if (this.speed_limit.rules == "") {
-        return this.$notify({
-          message: "请输入规则名称!",
-          title: "提示",
-          type: "error"
-        });
-      } else if (this.line == "") {
-        return this.$notify({
-          message: "请选择线路!",
-          title: "提示",
-          type: "error"
-        });
-      } else if (this.speed_limit.time == "" && this.speed_limit.time == null) {
-        return this.$notify({
-          message: "请选择时间!",
-          title: "提示",
-          type: "error"
-        });
-      } else if (this.limit_road.length < 1) {
-        return this.$notify({
-          message: "限速规则最少一项!",
-          title: "提示",
-          type: "error"
-        });
-      }
-      var data = {};
-      var roadNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-      if (this.according_time) {
-        roadNum[15] = 1;
-      }
-      if (this.enter_driver) {
-        roadNum[13] = 1;
-      }
-      if (this.outer_driver) {
-        roadNum[12] = 1;
-      }
-      if (this.enter_platform) {
-        roadNum[11] = 1;
-      }
-      if (this.outer_platform) {
-        roadNum[10] = 1;
-      }
-      var reg = new RegExp(",", "g");
-      roadNum = parseInt(roadNum.toString().replace(reg, ""), 2);
-      var start_time = "";
-      start_time = this.speed_limit.time[0];
-      var end_time = "";
-      end_time = this.speed_limit.time[1];
-      data = {
-        SimID: "",
-        MessageID: "x8606",
-        RouteId: this.roadData[0].RegionId, //路线id
-        RouteProperty: roadNum, // 路线属性
-        StartTime: start_time, // 起始时间
-        EndTime: end_time, // 结束时间
-        // RoutePointsCount: "", // 路线总拐点数
-        TurnPoints: [
-          {
-            RoutePointId: "", // 拐点ID
-            RouteSegmentId: "", // 路段ID
-            TurnPointLatitude: "", // 拐点纬度
-            TurnPointLongitude: "", // 拐点经度
-            RouteSegmentWidth: "", // 路段宽度
-            RouteSegmentProperty: "", // 路段属性
-            MaxDriveTimeLimited: "", // 路段行驶过长阈值
-            MinDriveTimeLimited: "", // 路段行驶不足阈值
-            MaxSpeedLimited: "", // 路段最高速度
-            OverMaxSpeedLastTime: "" // 路段超速持续时间
-          }
-        ]
-      };
-    },
-    // 存储返回的拐点项
-    storageItem(data) {
-      this.itemDialog = false;
-      var arr = this.limit_road;
-      data.map(item => {
-        arr.push(item);
-      });
-      this.$set(this.$data, "limit_road", arr);
-      // this.limit_road = data;
-    },
-    // 查询所选择的路线
-    selectRoad(name) {
-      var data = {};
-      data = {
-        page: 1,
-        size: 999,
-        RegionName: name
-      };
-      GetRegionByPage(data).then(res => {
-        if (res.data.code == 0) {
-          this.$set(this.$data, "roadData", res.data.data);
-        }
-      });
-    },
-    //添加拐点项
-    addRoad() {
-      if (this.line == "") {
-        return this.$notify({
-          message: "请选择线路!",
-          title: "提示",
-          type: "error"
-        });
-      }
-      this.addKey++;
-      this.itemDialog = true;
-    },
-    // 分段限速
-    speedLimit() {
-      this.speedDialog = true;
-      this.getLine();
-    },
-    getLine() {
-      this.lineData = [];
-      this.tableData.data.map(item => {
-        if (item.Type == "5") {
-          this.lineData.push(item);
-        }
-      });
-    },
     // 查看所画区域
     selceForm(scope) {
       if (scope.row.Type == "1") {
@@ -649,6 +525,7 @@ export default {
       this.formdata.stop_time =
         "000000" + moment(this.formdata.time[1]).format("HHmmss");
       if (this.label == "circle") {
+        var radius = Math.round(this.mapData.overlays[1]);
         data = {
           AreaProperty: this.formdata.alarm_type,
           RegionName: this.formdata.name,
@@ -656,7 +533,7 @@ export default {
           EndTime: this.formdata.stop_time,
           CenterLatitude: this.mapData.overlays[0].lat,
           CenterLongitude: this.mapData.overlays[0].lng,
-          Radius: this.mapData.overlays[1],
+          Radius: radius,
           Type: "1"
         };
         AddRegion(data).then(res => {

@@ -340,6 +340,7 @@ export default {
           // 删除
         } else {
           // 更新 追加 修改
+
           instruction = {
             SimID: this.tableQuery.vehicleData.sim_id,
             MessageID: "x8600",

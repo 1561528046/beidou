@@ -1,7 +1,7 @@
 <template>
   <!-- 地图 -->
   <div>
-    <div style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
+    <div style=" width:60%; position:absolute;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
     <div class="vehicle_select">
       <el-autocomplete class="inline-input" size="small" style="width:90%" :popper-class="autoplate" v-model="formData.license" :fetch-suggestions="querySearch" placeholder="请输入车牌号/终端ID" :trigger-on-focus="false" @select="handleSelect">
         <el-button @click="selectVehicle" slot="append" icon="el-icon-search"></el-button>
@@ -10,7 +10,7 @@
       <el-button v-if="!tableType" @click="tableType=true" style="position:absolute;left:451px;top:9px;z-index:99;" size="small" icon="el-icon-arrow-down"></el-button>
     </div>
     <!-- 查询栏 -->
-    <div v-if="vtype" class="vehicle_data">
+    <div class="vehicle_data">
       <div style="margin-top:45px;">
         <el-form :model="trackForm" ref="baseForm" :rules="rules" size="small">
           <el-form-item prop="time">
@@ -36,14 +36,18 @@
         </div>
       </div>
     </div>
-    <div v-if="!tableType" style=" width:1000px; height:276px;background-color:#fff;position:absolute;left:520px;top:10px;z-index:99;">
-      <el-table :header-cell-style="{background:'#fafafa'}" :data="tableQuery.data" height="276" border style="width: 100%">
+    <div style=" width:40%; height:90%;background-color:#fff;position:absolute;left:0;top:0;bottom:0;z-index:99;">
+      <el-table :row-style="rowClass" :header-cell-style="{background:'#fafafa'}" :data="list" height="100%" border style="width: 100%">
         <el-table-column width="80px" prop="index" label="序号" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
         <el-table-column label="速度" prop="speed" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column label="当日里程" prop="em_0x01" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column label="位置" prop="address" :formatter="$utils.baseFormatter " width="300px"></el-table-column>
       </el-table>
+      <div class="admin-table-pager">
+        <el-pagination :disabled="true" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableQuery.total" layout="total, sizes, prev, pager, next, jumper" background>
+        </el-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -56,6 +60,14 @@ import { GetVehicleByLicense, GetVehicleLocation } from "@/api/index.js";
 import { location2address, gps2amap } from "@/utils/map-tools.js";
 import { GPS } from "@/utils/map-tools.js";
 export default {
+  computed: {
+    list: function() {
+      return this.tableQuery.data.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
+  },
   data() {
     return {
       trackForm: {
@@ -82,6 +94,8 @@ export default {
         ]
       },
       tableQuery: {
+        page: 1,
+        size: 100,
         total: 0,
         data: []
       },
@@ -123,6 +137,15 @@ export default {
     });
   },
   methods: {
+    // 单行样式
+    rowClass(row, index) {
+      if (index == this.currentIndex) {
+        console.log(1);
+        return { "background-color": "red" };
+      }
+      // console.log(row, index);
+    },
+    //
     validateTime(rule, value, callback) {
       // value[0] = moment(value[0]).format("YYYY-MM-DD HH:mm:ss");
 
@@ -256,53 +279,50 @@ export default {
             } else {
               this.player = false;
             }
-            var loader = this.$loading({
-              text: "正在转换坐标"
-            });
             var data = [];
             data = res.data.data;
             gps2amap({
               data: data,
               longKey: "longitude",
               latKey: "latitude"
-            })
-              .then(res => {
-                data.map((item, index) => {
-                  item.amap_longitude = res[index].split(",")[0];
-                  item.amap_latitude = res[index].split(",")[1];
-                });
-              })
-              .catch(() => {
-                loader.close();
-              })
-              .then(() => {
-                loader.close();
-                loader = this.$loading({
-                  text: "正在转换地址"
-                });
+            }).then(res => {
+              this.list.map((item, index) => {
+                item.amap_longitude = res[index].split(",")[0];
+                item.amap_latitude = res[index].split(",")[1];
+                var arr = [item];
                 location2address({
-                  data: data,
+                  data: arr,
                   longKey: "amap_longitude",
                   latKey: "amap_latitude"
-                })
-                  .then(addressArr => {
-                    loader.close();
-                    data.map((item, index) => {
-                      this.$set(item, "address", addressArr[index]);
-                      // item.address =
-                    });
-                    this.$set(this.tableQuery, "data", Object.freeze(data));
-                    this.$set(
-                      this.tableQuery,
-                      "total",
-                      this.tableQuery.data.length
-                    );
-                    this.tableType = false;
-                  })
-                  .catch(() => {
-                    loader.close();
-                  });
+                }).then(addressArr => {
+                  this.$set(item, "address", addressArr[0]);
+                });
               });
+            });
+            // .catch(() => {})
+            // .then(() => {
+            //   location2address({
+            //     data: data,
+            //     longKey: "amap_longitude",
+            //     latKey: "amap_latitude"
+            //   })
+            //     .then(addressArr => {
+            //       data.map((item, index) => {
+            //         // this.$set(item, "address", addressArr[index]);
+            //         this.tableQuery.data.map(icar => {
+            //           this.$set(icar, "address", addressArr[index]);
+            //         });
+            //       });
+            //       // this.$set(this.tableQuery, "data", Object.freeze(data));
+            //       this.$set(
+            //         this.tableQuery,
+            //         "total",
+            //         this.tableQuery.data.length
+            //       );
+            //       this.tableType = false;
+            //     })
+            //     .catch(() => {});
+            // });
           }
         });
       } else {
@@ -368,6 +388,16 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+    // 分页
+    handleSizeChange(val) {
+      this.tableQuery.page = 1;
+      this.tableQuery.size = val;
+      this.selectForm();
+    },
+    handleCurrentChange(val) {
+      this.tableQuery.page = val;
+      this.selectForm();
     }
   }
 };
@@ -400,9 +430,9 @@ export default {
   width: 482px;
   height: 30px;
   position: absolute;
-  left: 10px;
+  left: 40%;
   right: 0;
-  top: 10px;
+  top: 0;
   bottom: 0;
   box-shadow: 2px 2px 5px #ddd;
   border-radius: 5px;
@@ -415,9 +445,9 @@ export default {
   width: 480px;
   height: 201px;
   position: absolute;
-  left: 10px;
+  left: 40%;
   right: 0;
-  top: 65px;
+  top: 55px;
   bottom: 0;
   z-index: 99;
   background-color: #fff;
