@@ -24,7 +24,7 @@ export const initMap = function(callback) {
   }
 };
 
-export const createMarker = function(vehicleData, AMap) {
+export const createMarker = function(vehicleData, AMap, stateImg) {
   var img = "/static/offline.png";
   if (vehicleData.alarmCount == "0") {
     img = "/static/alarm.png";
@@ -37,19 +37,23 @@ export const createMarker = function(vehicleData, AMap) {
   } else {
     img = "/static/offline.png";
   }
+  if (stateImg) {
+    img = `/static/${stateImg}.png`;
+  }
   var image = new AMap.Icon({
-    size: new AMap.Size(40, 40), //图标大小
+    size: new AMap.Size(28, 40), //图标大小
     image: img,
-    imageSize: new AMap.Size(40, 40)
+    imageSize: new AMap.Size(28, 40)
   });
   return new AMap.Marker({
     position: new AMap.LngLat(vehicleData.lng, vehicleData.lat),
     icon: image,
+    offset: new AMap.Pixel(-14, -20),
     angle: vehicleData.angle || 0
   });
 };
 
-export const setMarker = function(marker, vehicleData, AMap) {
+export const setMarker = function(marker, vehicleData, AMap, stateImg) {
   var img = "/static/offline.png";
   if (vehicleData.alarmCount == "0") {
     img = "/static/alarm.png";
@@ -62,10 +66,13 @@ export const setMarker = function(marker, vehicleData, AMap) {
   } else {
     img = "/static/offline.png";
   }
+  if (stateImg) {
+    img = `/static/${stateImg}.png`;
+  }
   var image = new AMap.Icon({
-    size: new AMap.Size(40, 40), //图标大小
+    size: new AMap.Size(28, 40), //图标大小
     image: img,
-    imageSize: new AMap.Size(40, 40)
+    imageSize: new AMap.Size(28, 40)
   });
   marker.setAngle(vehicleData.angle);
   marker.setIcon(image);
