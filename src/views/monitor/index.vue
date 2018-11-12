@@ -223,12 +223,13 @@ export default {
     var vm = this;
     //创建全局监控对象
     window.monitor = {
+      socketDataWorker: new Worker("/map/worker-socket.js"),
       ws: {
         position: null, //定位ws
-        positionHeartInterval: 0, //定位ws心跳interval
-        instruction: null, //指令ws
-        instructionHeartInterval: 0, //指令ws心跳interval
-        promiseList: new Map() //所有指令回复合集
+        positionHeartInterval: 0 //定位ws心跳interval
+        // instruction: null, //指令ws
+        // instructionHeartInterval: 0, //指令ws心跳interval
+        // promiseList: new Map() //所有指令回复合集
       },
       data: new Map(), //所有数据
       dict: {
@@ -290,6 +291,13 @@ export default {
           this.setUserCount();
         }, 20);
         this.initWS();
+        this.socketDataWorker.onmessage = evt => {
+          evt.data.sim_id = parseInt(evt.data.sim_id).toString();
+          var position = GPS.gcj_encrypt(evt.data.lat || 0, evt.data.lng || 0); //GPS转高德
+          evt.data.lng = position.lon;
+          evt.data.lat = position.lat;
+          this.setVehicleData(evt.data);
+        };
         this.initInstructionListen(); //初始化电子运单/事件报告全局监听
       },
       initInstructionListen() {
@@ -350,31 +358,29 @@ export default {
         });
       },
       initWS() {
-        /*初始化2个socket */
-        var wsList = this.ws;
-        //1 定位数据socket
-        wsList.position = new WebSocket(vm.$dict.MONITOR_URL);
-        var socketDataWorker = new Worker("/map/worker-socket.js");
-        wsList.position.binaryType = "arraybuffer";
-        wsList.position.onopen = () => {
-          // wsList.position.send(`^login|admin|49ba59abbe56e057$`);
+        var ws = this.ws;
+        window.ws = ws;
+        clearInterval(ws.positionHeartInterval);
+        ws.position = new WebSocket(vm.$dict.MONITOR_URL);
+        ws.position.binaryType = "arraybuffer";
+        ws.position.onopen = () => {
           var userInfo = JSON.parse(localStorage.getItem("BEIDOU"));
-          wsList.position.send(
+          ws.position.send(
             `^login|${userInfo.user_name}|${userInfo.pass_word}$`
           );
-          wsList.positionHeartInterval = setInterval(() => {
-            wsList.position.send("^heart$");
+          ws.positionHeartInterval = setInterval(() => {
+            if (ws.position.readyState == 1) {
+              ws.position.send("^heart$");
+            }
           }, 20000);
         };
-        wsList.position.onmessage = evt => {
-          socketDataWorker.postMessage(new Uint8Array(evt.data));
+        ws.position.onmessage = evt => {
+          this.socketDataWorker.postMessage(new Uint8Array(evt.data));
         };
-        socketDataWorker.onmessage = evt => {
-          evt.data.sim_id = parseInt(evt.data.sim_id).toString();
-          var position = GPS.gcj_encrypt(evt.data.lat || 0, evt.data.lng || 0); //GPS转高德
-          evt.data.lng = position.lon;
-          evt.data.lat = position.lat;
-          this.setVehicleData(evt.data);
+        ws.position.onclose = () => {
+          setTimeout(() => {
+            this.initWS();
+          }, 10000);
         };
       },
       initFence() {
@@ -637,7 +643,7 @@ export default {
             vm.$dict.ONLINE_TIMEOUT
           ) {
             this.setOffline(vehicleData);
-            console.log("设置" + key + "离线");
+            // console.log("设置" + key + "离线");
           }
         }
         // console.log("检测离线完成");
