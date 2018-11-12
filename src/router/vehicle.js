@@ -129,12 +129,12 @@ export default {
       },
       component: () => import("@/views/manage/vehicle/repair.vue")
     },
-    {
-      path: "vehicle-pcap",
-      name: "vehicle-pcap",
-      meta: { name: "车辆数据连接", icon: "iconfont icon-swap" },
-      component: () => import("@/views/manage/vehicle/index.vue")
-    },
+    // {
+    //   path: "vehicle-pcap",
+    //   name: "vehicle-pcap",
+    //   meta: { name: "车辆数据连接", icon: "iconfont icon-swap" },
+    //   component: () => import("@/views/manage/vehicle/index.vue")
+    // },
     {
       path: "vehicle-setting",
       name: "vehicle-setting",

@@ -21,7 +21,6 @@ import { createMarker, setMarker } from "@/utils/map.js";
 import { getTodayVehicleAlarm } from "@/api/index.js";
 export default {
   mounted() {
-    window.vehicle = this.$props.vehicle;
     initMap(() => {
       this.$map = new AMap.Map(this.$refs.map, {
         zoom: 14
@@ -86,6 +85,7 @@ export default {
       this.$map.setCenter(new AMap.LngLat(vehicleData.lng, vehicleData.lat));
     },
     initAddress(list) {
+      this.alarmLoading = true;
       location2address({
         data: list,
         longKey: "Longitude",
@@ -95,28 +95,37 @@ export default {
           res.map((item, index) => {
             list[index].address = item;
             this.$set(this.$data, "list", Object.freeze(list));
+            this.alarmLoading = false;
           });
         })
         .catch(() => {
           this.$set(this.$data, "list", Object.freeze(list));
+          this.alarmLoading = false;
         });
     },
     addAlarm() {
-      var vehilce = this.$props.vehicle;
+      var vehicle = this.$props.vehicle;
       var newAlarm = {
-        AlarmSign: vehilce.alarm,
-        Latitude: vehilce.lat,
-        Longitude: vehilce.lng,
-        Altitude: vehilce.altitude,
-        Speed: vehilce.speed,
-        Direction: vehilce.direction,
-        Time: vehilce.time,
+        AlarmSign: vehicle.alarm,
+        Latitude: vehicle.lat,
+        Longitude: vehicle.lng,
+        Altitude: vehicle.altitude,
+        Speed: vehicle.speed,
+        Direction: vehicle.direction,
+        Time: vehicle.time,
         EM0x01: vehicle.mileage,
         EM0x03: vehicle.speed1,
         EM0x30: vehicle.wifiSignal
       };
-      var list = [newAlarm].concat(this.list);
-      this.$set(this.$data, "list", list);
+      location2address({
+        data: [newAlarm],
+        longKey: "Longitude",
+        latKey: "Latitude"
+      }).then(res => {
+        newAlarm.address = res[0];
+        var list = [newAlarm].concat(this.list);
+        this.$set(this.$data, "list", list);
+      });
     },
     getTableHeight() {
       if (this.actived) {
@@ -128,7 +137,7 @@ export default {
     },
     formatSpeed(row) {
       var speed = row.EM0x03 || row.Speed;
-      return speed / 10 || 0 + "km/h";
+      return (speed || 0) + "km/h";
     },
     formatAlarm(row) {
       return this.$dict.getAlarm(row.AlarmSign) || "--";
