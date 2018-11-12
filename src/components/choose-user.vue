@@ -1,5 +1,5 @@
 <template>
-  <el-form status-icon :model="formData" size="small" ref="baseForm" class="msg-form">
+  <el-form v-loading="loading" status-icon :model="formData" size="small" ref="baseForm" class="msg-form">
     <template>
       <el-table height="250" :data="tableData.data" border style="width: 100%">
         <el-table-column prop="real_name" :formatter="$utils.baseFormatter" label="用户">
@@ -19,6 +19,7 @@ import { getUserChildrenList, getVehicleByPage } from "@/api/index.js";
 export default {
   data() {
     return {
+      loading: true,
       formData: {
         user_ids: ""
       },
@@ -42,6 +43,7 @@ export default {
       getUserChildrenList().then(res => {
         if (res.data.code == 0) {
           this.$set(this.tableData, "data", res.data.data);
+          this.loading = false;
         }
       });
     }

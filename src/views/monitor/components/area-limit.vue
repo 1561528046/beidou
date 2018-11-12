@@ -9,8 +9,9 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="规则名称：">
-            <el-input size="small" v-model="speed_limit.rules" style="width:20%"></el-input>
+          <el-form-item label="选择事件">
+            <el-radio v-model="speed_limit.event_type" label="1">设置</el-radio>
+            <el-radio v-model="speed_limit.event_type" label="2">删除</el-radio>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -20,13 +21,18 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col v-if="attribute" :span="24">
+          <el-form-item label="规则名称：">
+            <el-input size="small" v-model="speed_limit.rules" style="width:20%"></el-input>
+          </el-form-item>
+        </el-col>
         <!-- <el-col :span="24">
                     <el-form-item label="时间范围：">
                         <el-date-picker v-model="speed_limit.time" value-format="yyyy-MM-DD HH:mm:ss" style="width:20%;" size="small" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
                         </el-date-picker>
                     </el-form-item>
                 </el-col> -->
-        <el-col :span="24">
+        <el-col v-if="attribute" :span="24">
           <el-form-item style="margin:0" label="路线属性:">
             <el-checkbox v-model="according_time" style="margin-left:0px;">根据时间</el-checkbox>
             <el-checkbox v-model="enter_driver" style="margin-left:5px;">进路线报警给驾驶员</el-checkbox>
@@ -35,7 +41,7 @@
             <el-checkbox v-model="outer_platform" style="margin-left:5px;">出路线报警给平台</el-checkbox>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <el-col v-if="attribute" :span="24">
           <el-form-item label="限速路段：">
             <el-button size="mini" type="primary" @click="addRoad" icon="el-icon-plus"></el-button>
             <el-table height="200" :data="limit_road" style="width:40%;">
@@ -75,6 +81,26 @@ export default {
   components: { selectCityInput, areaRoute, chooseVehicle },
   created() {
     this.getTable();
+    this.$instruction.on("x8606", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "设置成功!",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
+    this.$instruction.on("x8607", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "删除成功!",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
   },
   mounted() {},
   data() {
@@ -92,6 +118,7 @@ export default {
       limit_road: [],
       vehicleData: {},
       license: "",
+      attribute: true,
       according_time: false,
       enter_driver: false,
       outer_driver: false,
@@ -105,6 +132,7 @@ export default {
       addKey: 0,
       speed_limit: {
         // time: "",
+        event_type: "1",
         rules: ""
       },
       mapData: {
@@ -133,6 +161,18 @@ export default {
         data: []
       }
     };
+  },
+  watch: {
+    speed_limit: {
+      handler: function() {
+        if (this.speed_limit.event_type == "1") {
+          this.attribute = true;
+        } else if (this.speed_limit.event_type == "2") {
+          this.attribute = false;
+        }
+      },
+      deep: true
+    }
   },
   methods: {
     closeInterface() {
@@ -181,97 +221,107 @@ export default {
     },
     // 发送分段限速指令
     sendInstruction() {
-      if (this.license == "") {
-        return this.$notify({
-          message: "请选择车辆!",
-          title: "提示",
-          type: "error"
-        });
-      } else if (this.speed_limit.rules == "") {
-        return this.$notify({
-          message: "请输入规则名称!",
-          title: "提示",
-          type: "error"
-        });
-      } else if (this.line == "") {
-        return this.$notify({
-          message: "请选择线路!",
-          title: "提示",
-          type: "error"
-        });
-      } else if (this.limit_road.length < 1) {
-        return this.$notify({
-          message: "限速规则最少一项!",
-          title: "提示",
-          type: "error"
-        });
-      }
-      //   else if (this.speed_limit.time == "" || this.speed_limit.time == null) {
-      //     return this.$notify({
-      //       message: "请选择时间!",
-      //       title: "提示",
-      //       type: "error"
-      //     });
-      //   }
       var data = {};
-      var roadNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-      if (this.according_time) {
-        roadNum[15] = 1;
-      }
-      if (this.enter_driver) {
-        roadNum[13] = 1;
-      }
-      if (this.outer_driver) {
-        roadNum[12] = 1;
-      }
-      if (this.enter_platform) {
-        roadNum[11] = 1;
-      }
-      if (this.outer_platform) {
-        roadNum[10] = 1;
-      }
-      var reg = new RegExp(",", "g");
-      roadNum = parseInt(roadNum.toString().replace(reg, ""), 2);
-
-      var start_time = "";
-      //   start_time = this.speed_limit.time[0];
-      var end_time = "";
-      //   end_time = this.speed_limit.time[1];
       var sim_id = "";
       if (this.vehicleData.sim_id.length == 11) {
         sim_id = "0" + this.vehicleData.sim_id;
       } else {
         sim_id = this.vehicleData.sim_id;
       }
-      var TurnPoints = [];
-      this.limit_road.map(it => {
-        it.point.map(item => {
-          TurnPoints.push({
-            RoutePointId: item.id, // 拐点ID
-            RouteSegmentId: item.id, // 路段ID
-            TurnPointLatitude: item.lat, // 拐点纬度
-            TurnPointLongitude: item.lng, // 拐点经度
-            RouteSegmentWidth: it.RouteSegmentWidth, // 路段宽度
-            RouteSegmentProperty: it.RouteSegmentProperty, // 路段属性
-            MaxDriveTimeLimited: it.MaxDriveTimeLimited, // 路段行驶过长阈值
-            MinDriveTimeLimited: it.MinDriveTimeLimited, // 路段行驶不足阈值
-            MaxSpeedLimited: it.MaxSpeedLimited, // 路段最高速度
-            OverMaxSpeedLastTime: it.OverMaxSpeedLastTime // 路段超速持续时间
+      if (this.speed_limit.event_type == "1") {
+        if (this.license == "") {
+          return this.$notify({
+            message: "请选择车辆!",
+            title: "提示",
+            type: "error"
+          });
+        } else if (this.speed_limit.rules == "") {
+          return this.$notify({
+            message: "请输入规则名称!",
+            title: "提示",
+            type: "error"
+          });
+        } else if (this.line == "") {
+          return this.$notify({
+            message: "请选择线路!",
+            title: "提示",
+            type: "error"
+          });
+        } else if (this.limit_road.length < 1) {
+          return this.$notify({
+            message: "限速规则最少一项!",
+            title: "提示",
+            type: "error"
+          });
+        }
+        var roadNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        if (this.according_time) {
+          roadNum[15] = 1;
+        }
+        if (this.enter_driver) {
+          roadNum[13] = 1;
+        }
+        if (this.outer_driver) {
+          roadNum[12] = 1;
+        }
+        if (this.enter_platform) {
+          roadNum[11] = 1;
+        }
+        if (this.outer_platform) {
+          roadNum[10] = 1;
+        }
+        var reg = new RegExp(",", "g");
+        roadNum = parseInt(roadNum.toString().replace(reg, ""), 2);
+
+        var start_time = "";
+        //   start_time = this.speed_limit.time[0];
+        var end_time = "";
+        //   end_time = this.speed_limit.time[1];
+        var TurnPoints = [];
+        this.limit_road.map(it => {
+          it.point.map(item => {
+            TurnPoints.push({
+              RoutePointId: item.id, // 拐点ID
+              RouteSegmentId: item.id, // 路段ID
+              TurnPointLatitude: item.lat, // 拐点纬度
+              TurnPointLongitude: item.lng, // 拐点经度
+              RouteSegmentWidth: it.RouteSegmentWidth, // 路段宽度
+              RouteSegmentProperty: it.RouteSegmentProperty, // 路段属性
+              MaxDriveTimeLimited: it.MaxDriveTimeLimited, // 路段行驶过长阈值
+              MinDriveTimeLimited: it.MinDriveTimeLimited, // 路段行驶不足阈值
+              MaxSpeedLimited: it.MaxSpeedLimited, // 路段最高速度
+              OverMaxSpeedLastTime: it.OverMaxSpeedLastTime // 路段超速持续时间
+            });
           });
         });
-      });
-      data = {
-        SimID: sim_id,
-        MessageID: "x8606",
-        RouteId: this.roadData[0].RegionId, //路线id
-        RouteProperty: roadNum, // 路线属性
-        StartTime: this.roadData[0].StartTime, // 起始时间
-        EndTime: this.roadData[0].EndTime, // 结束时间
-        // RoutePointsCount: "", // 路线总拐点数
-        TurnPoints: TurnPoints
-      };
-      data = JSON.stringify(data);
-      this.$instruction.send(data);
+        data = {
+          SimID: sim_id,
+          MessageID: "x8606",
+          RouteId: this.roadData[0].RegionId, //路线id
+          RouteProperty: roadNum, // 路线属性
+          StartTime: this.roadData[0].StartTime, // 起始时间
+          EndTime: this.roadData[0].EndTime, // 结束时间
+          // RoutePointsCount: "", // 路线总拐点数
+          TurnPoints: TurnPoints
+        };
+        data = JSON.stringify(data);
+        this.$instruction.send(data);
+      } else if (this.speed_limit.event_type == "2") {
+        if (this.line == "") {
+          return this.$notify({
+            message: "请选择线路!",
+            title: "提示",
+            type: "error"
+          });
+        }
+        data = {
+          SimID: sim_id,
+          MessageID: "x8607",
+          RouteIDs: this.roadData[0].RegionId //路线id
+        };
+        data = JSON.stringify(data);
+        this.$instruction.send(data);
+      }
     },
     // 存储返回的拐点项
     storageItem(data) {

@@ -1,5 +1,5 @@
 <template>
-  <el-form status-icon :rules="rules" :model="tableQuery" @submit.native.prevent size="small" ref="baseForm" class="msg-form">
+  <el-form v-loading="loading" status-icon :rules="rules" :model="tableQuery" @submit.native.prevent size="small" ref="baseForm" class="msg-form">
     <el-row :gutter="30">
       <el-col :span="7">
         <el-form-item label="车牌号" prop="query_mode">
@@ -52,6 +52,7 @@ export default {
   data() {
     return {
       checked: true,
+      loading: true,
       selection: [],
       vehicle: [],
       formData: {
@@ -151,6 +152,7 @@ export default {
         if (res.data.code == 0) {
           this.$set(this.tableData, "data", res.data.data);
           this.$set(this.tableData, "total", res.data.total);
+          this.loading = false;
           this.$nextTick(() => {
             this.tableData.data.map(vehicle => {
               if (this.selection.includes(vehicle.vehicle_id)) {

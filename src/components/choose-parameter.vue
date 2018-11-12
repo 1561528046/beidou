@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-form :model="tableQuery" label-width="60px" @submit.native.prevent>
       <el-row :gutter="30">
         <el-col :span="8">
@@ -60,6 +60,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       selection: [],
       vehicle: [],
       isCollapse: false,
@@ -136,6 +137,7 @@ export default {
         if (res.data.code == 0) {
           this.$set(this.tableData, "data", res.data.data);
           this.$set(this.tableData, "total", res.data.total);
+          this.loading = false;
           this.$nextTick(() => {
             this.tableData.data.map(vehicle => {
               if (this.selection.includes(vehicle.vehicle_id)) {

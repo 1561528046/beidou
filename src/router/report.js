@@ -270,14 +270,14 @@ export default {
           meta: { name: "用户操作日志", icon: "iconfont icon-yonghucaozuo" },
           component: () =>
             import("@/views/manage/report/userbehavior/operation/index.vue")
-        },
-        {
-          path: "userbehavior-media",
-          name: "userbehavior-media",
-          meta: { name: "用户媒体明细", icon: "iconfont icon-mingxi" },
-          component: () =>
-            import("@/views/manage/report/userbehavior/media/index.vue")
         }
+        // {
+        //   path: "userbehavior-media",
+        //   name: "userbehavior-media",
+        //   meta: { name: "用户媒体明细", icon: "iconfont icon-mingxi" },
+        //   component: () =>
+        //     import("@/views/manage/report/userbehavior/media/index.vue")
+        // }
         // {
         //   path: "userbehavior-vehicle",
         //   name: "userbehavior-vehicle",
