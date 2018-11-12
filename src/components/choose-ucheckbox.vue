@@ -1,5 +1,5 @@
 <template>
-  <el-form status-icon :model="formData" size="small" ref="baseForm" class="msg-form">
+  <el-form v-loading="loading" status-icon :model="formData" size="small" ref="baseForm" class="msg-form">
     <template>
       <el-table height="250" :data="tableData.data" border style="width: 100%">
         <el-table-column label="状态" width="50">
@@ -21,6 +21,7 @@ import { getUserChildrenList, getVehicleByPage } from "@/api/index.js";
 export default {
   data() {
     return {
+      loading: true,
       formData: {
         user: [],
         user_ids: ""
@@ -86,6 +87,7 @@ export default {
             res.data.data[i].checked = false;
           }
           this.$set(this.tableData, "data", res.data.data);
+          this.loading = false;
         }
       });
     }

@@ -1,5 +1,5 @@
 <template>
-  <el-form status-icon :rules="rules" :model="tableQuery" size="small" ref="baseForm" class="msg-form">
+  <el-form v-loading="loading" status-icon :rules="rules" :model="tableQuery" size="small" ref="baseForm" class="msg-form">
     <el-row :gutter="30">
       <el-col :span="7">
         <el-form-item label="车牌号" prop="query_mode">
@@ -51,6 +51,7 @@ import { getVehicleByPage } from "@/api/index.js";
 export default {
   data() {
     return {
+      loading: true,
       formData: {
         license: "",
         owner: "",
@@ -85,6 +86,7 @@ export default {
         if (res.data.code == 0) {
           this.$set(this.tableData, "data", res.data.data);
           this.$set(this.tableData, "total", res.data.total);
+          this.loading = false;
         } else {
           this.$message.error(res.data.msg);
         }
