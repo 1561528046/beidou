@@ -22,12 +22,13 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label-width="130px" label="车牌颜色">
-            <el-input style="width:90%" v-model="communication.Ox0084">
-              <!-- <template slot="append">
-                <el-button @click="setup('0x0084')">设置</el-button>
-              </template> -->
-            </el-input>
-            <!-- <el-button @click="collect('0x0084')" style="margin-left:31px">采集</el-button> -->
+            <el-select style="width:90%" v-model="communication.Ox0084">
+              <el-option value="1" label="蓝色">蓝色</el-option>
+              <el-option value="2" label="黄色">黄色</el-option>
+              <el-option value="3" label="黑色">黑色</el-option>
+              <el-option value="4" label="白色">白色</el-option>
+              <el-option value="9" label="其他">其他</el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -174,7 +175,24 @@ export default {
     message: Array,
     respond: String
   },
-  created() {},
+  created() {
+    this.$instruction.on("x8701", eve => {
+      var data = JSON.parse(eve.data);
+      var sim_id = "";
+      if (data.code == "0") {
+        this.communication.data.map(item => {
+          if (item.sim_id.length == 11) {
+            sim_id = "0" + item.sim_id;
+          } else {
+            sim_id = item.sim_id;
+          }
+          if (data.SimID == sim_id) {
+            this.$set(item, "operating", "设置成功");
+          }
+        });
+      }
+    });
+  },
   methods: {
     vehicleClick() {
       this.vehicleDialog = true;

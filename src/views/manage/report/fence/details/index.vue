@@ -66,7 +66,7 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import { getAlarmDetailByPage } from "@/api/index.js";
+import { getFenceDetailByPage } from "@/api/index.js";
 import selectFencetype from "@/components/select-fencetype.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 import { location2address, gps2amap } from "@/utils/map-tools.js";
@@ -97,6 +97,7 @@ export default {
         speed_limit: "",
         alarm_type: "",
         sim_ids: "",
+        source: "0",
         size: 10,
         page: 1
       },
@@ -235,7 +236,7 @@ export default {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
-          getAlarmDetailByPage(query)
+          getFenceDetailByPage(query)
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];

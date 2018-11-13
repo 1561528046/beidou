@@ -1,16 +1,16 @@
 <template>
   <!-- 地图 -->
   <div>
-    <div style=" width:60%; position:absolute;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
+    <div style=" width:55%; position:absolute;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
     <div class="vehicle_select">
-      <el-autocomplete class="inline-input" size="small" style="width:90%" :popper-class="autoplate" v-model="formData.license" :fetch-suggestions="querySearch" placeholder="请输入车牌号/终端ID" :trigger-on-focus="false" @select="handleSelect">
+      <el-autocomplete class="inline-input" size="small" style="width:90%" :popper-class="autoplate" v-model="formData.license" :fetch-suggestions="querySearch" placeholder="请输入车牌号/终端ID" :trigger-on-focus="false" @select="selectVehicle">
         <el-button @click="selectVehicle" slot="append" icon="el-icon-search"></el-button>
       </el-autocomplete>
-      <el-button v-if="tableType" @click="tableType=false" style="position:absolute;left:451px;top:9px;z-index:99;" size="small" icon="el-icon-arrow-right"></el-button>
-      <el-button v-if="!tableType" @click="tableType=true" style="position:absolute;left:451px;top:9px;z-index:99;" size="small" icon="el-icon-arrow-down"></el-button>
+      <el-button v-if="selectType" @click="selectType=false" style="position:absolute;left:451px;top:9px;z-index:99;" size="small" icon="el-icon-arrow-right"></el-button>
+      <el-button v-if="!selectType" @click="selectType=true" style="position:absolute;left:451px;top:9px;z-index:99;" size="small" icon="el-icon-arrow-down"></el-button>
     </div>
     <!-- 查询栏 -->
-    <div class="vehicle_data">
+    <div v-if="selectType" class="vehicle_data">
       <div style="margin-top:45px;">
         <el-form :model="trackForm" ref="baseForm" :rules="rules" size="small">
           <el-form-item prop="time">
@@ -36,16 +36,16 @@
         </div>
       </div>
     </div>
-    <div style=" width:40%; height:90%;background-color:#fff;position:absolute;left:0;top:0;bottom:0;z-index:99;">
-      <el-table :row-style="rowClass" :header-cell-style="{background:'#fafafa'}" :data="list" height="100%" border style="width: 100%">
+    <div style=" width:45%; height:90%;background-color:#fff;position:absolute;left:0;top:0;bottom:0;z-index:99;">
+      <el-table :row-style="{height:'71px'}" :row-class-name="tableRowClassName" ref="baseTable" :header-cell-style="{background:'#fafafa'}" :data="list" height="100%" border style="width: 100%">
         <el-table-column width="80px" prop="index" label="序号" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
-        <el-table-column label="速度" prop="speed" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column width="150px" label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
+        <el-table-column label="速度" prop="speed"></el-table-column>
         <el-table-column label="当日里程" prop="em_0x01" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column label="位置" prop="address" :formatter="$utils.baseFormatter " width="300px"></el-table-column>
+        <el-table-column label="位置" prop="address" :formatter="$utils.baseFormatter " width="400px"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination :disabled="true" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableQuery.total" layout="total, sizes, prev, pager, next, jumper" background>
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableQuery.total" layout="total, sizes, prev, pager, next, jumper" background>
         </el-pagination>
       </div>
     </div>
@@ -60,6 +60,7 @@ import { GetVehicleByLicense, GetVehicleLocation } from "@/api/index.js";
 import { location2address, gps2amap } from "@/utils/map-tools.js";
 import { GPS } from "@/utils/map-tools.js";
 export default {
+  created() {},
   computed: {
     list: function() {
       return this.tableQuery.data.slice(
@@ -70,6 +71,22 @@ export default {
   },
   data() {
     return {
+      scroll_bar: "",
+      player: false,
+      vehicle_license: "",
+      autoplate: "",
+      currentIndex: 0, //当前播放的第几条数据
+      speed: 1000, //速度(定时器时间)
+      timer: null, //定时器
+      addkey: 0,
+      timer: {},
+      progress_bar: 0,
+      isCollapse: true,
+      dialogVisible: false,
+      playType: false,
+      playState: true,
+      vtype: false,
+      selectType: false,
       trackForm: {
         sim_id: "",
         time: [],
@@ -99,14 +116,6 @@ export default {
         total: 0,
         data: []
       },
-      player: false,
-      vehicle_license: "",
-      autoplate: "",
-      selectType: false,
-      tableType: true,
-      currentIndex: 0, //当前播放的第几条数据
-      speed: 1000, //速度(定时器时间)
-      timer: null, //定时器
       mapData: {
         map: {},
         polyline: {},
@@ -115,15 +124,7 @@ export default {
       tableData: {
         total: 0,
         data: []
-      },
-      addkey: 0,
-      timer: {},
-      progress_bar: 0,
-      isCollapse: true,
-      dialogVisible: false,
-      playType: false,
-      playState: true,
-      vtype: false
+      }
     };
   },
   watch: {},
@@ -138,17 +139,14 @@ export default {
   },
   methods: {
     // 单行样式
-    rowClass(row, index) {
-      if (index == this.currentIndex) {
-        console.log(1);
-        return { "background-color": "red" };
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex == this.currentIndex % this.tableQuery.size) {
+        return "success-row";
       }
-      // console.log(row, index);
+      return "";
     },
     //
     validateTime(rule, value, callback) {
-      // value[0] = moment(value[0]).format("YYYY-MM-DD HH:mm:ss");
-
       var date = moment(value[0]).add(3, "days");
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");
       if (value == "") {
@@ -178,13 +176,16 @@ export default {
         this.autoplate = "autoplate";
       }
     },
-    handleSelect(item) {
-      if (item.license != "") {
-        this.selectType = true;
-      }
-    },
     //移动位置(初始化位置)
     nextData() {
+      if (
+        this.currentIndex % this.tableQuery.size == 0 &&
+        this.currentIndex != 0
+      ) {
+        this.handleCurrentChange(this.tableQuery.page + 1);
+      }
+      this.scroll_bar.scrollTop =
+        (this.currentIndex % this.tableQuery.size - 5) * 71;
       var currentData = this.tableData.data[this.currentIndex];
       this.mapData.marker.setPosition(
         new AMap.LngLat(currentData.lng, currentData.lat)
@@ -192,21 +193,20 @@ export default {
     },
     // 查询车辆
     selectVehicle() {
-      if (this.selectType) {
-        GetVehicleByLicense(this.formData).then(res => {
-          if (res.data.code == 0) {
-            this.vehicle_license = res.data.data[0].license;
-            this.trackForm.sim_id = res.data.data[0].sim_id;
-            this.vtype = true;
-          } else {
-            return this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        });
-      }
+      GetVehicleByLicense(this.formData).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.$data, "vehicle_license", res.data.data[0].license);
+          this.trackForm.sim_id = res.data.data[0].sim_id;
+          this.selectType = true;
+          this.vtype = true;
+        } else {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
+        }
+      });
     },
     // 绘制点到地图上
     setMarker() {
@@ -251,6 +251,14 @@ export default {
     },
     // 查询轨迹信息
     selectForm() {
+      this.$refs.baseTable.$el.childNodes.forEach(item => {
+        if (
+          item.className &&
+          item.className.indexOf("el-table__body-wrapper") != -1
+        ) {
+          this.scroll_bar = item;
+        }
+      });
       if (this.trackForm.position_type) {
         this.trackForm.filter_position = 1;
       } else {
@@ -270,6 +278,7 @@ export default {
               arr.push({ lng: item.longitude, lat: item.latitude });
             });
             this.$set(this.tableQuery, "data", res.data.data);
+            this.$set(this.tableQuery, "total", res.data.count);
             this.$set(this.tableData, "data", arr);
             this.$set(this.tableData, "total", res.data.count);
             this.setMarker();
@@ -299,30 +308,6 @@ export default {
                 });
               });
             });
-            // .catch(() => {})
-            // .then(() => {
-            //   location2address({
-            //     data: data,
-            //     longKey: "amap_longitude",
-            //     latKey: "amap_latitude"
-            //   })
-            //     .then(addressArr => {
-            //       data.map((item, index) => {
-            //         // this.$set(item, "address", addressArr[index]);
-            //         this.tableQuery.data.map(icar => {
-            //           this.$set(icar, "address", addressArr[index]);
-            //         });
-            //       });
-            //       // this.$set(this.tableQuery, "data", Object.freeze(data));
-            //       this.$set(
-            //         this.tableQuery,
-            //         "total",
-            //         this.tableQuery.data.length
-            //       );
-            //       this.tableType = false;
-            //     })
-            //     .catch(() => {});
-            // });
           }
         });
       } else {
@@ -338,7 +323,7 @@ export default {
       this.mapData.map.clearMap();
       this.vtype = false;
       this.player = false;
-      this.tableType = true;
+      this.selectType = false;
       this.tableQuery.data = [];
       this.trackForm.sim_id = "";
       this.trackForm.time = [];
@@ -403,6 +388,9 @@ export default {
 };
 </script>
 <style>
+.el-table .success-row {
+  background: #cbf1b7;
+}
 .autoplate {
   display: none;
 }
@@ -430,7 +418,7 @@ export default {
   width: 482px;
   height: 30px;
   position: absolute;
-  left: 40%;
+  left: 45%;
   right: 0;
   top: 0;
   bottom: 0;
@@ -445,7 +433,7 @@ export default {
   width: 480px;
   height: 201px;
   position: absolute;
-  left: 40%;
+  left: 45%;
   right: 0;
   top: 55px;
   bottom: 0;

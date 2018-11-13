@@ -93,6 +93,56 @@ export default {
         });
       }
     });
+    this.$instruction.on("x8601", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "设置成功",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
+    this.$instruction.on("x8602", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "设置成功",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
+    this.$instruction.on("x8603", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "设置成功",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
+    this.$instruction.on("x8604", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "设置成功",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
+    this.$instruction.on("x8605", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "设置成功",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
   },
   computed: {},
   data() {
@@ -245,7 +295,7 @@ export default {
           title: "提示",
           type: "error"
         });
-      } else if (this.areaType == "") {
+      } else if (this.areaType == "" && this.areaValue == "") {
         return this.$notify({
           message: "请选择区域!",
           title: "提示",
@@ -273,25 +323,15 @@ export default {
         }
       }
 
-      // if (this.tableQuery.area == "3") {
-      //   if (this.areaType == "") {
-      //     return this.$notify({
-      //       message: "请选择区域!",
-      //       title: "提示",
-      //       type: "error"
-      //     });
-      //   }
-      // } else if (this.tableQuery.area == "4") {
-      //
-      // }
-
       //圆形区域
       var instruction = {};
       if (this.tableQuery.vehicleData.sim_id.length == 11) {
         this.tableQuery.vehicleData.sim_id =
           "0" + this.tableQuery.vehicleData.sim_id;
       }
+      console.log(this.tableQuery.area);
       if (this.tableQuery.area == "4") {
+        console.log(this.areaValue);
         if (this.areaValue == "") {
           return this.$notify({
             message: "请选择区域类型!",
@@ -319,7 +359,7 @@ export default {
         } else if (this.areaValue == "3") {
           instruction = {
             SimID: this.tableQuery.vehicleData.sim_id,
-            MessageID: "x8603",
+            MessageID: "x8605",
             PolygonAreasCount: "0"
           };
           instruction = JSON.stringify(instruction);
