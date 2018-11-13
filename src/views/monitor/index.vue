@@ -299,6 +299,9 @@ export default {
           this.setVehicleData(evt.data);
         };
         this.initInstructionListen(); //初始化电子运单/事件报告全局监听
+        if (vm.$route.params && vm.$route.params.sim_id) {
+          vm.addSingleVehicle(vm.$route.params.sim_id);
+        }
       },
       initInstructionListen() {
         vm.$instruction.on("x0701", evt => {
@@ -1035,6 +1038,14 @@ export default {
         default:
           this.closeTab(tabName);
       }
+    }
+  },
+  activated() {
+    if (
+      this.$route.params &&
+      window.monitor.data.has(this.$route.params.sim_id)
+    ) {
+      this.addSingleVehicle(this.$route.params.sim_id);
     }
   },
   destroyed() {

@@ -164,7 +164,9 @@ export default {
         if (item.MultimediaDataID == data.MultimediaDataID) {
           this.getMediaUrl(item);
           var index = this.getMeidaList.indexOf(item);
-          this.getMeidaList.replace(index, 1);
+          if (index != -1) {
+            this.getMeidaList.replace(index, 1);
+          }
         }
       });
     },

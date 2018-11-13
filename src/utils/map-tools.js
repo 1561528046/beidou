@@ -244,7 +244,7 @@ export const location2address = function({ data, longKey, latKey }) {
                 " " +
                 address.roads[0].direction +
                 " " +
-                address.roads[0].distance +
+                parseInt(address.roads[0].distance) +
                 "米";
             }
             result[index * 20 + addressIndex] = addressTemp;

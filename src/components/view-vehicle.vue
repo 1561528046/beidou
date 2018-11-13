@@ -63,7 +63,7 @@
                     <template v-if="formData.license_color">
                       <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="$dict.get_license_color(formData.license_color).style">
                       </span>
-                      {{formData.license_color?$dict.license_color[formData.license_color].name:"--"}}
+                      {{formData.license_color&&$dict.license_color[formData.license_color]?$dict.license_color[formData.license_color].name:"--"}}
                     </template>
 
                     <!-- <el-select v-model="formData.license_color" placeholder="请选择车牌颜色">

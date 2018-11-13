@@ -405,8 +405,13 @@ export default {
       this.openCompany.postData["img" + index + "File"] = file;
     },
     handleCommand(command) {
-      console.log(command.command);
       switch (command.command) {
+        case "view-position": //车辆位置
+          this.$router.replace({
+            name: "monitor",
+            params: { sim_id: command.data.row.sim_id }
+          });
+          break;
         case "active-company": //厂商激活
           this.openCompanyShow(command.data);
           break;

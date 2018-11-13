@@ -261,7 +261,7 @@
         <el-badge :value="parseInt(mapData.vehicle.alarm_count)||''" :max="99" class="alarm-badge" :class="{'no-alarm':!mapData.vehicle.alarm_count}">
           <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
         </el-badge>
-        <!-- <i class="iconfont icon-error-fill _error" @click="openCard('error')" title="异常信息"></i> -->
+        <i class="iconfont icon-error-fill _error" @click="showCard('repairCard','故障申报')" title="故障申报"></i>
         <!-- <i class="iconfont icon-video" @click="openCard('media')" title="媒体列表"></i> -->
       </div>
       <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%" :close-on-click-modal="false" :close-on-press-escape="false">
@@ -280,6 +280,7 @@ import { location2address } from "@/utils/map-tools.js";
 import { initMap, createMarker, setMarker } from "@/utils/map.js";
 import deviceCard from "./card-device.vue";
 import simCard from "./card-sim.vue";
+import repairCard from "./card-repair.vue";
 import terminalCard from "./card-terminal.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 import x8804 from "./x8804.vue";
@@ -294,7 +295,8 @@ export default {
     chooseVehicle,
     x8804,
     x8801,
-    x0702
+    x0702,
+    repairCard
   },
   data() {
     return {
