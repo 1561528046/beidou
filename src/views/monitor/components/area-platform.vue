@@ -32,7 +32,7 @@
             <li v-for="areaitem in area" :class="{active:areaitem.RegionId==currentUser.RegionId}" :key="areaitem.RegionId" @click="changeUser(areaitem)"> {{areaitem.RegionName}}</li>
           </ul>
           <div class="user-pager">
-            <el-input placeholder="页码" size="small" v-model="userTableQuery.page">
+            <el-input placeholder="页码" size="small" v-model="areaList.page">
               <el-button slot="prepend" icon="el-icon-caret-left" @click="userPagerPrev()" :disabled="userPagerPrevState"></el-button>
               <el-button slot="append" icon="el-icon-caret-right" @click="userPagerNext()" :disabled="userPagerNextState"></el-button>
             </el-input>
@@ -128,13 +128,12 @@ export default {
     },
     userPagerNextState: function() {
       return !(
-        this.userTableQuery.total -
-          this.userTableQuery.page * this.userTableQuery.size >
+        this.areaList.total - this.areaList.page * this.areaList.size >
         0
       );
     },
     userPagerPrevState: function() {
-      return !(this.userTableQuery.page > 1);
+      return !(this.areaList.page > 1);
     }
   },
   data() {
@@ -150,7 +149,8 @@ export default {
         page: 1,
         size: 10,
         RegionName: "",
-        Type: ""
+        Type: "",
+        total: 0
       },
       // 左侧列表查询
       agreement: {
@@ -164,11 +164,7 @@ export default {
         server_id: "",
         flag: 808
       },
-      userTableQuery: {
-        real_name: "",
-        size: 20,
-        page: 1
-      },
+
       // 已绑定查询
       bindTableQuery: {
         page: 1,
@@ -261,7 +257,7 @@ export default {
       GetRegionByPage(this.areaList).then(res => {
         if (res.data.code == 0) {
           this.$set(this.$data, "area", res.data.data);
-          this.userTableQuery.total = res.data.total;
+          this.areaList.total = res.data.total;
         }
       });
     },
@@ -339,21 +335,21 @@ export default {
       this.renderUnbind();
     },
     userPagerPrev() {
-      if (isNaN(Number(parseInt(this.userTableQuery.page)))) {
-        this.userTableQuery.page = 1;
+      if (isNaN(Number(parseInt(this.areaList.page)))) {
+        this.areaList.page = 1;
       } else {
-        if (this.userTableQuery.page - 1 <= 0) {
-          this.userTableQuery.page = 1;
+        if (this.areaList.page - 1 <= 0) {
+          this.areaList.page = 1;
         } else {
-          this.userTableQuery.page = parseInt(this.userTableQuery.page) - 1;
+          this.areaList.page = parseInt(this.areaList.page) - 1;
         }
       }
     },
     userPagerNext() {
-      if (isNaN(Number(parseInt(this.userTableQuery.page)))) {
-        this.userTableQuery.page = 1;
+      if (isNaN(Number(parseInt(this.areaList.page)))) {
+        this.areaList.page = 1;
       } else {
-        this.userTableQuery.page = parseInt(this.userTableQuery.page) + 1;
+        this.areaList.page = parseInt(this.areaList.page) + 1;
       }
     }
   }

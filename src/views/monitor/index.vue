@@ -862,7 +862,7 @@ export default {
               vehicle_id: item[9],
               group_path: item[10].split(","), //车辆对应分组路径 [path1,path2,path3....]
               fence_ids: item[8] ? item[8].split(",") : [], //围栏ID列表
-              fence_alarm: [], //围栏报警信息
+              fence_alarm: {}, //围栏报警信息
               fence_alarm_text: "", // 出围栏，进围栏
               speed: 0,
               speed1: 0,

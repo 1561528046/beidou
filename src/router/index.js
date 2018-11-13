@@ -99,15 +99,15 @@ var routers = [
         meta: { name: "编辑司机", hidden: true },
         component: () => import("@/views/manage/driver/update.vue")
       },
-      report,
-      {
-        path: "server-state",
-        name: "server-state",
-        meta: {
-          name: "服务器状态",
-          icon: "iconfont icon-fuwuqi1"
-        }
-      }
+      report
+      // {
+      //   path: "server-state",
+      //   name: "server-state",
+      //   meta: {
+      //     name: "服务器状态",
+      //     icon: "iconfont icon-fuwuqi1"
+      //   }
+      // }
     ]
   },
   {

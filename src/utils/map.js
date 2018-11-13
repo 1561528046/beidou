@@ -31,7 +31,10 @@ export const createMarker = function(vehicleData, AMap, stateImg) {
   }
   if (vehicleData.online) {
     img = "/static/online.png";
-    if (vehicleData.alarm != "0" && vehicleData.alarm != "") {
+    if (
+      (vehicleData.alarm != "0" && vehicleData.alarm != "") ||
+      vehicleData.fence_alarm_text != ""
+    ) {
       img = "/static/alarm.png";
     }
   } else {
@@ -60,7 +63,10 @@ export const setMarker = function(marker, vehicleData, AMap, stateImg) {
   }
   if (vehicleData.online) {
     img = "/static/online.png";
-    if (vehicleData.alarm != "0" && vehicleData.alarm != "") {
+    if (
+      (vehicleData.alarm != "0" && vehicleData.alarm != "") ||
+      vehicleData.fence_alarm_text != ""
+    ) {
       img = "/static/alarm.png";
     }
   } else {
