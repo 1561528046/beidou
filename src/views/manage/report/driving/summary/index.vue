@@ -264,9 +264,9 @@ export default {
         this.tableQuery.sim_ids =
           this.tableQuery.sim_ids + ("0" + scope.vehicle[j].sim_id) + ",";
       }
-      for (var s = 0; s < scope.user.length; s++) {
+      for (var s = 0; s < scope.real.length; s++) {
         this.tableQuery.real_name =
-          this.tableQuery.real_name + scope.user[s].real_name + ",";
+          this.tableQuery.real_name + scope.real[s].real_name + ",";
       }
       this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,

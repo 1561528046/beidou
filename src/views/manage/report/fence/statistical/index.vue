@@ -41,10 +41,10 @@
         </el-table-column>
         <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
         <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
-        <el-table-column prop="jinchuquyu" label="进出区域" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="jinchuluxian" label="进出线路" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="luduanshijian" label="路段行驶时间不足或过长" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="luxianpianli" label="路线偏离" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="jinchuquyu" label="进出区域"> </el-table-column>
+        <el-table-column prop="jinchuluxian" label="进出线路"> </el-table-column>
+        <el-table-column prop="luduanshijian" label="路段行驶时间不足或过长"> </el-table-column>
+        <el-table-column prop="luxianpianli" label="路线偏离"> </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
@@ -265,9 +265,9 @@ export default {
         this.tableQuery.sim_ids =
           this.tableQuery.sim_ids + ("0" + scope.vehicle[j].sim_id) + ",";
       }
-      for (var s = 0; s < scope.user.length; s++) {
+      for (var s = 0; s < scope.real.length; s++) {
         this.tableQuery.real_name =
-          this.tableQuery.real_name + scope.user[s].real_name + ",";
+          this.tableQuery.real_name + scope.real[s].real_name + ",";
       }
       this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,

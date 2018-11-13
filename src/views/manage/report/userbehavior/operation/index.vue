@@ -252,11 +252,13 @@ export default {
           sim_id: scope.vehicle[j].sim_id
         });
       }
-      for (var s = 0; s < scope.user.length; s++) {
+      for (var s = 0; s < scope.real.length; s++) {
         this.tableQuery.real_name =
-          this.tableQuery.real_name + scope.user[s].real_name + ",";
+          this.tableQuery.real_name + scope.real[s].real_name + ",";
+      }
+      for (var d = 0; d < scope.user.length; d++) {
         this.tableQuery.user_ids =
-          this.tableQuery.user_ids + scope.user[s].user_id + ",";
+          this.tableQuery.user_ids + scope.user[d] + ",";
       }
       this.tableQuery.user_ids = this.tableQuery.user_ids.substring(
         0,
