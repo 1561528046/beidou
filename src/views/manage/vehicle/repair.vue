@@ -460,7 +460,7 @@ export default {
         owner: "",
         fault_type: "",
         repair_state: "",
-        is_enter: 1,
+        is_enter: 2,
         desc: ""
       },
       tableData: {
