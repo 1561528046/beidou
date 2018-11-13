@@ -186,14 +186,14 @@ export default {
       this.addKey++;
       this.vehicleDialog = true;
       this.tableQuery.license = "";
-      this.tableQuery.sim_ids = "";
+      this.tableQuery.user_ids = "";
       this.userAlert = false;
     },
     selectuser() {
       this.addKey++;
       this.userDialog = true;
       this.tableQuery.real_name = "";
-      this.tableQuery.sim_ids = "";
+      this.tableQuery.user_ids = "";
       this.vehicleAlert = false;
     },
     // 回来的数据
@@ -228,11 +228,13 @@ export default {
       if (!scope.vehicle.length == 0) {
         this.vehicleAlert = true;
       }
-      for (var s = 0; s < scope.user.length; s++) {
+      for (var h = 0; h < scope.real.length; h++) {
         this.tableQuery.real_name =
-          this.tableQuery.real_name + scope.user[s].real_name + ",";
+          this.tableQuery.real_name + scope.real[h].real_name + ",";
+      }
+      for (var s = 0; s < scope.user.length; s++) {
         this.tableQuery.user_ids =
-          this.tableQuery.user_ids + scope.user[s].user_id + ",";
+          this.tableQuery.user_ids + scope.user[s] + ",";
       }
       this.tableQuery.user_ids = this.tableQuery.user_ids.substring(
         0,
