@@ -3,11 +3,11 @@
     <div class="monitor-nav">
       <i class="iconfont icon-unorderedlist _header"></i>
       <div class="_list">
-        <a href="#" @click="openTab('track')">
+        <a href="javascript:;" @click="openTab('track')">
           <i class="iconfont icon-guiji"></i>
           <span>轨迹回放</span>
         </a>
-        <a href="#" @click="openTab('fence')">
+        <a href="javascript:;" @click="openTab('fence')">
           <i class="iconfont icon-weilan"></i>
           <span>围栏管理 </span>
         </a>
