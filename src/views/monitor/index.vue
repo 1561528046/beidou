@@ -304,6 +304,37 @@ export default {
         }
       },
       initInstructionListen() {
+        vm.$instruction.on("x9200", evt => {
+          //809 9200
+          var data = JSON.parse(evt.data);
+          if (data.GNSS_DATA) {
+            data.GNSS_DATA = JSON.parse(data.GNSS_DATA);
+          }
+          vm.$store.commit("x809In/add", data);
+        });
+
+        vm.$instruction.on("x9400", evt => {
+          //809 9400
+          var data = JSON.parse(evt.data);
+          vm.$store.commit("x809In/add", data);
+        });
+
+        vm.$instruction.on("x9300", evt => {
+          //809 x9300
+          var data = JSON.parse(evt.data);
+          vm.$store.commit("x809In/add", data);
+        });
+
+        vm.$instruction.on("x0900", evt => {
+          //上行透传
+          var data = JSON.parse(evt.data);
+          var sim_id = vm.$utils.unFormatSim(data.SimID);
+          if (this.data.has(sim_id)) {
+            //如果有当前车辆的监控权限,发送数据到$store
+            vm.$store.commit("x0900/add", data);
+          }
+        });
+
         vm.$instruction.on("x0701", evt => {
           //电子运单数据
           var data = JSON.parse(evt.data);

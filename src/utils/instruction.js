@@ -125,7 +125,7 @@ export default class Instruction {
     } else {
       var data = JSON.parse(evt.data);
       sim_id = data.SimID;
-      messageId = data.MessageID;
+      messageId = data.MessageID || data.MSG_ID;
     }
 
     if (messageId != "heart") {
