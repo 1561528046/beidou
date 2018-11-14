@@ -14,7 +14,7 @@
       <div style="margin-top:45px;">
         <el-form :model="trackForm" ref="baseForm" :rules="rules" size="small">
           <el-form-item prop="time">
-            <el-date-picker size="small" v-model="trackForm.time" value-format="yyyy-MM-dd HH:mm:ss" type="datetimerange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+            <el-date-picker size="small" v-model="trackForm.time" value-format="yyyy-MM-dd HH:mm:ss" type="datetimerange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']">
             </el-date-picker>
           </el-form-item>
           <el-form-item style="margin-bottom:18px;">
@@ -32,7 +32,9 @@
             <el-button size="small" v-if="!playType" @click="play" style="width:36px;height:36px; border-radius: 100%;border: solid 1px; padding:9px 12px;" icon="iconfont icon-bofangqibofang"></el-button>
             <el-button size="small" v-if="playType" @click="suspended" style="width:36px;height:36px;border-radius: 100%;border: solid 1px;padding:9px 12px;" icon="iconfont icon-bofangqi-zanting"></el-button>
           </div>
-          <el-slider v-model="currentIndex" :min="0" :max="tableData.total+1"></el-slider>
+          <div style="padding:0 5px;">
+            <el-slider v-model="currentIndex" :min="0" :max="tableData.total-1"></el-slider>
+          </div>
         </div>
       </div>
     </div>
@@ -41,8 +43,8 @@
         <el-table-column width="80px" prop="index" label="序号"></el-table-column>
         <el-table-column width="150px" label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
         <el-table-column label="速度" prop="speed"></el-table-column>
-        <el-table-column label="当日里程" prop="em_0x01" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column label="位置" prop="address" :formatter="$utils.baseFormatter " width="400px"></el-table-column>
+        <el-table-column label="当日里程" prop="em_0x01" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column label="位置" prop="address" :formatter="$utils.baseFormatter" width="400px"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableQuery.total" layout="total, sizes, prev, pager, next, jumper" background>
@@ -112,7 +114,7 @@ export default {
       },
       tableQuery: {
         page: 1,
-        size: 100,
+        size: 20,
         total: 0,
         data: []
       },
@@ -124,7 +126,8 @@ export default {
       tableData: {
         total: 0,
         data: []
-      }
+      },
+      addressList: new Map()
     };
   },
   watch: {
@@ -306,19 +309,19 @@ export default {
             } else {
               this.player = false;
             }
-            var data = [];
-            data = res.data.data;
             gps2amap({
-              data: data,
+              data: this.tableQuery.data,
               longKey: "longitude",
               latKey: "latitude"
             }).then(res => {
-              this.list.map((item, index) => {
+              this.tableQuery.data.map((item, index) => {
                 item.amap_longitude = res[index].split(",")[0];
                 item.amap_latitude = res[index].split(",")[1];
-                var arr = [item];
+              });
+
+              this.list.map((item, index) => {
                 location2address({
-                  data: arr,
+                  data: [item],
                   longKey: "amap_longitude",
                   latKey: "amap_latitude"
                 }).then(addressArr => {
@@ -401,10 +404,33 @@ export default {
     },
     handleCurrentChange(val) {
       this.tableQuery.page = val;
+      this.$nextTick(() => {
+        this.list.map(item => {
+          if (item.address) {
+            return false;
+          }
+          this.getAddress(item);
+        });
+      });
       // this.selectForm();
     },
     tableCurrentChange(currentRow) {
       this.currentIndex = currentRow.index;
+    },
+    getAddress(data) {
+      var key = data.Longitude + "," + data.Latitude;
+      if (this.addressList.has(key)) {
+        this.$set(data, "address", this.addressList.get(key));
+      } else {
+        location2address({
+          data: [data],
+          longKey: "amap_longitude",
+          latKey: "amap_latitude"
+        }).then(res => {
+          this.addressList.set(key, res[0]);
+          this.$set(data, "address", res[0]);
+        });
+      }
     }
   }
 };
@@ -442,24 +468,28 @@ export default {
   position: absolute;
   left: 45%;
   right: 0;
-  top: 0;
+  top: 5px;
   bottom: 0;
   box-shadow: 2px 2px 5px #ddd;
   border-radius: 5px;
   padding: 10px;
   z-index: 99;
   background-color: #fff;
+  margin-left: 10px;
 }
 .vehicle_data {
   padding: 10px;
   width: 480px;
-  height: 201px;
+  height: 211px;
   position: absolute;
   left: 45%;
   right: 0;
-  top: 55px;
+  top: 60px;
+  margin-left: 10px;
   bottom: 0;
   z-index: 99;
   background-color: #fff;
+  box-shadow: 2px 2px 5px #ddd;
+  border-radius: 5px;
 }
 </style>

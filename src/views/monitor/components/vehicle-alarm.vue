@@ -226,10 +226,11 @@ export default {
       if (row.fence_alarm_text) {
         fence_alarm_text = row.fence_alarm_text;
       } else if (row.IsPlatformAlarm != 0) {
-        fence_alarm_text =
-          ["", "禁入", "禁出"][row.PlatAlarmSign || 0] + (row.RegionName || "");
+        fence_alarm_text = ["", "出围栏（平台）", "进围栏（平台）"][
+          row.PlatAlarmSign || 0
+        ];
       }
-      return this.$dict.getAlarm(row.AlarmSign) + fence_alarm_text || "--";
+      return this.$dict.getAlarm(row.AlarmSign) + ";" + fence_alarm_text;
     },
     formatTime(row) {
       return this.$utils.formatDate14(row.Time) || "--";
