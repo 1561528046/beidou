@@ -59,7 +59,11 @@ export default {
       this.pager.total = this.listAll.length;
     },
     "$props.vehicle.time": function() {
-      if (this.vehicle.alarm != "0" || this.vehicle.alarm != "") {
+      if (
+        this.vehicle.alarm != "0" ||
+        this.vehicle.alarm != "" ||
+        this.vehicle.fence_alarm_text != ""
+      ) {
         //监控vehicle的time变化 ，如果alarm不为0 则list增加一条记录
         this.addAlarm();
       }
@@ -163,31 +167,32 @@ export default {
         Time: vehicle.time,
         EM0x01: vehicle.mileage,
         EM0x03: vehicle.speed1,
-        EM0x30: vehicle.wifiSignal
+        EM0x30: vehicle.wifiSignal,
+        fence_alarm_text: vehicle.fence_alarm_text
       };
-      gps2amap({
+      location2address({
         data: [newAlarm],
         longKey: "Longitude",
         latKey: "Latitude"
-      })
-        .then(res => {
-          newAlarm.Longitude = res[0].split(",")[0];
-          newAlarm.Latitude = res[0].split(",")[1];
-        })
-        .then(() => {
-          // location2address({
-          //   data: [newAlarm],
-          //   longKey: "Longitude",
-          //   latKey: "Latitude"
-          // }).then(res => {
-          //   newAlarm.address = res[0];
-          //   var list = [newAlarm].concat(this.listAll);
-          //   this.$set(this.$data, "listAll", list);
-          // });
-        });
+      }).then(res => {
+        newAlarm.address = res[0];
+        var list = [newAlarm].concat(this.listAll);
+        this.$set(this.$data, "listAll", list);
+      });
+      // gps2amap({
+      //   data: [newAlarm],
+      //   longKey: "Longitude",
+      //   latKey: "Latitude"
+      // })
+      //   .then(res => {
+      //     newAlarm.Longitude = res[0].split(",")[0];
+      //     newAlarm.Latitude = res[0].split(",")[1];
+      //   })
+      //   .then(() => {
+
+      //   });
     },
     getAddress(data) {
-      console.log(data);
       var key = data.Longitude + "," + data.Latitude;
       if (this.addressList.has(key)) {
         this.$set(data, "address", this.addressList.get(key));
@@ -216,7 +221,15 @@ export default {
       return (speed || 0) + "km/h";
     },
     formatAlarm(row) {
-      return this.$dict.getAlarm(row.AlarmSign) || "--";
+      //PlatAlarmSign 1禁入 2禁出    RegionName围栏名称
+      var fence_alarm_text = "";
+      if (row.fence_alarm_text) {
+        fence_alarm_text = row.fence_alarm_text;
+      } else if (row.IsPlatformAlarm != 0) {
+        fence_alarm_text =
+          ["", "禁入", "禁出"][row.PlatAlarmSign || 0] + (row.RegionName || "");
+      }
+      return this.$dict.getAlarm(row.AlarmSign) + fence_alarm_text || "--";
     },
     formatTime(row) {
       return this.$utils.formatDate14(row.Time) || "--";

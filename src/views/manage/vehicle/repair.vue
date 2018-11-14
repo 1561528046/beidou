@@ -148,7 +148,7 @@
           </el-row>
         </el-form>
         <el-card shadow="always">
-          <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
+          <el-table :data="tableData.data" style="width: 100%" class="admin-table-list" v-loading="tableLoading">
             <el-table-column prop="fault_time" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"> </el-table-column>
             <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -468,7 +468,7 @@ export default {
         total: 0,
         data: []
       },
-      tableLoading: true,
+      tableLoading: false,
       pickerOptions: {
         shortcuts: [
           {
@@ -591,8 +591,8 @@ export default {
     getTable() {
       this.tableRepair.start_time = this.tableRepair.time[0];
       this.tableRepair.end_time = this.tableRepair.time[1];
-      this.tableLoading = true;
       var query = Object.assign({}, this.tableRepair);
+      this.tableLoading = true;
       getRepairListByPage(query)
         .then(res => {
           if (res.data.code == 0) {
@@ -603,7 +603,9 @@ export default {
           }
           this.tableLoading = false;
         })
-        .catch(() => {});
+        .catch(() => {
+          this.tableLoading = false;
+        });
     },
     handleSizeChange(val) {
       //每页数量切换

@@ -86,9 +86,9 @@
         <el-button type="primary" size="small" v-if="$props.state==2">
           <i class="el-icon-upload2"></i> 批量导入
         </el-button> -->
-        <el-button type="primary" size="small" v-rights="1-1-5">
+        <!-- <el-button type="primary" size="small" v-rights="1-1-5">
           <i class="el-icon-download"></i> 导出
-        </el-button>
+        </el-button> -->
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="first_time" label="首次入网时间" :formatter="(row)=>{return $utils.formatDate(row.first_time)}"></el-table-column>
@@ -581,6 +581,7 @@ export default {
     getTable() {
       //获取列表
       this.tableLoading = true;
+      this.tableQuery.page = 1;
       var query = Object.assign({}, this.tableQuery, this.tableQuery.area);
       delete query.area;
       getVehicleList(query)

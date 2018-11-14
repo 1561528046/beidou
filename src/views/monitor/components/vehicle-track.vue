@@ -32,12 +32,12 @@
             <el-button size="small" v-if="!playType" @click="play" style="width:36px;height:36px; border-radius: 100%;border: solid 1px; padding:9px 12px;" icon="iconfont icon-bofangqibofang"></el-button>
             <el-button size="small" v-if="playType" @click="suspended" style="width:36px;height:36px;border-radius: 100%;border: solid 1px;padding:9px 12px;" icon="iconfont icon-bofangqi-zanting"></el-button>
           </div>
-          <el-slider v-model="currentIndex" :min="0" :max="tableData.total"></el-slider>
+          <el-slider v-model="currentIndex" :min="0" :max="tableData.total+1"></el-slider>
         </div>
       </div>
     </div>
     <div style=" width:45%; height:90%;background-color:#fff;position:absolute;left:0;top:0;bottom:0;z-index:99;">
-      <el-table :row-style="{height:'71px'}" :row-class-name="tableRowClassName" ref="baseTable" :header-cell-style="{background:'#fafafa'}" :data="list" height="100%" border style="width: 100%">
+      <el-table @row-click="tableCurrentChange" :row-style="{height:'71px'}" highlight-current-row ref="baseTable" :header-cell-style="{background:'#fafafa'}" :data="list" height="100%" border style="width: 100%">
         <el-table-column width="80px" prop="index" label="序号" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column width="150px" label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
         <el-table-column label="速度" prop="speed"></el-table-column>
@@ -75,7 +75,7 @@ export default {
       player: false,
       vehicle_license: "",
       autoplate: "",
-      currentIndex: 0, //当前播放的第几条数据
+      currentIndex: 1, //当前播放的第几条数据
       speed: 1000, //速度(定时器时间)
       timer: null, //定时器
       addkey: 0,
@@ -127,7 +127,11 @@ export default {
       }
     };
   },
-  watch: {},
+  watch: {
+    currentIndex: function(newVal) {
+      this.currentIndexChange(newVal);
+    }
+  },
   mounted() {
     var vm = this;
     initMap(() => {
@@ -139,12 +143,16 @@ export default {
   },
   methods: {
     // 单行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex == this.currentIndex % this.tableQuery.size) {
-        return "success-row";
-      }
-      return "";
-    },
+    // tableRowClassName({ row, rowIndex }) {
+    //   if (
+    //     rowIndex == this.currentIndex % this.tableQuery.size &&
+    //     this.tableQuery.page ==
+    //       Math.ceil(this.currentIndex - 1 / this.tableQuery.size)
+    //   ) {
+    //     return "success-row";
+    //   }
+    //   return "";
+    // },
     //
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(3, "days");
@@ -178,18 +186,27 @@ export default {
     },
     //移动位置(初始化位置)
     nextData() {
-      if (
-        this.currentIndex % this.tableQuery.size == 0 &&
-        this.currentIndex != 0
-      ) {
-        this.handleCurrentChange(this.tableQuery.page + 1);
-      }
-      this.scroll_bar.scrollTop =
-        (this.currentIndex % this.tableQuery.size - 5) * 71;
+      this.tableQuery.page =
+        Math.ceil((this.currentIndex + 1) / this.tableQuery.size) || 1;
+      var current = this.currentIndex % this.tableQuery.size;
+
+      this.scroll_bar.scrollTop = (current - 5) * 71;
       var currentData = this.tableData.data[this.currentIndex];
+      var currentRow = this.list[current];
+      this.$refs.baseTable.setCurrentRow(currentRow);
       this.mapData.marker.setPosition(
         new AMap.LngLat(currentData.lng, currentData.lat)
       );
+    },
+    currentIndexChange(newCurrent) {
+      if (this.playType) {
+        this.suspended();
+        this.tableQuery.currentIndex = newCurrent;
+        this.play();
+      } else {
+        this.tableQuery.currentIndex = newCurrent;
+      }
+      this.nextData();
     },
     // 查询车辆
     selectVehicle() {
@@ -274,7 +291,7 @@ export default {
           if (res.data.code == 0) {
             var arr = [];
             res.data.data.map((item, index) => {
-              item.index = index + 1;
+              item.index = index;
               arr.push({ lng: item.longitude, lat: item.latitude });
             });
             this.$set(this.tableQuery, "data", res.data.data);
@@ -346,7 +363,7 @@ export default {
           that.playType = false;
           clearInterval(that.timer);
         }
-        that.nextData();
+        //that.nextData();
       }, this.speed);
     },
     // 暂停
@@ -382,7 +399,10 @@ export default {
     },
     handleCurrentChange(val) {
       this.tableQuery.page = val;
-      this.selectForm();
+      // this.selectForm();
+    },
+    tableCurrentChange(currentRow) {
+      this.currentIndex = currentRow.index;
     }
   }
 };
