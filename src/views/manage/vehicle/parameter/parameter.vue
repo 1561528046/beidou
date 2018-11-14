@@ -94,7 +94,6 @@ export default {
     var vm = this;
     this.timerOpen();
     this.socket.onmessage = function(event) {
-      console.log(event);
       vm.fromSend(event.data);
     };
   },

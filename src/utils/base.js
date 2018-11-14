@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 // var BASE_URL = "http://192.168.88.100:725/";
 // var API_URL = "http://192.168.88.100:725/api";
-=======
->>>>>>> ad27d82cf90a7084bc8edf5d8842c1eec8759749
 // var BASE_URL = "http://192.168.88.88:10462/";
 // var API_URL = "http://192.168.88.88:10462/api";
 // var MONITOR_URL = "ws://192.168.88.88:5002";

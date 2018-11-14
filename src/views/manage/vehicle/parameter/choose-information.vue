@@ -176,22 +176,55 @@ export default {
     respond: String
   },
   created() {
-    this.$instruction.on("x8701", eve => {
-      var data = JSON.parse(eve.data);
-      var sim_id = "";
-      if (data.code == "0") {
-        this.communication.data.map(item => {
-          if (item.sim_id.length == 11) {
-            sim_id = "0" + item.sim_id;
-          } else {
-            sim_id = item.sim_id;
-          }
-          if (data.SimID == sim_id) {
-            this.$set(item, "operating", "设置成功");
-          }
-        });
-      }
+    this.$instruction.on("x0700", eve => {
+      // var data = JSON.parse(eve.data);
+      console.log(eve);
+      // var sim_id = "";
+      // if (data.code == "0") {
+      //   this.communication.data.map(item => {
+      //     if (item.sim_id.length == 11) {
+      //       sim_id = "0" + item.sim_id;
+      //     } else {
+      //       sim_id = item.sim_id;
+      //     }
+      //     if (data.SimID == sim_id) {
+      //       this.$set(item, "operating", "采集成功");
+      //     }
+      //   });
+      // }
     });
+    // this.$instruction.on("x8701", eve => {
+    //   var data = JSON.parse(eve.data);
+    //   var sim_id = "";
+    //   if (data.code == "0") {
+    //     this.communication.data.map(item => {
+    //       if (item.sim_id.length == 11) {
+    //         sim_id = "0" + item.sim_id;
+    //       } else {
+    //         sim_id = item.sim_id;
+    //       }
+    //       if (data.SimID == sim_id) {
+    //         this.$set(item, "operating", "设置成功");
+    //       }
+    //     });
+    //   }
+    // });
+    // this.$instruction.on("x8700", eve => {
+    //   var data = JSON.parse(eve.data);
+    //   var sim_id = "";
+    //   if (data.code == "0") {
+    //     this.communication.data.map(item => {
+    //       if (item.sim_id.length == 11) {
+    //         sim_id = "0" + item.sim_id;
+    //       } else {
+    //         sim_id = item.sim_id;
+    //       }
+    //       if (data.SimID == sim_id) {
+    //         this.$set(item, "operating", "采集成功");
+    //       }
+    //     });
+    //   }
+    // });
   },
   methods: {
     vehicleClick() {
