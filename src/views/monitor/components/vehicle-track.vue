@@ -268,6 +268,7 @@ export default {
     },
     // 查询轨迹信息
     selectForm() {
+      this.currentIndex = 0;
       this.$refs.baseTable.$el.childNodes.forEach(item => {
         if (
           item.className &&
@@ -341,7 +342,11 @@ export default {
       this.vtype = false;
       this.player = false;
       this.selectType = false;
+      this.tableData.data = [];
       this.tableQuery.data = [];
+      this.tableData.total = 0;
+      this.tableQuery.total = 0;
+      this.currentIndex = 0;
       this.trackForm.sim_id = "";
       this.trackForm.time = [];
       this.trackForm.start_time = "";
@@ -363,7 +368,6 @@ export default {
           that.playType = false;
           clearInterval(that.timer);
         }
-        //that.nextData();
       }, this.speed);
     },
     // 暂停
@@ -383,8 +387,6 @@ export default {
       clearInterval(this.timer);
       this.play();
     },
-    // 停止行动
-    stop_action() {},
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
