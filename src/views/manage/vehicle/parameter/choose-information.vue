@@ -5,62 +5,67 @@
       <el-table-column prop="operating" label="操作状态"></el-table-column>
       <el-table-column prop="Ox0081" label="车辆所在的省域ID" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="Ox0082" label="车辆所在的市域ID" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="Ox0084" label="车牌颜色" :formatter="(row)=>{return this.$dict.get_color(row.Ox0084)}"> </el-table-column>
       <el-table-column prop="Ox0083" label="机动车号牌" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0084" label="车牌颜色" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="VIN" label="车辆识别码" :formatter="$utils.baseFormatter"></el-table-column>
+      <el-table-column prop="Plate" label="机动车号牌分类" :formatter="(row)=>{return this.$dict.get_license_species(row.Plate)}"></el-table-column>
     </el-table>
     <el-form label-width="130px" label-position="left" class="table-search" size="small">
       <el-row :gutter="30">
-        <el-col :span="6">
-          <el-form-item label-width="130px" label="机动车号牌">
-            <el-input style="width:90%" v-model="communication.Ox0083">
-              <!-- <template slot="append">
-                <el-button @click="setup('0x0083')">设置</el-button>
-              </template> -->
+        <el-col :span="7">
+          <el-form-item label="机动车号牌">
+            <el-input style="width:82%" v-model="communication.Ox0083">
             </el-input>
-            <!-- <el-button @click="collect('0x0083')" style="margin-left:31px">采集</el-button> -->
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label-width="130px" label="车牌颜色">
-            <el-select style="width:90%" v-model="communication.Ox0084">
-              <el-option value="1" label="蓝色">蓝色</el-option>
-              <el-option value="2" label="黄色">黄色</el-option>
-              <el-option value="3" label="黑色">黑色</el-option>
-              <el-option value="4" label="白色">白色</el-option>
-              <el-option value="9" label="其他">其他</el-option>
+        <el-col :span="7">
+          <el-form-item label="机动车号牌分类">
+            <el-select style="width:82%" v-model="communication.Plate">
+              <el-option v-for="(item,index) in this.$dict.license_species" :key="index" :value="index" :label="item">{{item}}</el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label-width="130px" label="车辆识别码(VIN)">
-            <el-input style="width:90%" v-model="communication.vehicle_code">
+        <el-col :span="7">
+          <el-form-item label="车辆识别码(VIN)">
+            <el-input style="width:82%" v-model="communication.VIN">
             </el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <div>
-            <el-button size="small" @click="setNational('82H')">设置</el-button>
-            <el-button size="small" @click="collectNational('05H')" style="margin-left:31px">采集</el-button>
-          </div>
+        <el-col :span="3">
+          <el-button size="small" @click="setNational('82H')">设置</el-button>
+          <el-button size="small" @click="collectNational('05H')" style="margin-left:31px">采集</el-button>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="7">
           <el-form-item label="车辆所在的省域ID">
             <el-input style="width:60%" v-model="communication.Ox0081">
               <template slot="append">
                 <el-button @click="setup('0x0081')">设置</el-button>
               </template>
             </el-input>
-            <el-button @click="collect('0x0081')" style="margin-left:31px">采集</el-button>
+            <el-button @click="collect('0x0081')" style="margin-left:30px">采集</el-button>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="7">
           <el-form-item label="车辆所在的市域ID">
             <el-input style="width:60%" v-model="communication.Ox0082">
               <template slot="append">
                 <el-button @click="setup('0x0082')">设置</el-button>
               </template>
             </el-input>
-            <el-button @click="collect('0x0082')" style="margin-left:31px">采集</el-button>
+            <el-button @click="collect('0x0082')" style="margin-left:30px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="7">
+          <el-form-item label="车牌颜色">
+            <el-select style="width:45%" v-model="communication.Ox0084">
+              <el-option value="1" label="蓝色">蓝色</el-option>
+              <el-option value="2" label="黄色">黄色</el-option>
+              <el-option value="3" label="黑色">黑色</el-option>
+              <el-option value="4" label="白色">白色</el-option>
+              <el-option value="9" label="其他">其他</el-option>
+            </el-select>
+            <el-button @click="setup('0x0084')">设置</el-button>
+            <el-button @click="collect('0x0084')" style="margin-left:31px">采集</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -74,23 +79,22 @@ export default {
   components: { chooseParameter },
   //   name: "choose-communication",
   created() {
-    // this.$instruction.on("x0700", eve => {
-    // var data = JSON.parse(eve.data);
-    // console.log(eve);
-    // var sim_id = "";
-    // if (data.code == "0") {
-    //   this.communication.data.map(item => {
-    //     if (item.sim_id.length == 11) {
-    //       sim_id = "0" + item.sim_id;
-    //     } else {
-    //       sim_id = item.sim_id;
-    //     }
-    //     if (data.SimID == sim_id) {
-    //       this.$set(item, "operating", "采集成功");
-    //     }
-    //   });
-    // }
-    // });
+    this.$instruction.on("x0700", eve => {
+      var data = JSON.parse(eve.data);
+      var sim_id = "";
+      this.communication.data.map(item => {
+        if (item.sim_id.length == 11) {
+          sim_id = "0" + item.sim_id;
+        } else {
+          sim_id = item.sim_id;
+        }
+        if (sim_id == data.SimID) {
+          this.$set(item, "Ox0083", data.PlateNo);
+          this.$set(item, "VIN", data.VIN);
+          this.$set(item, "Plate", data.PlateClassify);
+        }
+      });
+    });
     this.$instruction.on("x8701", eve => {
       var data = JSON.parse(eve.data);
       var sim_id = "";
@@ -135,7 +139,8 @@ export default {
         Ox0082: "",
         Ox0083: "",
         Ox0084: "",
-        vehicle_code: "",
+        VIN: "",
+        Plate: "",
         data: []
       },
       tableQuery: {
@@ -156,10 +161,12 @@ export default {
         this.$set(this.communication, "data", this.$props.message);
         this.communication.data.map(item => {
           if (item.Ox0081 == undefined) {
-            this.$set(item, "Ox0081", ""),
-              this.$set(item, "Ox0082", ""),
-              this.$set(item, "Ox0083", ""),
-              this.$set(item, "Ox0084", "");
+            this.$set(item, "Ox0081", "");
+            this.$set(item, "Ox0082", "");
+            this.$set(item, "Ox0083", "");
+            this.$set(item, "Ox0084", "");
+            this.$set(item, "VIN", "");
+            this.$set(item, "Plate", "");
           }
         });
       },
@@ -295,7 +302,7 @@ export default {
           title: "提示",
           type: "error"
         });
-      } else if (this.communication.vehicle_code == "") {
+      } else if (this.communication.VIN == "") {
         return this.$notify({
           message: "请输入车辆识别码!",
           title: "提示",
@@ -303,13 +310,13 @@ export default {
         });
       } else if (this.communication.Ox0083 == "") {
         return this.$notify({
-          message: "请输入车牌号!",
+          message: "请输入机动车号牌!",
           title: "提示",
           type: "error"
         });
-      } else if (this.communication.Ox0084 == "") {
+      } else if (this.communication.Plate == "") {
         return this.$notify({
-          message: "请输入车牌颜色!",
+          message: "请输入机动车号牌分类!",
           title: "提示",
           type: "error"
         });
@@ -326,9 +333,9 @@ export default {
           SimID: sim_id,
           MessageID: "x8701",
           CommandWord: type, //命令字
-          VIN: this.communication.vehicle_code, //车架号
+          VIN: this.communication.VIN, //车架号
           PlateNo: this.communication.Ox0083, //车牌号
-          PlateClassify: this.communication.Ox0084 //车牌颜色
+          PlateClassify: this.communication.Plate //车牌分类
         };
         data = JSON.stringify(data);
         this.$instruction.send(data);

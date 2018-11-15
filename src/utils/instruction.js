@@ -45,7 +45,6 @@ export default class Instruction {
       sim_id = "0".repeat(12 - sim_id.length) + sim_id;
 
       key = event + sim_id;
-      console.log(key);
     }
     if (!this.handlers.has(key)) {
       this.handlers.set(key, new Set());

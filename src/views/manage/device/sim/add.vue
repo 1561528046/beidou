@@ -57,6 +57,7 @@ export default {
       },
       rules: {
         ...rules,
+        belong: { required: true, message: "请选择运营商", trigger: "change" },
         sim_no: [
           { trigger: "blur", validator: this.validateSimNo },
           {

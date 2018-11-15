@@ -469,7 +469,7 @@ export default {
         if (res.data.code == 0) {
           var arr = [];
           res.data.data.map(item => {
-            if (item.Type == "4") {
+            if (item.Type == "4" || item.Type == "5") {
               return;
             }
             arr.push(item);

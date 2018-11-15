@@ -28,6 +28,7 @@
         <div v-if="player" style="position: relative;">
           <el-button size="small" @click="speed_up" style="position:absolute;top:0;">加速</el-button>
           <el-button size="small" @click="speed_down" style="position:absolute;top:0;left:58px;">减速</el-button>
+          <!-- <label style="position:absolute;top:10px;right:20px;">{{speed}}</label> -->
           <div style="width:36px;margin:0 auto;">
             <el-button size="small" v-if="!playType" @click="play" style="width:36px;height:36px; border-radius: 100%;border: solid 1px; padding:9px 12px;" icon="iconfont icon-bofangqibofang"></el-button>
             <el-button size="small" v-if="playType" @click="suspended" style="width:36px;height:36px;border-radius: 100%;border: solid 1px;padding:9px 12px;" icon="iconfont icon-bofangqi-zanting"></el-button>
@@ -192,7 +193,6 @@ export default {
       this.tableQuery.page =
         Math.ceil((this.currentIndex + 1) / this.tableQuery.size) || 1;
       var current = this.currentIndex % this.tableQuery.size;
-
       this.scroll_bar.scrollTop = (current - 5) * 71;
       var currentData = this.tableData.data[this.currentIndex];
       var currentRow = this.list[current];
@@ -271,7 +271,7 @@ export default {
     },
     // 查询轨迹信息
     selectForm() {
-      this.currentIndex = 0;
+      // this.currentIndex = 0;
       this.$refs.baseTable.$el.childNodes.forEach(item => {
         if (
           item.className &&
@@ -302,6 +302,7 @@ export default {
             this.$set(this.tableQuery, "total", res.data.count);
             this.$set(this.tableData, "data", arr);
             this.$set(this.tableData, "total", res.data.count);
+            this.mapData.map.clearMap();
             this.setMarker();
             this.setPolyline();
             if (this.tableQuery.data.length > 0) {
