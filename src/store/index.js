@@ -9,6 +9,7 @@ import alarm from "./modules/alarm";
 import x0900 from "./modules/x0900";
 import x0901 from "./modules/x0901";
 import x809 from "./modules/809";
+import x809In from "./modules/809-in";
 Vue.use(Vuex);
 const store = new Vuex.Store({
   modules: {
@@ -20,7 +21,8 @@ const store = new Vuex.Store({
     alarm,
     x0900,
     x0901,
-    x809
+    x809,
+    x809In
   }
 });
 
