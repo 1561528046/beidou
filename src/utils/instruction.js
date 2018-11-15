@@ -43,6 +43,7 @@ export default class Instruction {
     var key = event;
     if (sim_id && typeof sim_id != "function") {
       sim_id = "0".repeat(12 - sim_id.length) + sim_id;
+
       key = event + sim_id;
     }
     if (!this.handlers.has(key)) {

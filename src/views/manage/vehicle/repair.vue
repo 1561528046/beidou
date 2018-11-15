@@ -564,6 +564,7 @@ export default {
       getUpdateVehicleState(scope.row).then(res => {
         if (res.data.code == 0) {
           this.addDialog = false;
+          this.getTable();
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.meg);

@@ -240,7 +240,7 @@ export default {
           { required: true, message: "两次密码不一样", trigger: "blur" }
         ],
         group_id: [
-          { required: true, message: "必须选择用户分组", trigger: "change" }
+          { required: true, message: "必须选择用户分组", trigger: "blur" }
         ],
         pass_word: [
           {

@@ -62,6 +62,16 @@ export const dict = {
       style: "background:#79bb0f;border:1px solid #669e0b;color:#000;"
     }
   },
+  color: {
+    "1": "蓝色",
+    "2": "黄色",
+    "3": "黑色",
+    "4": "白色",
+    "9": "其他"
+  },
+  get_color: function(key) {
+    return this.color[key] || "--";
+  },
   alarm: {
     "1": "紧急报警",
     "2": "超速报警",
@@ -283,6 +293,30 @@ export const dict = {
   },
   get_order_detailtype: function(key) {
     return this.order_detailtype[key] || "--";
+  },
+  license_species: {
+    "1": "大型汽车号牌",
+    "2": "挂车号牌",
+    "3": "小型汽车号牌",
+    "4": "使馆汽车号牌",
+    "5": "领馆汽车号牌",
+    "6": "港澳入出境车号牌",
+    "7": "教练汽车号牌",
+    "8": "警用汽车号牌",
+    "9": "普通摩托车号牌",
+    "10": "轻便摩托车号牌",
+    "11": "使馆摩托车号牌",
+    "12": "领馆摩托车号牌",
+    "13": "教练摩托车号牌",
+    "14": "警用摩托车号牌",
+    "15": "低速车号牌",
+    "16": "临时行驶车号牌",
+    "17": "临时入境汽车号牌",
+    "18": "临时入境摩托车号牌",
+    "19": "拖拉机号牌"
+  },
+  get_license_species: function(key) {
+    return this.license_species[key] || "--";
   },
   //所属行业(单纯记录 非必填):普货，长途，出租，校车，公交车等等
   vehicle_type: {

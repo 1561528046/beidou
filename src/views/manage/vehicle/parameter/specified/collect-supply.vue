@@ -5,6 +5,11 @@
       <el-table-column prop="EventHappenTime" label="事件发生时间">
       </el-table-column>
       <el-table-column prop="EventType" label="事件类型">
+        <template slot-scope="scope">
+          <label v-if="scope.row.EventType=='1'">通电</label>
+          <label v-if="scope.row.EventType=='2'">断电</label>
+        </template>
+
       </el-table-column>
     </el-table>
   </div>

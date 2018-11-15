@@ -1,5 +1,5 @@
 <template slot-scope="scope">
-  <el-select v-model="prodName" placeholder="请选择" filterable no-match-text="" remote :remote-method="remoteMethod" :loading="loading" :clearable="clearable" style="width:100%">
+  <el-select v-model="prodName" placeholder="请输入" filterable no-match-text="" remote :remote-method="remoteMethod" :loading="loading" :clearable="clearable" style="width:100%">
     <template slot-scope="scope">
       <el-option v-for="item in list" :key="item.prodName" :label="item.prodName" :value="item.prodName">
       </el-option>

@@ -1,17 +1,17 @@
 <template>
-    <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
-        <!-- 设备信息 -->
-        <el-row :gutter="30">
-            <el-col :span="24">
-                <el-form-item prop="remark" label="报废原因">
-                    <el-input v-model="formData.remark"></el-input>
-                </el-form-item>
-            </el-col>
-        </el-row>
-        <el-form-item style="text-align:center;">
-            <el-button type="primary " size="large " @click="formSubmit">提交</el-button>
+  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+    <!-- 设备信息 -->
+    <el-row :gutter="30">
+      <el-col :span="24">
+        <el-form-item prop="remark" label="报废原因">
+          <el-input v-model="formData.remark"></el-input>
         </el-form-item>
-    </el-form>
+      </el-col>
+    </el-row>
+    <el-form-item style="text-align:center;">
+      <el-button type="primary " size="large " @click="formSubmit">提交</el-button>
+    </el-form-item>
+  </el-form>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
@@ -31,7 +31,12 @@ export default {
       rules: {
         ...rules,
         remark: [
-          { required: true, message: "请填写报废原因", trigger: "change" }
+          { required: true, message: "请填写报废原因", trigger: "change" },
+          { min: 2, message: "请输入不少于2个字符", trigger: "change" },
+          {
+            pattern: /^[A-Za-z0-9\u4e00-\u9fa5]+$/,
+            message: "不允许输入空格等特殊符号"
+          }
         ]
       },
       simss: [],
