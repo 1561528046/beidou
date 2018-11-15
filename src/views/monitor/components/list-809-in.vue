@@ -1,24 +1,24 @@
 <template>
   <div>
+    <el-row>
+      <el-button>申请交换指定车辆定位信息请求消息 0x1207</el-button>
+      <el-button> 取消交换指定车辆定位信息请求消息 0x1208</el-button>
+      <el-button>补发车辆定位信息请求 0x1209</el-button>
+      <el-button>主动上报驾驶员身份信息 0x120C</el-button>
+      <el-button>主动上报车辆电子运单信息 0x120D</el-button>
+      <el-button>平台查岗应答 0x1301</el-button>
+
+      <el-button>报警督办应答 0x1401</el-button>
+      <el-button>上报报警信息 0x1402</el-button>
+      <el-button>主动上报报警处理结果 0x1403</el-button>
+
+    </el-row>
     <el-table :data="list" size="mini">
       <el-table-column prop="VEHICLE_NO" label="车牌号"></el-table-column>
       <el-table-column prop="VEHICLE_COLOR" label="车牌颜色"></el-table-column>
       <el-table-column label="类型" :formatter="getType"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <template v-if="scope.row.DATA_TYPE.toString(16) == '9403'">
-            <el-popover trigger="hover" placement="top">
-              <p>实时交换报警信息</p>
-              <p>报警信息来源: {{ {"1":"车载终端","2":"企业监控平台","3":"政府监管平台","9":"其他"}[scope.row.WARN_SRC] }}</p>
-              <p>报警类型: {{ getWARN_TYPE(scope.row.WARN_TYPE) }}</p>
-              <p>报警时间: {{ scope.row.WARN_TIME }}</p>
-              <p>报警描述: {{ scope.row.WARN_CONTENT }}</p>
-              <div slot="reference">
-                <el-tag size="medium">详细信息</el-tag>
-              </div>
-            </el-popover>
-          </template>
-
           <template v-if="scope.row.DATA_TYPE.toString(16) == '9202'">
             <el-popover trigger="hover" placement="top">
               <p>交换车辆定位信息</p>
@@ -33,6 +33,18 @@
               <p>海拔: {{ scope.row.GNSS_DATA.ALTITUDE }} m</p>
               <p>状态: {{ scope.row.GNSS_DATA.STATE }}</p>
               <p>报警状态: {{ scope.row.GNSS_DATA.ALARM }}</p>
+              <div slot="reference">
+                <el-tag size="medium">详细信息</el-tag>
+              </div>
+            </el-popover>
+          </template>
+
+          <template v-if="scope.row.DATA_TYPE.toString(16) == '9203'">
+            <el-popover trigger="hover" placement="top">
+              <p>车辆定位信息交换补发</p>
+              <p>
+                {{scope.row}}
+              </p>
               <div slot="reference">
                 <el-tag size="medium">详细信息</el-tag>
               </div>
@@ -54,6 +66,62 @@ ID :=1000;OWERS_TEL:=13516814499; RTOLN:=330101200006; VEHICLE-MODE:=解放
 3301011050108030000113717660901;APPROVED_TONNAGE:=5;DG_TYPE:=03115;CARGO
 _NAME:=天燃气;CARGO_TONNAGE:=3;TRANSPO_ORIGIN=萧山区;TRANSPORT_DES:=
 长宁区；TSSL:= 126148659111261488899。 -->
+              <div slot="reference">
+                <el-tag size="medium">详细信息</el-tag>
+              </div>
+            </el-popover>
+          </template>
+          <template v-if="scope.row.DATA_TYPE.toString(16) == '9301'">
+            <el-popover trigger="hover" placement="top">
+              <p>平台查岗请求</p>
+              <el-button>平台查岗应答 0x1301</el-button>
+              <div slot="reference">
+                <el-tag size="medium">详细信息</el-tag>
+              </div>
+            </el-popover>
+          </template>
+
+          <template v-if="scope.row.DATA_TYPE.toString(16) == '9302'">
+            <el-popover trigger="hover" placement="top">
+              <p>平台间报文</p>
+              <div slot="reference">
+                <el-tag size="medium">详细信息</el-tag>
+              </div>
+            </el-popover>
+          </template>
+
+          <template v-if="scope.row.DATA_TYPE.toString(16) == '9401'">
+            <el-popover trigger="hover" placement="top">
+              <p>报警督办请求</p>
+              <div slot="reference">
+                <el-tag size="medium">详细信息</el-tag>
+              </div>
+            </el-popover>
+          </template>
+          <template v-if="scope.row.DATA_TYPE.toString(16) == '9402'">
+            <el-popover trigger="hover" placement="top">
+              <p>报警预警</p>
+              <div slot="reference">
+                <el-tag size="medium">详细信息</el-tag>
+              </div>
+            </el-popover>
+          </template>
+          <template v-if="scope.row.DATA_TYPE.toString(16) == '9403'">
+            <el-popover trigger="hover" placement="top">
+              <p>实时交换报警信息</p>
+              <p>报警信息来源: {{ {"1":"车载终端","2":"企业监控平台","3":"政府监管平台","9":"其他"}[scope.row.WARN_SRC] }}</p>
+              <p>报警类型: {{ getWARN_TYPE(scope.row.WARN_TYPE) }}</p>
+              <p>报警时间: {{ scope.row.WARN_TIME }}</p>
+              <p>报警描述: {{ scope.row.WARN_CONTENT }}</p>
+              <div slot="reference">
+                <el-tag size="medium">详细信息</el-tag>
+              </div>
+            </el-popover>
+          </template>
+          <template v-if="scope.row.DATA_TYPE.toString(16) == '9601'">
+            <el-popover trigger="hover" placement="top">
+              <p>补报车辆静态信息</p>
+              <el-botton>补报车辆静态信息应答 0x1601</el-botton>
               <div slot="reference">
                 <el-tag size="medium">详细信息</el-tag>
               </div>
