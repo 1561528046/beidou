@@ -15,11 +15,6 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="子业务类型标识：">
-            <el-input style="width:90%" size="small" v-model="formData.DATA_TYPE"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
           <el-form-item label="电子运单数据内容：">
             <el-input v-model="formData.EWAYBILL_INFO" size="small" style="width:90%"></el-input>
           </el-form-item>
@@ -39,7 +34,8 @@ export default {
   data() {
     return {
       formData: {
-        DATA_TYPE: "",
+        MSG_ID: "x1200",
+        DATA_TYPE: 0x120d,
         VEHICLE_NO: "",
         VEHICLE_COLOR: "",
         EWAYBILL_INFO: ""
@@ -56,13 +52,6 @@ export default {
           {
             required: true,
             message: "请选择车牌颜色",
-            trigger: "change"
-          }
-        ],
-        DATA_TYPE: [
-          {
-            required: true,
-            message: "请输入子业务类型标识",
             trigger: "change"
           }
         ],

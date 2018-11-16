@@ -14,11 +14,6 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
-          <el-form-item label="子业务类型标识：">
-            <el-input style="width:90%" size="small" v-model="formData.DATA_TYPE"></el-input>
-          </el-form-item>
-        </el-col>
       </el-row>
       <el-button @click="send" style="display:block;margin:0 auto;" type="primary" size="small">发送</el-button>
     </el-form>
@@ -34,7 +29,8 @@ export default {
   data() {
     return {
       formData: {
-        DATA_TYPE: "",
+        MSG_ID: "x1200",
+        DATA_TYPE: 0x1208,
         VEHICLE_NO: "",
         VEHICLE_COLOR: ""
       },
@@ -50,13 +46,6 @@ export default {
           {
             required: true,
             message: "请选择车牌颜色",
-            trigger: "change"
-          }
-        ],
-        DATA_TYPE: [
-          {
-            required: true,
-            message: "请输入子业务类型标识",
             trigger: "change"
           }
         ]

@@ -15,17 +15,12 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="子业务类型标识：">
-            <el-input style="width:90%" size="small" v-model="formData.DATA_TYPE"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
           <el-form-item label="报警信息来源：">
             <el-select v-model="formData.WARN_SRC" style="width:90%" size="small">
-              <el-option value="0x01" label="车载终端">车载终端</el-option>
-              <el-option value="0x02" label="企业监控平台">企业监控平台</el-option>
-              <el-option value="0x03" label="政府监管平台">政府监管平台</el-option>
-              <el-option value="0x09" label="其他">其他</el-option>
+              <el-option value="1" label="车载终端">车载终端</el-option>
+              <el-option value="2" label="企业监控平台">企业监控平台</el-option>
+              <el-option value="3" label="政府监管平台">政府监管平台</el-option>
+              <el-option value="9" label="其他">其他</el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -68,7 +63,8 @@ export default {
     return {
       time: "",
       formData: {
-        DATA_TYPE: "",
+        MSG_ID: "x1400",
+        DATA_TYPE: 0x1402,
         VEHICLE_NO: "",
         VEHICLE_COLOR: "",
         WARN_SRC: "",
