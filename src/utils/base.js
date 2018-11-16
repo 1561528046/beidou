@@ -121,6 +121,25 @@ export const dict = {
     }
     return keys;
   },
+  vehicle_alarm: {
+    "1": "超速报警",
+    "2": "疲劳驾驶报警",
+    "3": "紧急报警",
+    "4": "进入指定区域报警",
+    "5": "离开指定区域报警",
+    "6": "路段赌赛报警",
+    "7": "危险路段报警",
+    "8": "越界报警",
+    "9": "盗警",
+    "10": "劫警",
+    "11": "偏离路线报警",
+    "12": "车辆移动报警",
+    "13": "超时驾驶报警",
+    "14": "其他报警"
+  },
+  get_vehicle_alarm: function(key) {
+    return this.vehicle_alarm[key] || "--";
+  },
   get_license_color: function(key) {
     return this.license_color[key] || {};
   },
