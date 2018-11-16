@@ -9,10 +9,10 @@ var INSTRUCTION_URL = "ws://192.168.88.125:5000";
 
 // || true
 if (process.env.NODE_ENV == "production") {
-  BASE_URL = "http://60.10.139.113:1023/";
-  API_URL = "http://60.10.139.113:1023/api";
-  INSTRUCTION_URL = "ws://60.10.139.112:5000";
-  MONITOR_URL = "ws://60.10.139.112:5002";
+  BASE_URL = "http://60.10.139.110:1023/";
+  API_URL = "http://60.10.139.110:1023/api";
+  INSTRUCTION_URL = "ws://60.10.139.108:5000";
+  MONITOR_URL = "ws://60.10.139.108:5002";
 }
 export const dict = {
   //全局字典
