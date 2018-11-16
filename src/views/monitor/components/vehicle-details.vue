@@ -12,6 +12,7 @@
       <v-contextmenu-item @click="sendInstruction" data-index="x8400">电话回拨</v-contextmenu-item>
       <v-contextmenu-item @click="sendInstruction" data-index="x8802">媒体查询</v-contextmenu-item>
       <v-contextmenu-submenu title="终端控制">
+        <v-contextmenu-item @click="sendInstruction" data-index="x8A00">平台公钥下发</v-contextmenu-item>
         <v-contextmenu-item @click="sendInstruction" data-index="x8105|1">无线升级</v-contextmenu-item>
         <v-contextmenu-item @click="sendInstruction" data-index="x8105|2">指定服务器</v-contextmenu-item>
         <v-contextmenu-item @click="sendInstruction" data-index="x8105|3">终端关机</v-contextmenu-item>

@@ -43,7 +43,7 @@
       </el-tab-pane>
       <el-tab-pane :closable="false" name="list809">
         <span slot="label"> 查岗
-          <el-badge :value="$store.getters['x809/list'].length" :max="99" class="monitor-badge"> </el-badge>
+          <el-badge :value="$store.getters['x809In/list9301'].length" :max="99" class="monitor-badge"> </el-badge>
         </span>
         <list809></list809>
       </el-tab-pane>
@@ -69,7 +69,7 @@ import listX0301 from "./list-x0301.vue"; //事件报告
 import listX8203 from "./list-x8203.vue"; //报警
 import listX0900 from "./list-x0900.vue"; //数据上行透传
 import listX0901 from "./list-x0901.vue"; //数据压缩上报
-import list809 from "./list-809.vue"; //809查岗
+import list809 from "./list-809-9301.vue"; //809查岗
 import list809In from "./list-809-in.vue"; //809查岗
 import list809Send from "./list-809-send.vue"; //809发送
 export default {

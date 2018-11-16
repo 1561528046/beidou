@@ -1,18 +1,5 @@
 <template>
   <div>
-    <el-row>
-      <el-button>申请交换指定车辆定位信息请求消息 0x1207</el-button>
-      <el-button> 取消交换指定车辆定位信息请求消息 0x1208</el-button>
-      <el-button>补发车辆定位信息请求 0x1209</el-button>
-      <el-button>主动上报驾驶员身份信息 0x120C</el-button>
-      <el-button>主动上报车辆电子运单信息 0x120D</el-button>
-      <el-button>平台查岗应答 0x1301</el-button>
-
-      <el-button>报警督办应答 0x1401</el-button>
-      <el-button>上报报警信息 0x1402</el-button>
-      <el-button>主动上报报警处理结果 0x1403</el-button>
-
-    </el-row>
     <el-table :data="list" size="mini">
       <el-table-column prop="VEHICLE_NO" label="车牌号"></el-table-column>
       <el-table-column prop="VEHICLE_COLOR" label="车牌颜色"></el-table-column>
@@ -71,7 +58,7 @@ _NAME:=天燃气;CARGO_TONNAGE:=3;TRANSPO_ORIGIN=萧山区;TRANSPORT_DES:=
               </div>
             </el-popover>
           </template>
-          <template v-if="scope.row.DATA_TYPE.toString(16) == '9301'">
+          <!-- <template v-if="scope.row.DATA_TYPE.toString(16) == '9301'">
             <el-popover trigger="hover" placement="top">
               <p>平台查岗请求</p>
               <el-button>平台查岗应答 0x1301</el-button>
@@ -79,11 +66,14 @@ _NAME:=天燃气;CARGO_TONNAGE:=3;TRANSPO_ORIGIN=萧山区;TRANSPORT_DES:=
                 <el-tag size="medium">详细信息</el-tag>
               </div>
             </el-popover>
-          </template>
+          </template> -->
 
           <template v-if="scope.row.DATA_TYPE.toString(16) == '9302'">
             <el-popover trigger="hover" placement="top">
               <p>平台间报文</p>
+              <p>下发报文对象类型 {{getOBJECT_TYPE(scope.row.OBJECT_TYPE)}} </p>
+              <p>下发报文对象 {{scope.row.OBJECT_ID}} </p>
+              <p>信息内容 {{scope.row.INFO_CONTENT}} </p>
               <div slot="reference">
                 <el-tag size="medium">详细信息</el-tag>
               </div>
@@ -93,6 +83,15 @@ _NAME:=天燃气;CARGO_TONNAGE:=3;TRANSPO_ORIGIN=萧山区;TRANSPORT_DES:=
           <template v-if="scope.row.DATA_TYPE.toString(16) == '9401'">
             <el-popover trigger="hover" placement="top">
               <p>报警督办请求</p>
+              <p>报警信息来源 {{getWARN_SRC(scope.row.WARN_SRC)}} </p>
+              <p>报警信息来源 {{getWARN_TYPE(scope.row.WARN_TYPE)}} </p>
+              <p>报警时间 {{scope.row.WARN_TIME}}</p>
+              <p>报警督办ID {{scope.row.SUPERVISION_ID}}</p>
+              <p>督办截止时间 {{scope.row.SUPERVISION_ENDTIME}}</p>
+              <p>督办级别 {{["紧急","一般"][scope.row.SUPERVISION_LEVEL]}}</p>
+              <p>督办人 {{scope.row.SUPERVISOR}}</p>
+              <p>督办联系电话 {{scope.row.SUPERVISION_TEL}}</p>
+              <p>督办联系电子邮件 {{scope.row.SUPERVISION_EMAL}}</p>
               <div slot="reference">
                 <el-tag size="medium">详细信息</el-tag>
               </div>
@@ -101,6 +100,10 @@ _NAME:=天燃气;CARGO_TONNAGE:=3;TRANSPO_ORIGIN=萧山区;TRANSPORT_DES:=
           <template v-if="scope.row.DATA_TYPE.toString(16) == '9402'">
             <el-popover trigger="hover" placement="top">
               <p>报警预警</p>
+              <p>报警信息来源 {{getWARN_SRC(scope.row.WARN_SRC)}} </p>
+              <p>报警信息来源 {{getWARN_TYPE(scope.row.WARN_TYPE)}} </p>
+              <p>报警时间 {{scope.row.WARN_TIME}}</p>
+              <p>报警描述 {{scope.row.WARN_CONTENT}}</p>
               <div slot="reference">
                 <el-tag size="medium">详细信息</el-tag>
               </div>
@@ -109,7 +112,7 @@ _NAME:=天燃气;CARGO_TONNAGE:=3;TRANSPO_ORIGIN=萧山区;TRANSPORT_DES:=
           <template v-if="scope.row.DATA_TYPE.toString(16) == '9403'">
             <el-popover trigger="hover" placement="top">
               <p>实时交换报警信息</p>
-              <p>报警信息来源: {{ {"1":"车载终端","2":"企业监控平台","3":"政府监管平台","9":"其他"}[scope.row.WARN_SRC] }}</p>
+              <p>报警信息来源 {{getWARN_SRC(scope.row.WARN_SRC)}} </p>
               <p>报警类型: {{ getWARN_TYPE(scope.row.WARN_TYPE) }}</p>
               <p>报警时间: {{ scope.row.WARN_TIME }}</p>
               <p>报警描述: {{ scope.row.WARN_CONTENT }}</p>
@@ -143,11 +146,31 @@ export default {
   },
   computed: {
     list: function() {
-      return this.$store.getters["x809In/list"];
+      return this.$store.getters["x809In/list"].filter(item => {
+        return item.DATA_TYPE != 0x9301;
+      });
     }
   },
   created() {},
   methods: {
+    getWARN_SRC(key) {
+      return ["", "车载终端 ", "企业监控平台 ", "政府监管平台 ", "其他"][key];
+    },
+    getOBJECT_TYPE(key) {
+      return [
+        "",
+        "下级平台所属单一平台 ",
+        "当前连接的下级平台 ",
+        "下级平台所属单一业户 ",
+        "下级平台所属所有业户",
+        "下级平台所属所有平台",
+        "下级平台所属所有平台和业户",
+        "下级平台所属所有政府监管平台（含监控端）",
+        "下级平台所属所有企业监控平台",
+        "下级平台所属所有经营性企业监控平台",
+        "下级平台所属所有非经营性企业监控平台"
+      ][key];
+    },
     getType(row) {
       var dict = {
         x9200: "从链路动态信息交换消息",

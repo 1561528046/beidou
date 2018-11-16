@@ -2,11 +2,11 @@
   <div class="QA">
     <el-table :data="$store.getters['QA/askList']" size="mini">
       <el-table-column type="expand">
-        <template slot-scope="props">
+        <template slot-scope="scope">
           <div class="anwser-box">
             <h4>答案列表</h4>
             <ul class="anwser-list">
-              <li v-for="answer in props.row.CandidateAnswers" :key="answer.AnswerID" :class="{selected:props.row.answer.AnswerID == answer.AnswerID}">
+              <li v-for="answer in scope.row.CandidateAnswers" :key="answer.AnswerID" :class="{selected:scope.row.answer && scope.row.answer.AnswerID == answer.AnswerID}">
                 答案{{answer.AnswerID}} - {{answer.AnswerContent}}
               </li>
             </ul>
@@ -40,9 +40,7 @@ export default {
   },
   methods: {
     getLicense(row) {
-      var vehicle = window.monitor.data.get(
-        this.$utils.unFormatSim(row.sim_id)
-      );
+      var vehicle = window.monitor.data.get(this.$utils.unFormatSim(row.SimID));
       if (vehicle) {
         return vehicle.license;
       } else {
