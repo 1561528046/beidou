@@ -15,11 +15,6 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="子业务类型标识：">
-            <el-input style="width:90%" size="small" v-model="formData.DATA_TYPE"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
           <el-form-item label="时间：">
             <el-date-picker style="width:90%" size="small" v-model="time" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
             </el-date-picker>
@@ -41,7 +36,8 @@ export default {
     return {
       time: "",
       formData: {
-        DATA_TYPE: "",
+        MSG_ID: "X1200",
+        DATA_TYPE: 0x1207,
         VEHICLE_NO: "",
         VEHICLE_COLOR: "",
         START_TIME: "",
@@ -59,13 +55,6 @@ export default {
           {
             required: true,
             message: "请选择车牌颜色",
-            trigger: "change"
-          }
-        ],
-        DATA_TYPE: [
-          {
-            required: true,
-            message: "请输入子业务类型标识",
             trigger: "change"
           }
         ],

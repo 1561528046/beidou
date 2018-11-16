@@ -77,6 +77,39 @@ export default {
       var data = JSON.parse(eve.data);
       this.$set(this.$data, "collectData", data);
     });
+    this.$instruction.on("x8700", eve => {
+      var data = JSON.parse(eve.data);
+      var sim_id = "";
+      this.communication.data.map(item => {
+        if (item.sim_id.length == 11) {
+          sim_id = "0" + item.sim_id;
+        } else {
+          sim_id = item.sim_id;
+        }
+        if (sim_id == data.SimID) {
+          switch (data.CommandWord) {
+            case 0:
+              this.$set(item, "operating", "记录仪执行标准版本采集成功");
+              break;
+            case 1:
+              this.$set(item, "operating", "当前驾驶人信息采集成功");
+              break;
+            case 2:
+              this.$set(item, "operating", "记录仪实时时间采集成功");
+              break;
+            case 3:
+              this.$set(item, "operating", "累计行驶里程采集成功");
+              break;
+            case 4:
+              this.$set(item, "operating", "记录仪脉冲系数采集成功");
+              break;
+            case 7:
+              this.$set(item, "operating", "唯一性编号采集成功");
+              break;
+          }
+        }
+      });
+    });
   },
   // beforeDestroy() {
   //   this.$instruction.off("x0700");

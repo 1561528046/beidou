@@ -15,11 +15,6 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="子业务类型标识：">
-            <el-input style="width:90%" size="small" v-model="formData.DATA_TYPE"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
           <el-form-item label="报警信息ID：">
             <el-input v-model="formData.INFO_ID" size="small" style="width:90%;"></el-input>
           </el-form-item>
@@ -27,10 +22,10 @@
         <el-col :span="8">
           <el-form-item label="报警处理结果：">
             <el-select style="width:90%;" size="small" v-model="formData.RESULT">
-              <el-option value="0x00" label="处理中">处理中</el-option>
-              <el-option value="0x01" label="以处理完毕">已处理完毕</el-option>
-              <el-option value="0x02" label="不作处理">不作处理</el-option>
-              <el-option value="0x03" label="将来处理">将来处理</el-option>
+              <el-option value="0" label="处理中">处理中</el-option>
+              <el-option value="1" label="以处理完毕">已处理完毕</el-option>
+              <el-option value="2" label="不作处理">不作处理</el-option>
+              <el-option value="3" label="将来处理">将来处理</el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -49,7 +44,8 @@ export default {
   data() {
     return {
       formData: {
-        DATA_TYPE: "",
+        MSG_ID: "x1400",
+        DATA_TYPE: 0x1403,
         VEHICLE_NO: "",
         VEHICLE_COLOR: "",
         INFO_ID: "",
@@ -67,13 +63,6 @@ export default {
           {
             required: true,
             message: "请选择车牌颜色",
-            trigger: "change"
-          }
-        ],
-        DATA_TYPE: [
-          {
-            required: true,
-            message: "请输入子业务类型标识",
             trigger: "change"
           }
         ]
