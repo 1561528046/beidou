@@ -3,12 +3,12 @@
     <el-form :model="formData" :rules="rules" label-width="130px" label-position="left">
       <el-row>
         <el-col :span="8">
-          <el-form-item label="车牌号：">
+          <el-form-item label="目标车牌号：">
             <el-input style="width:90%" v-model="formData.VEHICLE_NO" size="small"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="车牌颜色：">
+          <el-form-item label="目标车牌颜色：">
             <el-select style="width:90%" size="small" v-model="formData.VEHICLE_COLOR">
               <el-option v-for="(item,index) in this.$dict.color" :key="index" :value="index" :label="item">{{item}}</el-option>
             </el-select>
@@ -20,9 +20,38 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="时间：">
-            <el-date-picker style="width:90%" size="small" v-model="time" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-            </el-date-picker>
+          <el-form-item label="车牌号：">
+            <el-input style="width:90%" size="small" v-model="formData.DATA_TYPE"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="车牌颜色：">
+            <el-input v-model="formData.INFO_ID" size="small" style="width:90%;"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="运输行业编码：">
+            <el-input size="small" style="width:90%"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="车籍地：">
+            <el-input size="small" style="width:90%"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="业户ID：">
+            <el-input size="small" style="width:90%"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="业户名称：">
+            <el-input size="small" style="width:90%"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="业户联系电话：">
+            <el-input size="small" style="width:90%"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -33,19 +62,26 @@
 <script>
 export default {
   created() {
-    this.$instruction.on("x1207", eve => {
+    this.$instruction.on("x1601", eve => {
       console.log(eve.data);
     });
   },
   data() {
     return {
-      time: "",
       formData: {
         DATA_TYPE: "",
         VEHICLE_NO: "",
+        VEHICLE_COLOR: ""
+      },
+      CAR_INFO: {
+        VIN: "",
         VEHICLE_COLOR: "",
-        START_TIME: "",
-        END_TIME: ""
+        VEHICLE_TYPE: "",
+        TRANS_TYPE: "",
+        VEHICLE_NATIONALITY: "",
+        OWERS_ID: "",
+        OWERS_NAME: "",
+        WOERS_TEL: ""
       },
       rules: {
         VEHICLE_NO: [
@@ -68,21 +104,12 @@ export default {
             message: "请输入子业务类型标识",
             trigger: "change"
           }
-        ],
-        time: [
-          {
-            required: true,
-            message: "请选择时间",
-            trigger: "change"
-          }
         ]
       }
     };
   },
   methods: {
     send() {
-      this.formData.START_TIME = this.time[0];
-      this.formData.END_TIME = this.time[1];
       var data = JSON.stringify(this.formData);
       this.$instruction.send(data);
     }

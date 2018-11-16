@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :model="formData" :rules="rules" label-width="130px" label-position="left">
+    <el-form :model="formData" :rules="rules" label-width="140px" label-position="left">
       <el-row>
         <el-col :span="8">
           <el-form-item label="车牌号：">
@@ -20,9 +20,36 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="时间：">
-            <el-date-picker style="width:90%" size="small" v-model="time" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+          <el-form-item label="报警信息来源：">
+            <el-select v-model="formData.WARN_SRC" style="width:90%" size="small">
+              <el-option value="0x01" label="车载终端">车载终端</el-option>
+              <el-option value="0x02" label="企业监控平台">企业监控平台</el-option>
+              <el-option value="0x03" label="政府监管平台">政府监管平台</el-option>
+              <el-option value="0x09" label="其他">其他</el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="报警类型：">
+            <el-select style="width:90%" size="small" v-model="formData.WARN_TYPE">
+              <el-option v-for="(item,index) in this.$dict.vehicle_alarm" :key="index" :value="index" :label="item">{{item}}</el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="报警时间：">
+            <el-date-picker style="width:90%" size="small" v-model="time" type="datetime" placeholder="选择日期时间">
             </el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="信息ID：">
+            <el-input v-model="formData.INFO_ID" size="small" style="width:90%"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="上报报警信息内容：">
+            <el-input v-model="formData.INFO_CONTENT" size="small" style="width:90%"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -33,7 +60,7 @@
 <script>
 export default {
   created() {
-    this.$instruction.on("x1207", eve => {
+    this.$instruction.on("x1402", eve => {
       console.log(eve.data);
     });
   },
@@ -44,8 +71,11 @@ export default {
         DATA_TYPE: "",
         VEHICLE_NO: "",
         VEHICLE_COLOR: "",
-        START_TIME: "",
-        END_TIME: ""
+        WARN_SRC: "",
+        WARN_TYPE: "",
+        WARN_TIME: "",
+        INFO_ID: "",
+        INFO_CONTENT: ""
       },
       rules: {
         VEHICLE_NO: [
@@ -68,21 +98,13 @@ export default {
             message: "请输入子业务类型标识",
             trigger: "change"
           }
-        ],
-        time: [
-          {
-            required: true,
-            message: "请选择时间",
-            trigger: "change"
-          }
         ]
       }
     };
   },
   methods: {
     send() {
-      this.formData.START_TIME = this.time[0];
-      this.formData.END_TIME = this.time[1];
+      this.formData.WARN_TIME = this.time[0];
       var data = JSON.stringify(this.formData);
       this.$instruction.send(data);
     }
