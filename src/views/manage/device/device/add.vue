@@ -55,7 +55,6 @@
           </el-form-item>
         </el-col>
       </template>
-
     </el-row>
     <el-form-item style="text-align:center;">
       <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
@@ -103,7 +102,13 @@ export default {
             message: "只能输入字母和数字！"
           }
         ],
-        sim_id: [{ trigger: "blur", validator: this.validateDeviceSimId }]
+        sim_id: [
+          { trigger: "blur", validator: this.validateDeviceSimId },
+          {
+            pattern: /^[0-9a-zA-Z]+$/,
+            message: "只能输入字母和数字！"
+          }
+        ]
       }
     };
   },

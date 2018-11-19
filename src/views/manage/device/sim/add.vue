@@ -66,6 +66,10 @@ export default {
             max: 14,
             message: "长度在 11 到 14 个字符",
             trigger: "change"
+          },
+          {
+            pattern: /^[0-9a-zA-Z]+$/,
+            message: "只能输入字母和数字！"
           }
         ],
         icc_id: [{ trigger: "blur", validator: this.validateIccid }]
