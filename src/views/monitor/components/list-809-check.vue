@@ -45,11 +45,11 @@ export default {
           this.$message.warning("发送失败");
         }
       });
-      row.answered = true;
       this.$instruction.send(
         JSON.stringify({
           MessageID: "x1300",
           DATA_TYPE: 0x1301,
+          MSG_GNSSCENTERID: row.MSG_GNSSCENTERID || "",
           OBJECT_TYPE: row.OBJECT_TYPE || "",
           OBJECT_ID: row.OBJECT_ID || "",
           INFO_ID: row.INFO_ID || "",

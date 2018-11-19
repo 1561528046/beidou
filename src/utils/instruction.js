@@ -34,7 +34,11 @@ export default class Instruction {
     };
   }
   send(instruction) {
-    this.ws.send(instruction);
+    try {
+      this.ws.send(instruction);
+    } catch (err) {
+      alert("连接已断开，请等待重连!");
+    }
   }
   on(event, sim_id, fn) {
     if (typeof sim_id === "function") {

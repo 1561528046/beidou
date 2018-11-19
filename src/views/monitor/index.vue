@@ -398,11 +398,15 @@ export default {
         ws.position.onopen = () => {
           var userInfo = JSON.parse(localStorage.getItem("BEIDOU"));
           ws.position.send(
-            `^login|${userInfo.user_name}|${userInfo.pass_word}$`
+            JSON.stringify({
+              MessageID: "login",
+              user_name: userInfo.userName,
+              pass_word: userInfo.pass_word
+            })
           );
           ws.positionHeartInterval = setInterval(() => {
             if (ws.position.readyState == 1) {
-              ws.position.send("^heart$");
+              ws.position.send('{"MessageID":"heart"}');
             }
           }, 20000);
         };
@@ -845,7 +849,12 @@ export default {
       }
       if (instructionArr[0] == "x8201") {
         sim_id = this.$utils.formatSim(sim_id);
-        this.$instruction.send("^x8201|" + sim_id + "$");
+        this.$instruction.send(
+          JSON.stringify({
+            SimID: sim_id,
+            MessageID: "x8201"
+          })
+        );
         return false;
       }
       if (instructionArr[0] == "x8802") {
@@ -884,10 +893,6 @@ export default {
       }
       this.instructionCard.show = true;
       this.instructionCard.vehicle = monitor.data.get(sim_id);
-    },
-    makeInstruction(arr, sim_id) {
-      sim_id = "0".repeat(12 - sim_id.length) + sim_id;
-      return "^" + arr.join("|") + "|" + sim_id + "$";
     },
     initVehicle(groups) {
       this.initLoader.setText("初始化车辆数据");

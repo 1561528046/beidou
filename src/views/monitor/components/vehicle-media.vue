@@ -50,7 +50,6 @@
       </el-col>
       <el-col :span="18">
         <div class="shadow-box" style="background:#FFF; padding:15px; margin-top:20px;">
-          {{list}}
           <el-table :data="list" size="mini">
             <el-table-column prop="SimID" label="sim id">
               <template slot-scope="scope">
