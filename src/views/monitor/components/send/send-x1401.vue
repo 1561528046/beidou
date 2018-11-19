@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-form :model="formData" :rules="rules" label-width="140px" label-position="left">
+
       <el-row>
         <el-col :span="8">
           <el-form-item label="车牌号：">

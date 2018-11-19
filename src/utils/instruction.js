@@ -126,12 +126,13 @@ export default class Instruction {
     } else {
       var data = JSON.parse(evt.data);
       sim_id = data.SimID;
-      if (data.MSG_ID) {
-        data.MSG_ID = "x" + data.MSG_ID.toString(16);
-        messageId = data.MSG_ID;
-      } else {
-        messageId = data.MessageID;
-      }
+      messageId = data.MessageID;
+      // if (data.MSG_ID) {
+      //   data.MSG_ID = "x" + data.MSG_ID.toString(16);
+      //   messageId = data.MSG_ID;
+      // } else {
+      //   messageId = data.MessageID;
+      // }
     }
 
     if (messageId != "heart") {
