@@ -225,7 +225,7 @@ export default {
         "9300": "从链路平台间信息交互消息",
         "9400": "从链路报警信息交互消息"
       };
-      return dict[row.MSG_ID.toString(16)] || "--";
+      return dict[row.MessageID] || "--";
     },
     getSubType(row) {
       var key = Number(row.DATA_TYPE)
