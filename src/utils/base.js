@@ -1,20 +1,17 @@
 var BASE_URL = "http://192.168.88.100:725/";
 var API_URL = "http://192.168.88.100:725/api";
-var MONITOR_URL = "ws://192.168.88.125:5002";
-var INSTRUCTION_URL = "ws://192.168.88.125:5000";
-// var BASE_URL = "http://60.10.139.113:1023/";
-// var API_URL = "http://60.10.139.113:1023/api";
-// var INSTRUCTION_URL = "ws://60.10.139.112:5000";
-// var MONITOR_URL = "ws://60.10.139.112:5002";
+var MONITOR_URL = "ws://192.168.88.88:5002";
+var INSTRUCTION_URL = "ws://192.168.88.88:5000";
 
 // || true
 if (process.env.NODE_ENV == "production") {
-  BASE_URL = "http://60.10.139.113:1023/";
-  API_URL = "http://60.10.139.113:1023/api";
-  INSTRUCTION_URL = "ws://60.10.139.112:5000";
-  MONITOR_URL = "ws://60.10.139.112:5002";
+  // public/index.html中 最下方的script中会配置全局config
+  BASE_URL = "http://60.10.139.110:51023/";
+  API_URL = "http://60.10.139.110:51023/api";
+  INSTRUCTION_URL = "ws://60.10.139.108:5000";
+  MONITOR_URL = "ws://60.10.139.108:5002";
 }
-export const dict = {
+var dict = {
   //全局字典
   AMAP_KEY: "bce86b9b523a60714211899fa89b072c", //高德 key
   BMAP_KEY: "E6CTjsauEoavEzCYG4WM1zt0S5OB6dAf", //百度key
@@ -541,5 +538,8 @@ export const dict = {
     return this.special[key] || "";
   }
 };
+if (process.env.NODE_ENV == "production") {
+  dict = Object.assign(dict, window.BEIDOU_CONFIG);
+}
 import utils from "@/utils/utils";
-export { utils };
+export { utils, dict };

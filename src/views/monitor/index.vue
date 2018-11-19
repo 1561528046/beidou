@@ -304,12 +304,10 @@ export default {
         }
       },
       initInstructionListen() {
+        //初始化各种组件的指令监听
         vm.$instruction.on("x9200", evt => {
           //809 9200
           var data = JSON.parse(evt.data);
-          if (data.GNSS_DATA) {
-            data.GNSS_DATA = JSON.parse(data.GNSS_DATA);
-          }
           vm.$store.commit("x809In/add", data);
         });
 
@@ -791,6 +789,23 @@ export default {
     },
     contextmenuInstruction({ instruction, sim_id }) {
       var instructionArr = instruction.split("|");
+      if (instructionArr[0] == "x8A00") {
+        //发送公钥
+        var obj = {
+          SimID: this.$utils.formatSim(sim_id),
+          MessageID: "x8A00"
+        };
+        this.$instruction.send(JSON.stringify(obj));
+        this.$instruction.once("x8A00", evt => {
+          var data = JSON.parse(evt.data);
+          if (data.code == 0) {
+            this.$message.success("下发成功");
+          } else {
+            this.$message.warning("下发失败");
+          }
+        });
+        return false;
+      }
       if (instructionArr[0] == "x8500") {
         //无需设置、直接发送的命令车门解锁、上锁
         var obj = {
