@@ -3,7 +3,9 @@
     <el-table :data="list" size="mini">
       <el-table-column prop="VEHICLE_NO" label="车牌号"></el-table-column>
       <el-table-column prop="VEHICLE_COLOR" label="车牌颜色"></el-table-column>
+      <el-table-column prop="MSG_SN" label="报文序列号"></el-table-column>
       <el-table-column label="类型" :formatter="getType"></el-table-column>
+      <el-table-column label="子业务类型" :formatter="getSubType"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <template v-if="scope.row.DATA_TYPE.toString(16) == '9202'">
@@ -29,9 +31,19 @@
           <template v-if="scope.row.DATA_TYPE.toString(16) == '9203'">
             <el-popover trigger="hover" placement="top">
               <p>车辆定位信息交换补发</p>
-              <p>
-                {{scope.row}}
-              </p>
+              <el-table :data="scope.row.GNSS_DATAS">
+                <el-table-column min-width="150" prop="EXCRYPT" label="地图是否加密"> </el-table-column>
+                <el-table-column min-width="150" prop="DATE" label="时间"> </el-table-column>
+                <el-table-column width="150" prop="LON" label="经度"> </el-table-column>
+                <el-table-column width="150" prop="LAT" label="纬度"> </el-table-column>
+                <el-table-column prop="VEC1" label="速度"> </el-table-column>
+                <el-table-column width="150" prop="VEC2" label="行驶记录速度"> </el-table-column>
+                <el-table-column width="150" prop="VEC3" label="总里程"> </el-table-column>
+                <el-table-column prop="DIRECTION" label="方向"> </el-table-column>
+                <el-table-column prop="ALTITUDE" label="海拔"> </el-table-column>
+                <el-table-column prop="STATE" label="状态"> </el-table-column>
+                <el-table-column prop="ALARM" label="报警状态"> </el-table-column>
+              </el-table>
               <div slot="reference">
                 <el-tag size="medium">详细信息</el-tag>
               </div>
@@ -41,39 +53,75 @@
           <template v-if="scope.row.DATA_TYPE.toString(16) == '9204'">
             <el-popover trigger="hover" placement="top">
               <p>交换车辆静态信息</p>
-              <p>
-                {{scope.row.CAR_INFO}}
+              <p v-if="scope.row.CAR_INFO.VIN">
+                车牌号:{{scope.row.CAR_INFO.VIN}}
               </p>
-              <!-- TRANS TYPE:=030;VIN:=i 浙 A25307; TRACTION:=30;TRAILER_V1N:=浙 A21107
-桂;VEHICLE_NATIONALIT:=330108; VEHICLE_TYPE:=40;
-RTPN:=330101212280;OWERS_NAME:=杭州货运代理公司;OWERS_ORIG
-ID :=1000;OWERS_TEL:=13516814499; RTOLN:=330101200006; VEHICLE-MODE:=解放
-5163;VEI-IICLG COLOR:=1;VEI-IICLE_ORIG_ID:=12345; DRIVER-INFO:=阮孟禄
-13301011060008040000}13854389438;GUARDS_INFO:=刘二
-3301011050108030000113717660901;APPROVED_TONNAGE:=5;DG_TYPE:=03115;CARGO
-_NAME:=天燃气;CARGO_TONNAGE:=3;TRANSPO_ORIGIN=萧山区;TRANSPORT_DES:=
-长宁区；TSSL:= 126148659111261488899。 -->
-              <div slot="reference">
-                <el-tag size="medium">详细信息</el-tag>
-              </div>
-            </el-popover>
-          </template>
-          <!-- <template v-if="scope.row.DATA_TYPE.toString(16) == '9301'">
-            <el-popover trigger="hover" placement="top">
-              <p>平台查岗请求</p>
-              <el-button>平台查岗应答 0x1301</el-button>
-              <div slot="reference">
-                <el-tag size="medium">详细信息</el-tag>
-              </div>
-            </el-popover>
-          </template> -->
-
-          <template v-if="scope.row.DATA_TYPE.toString(16) == '9302'">
-            <el-popover trigger="hover" placement="top">
-              <p>平台间报文</p>
-              <p>下发报文对象类型 {{getOBJECT_TYPE(scope.row.OBJECT_TYPE)}} </p>
-              <p>下发报文对象 {{scope.row.OBJECT_ID}} </p>
-              <p>信息内容 {{scope.row.INFO_CONTENT}} </p>
+              <p v-if="scope.row.CAR_INFO.TRANS_TYPE">
+                运输行业编码:{{scope.row.CAR_INFO.TRANS_TYPE}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.TRACTION">
+                牵引总质量:{{scope.row.CAR_INFO.TRACTION}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.TRAILER_VIN">
+                挂车车牌号:{{scope.row.CAR_INFO.TRAILER_VIN}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.VEHICLE_NATIONALITY">
+                车籍地:{{scope.row.CAR_INFO.VEHICLE_NATIONALITY}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.VEHICLE_TYPE">
+                车辆类型:{{scope.row.CAR_INFO.VEHICLE_TYPE}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.RTPN">
+                道路运输证号:{{scope.row.CAR_INFO.RTPN}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.OWERS_NAME">
+                业户名称:{{scope.row.CAR_INFO.OWERS_NAME}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.OWERS_ORIG_ID">
+                业户原 ID:{{scope.row.CAR_INFO.OWERS_ORIG_ID}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.WOERS_TEL">
+                业户联系电话:{{scope.row.CAR_INFO.WOERS_TEL}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.RTOLN">
+                经营许可证号:{{scope.row.CAR_INFO.RTOLN}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.VEHICLE_MODE">
+                车辆厂牌型号:{{scope.row.CAR_INFO.VEHICLE_MODE}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.VEHICLE_COLOR">
+                车辆颜色:{{scope.row.CAR_INFO.VEHICLE_COLOR}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.VEHICLE_ORIG_ID">
+                车辆原编号:{{scope.row.CAR_INFO.VEHICLE_ORIG_ID}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.DRIVER_INFO">
+                驾驶员情况:{{scope.row.CAR_INFO.DRIVER_INFO}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.GUARDS_INFO">
+                押运员情况:{{scope.row.CAR_INFO.GUARDS_INFO}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.APPROVED_TONNAGE">
+                核定吨位:{{scope.row.CAR_INFO.APPROVED_TONNAGE}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.DRIVER_INFO">
+                危险品货物分类:{{scope.row.CAR_INFO.DG_TYPE}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.CARGO_NAME">
+                货物品名:{{scope.row.CAR_INFO.CARGO_NAME}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.CARGO_TONNAGE">
+                货物吨位:{{scope.row.CAR_INFO.CARGO_TONNAGE}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.TRANSPORT_ORIGIN">
+                运输出发地:{{scope.row.CAR_INFO.TRANSPORT_ORIGIN}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.TRANSPORT_DES">
+                运输目的地:{{scope.row.CAR_INFO.TRANSPORT_DES}}
+              </p>
+              <p v-if="scope.row.CAR_INFO.TSSL">
+                运输起止时间:{{scope.row.CAR_INFO.TSSL}}
+              </p>
               <div slot="reference">
                 <el-tag size="medium">详细信息</el-tag>
               </div>
@@ -173,11 +221,40 @@ export default {
     },
     getType(row) {
       var dict = {
-        x9200: "从链路动态信息交换消息",
-        x9300: "从链路平台间信息交互消息",
-        x9400: "从链路报警信息交互消息"
+        "9200": "从链路动态信息交换消息",
+        "9300": "从链路平台间信息交互消息",
+        "9400": "从链路报警信息交互消息"
       };
-      return dict[row.MSG_ID] || "--";
+      return dict[row.MSG_ID.toString(16)] || "--";
+    },
+    getSubType(row) {
+      var key = Number(row.DATA_TYPE)
+        .toString(16)
+        .toUpperCase();
+      var dict = {
+        "9202": "交换车辆定位信息",
+        "9203": "车辆定位信息交换补发",
+        "9204": "交换车辆静态信息",
+        "9205": "启动车辆定位信息交换请求",
+        "9206": "结束车辆定位信息交换请求",
+        "9207": "申请交换指定车辆定位信息应答",
+        "9208": "取消交换指定车辆定位信息应答",
+        "9209": "补发车辆定位信息应答",
+        "920A": "上报车辆驾驶员身份信息请求",
+        "920B": "上报车辆电子运单请求",
+        "9301": "平台查岗请求",
+        "9302": "下发平台间报文请求",
+        "9401": "报警督办请求",
+        "9402": "报警预警",
+        "9403": "实时交换报警信息",
+        "9501": "车辆单向监听请求",
+        "9502": "车辆拍照请求",
+        "9503": "下发车辆报文请求",
+        "9504": "上报车辆行驶记录请求",
+        "9505": "车辆应急接入监管平台请求",
+        "9601": "补报车辆静态信息请求"
+      };
+      return dict[key] || "--";
     },
     getWARN_TYPE(key) {
       return [

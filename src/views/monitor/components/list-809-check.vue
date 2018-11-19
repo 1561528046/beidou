@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-table :data="$store.getters['x809In/list9301']" size="mini">
-      <el-table-column prop="OBJECT_TYPE" label="查岗对象" :formatter="getOBJECT_TYPE"></el-table-column>
+      <!-- <el-table-column prop="OBJECT_TYPE" label="查岗对象" :formatter="getOBJECT_TYPE"></el-table-column> -->
       <el-table-column prop="INFO_CONTENT" label="问题"></el-table-column>
       <el-table-column prop="INFO_ID" label="信息 ID"></el-table-column>
       <el-table-column label="操作">

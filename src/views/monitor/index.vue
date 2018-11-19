@@ -308,9 +308,6 @@ export default {
         vm.$instruction.on("x9200", evt => {
           //809 9200
           var data = JSON.parse(evt.data);
-          if (data.GNSS_DATA) {
-            data.GNSS_DATA = JSON.parse(data.GNSS_DATA);
-          }
           vm.$store.commit("x809In/add", data);
         });
 
