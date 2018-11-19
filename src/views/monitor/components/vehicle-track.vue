@@ -263,16 +263,6 @@ export default {
       });
       this.trackForm.filter_position = this.trackForm.position_type ? 1 : 0;
       this.trackForm.filter_invalid = this.trackForm.invalid_type ? 1 : 0;
-      // if (this.trackForm.position_type) {
-      //   this.trackForm.filter_position = 1;
-      // } else {
-      //   this.trackForm.filter_position = 0;
-      // }
-      // if (this.trackForm.invalid_type) {
-      //   this.trackForm.filter_invalid = 1;
-      // } else {
-      //   this.trackForm.filter_invalid = 0;
-      // }
       if (this.trackForm.time.length > 0) {
         GetVehicleLocation(this.trackForm).then(res => {
           if (res.data.code == 0) {

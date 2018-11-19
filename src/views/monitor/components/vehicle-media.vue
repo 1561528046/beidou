@@ -50,7 +50,6 @@
       </el-col>
       <el-col :span="18">
         <div class="shadow-box" style="background:#FFF; padding:15px; margin-top:20px;">
-          {{list}}
           <el-table :data="list" size="mini">
             <el-table-column prop="SimID" label="sim id">
               <template slot-scope="scope">
@@ -59,23 +58,23 @@
             </el-table-column>
             <el-table-column prop="MultimediaDataID" label="媒体ID"></el-table-column>
             <el-table-column prop="MultimediaType" label="媒体类型">
-              <!-- <template slot="scope">
+              <template slot-scope="scope">
                 <label v-if="scope.row.MultimediaType=='0'">图像</label>
                 <label v-if="scope.row.MultimediaType=='1'">音频</label>
                 <label v-if="scope.row.MultimediaType=='2'">视频</label>
-              </template> -->
+              </template>
             </el-table-column>
             <el-table-column prop="ChannelId" label="通道"></el-table-column>
             <el-table-column prop="EventCode" label="事件项编码">
-              <template slot="scope">
-                <!-- <label v-if="scope.row.EventCode=='0'">平台下发指令</label>
+              <template slot-scope="scope">
+                <label v-if="scope.row.EventCode=='0'">平台下发指令</label>
                 <label v-if="scope.row.EventCode=='1'">定时动作</label>
                 <label v-if="scope.row.EventCode=='2'">抢劫报警触发</label>
                 <label v-if="scope.row.EventCode=='3'">碰撞侧翻报警触发</label>
                 <label v-if="scope.row.EventCode=='4'">门开拍照</label>
                 <label v-if="scope.row.EventCode=='5'">门关拍照</label>
                 <label v-if="scope.row.EventCode=='6'">车门由开变关</label>
-                <label v-if="scope.row.EventCode=='7'">定距拍照</label> -->
+                <label v-if="scope.row.EventCode=='7'">定距拍照</label>
               </template>
             </el-table-column>
             <el-table-column label="操作" v-if="viewmodel=='x8802'">
