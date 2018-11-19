@@ -48,7 +48,7 @@ export default {
     return {
       tableData: [],
       formData: {
-        MSG_ID: "x1200",
+        MessageID: "x1200",
         DATA_TYPE: 0x120d,
         VEHICLE_NO: "",
         VEHICLE_COLOR: "",

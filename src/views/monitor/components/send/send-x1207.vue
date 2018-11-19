@@ -50,7 +50,7 @@ export default {
       tableData: [],
       time: "",
       formData: {
-        MSG_ID: "X1200",
+        MessageID: "X1200",
         DATA_TYPE: 0x1207,
         VEHICLE_NO: "",
         VEHICLE_COLOR: "",

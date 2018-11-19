@@ -86,7 +86,6 @@ export default {
       addkey: 0,
       timer: {},
       playType: false,
-      vtype: false,
       selectType: false,
       trackForm: {
         sim_id: "",
@@ -204,7 +203,6 @@ export default {
           this.$set(this.$data, "vehicle_license", res.data.data[0].license);
           this.trackForm.sim_id = res.data.data[0].sim_id;
           this.selectType = true;
-          this.vtype = true;
         } else {
           return this.$notify({
             message: res.data.msg,
@@ -247,9 +245,7 @@ export default {
         map: hm.mapData.map,
         path: path,
         strokeColor: "#00A", //线颜色
-        // strokeOpacity: 1,     //线透明度
         strokeWeight: 3 //线宽
-        // strokeStyle: "solid"  //线样式
       });
       this.$set(this.mapData, "polyline", polyline);
       polyline.setMap(this.mapData.map); //将轨迹显示在地图上
@@ -257,7 +253,6 @@ export default {
     },
     // 查询轨迹信息
     selectForm() {
-      // this.currentIndex = 0;
       this.$refs.baseTable.$el.childNodes.forEach(item => {
         if (
           item.className &&
@@ -266,16 +261,18 @@ export default {
           this.scroll_bar = item;
         }
       });
-      if (this.trackForm.position_type) {
-        this.trackForm.filter_position = 1;
-      } else {
-        this.trackForm.filter_position = 0;
-      }
-      if (this.trackForm.invalid_type) {
-        this.trackForm.filter_invalid = 1;
-      } else {
-        this.trackForm.filter_invalid = 0;
-      }
+      this.trackForm.filter_position = this.trackForm.position_type ? 1 : 0;
+      this.trackForm.filter_invalid = this.trackForm.invalid_type ? 1 : 0;
+      // if (this.trackForm.position_type) {
+      //   this.trackForm.filter_position = 1;
+      // } else {
+      //   this.trackForm.filter_position = 0;
+      // }
+      // if (this.trackForm.invalid_type) {
+      //   this.trackForm.filter_invalid = 1;
+      // } else {
+      //   this.trackForm.filter_invalid = 0;
+      // }
       if (this.trackForm.time.length > 0) {
         GetVehicleLocation(this.trackForm).then(res => {
           if (res.data.code == 0) {
@@ -329,14 +326,13 @@ export default {
     // 关闭弹出框
     down() {
       this.mapData.map.clearMap();
-      this.vtype = false;
       this.player = false;
       this.selectType = false;
       this.tableData.data = [];
       this.tableQuery.data = [];
       this.tableData.total = 0;
       this.tableQuery.total = 0;
-      this.currentIndex = 0;
+      this.currentIndex = 1;
       this.trackForm.sim_id = "";
       this.trackForm.time = [];
       this.trackForm.start_time = "";
