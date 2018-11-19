@@ -35,8 +35,15 @@ export default {
         this.$set(this.$data, "tableData", res.data.data);
       }
     });
-    this.$instruction.on("x1208", eve => {
-      console.log(eve.data);
+    this.$instruction.on("x1200", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0" && data.DATA_TYPE == 4616) {
+        return this.$notify({
+          message: "取消交换指定车辆定位信息请求消息发送成功!",
+          title: "提示",
+          type: "success"
+        });
+      }
     });
   },
   data() {

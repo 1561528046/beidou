@@ -3,21 +3,21 @@
         <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
             <el-table-column fixed prop="license" label="车牌号" width="100" :formatter="$utils.baseFormatter"> </el-table-column>
             <el-table-column fixed prop="operating" label="操作状态" width="150"></el-table-column>
-            <el-table-column width="180" prop="Ox0001" label="终端心跳发送间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0002" label="TCP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0003" label="TCP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0004" label="UDP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0005" label="UDP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0006" label="SMS消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0007" label="SMS消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0010" label="主服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0014" label="备份服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0013" label="主服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0017" label="备份服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0018" label="服务器TCP端口" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0019" label="服务器UDP端口" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0020" label="位置汇报策略" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="Ox0021" label="位置汇报方案" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O1" label="终端心跳发送间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O2" label="TCP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O3" label="TCP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O4" label="UDP消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O5" label="UDP消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O6" label="SMS消息应答超时时间" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O7" label="SMS消息重传次数" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O16" label="主服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O19" label="备份服务器APN" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O20" label="主服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O23" label="备份服务器地址IP或域名" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O24" label="服务器TCP端口" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O25" label="服务器UDP端口" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O32" label="位置汇报策略" :formatter="$utils.baseFormatter"> </el-table-column>
+            <el-table-column width="180" prop="O33" label="位置汇报方案" :formatter="$utils.baseFormatter"> </el-table-column>
         </el-table>
         <el-form label-width="170px" label-position="left" class="table-search" size="small">
             <el-row :gutter="30">
@@ -222,22 +222,22 @@ export default {
       handler: function() {
         this.$set(this.communication, "data", this.$props.message);
         this.communication.data.map(item => {
-          if (item.Ox0001 == undefined) {
-            this.$set(item, "Ox0001", "");
-            this.$set(item, "Ox0002", "");
-            this.$set(item, "Ox0003", "");
-            this.$set(item, "Ox0004", "");
-            this.$set(item, "Ox0005", "");
-            this.$set(item, "Ox0006", "");
-            this.$set(item, "Ox0007", "");
-            this.$set(item, "Ox0010", "");
-            this.$set(item, "Ox0013", "");
-            this.$set(item, "Ox0014", "");
-            this.$set(item, "Ox0017", "");
-            this.$set(item, "Ox0018", "");
-            this.$set(item, "Ox0019", "");
-            this.$set(item, "Ox0020", "");
-            this.$set(item, "Ox0021", "");
+          if (item.O1 == undefined) {
+            this.$set(item, "O1", "");
+            this.$set(item, "O2", "");
+            this.$set(item, "O3", "");
+            this.$set(item, "O4", "");
+            this.$set(item, "O5", "");
+            this.$set(item, "O6", "");
+            this.$set(item, "O7", "");
+            this.$set(item, "O16", "");
+            this.$set(item, "O19", "");
+            this.$set(item, "O20", "");
+            this.$set(item, "O23", "");
+            this.$set(item, "O24", "");
+            this.$set(item, "O25", "");
+            this.$set(item, "O32", "");
+            this.$set(item, "O33", "");
           }
         });
       },
@@ -245,68 +245,43 @@ export default {
     },
     respond: {
       handler: function() {
-        var limit = [
-          "1",
-          "2",
-          "3",
-          "4",
-          "5",
-          "6",
-          "7",
-          "16",
-          "19",
-          "20",
-          "23",
-          "24",
-          "25",
-          "32",
-          "33"
-        ];
-        this.$set(this.$data, "str", this.$props.respond);
-        this.str = this.str.split("|");
-        if (!limit.includes(this.str[1])) {
-          return;
-        }
-        if (this.str[0] == "^x8106") {
-          if (this.str[3][0] == "0") {
-            this.str[1] = parseInt(this.str[1]).toString(16);
-            this.str[1] =
-              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-            this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (item.sim_id == this.str[2]) {
-                var utc = this.$dict.get_communication(this.str[1]);
-                item.operating = utc + "采集成功";
-              }
-            });
+        var data = JSON.parse(this.$props.respond);
+        var sim_id = "";
+        var limit = [1, 2, 3, 4, 5, 6, 7, 16, 19, 20, 23, 24, 25, 32, 33];
+        if (data.MessageID == "x8103") {
+          if (data.code == "0") {
+            if (limit.includes(data.ParameterId)) {
+              this.communication.data.map(item => {
+                sim_id =
+                  item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+                if (sim_id == data.SimID) {
+                  this.$set(item, "operating", "设置成功");
+                }
+              });
+            }
           }
-        } else if (this.str[0] == "^x0104") {
-          this.str[3] = this.str[3].substring(0, this.str[3].length - 1);
-          this.str[1] = parseInt(this.str[1]).toString(16);
-          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-          this.communication.data.map(item => {
-            if (item.sim_id.length == 11) {
-              item.sim_id = "0" + item.sim_id;
+        } else if (data.MessageID == "x8106") {
+          if (data.code == "0") {
+            if (limit.includes(data.ParameterId)) {
+              this.communication.data.map(item => {
+                sim_id =
+                  item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+                if (sim_id == data.SimID) {
+                  this.$set(item, "operating", "采集成功");
+                }
+              });
             }
-            if (item.sim_id == this.str[3]) {
-              item[this.str[1]] = this.str[2];
-            }
-          });
-        } else {
-          var state = this.str[4].substring(0, this.str[4].length - 1);
-          if (state == "0") {
-            this.str[1] = parseInt(this.str[1]).toString(16);
-            this.str[1] =
-              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+          }
+        } else if (data.MessageID == "x0104") {
+          var Parameters = JSON.parse(data.Parameters);
+          if (Parameters.length != 0) {
+            var ParameterId = "O" + Parameters[0].ParameterId;
+            var ParameterValue = Parameters[0].ParameterValue;
             this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (item.sim_id == this.str[3]) {
-                var utc = this.$dict.get_communication(this.str[1]);
-                item.operating = utc + "设置成功";
+              sim_id =
+                item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+              if (sim_id == data.SimID) {
+                this.$set(item, ParameterId, ParameterValue);
               }
             });
           }
@@ -347,7 +322,7 @@ export default {
         } else {
           simid = item.sim_id;
         }
-        instructioncollect = "^x8106" + "|" + num + "|" + simid + "$";
+        instructioncollect = [num, simid];
         this.$emit("instruction", instructioncollect);
       });
     },
@@ -371,8 +346,7 @@ export default {
         } else {
           simid = item.sim_id;
         }
-        instructionset =
-          "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
+        instructionset = [type, simid, value];
         this.$emit("setting", instructionset);
       });
     }

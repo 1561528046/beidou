@@ -3,16 +3,16 @@
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="operating" label="操作状态"></el-table-column>
-      <el-table-column prop="Ox0040" label="监控平台电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0041" label="复位电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0042" label="恢复出厂设置电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0043" label="监控平台SMS电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0044" label="接受终端SMS文本报警号码" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0045" label="终端电话接听策略" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0046" label="每次最长通话时间" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0047" label="当月最长通话时间" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0048" label="监听电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0049" label="监管平台特权短信号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O64" label="监控平台电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O65" label="复位电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O66" label="恢复出厂设置电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O67" label="监控平台SMS电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O68" label="接受终端SMS文本报警号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O69" label="终端电话接听策略" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O70" label="每次最长通话时间" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O71" label="当月最长通话时间" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O72" label="监听电话号码" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O73" label="监管平台特权短信号码" :formatter="$utils.baseFormatter"> </el-table-column>
     </el-table>
     <el-form label-width="180px" label-position="left" class="table-search" size="small">
       <el-row :gutter="30">
@@ -162,16 +162,16 @@ export default {
         this.$set(this.communication, "data", this.$props.message);
         this.communication.data.map(item => {
           if (item.Ox0040 == undefined) {
-            this.$set(item, "Ox0040", ""),
-              this.$set(item, "Ox0041", ""),
-              this.$set(item, "Ox0042", ""),
-              this.$set(item, "Ox0043", ""),
-              this.$set(item, "Ox0044", ""),
-              this.$set(item, "Ox0045", ""),
-              this.$set(item, "Ox0046", ""),
-              this.$set(item, "Ox0047", ""),
-              this.$set(item, "Ox0048", ""),
-              this.$set(item, "Ox0049", "");
+            this.$set(item, "O64", ""),
+              this.$set(item, "O65", ""),
+              this.$set(item, "O66", ""),
+              this.$set(item, "O67", ""),
+              this.$set(item, "O68", ""),
+              this.$set(item, "O69", ""),
+              this.$set(item, "O70", ""),
+              this.$set(item, "O71", ""),
+              this.$set(item, "O72", ""),
+              this.$set(item, "O73", "");
           }
         });
       },
@@ -179,63 +179,43 @@ export default {
     },
     respond: {
       handler: function() {
-        var limit = [
-          "64",
-          "65",
-          "66",
-          "67",
-          "68",
-          "69",
-          "70",
-          "71",
-          "72",
-          "73"
-        ];
-        this.$set(this.$data, "str", this.$props.respond);
-        this.str = this.str.split("|");
-        if (!limit.includes(this.str[1])) {
-          return;
-        }
-        if (this.str[0] == "^x8106") {
-          if (this.str[3][0] == "0") {
-            this.str[1] = parseInt(this.str[1]).toString(16);
-            this.str[1] =
-              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-            this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (item.sim_id == this.str[2]) {
-                var utc = this.$dict.get_communication(this.str[1]);
-                item.operating = utc + "采集成功";
-              }
-            });
+        var data = JSON.parse(this.$props.respond);
+        var sim_id = "";
+        var limit = [64, 65, 66, 67, 68, 69, 70, 71, 72, 73];
+        if (data.MessageID == "x8103") {
+          if (data.code == "0") {
+            if (limit.includes(data.ParameterId)) {
+              this.communication.data.map(item => {
+                sim_id =
+                  item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+                if (sim_id == data.SimID) {
+                  this.$set(item, "operating", "设置成功");
+                }
+              });
+            }
           }
-        } else if (this.str[0] == "^x0104") {
-          this.str[3] = this.str[3].substring(0, this.str[3].length - 1);
-          this.str[1] = parseInt(this.str[1]).toString(16);
-          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-          this.communication.data.map(item => {
-            if (item.sim_id.length == 11) {
-              item.sim_id = "0" + item.sim_id;
+        } else if (data.MessageID == "x8106") {
+          if (data.code == "0") {
+            if (limit.includes(data.ParameterId)) {
+              this.communication.data.map(item => {
+                sim_id =
+                  item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+                if (sim_id == data.SimID) {
+                  this.$set(item, "operating", "采集成功");
+                }
+              });
             }
-            if (item.sim_id == this.str[3]) {
-              item[this.str[1]] = this.str[2];
-            }
-          });
-        } else {
-          var state = this.str[4].substring(0, this.str[4].length - 1);
-          if (state == "0") {
-            this.str[1] = parseInt(this.str[1]).toString(16);
-            this.str[1] =
-              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+          }
+        } else if (data.MessageID == "x0104") {
+          var Parameters = JSON.parse(data.Parameters);
+          if (Parameters.length != 0) {
+            var ParameterId = "O" + Parameters[0].ParameterId;
+            var ParameterValue = Parameters[0].ParameterValue;
             this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (item.sim_id == this.str[3]) {
-                var utc = this.$dict.get_communication(this.str[1]);
-                item.operating = utc + "设置成功";
+              sim_id =
+                item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+              if (sim_id == data.SimID) {
+                this.$set(item, ParameterId, ParameterValue);
               }
             });
           }
@@ -277,7 +257,7 @@ export default {
         } else {
           simid = item.sim_id;
         }
-        instructioncollect = "^x8106" + "|" + num + "|" + simid + "$";
+        instructioncollect = [num, simid];
         this.$emit("instruction", instructioncollect);
       });
     },
@@ -301,8 +281,7 @@ export default {
         } else {
           simid = item.sim_id;
         }
-        instructionset =
-          "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
+        instructionset = [type, simid, value];
         this.$emit("setting", instructionset);
       });
     }

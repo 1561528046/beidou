@@ -88,14 +88,15 @@ export default {
     chooseRecorder
   },
   created() {
-    // 192.168.88.88:5000
-    this.socket = new WebSocket(this.$dict.INSTRUCTION_URL);
-    // 服务端返回数据回调
-    var vm = this;
-    this.timerOpen();
-    this.socket.onmessage = function(event) {
-      vm.fromSend(event.data);
-    };
+    this.$instruction.on("x8106", eve => {
+      this.fromSend(eve.data);
+    });
+    this.$instruction.on("x8103", eve => {
+      this.fromSend(eve.data);
+    });
+    this.$instruction.on("x0104", eve => {
+      this.fromSend(eve.data);
+    });
   },
   beforeDestroy() {
     this.socket.close();
@@ -152,22 +153,31 @@ export default {
     fromSend(data) {
       this.respond = data;
     },
-    timerOpen() {
-      var sm = this;
-      this.timer = setInterval(function() {
-        sm.socket.send("^heart$");
-      }, 30000);
-    },
     timerDown() {
       clearInterval(this.timer);
     },
     //采集发送指令
-    instruction(num) {
-      this.socket.send(num);
+    instruction(arr) {
+      var data = {};
+      data = {
+        MessageID: "x8106",
+        SimID: arr[1],
+        ParameterId: arr[0]
+      };
+      data = JSON.stringify(data);
+      this.$instruction.send(data);
     },
     // 设置发送指令
-    setting(num) {
-      this.socket.send(num);
+    setting(arr) {
+      var data = {};
+      data = {
+        MessageID: "x8103",
+        SimID: arr[1],
+        ParameterId: arr[0],
+        ParameterValue: arr[2]
+      };
+      data = JSON.stringify(data);
+      this.$instruction.send(data);
     },
     selectVehicle(scope) {
       if (this.parameter_type == 1) {

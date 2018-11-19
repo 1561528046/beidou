@@ -80,8 +80,15 @@ export default {
         this.$set(this.$data, "tableData", res.data.data);
       }
     });
-    this.$instruction.on("x1601", eve => {
-      console.log(eve.data);
+    this.$instruction.on("x1600", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0" && data.DATA_TYPE == 5633) {
+        return this.$notify({
+          message: "补报车辆静态信息请求消息发送成功!",
+          title: "提示",
+          type: "success"
+        });
+      }
     });
   },
   data() {

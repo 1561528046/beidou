@@ -57,8 +57,15 @@ export default {
         this.$set(this.$data, "tableData", res.data.data);
       }
     });
-    this.$instruction.on("x120C", eve => {
-      console.log(eve.data);
+    this.$instruction.on("x1200", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0" && data.DATA_TYPE == 4620) {
+        return this.$notify({
+          message: "主动上报驾驶员身份信息发送成功!",
+          title: "提示",
+          type: "success"
+        });
+      }
     });
   },
   data() {

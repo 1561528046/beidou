@@ -68,8 +68,15 @@ export default {
         this.$set(this.$data, "tableData", res.data.data);
       }
     });
-    this.$instruction.on("x1402", eve => {
-      console.log(eve.data);
+    this.$instruction.on("x1400", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0" && data.DATA_TYPE == 5122) {
+        return this.$notify({
+          message: "上报报警信息发送成功!",
+          title: "提示",
+          type: "success"
+        });
+      }
     });
   },
   data() {
@@ -116,7 +123,7 @@ export default {
   methods: {
     send() {
       if (this.time != "" && this.time != null) {
-        this.formData.WARN_TIME = this.time[0];
+        this.formData.WARN_TIME = this.time;
       } else {
         this.formData.WARN_TIME = "";
       }

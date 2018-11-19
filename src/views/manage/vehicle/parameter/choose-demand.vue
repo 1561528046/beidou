@@ -160,7 +160,7 @@ export default {
         } else {
           simid = item.sim_id;
         }
-        instructioncollect = "^x8106" + "|" + num + "|" + simid + "$";
+        instructioncollect = [num, simid];
         this.$emit("instruction", instructioncollect);
       });
     },

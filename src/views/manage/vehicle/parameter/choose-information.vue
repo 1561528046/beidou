@@ -3,10 +3,10 @@
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="operating" label="操作状态"></el-table-column>
-      <el-table-column prop="Ox0081" label="车辆所在的省域ID" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0082" label="车辆所在的市域ID" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="Ox0084" label="车牌颜色" :formatter="(row)=>{return this.$dict.get_color(row.Ox0084)}"> </el-table-column>
-      <el-table-column prop="Ox0083" label="机动车号牌" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O129" label="车辆所在的省域ID" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O130" label="车辆所在的市域ID" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O131" label="车牌颜色" :formatter="(row)=>{return this.$dict.get_color(row.Ox0084)}"> </el-table-column>
+      <el-table-column prop="O132" label="机动车号牌" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="VIN" label="车辆识别码" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column prop="Plate" label="机动车号牌分类" :formatter="(row)=>{return this.$dict.get_license_species(row.Plate)}"></el-table-column>
     </el-table>
@@ -89,7 +89,7 @@ export default {
           sim_id = item.sim_id;
         }
         if (sim_id == data.SimID) {
-          this.$set(item, "Ox0083", data.PlateNo);
+          this.$set(item, "O131", data.PlateNo);
           this.$set(item, "VIN", data.VIN);
           this.$set(item, "Plate", data.PlateClassify);
         }
@@ -160,11 +160,11 @@ export default {
       handler: function() {
         this.$set(this.communication, "data", this.$props.message);
         this.communication.data.map(item => {
-          if (item.Ox0081 == undefined) {
-            this.$set(item, "Ox0081", "");
-            this.$set(item, "Ox0082", "");
-            this.$set(item, "Ox0083", "");
-            this.$set(item, "Ox0084", "");
+          if (item.O129 == undefined) {
+            this.$set(item, "O129", "");
+            this.$set(item, "O130", "");
+            this.$set(item, "O131", "");
+            this.$set(item, "O132", "");
             this.$set(item, "VIN", "");
             this.$set(item, "Plate", "");
           }
@@ -174,52 +174,44 @@ export default {
     },
     respond: {
       handler: function() {
-        var limit = ["129", "130", "131", "132"];
-        this.$set(this.$data, "str", this.$props.respond);
-        this.str = this.str.split("|");
-        if (!limit.includes(this.str[1])) {
-          return;
-        }
-        if (this.str[0] == "^x8106") {
-          if (this.str[3][0] == "0") {
-            this.str[1] = parseInt(this.str[1]).toString(16);
-            this.str[1] =
-              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-            this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (item.sim_id == this.str[2]) {
-                var utc = this.$dict.get_communication(this.str[1]);
-                item.operating = utc + "采集成功";
-              }
-            });
+        var data = JSON.parse(this.$props.respond);
+        var sim_id = "";
+        var limit = [129, 130, 131, 132];
+        if (data.MessageID == "x8103") {
+          if (data.code == "0") {
+            if (limit.includes(data.ParameterId)) {
+              this.communication.data.map(item => {
+                sim_id =
+                  item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+                if (sim_id == data.SimID) {
+                  this.$set(item, "operating", "设置成功");
+                }
+              });
+            }
           }
-        } else if (this.str[0] == "^x0104") {
-          this.str[3] = this.str[3].substring(0, this.str[3].length - 1);
-          this.str[1] = parseInt(this.str[1]).toString(16);
-          this.str[1] = "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
-          this.communication.data.map(item => {
-            if (item.sim_id.length == 11) {
-              item.sim_id = "0" + item.sim_id;
+        } else if (data.MessageID == "x8106") {
+          if (data.code == "0") {
+            if (limit.includes(data.ParameterId)) {
+              this.communication.data.map(item => {
+                sim_id =
+                  item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+                if (sim_id == data.SimID) {
+                  this.$set(item, "operating", "采集成功");
+                }
+              });
             }
-            if (item.sim_id == this.str[3]) {
-              item[this.str[1]] = this.str[2];
-            }
-          });
-        } else {
-          var state = this.str[4].substring(0, this.str[4].length - 1);
-          if (state == "0") {
-            this.str[1] = parseInt(this.str[1]).toString(16);
-            this.str[1] =
-              "Ox" + "0".repeat(4 - this.str[1].length) + this.str[1];
+          }
+        } else if (data.MessageID == "x0104") {
+          var Parameters = JSON.parse(data.Parameters);
+          if (Parameters.length != 0) {
+            var ParameterId = "O" + Parameters[0].ParameterId;
+            var ParameterValue = Parameters[0].ParameterValue;
             this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (item.sim_id == this.str[3]) {
-                var utc = this.$dict.get_communication(this.str[1]);
-                item.operating = utc + "设置成功";
+              sim_id =
+                item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+              if (sim_id == data.SimID) {
+                console.log(ParameterId, ParameterValue);
+                this.$set(item, ParameterId, ParameterValue);
               }
             });
           }
@@ -260,7 +252,7 @@ export default {
         } else {
           simid = item.sim_id;
         }
-        instructioncollect = "^x8106" + "|" + num + "|" + simid + "$";
+        instructioncollect = [num, simid];
         this.$emit("instruction", instructioncollect);
       });
     },
@@ -284,8 +276,7 @@ export default {
         } else {
           simid = item.sim_id;
         }
-        instructionset =
-          "^x8103" + "|" + type + "|" + value + "|" + simid + "$";
+        instructionset = [type, simid, value];
         this.$emit("setting", instructionset);
       });
     },

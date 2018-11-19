@@ -51,8 +51,15 @@ export default {
         this.$set(this.$data, "tableData", res.data.data);
       }
     });
-    this.$instruction.on("x1401", eve => {
-      console.log(eve.data);
+    this.$instruction.on("x1400", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0" && data.DATA_TYPE == 5121) {
+        return this.$notify({
+          message: "报警督办应答发送成功!",
+          title: "提示",
+          type: "success"
+        });
+      }
     });
   },
   data() {
