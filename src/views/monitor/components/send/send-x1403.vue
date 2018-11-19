@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :model="formData" :rules="rules" label-width="130px" label-position="left">
+    <el-form :model="formData" :rules="rules" label-width="140px" label-position="left">
       <el-row>
         <el-col :span="8">
           <el-form-item label="车牌号：">
@@ -29,27 +29,42 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col :span="8">
+          <el-form-item label="上级平台：">
+            <el-select v-model="formData.MSG_GNSSCENTERID" style="width:90%" size="small">
+              <el-option v-for="item in tableData" :key="item.server_id" :value="item.access_code" :label="item.title">{{item.title}}</el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-button @click="send" style="display:block;margin:0 auto;" type="primary" size="small">发送</el-button>
     </el-form>
   </div>
 </template>
 <script>
+import { GetServerByPage } from "@/api/index.js";
 export default {
   created() {
+    GetServerByPage({ page: 1, size: 999, flag: 809, title: "" }).then(res => {
+      if (res.data.code == 0) {
+        this.$set(this.$data, "tableData", res.data.data);
+      }
+    });
     this.$instruction.on("x1403", eve => {
       console.log(eve.data);
     });
   },
   data() {
     return {
+      tableData: [],
       formData: {
         MSG_ID: "x1400",
         DATA_TYPE: 0x1403,
         VEHICLE_NO: "",
         VEHICLE_COLOR: "",
         INFO_ID: "",
-        RESULT: ""
+        RESULT: "",
+        MSG_GNSSCENTERID: ""
       },
       rules: {
         VEHICLE_NO: [

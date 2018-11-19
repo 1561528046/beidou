@@ -33,7 +33,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="报警时间：">
-            <el-date-picker style="width:90%" size="small" v-model="time" type="datetime" placeholder="选择日期时间">
+            <el-date-picker style="width:90%" size="small" v-model="time" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
         </el-col>
@@ -47,20 +47,34 @@
             <el-input v-model="formData.INFO_CONTENT" size="small" style="width:90%"></el-input>
           </el-form-item>
         </el-col>
+        <el-col :span="8">
+          <el-form-item label="上级平台：">
+            <el-select v-model="formData.MSG_GNSSCENTERID" style="width:90%" size="small">
+              <el-option v-for="item in tableData" :key="item.server_id" :value="item.access_code" :label="item.title">{{item.title}}</el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-button @click="send" style="display:block;margin:0 auto;" type="primary" size="small">发送</el-button>
     </el-form>
   </div>
 </template>
 <script>
+import { GetServerByPage } from "@/api/index.js";
 export default {
   created() {
+    GetServerByPage({ page: 1, size: 999, flag: 809, title: "" }).then(res => {
+      if (res.data.code == 0) {
+        this.$set(this.$data, "tableData", res.data.data);
+      }
+    });
     this.$instruction.on("x1402", eve => {
       console.log(eve.data);
     });
   },
   data() {
     return {
+      tableData: [],
       time: "",
       formData: {
         MSG_ID: "x1400",
@@ -71,7 +85,8 @@ export default {
         WARN_TYPE: "",
         WARN_TIME: "",
         INFO_ID: "",
-        INFO_CONTENT: ""
+        INFO_CONTENT: "",
+        MSG_GNSSCENTERID: ""
       },
       rules: {
         VEHICLE_NO: [
@@ -100,7 +115,11 @@ export default {
   },
   methods: {
     send() {
-      this.formData.WARN_TIME = this.time[0];
+      if (this.time != "" && this.time != null) {
+        this.formData.WARN_TIME = this.time[0];
+      } else {
+        this.formData.WARN_TIME = "";
+      }
       var data = JSON.stringify(this.formData);
       this.$instruction.send(data);
     }

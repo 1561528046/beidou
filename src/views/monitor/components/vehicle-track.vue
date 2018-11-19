@@ -2,6 +2,7 @@
   <!-- 地图 -->
   <div>
     <div style=" width:55%; position:absolute;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
+    <!-- 搜索框 -->
     <div class="vehicle_select">
       <el-autocomplete class="inline-input" size="small" style="width:90%" :popper-class="autoplate" v-model="formData.license" :fetch-suggestions="querySearch" placeholder="请输入车牌号/终端ID" :trigger-on-focus="false" @select="selectVehicle">
         <el-button @click="selectVehicle" slot="append" icon="el-icon-search"></el-button>
@@ -25,10 +26,10 @@
           <label style="position:absolute;left:230px;top:15px">{{vehicle_license}}</label>
           <i @click="down()" class="el-icon-circle-close-outline" style="font-size:20px;position:absolute;right:15px;top:10px;margin-top:5px;"></i>
         </el-form>
+        <!-- 播放器 -->
         <div v-if="player" style="position: relative;">
           <el-button size="small" @click="speed_up" style="position:absolute;top:0;">加速</el-button>
           <el-button size="small" @click="speed_down" style="position:absolute;top:0;left:58px;">减速</el-button>
-          <!-- <label style="position:absolute;top:10px;right:20px;">{{speed}}</label> -->
           <div style="width:36px;margin:0 auto;">
             <el-button size="small" v-if="!playType" @click="play" style="width:36px;height:36px; border-radius: 100%;border: solid 1px; padding:9px 12px;" icon="iconfont icon-bofangqibofang"></el-button>
             <el-button size="small" v-if="playType" @click="suspended" style="width:36px;height:36px;border-radius: 100%;border: solid 1px;padding:9px 12px;" icon="iconfont icon-bofangqi-zanting"></el-button>
@@ -39,6 +40,7 @@
         </div>
       </div>
     </div>
+    <!-- 左侧数据展示栏 -->
     <div style=" width:45%; height:90%;background-color:#fff;position:absolute;left:0;top:0;bottom:0;z-index:99;">
       <el-table @row-click="tableCurrentChange" :row-style="{height:'71px'}" highlight-current-row ref="baseTable" :header-cell-style="{background:'#fafafa'}" :data="list" height="100%" border style="width: 100%">
         <el-table-column width="80px" prop="index" label="序号"></el-table-column>
@@ -83,11 +85,7 @@ export default {
       timer: null, //定时器
       addkey: 0,
       timer: {},
-      progress_bar: 0,
-      isCollapse: true,
-      dialogVisible: false,
       playType: false,
-      playState: true,
       vtype: false,
       selectType: false,
       trackForm: {
@@ -146,18 +144,6 @@ export default {
     });
   },
   methods: {
-    // 单行样式
-    // tableRowClassName({ row, rowIndex }) {
-    //   if (
-    //     rowIndex == this.currentIndex % this.tableQuery.size &&
-    //     this.tableQuery.page ==
-    //       Math.ceil(this.currentIndex - 1 / this.tableQuery.size)
-    //   ) {
-    //     return "success-row";
-    //   }
-    //   return "";
-    // },
-    //
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(3, "days");
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");

@@ -57,9 +57,26 @@
               </template>
             </el-table-column>
             <el-table-column prop="MultimediaDataID" label="媒体ID"></el-table-column>
-            <el-table-column prop="MultimediaType" label="媒体类型"></el-table-column>
+            <el-table-column prop="MultimediaType" label="媒体类型">
+              <template slot="scope">
+                <label v-if="scope.row.MultimediaType=='0'">图像</label>
+                <label v-if="scope.row.MultimediaType=='1'">音频</label>
+                <label v-if="scope.row.MultimediaType=='2'">视频</label>
+              </template>
+            </el-table-column>
             <el-table-column prop="ChannelId" label="通道"></el-table-column>
-            <el-table-column prop="EventCode" label="事件项编码"></el-table-column>
+            <el-table-column prop="EventCode" label="事件项编码">
+              <template slot="scope">
+                <label v-if="scope.row.MultimediaType=='0'">平台下发指令</label>
+                <label v-if="scope.row.MultimediaType=='1'">定时动作</label>
+                <label v-if="scope.row.MultimediaType=='2'">抢劫报警触发</label>
+                <label v-if="scope.row.MultimediaType=='3'">碰撞侧翻报警触发</label>
+                <label v-if="scope.row.MultimediaType=='4'">门开拍照</label>
+                <label v-if="scope.row.MultimediaType=='5'">门关拍照</label>
+                <label v-if="scope.row.MultimediaType=='6'">车门由开变关</label>
+                <label v-if="scope.row.MultimediaType=='7'">定距拍照</label>
+              </template>
+            </el-table-column>
             <el-table-column label="操作" v-if="viewmodel=='x8802'">
               <template slot-scope="scope">
                 <el-button @click="showMedia(scope.row)">查看</el-button>
@@ -67,7 +84,8 @@
             </el-table-column>
             <el-table-column label="媒体" width="300">
               <template slot-scope="scope">
-                <span v-if="viewmodel=='x8803' && !scope.row.media_url"> <i class="el-icon-loading"></i> 媒体资源正在上传</span>
+                <span v-if="viewmodel=='x8803' && !scope.row.media_url">
+                  <i class="el-icon-loading"></i> 媒体资源正在上传</span>
                 <div v-if="scope.row.media_url">
                   <img :src="scope.row.media_url" v-if="scope.row.MultimediaType==0" style="width:100%;" />
                   <audio :src="scope.row.media_url" controls v-if="scope.row.MultimediaType==1" style="width:100%;"></audio>

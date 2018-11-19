@@ -1,7 +1,7 @@
 <template>
   <div style="padding:10px 10px;">
-    <label style=" display:inline-block;font-size:14px; width:130px;">发送类型：</label>
-    <el-select style="width:22.4%;margin-bottom:10px" size="small" v-model="send">
+    <label style=" display:inline-block;font-size:14px; width:140px;">发送类型：</label>
+    <el-select style="width:21.8%;margin-bottom:10px" size="small" v-model="send">
       <el-option value="x1207" label="申请交换指定车辆定位信息请求消息(1207)">申请交换指定车辆定位信息请求消息(1207)</el-option>
       <el-option value="x1208" label="取消交换指定车辆定位信息请求消息(1208)">取消交换指定车辆定位信息请求消息(1208)</el-option>
       <el-option value="x1209" label="补发车辆定位信息请求(1209)">补发车辆定位信息请求(1209)</el-option>

@@ -31,7 +31,7 @@ export default {
     });
   },
   beforeDestroy() {
-    this.$instruction.off("x8701");
+    // this.$instruction.off("x8701");
   },
   watch: {},
   props: ["vehicle", "type"],
