@@ -48,7 +48,7 @@ export default {
       row.answered = true;
       this.$instruction.send(
         JSON.stringify({
-          MSG_ID: "x1300",
+          MessageID: "x1300",
           DATA_TYPE: 0x1301,
           OBJECT_TYPE: row.OBJECT_TYPE || "",
           OBJECT_ID: row.OBJECT_ID || "",
