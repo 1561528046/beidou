@@ -400,7 +400,7 @@ export default {
           ws.position.send(
             JSON.stringify({
               MessageID: "login",
-              user_name: userInfo.userName,
+              user_name: userInfo.user_name,
               pass_word: userInfo.pass_word
             })
           );
