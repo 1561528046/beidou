@@ -1,18 +1,16 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" @submit.native.prevent size="small">
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="厂商名称">
-              <!-- <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.company_name" :fetch-suggestions="false" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
-              </el-autocomplete> -->
               <el-input v-model="tableQuery.company_name"></el-input>
             </el-form-item>
           </el-col>
           <el-col :offset="isCollapse?0:6" :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
-              <el-button type="primary" @click="getTable">查询</el-button>
+              <el-button type="primary" native-type="submit" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -89,10 +87,7 @@ export default {
       },
       tableLoading: true,
       addKey: 0,
-      userdetailShow: false,
-      restaurants: [],
-      state1: "",
-      state2: ""
+      restaurants: []
     };
   },
   mounted() {
@@ -101,7 +96,6 @@ export default {
   methods: {
     // 删除厂商
     delRow(scope) {
-      //删除
       this.$confirm("确认删除？")
         .then(() => {
           delCompany(scope.row).then(res => {
@@ -124,7 +118,6 @@ export default {
     },
     // 修改厂商
     updateForm(scope) {
-      //编辑
       this.addKey++;
       this.updateDialog = true;
       this.updateId = scope.row.company_id;
@@ -161,26 +154,6 @@ export default {
       this.tableQuery.page = val;
       this.getTable();
     },
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createFilter(queryString) {
-      return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        );
-      };
-    },
-    handleSelect(item) {
-      this.simee = { value: item.value, address: item.address };
-      this.getTable();
-    },
     loadAll() {
       getDeviceCompanyAll().then(res => {
         if (res.data.code == 0) {
@@ -195,16 +168,6 @@ export default {
         }
       });
       return this.company;
-    },
-    filterTag(value, row) {
-      return row.tag === value;
-    },
-    filterHandler(value, row, column) {
-      const property = column["property"];
-      return row[property] === value;
-    },
-    handleClick() {
-      alert("button click");
     }
   }
 };

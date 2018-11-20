@@ -143,6 +143,7 @@ export default {
   watch: {},
   created() {},
   methods: {
+    // 版本号验证
     validateVersion(rule, value, callback) {
       if (value == "") {
         callback(new Error("请输入版本号"));
@@ -151,6 +152,7 @@ export default {
         callback();
       }
     },
+    // IP验证
     validateIp(rule, value, callback) {
       var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
       var reg = value.match(exp);
@@ -161,6 +163,7 @@ export default {
         callback();
       }
     },
+    // 端口号验证
     validateDuankou(rule, value, callback) {
       var parten = /^(\d)+$/g;
       if (
@@ -174,6 +177,7 @@ export default {
         return false;
       }
     },
+    // 本地端口号验证
     validateLocalDuankou(rule, value, callback) {
       var parten = /^(\d)+$/g;
       if (
@@ -187,6 +191,7 @@ export default {
         return false;
       }
     },
+    // 添加
     formSubmit() {
       if (this.formData.enable_type) {
         this.formData.enable = 1;

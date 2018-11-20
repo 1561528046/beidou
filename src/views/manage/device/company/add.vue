@@ -8,12 +8,9 @@
           </el-form-item>
         </el-col>
       </el-row>
-
       <el-form-item style="text-align:center;">
         <el-button type="primary" @click="formSubmit" size="large">添加</el-button>
       </el-form-item>
-
-      <!-- <button @click="$router.go(-1)">a</button> -->
     </el-form>
   </div>
 </template>
@@ -52,6 +49,7 @@ export default {
   computed: {},
   created() {},
   methods: {
+    // 添加
     formSubmit() {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

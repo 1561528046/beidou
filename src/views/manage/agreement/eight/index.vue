@@ -81,8 +81,6 @@ export default {
       updateDialog: false,
       updateId: "",
       delDialog: false,
-      isCollapse: false,
-      dateRange: "",
       tableQuery: {
         title: "",
         flag: 808,
@@ -96,17 +94,7 @@ export default {
       tableLoading: true
     };
   },
-  watch: {
-    // 拆分时间段
-    dateRange: function(arr) {
-      arr = arr || ["", ""];
-      this.tableQuery.start_date = arr[0];
-      this.tableQuery.end_date = arr[1];
-    },
-    "tableQuery.real_name": function() {
-      this.tableQuery.user_id = "";
-    }
-  },
+  watch: {},
   methods: {
     // 编辑成功回调
     success() {
@@ -169,10 +157,6 @@ export default {
     handleCurrentChange(val) {
       this.tableQuery.page = val;
       this.getTable();
-    },
-    uploadSuccess() {},
-    uploadError() {
-      alert(1);
     },
     uploadProgress() {}
   }

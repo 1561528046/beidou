@@ -1,7 +1,6 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-
       <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small" @submit.native.prevent>
         <el-row :gutter="30">
           <el-col :span="6">
@@ -45,7 +44,6 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
-      <!-- v-loading="tableLoading" 加载动画 -->
       <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
         <el-table-column prop="last_backtime" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.last_backtime)}"> </el-table-column>
         <el-table-column prop="device_no" label="终端ID" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -120,7 +118,6 @@
   </div>
 </template>
 <script>
-/* eslint-disable */
 import selectRepairstate from "@/components/select-repairstate.vue";
 import {
   getDeviceRepairList,

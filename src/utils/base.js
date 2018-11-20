@@ -534,7 +534,7 @@ var dict = {
     "10": "泥石流"
   },
   get_special: function(key) {
-    return this.special[key] || "";
+    return this.special[key] || "--";
   }
 };
 if (process.env.NODE_ENV == "production") {
