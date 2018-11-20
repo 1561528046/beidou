@@ -342,15 +342,6 @@ export default {
             vm.$store.commit("x0701/add", data);
           }
         });
-        vm.$instruction.on("x0900", evt => {
-          //上行透传
-          var data = JSON.parse(evt.data);
-          var sim_id = vm.$utils.unFormatSim(data.SimID);
-          if (this.data.has(sim_id)) {
-            //如果有当前车辆的监控权限,发送数据到$store
-            vm.$store.commit("x0900/add", data);
-          }
-        });
         vm.$instruction.on("x0702", evt => {
           //驾驶员信息上报处理（插入司机卡设备会发送该消息）； 存入监控车辆数据中
           var data = JSON.parse(evt.data);
