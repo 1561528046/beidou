@@ -91,7 +91,6 @@ export default {
       updateDialog: false,
       updateId: "",
       delDialog: false,
-      isCollapse: false,
       dateRange: "",
       tableQuery: {
         title: "",
@@ -106,17 +105,7 @@ export default {
       tableLoading: true
     };
   },
-  watch: {
-    // 拆分时间段
-    dateRange: function(arr) {
-      arr = arr || ["", ""];
-      this.tableQuery.start_date = arr[0];
-      this.tableQuery.end_date = arr[1];
-    },
-    "tableQuery.real_name": function() {
-      this.tableQuery.user_id = "";
-    }
-  },
+  watch: {},
   methods: {
     // 编辑成功回调
     success() {
@@ -140,6 +129,7 @@ export default {
       this.delDialog = true;
       this.addAgreement = scope.row;
     },
+    // 确认删除
     delConfirm() {
       DeleteServer809({ server_id: this.addAgreement.server_id }).then(res => {
         if (res.data.code == 0) {
@@ -179,12 +169,7 @@ export default {
     handleCurrentChange(val) {
       this.tableQuery.page = val;
       this.getTable();
-    },
-    uploadSuccess() {},
-    uploadError() {
-      alert(1);
-    },
-    uploadProgress() {}
+    }
   }
 };
 </script>

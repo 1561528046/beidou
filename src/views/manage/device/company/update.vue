@@ -8,12 +8,9 @@
         </el-form-item>
       </el-col>
     </el-row>
-
     <el-form-item style="text-align:center;">
       <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
     </el-form-item>
-
-    <!-- <button @click="$router.go(-1)">a</button> -->
   </el-form>
 </template>
 <script>
@@ -23,7 +20,6 @@ import { updateCompany, getDeviceCompany } from "@/api/index.js";
 export default {
   data() {
     return {
-      device_total_turn: true,
       formData: {
         company_id: this.$props.company_id, //设备厂商id
         area: [],
@@ -49,11 +45,7 @@ export default {
       }
     };
   },
-  watch: {
-    device_total_turn: function() {
-      this.formData.device_total = "";
-    }
-  },
+  watch: {},
   props: {
     company_id: String
   },

@@ -14,12 +14,6 @@
                 </el-input>
               </el-form-item>
             </el-form>
-
-            <!-- <div class="user-load-more" @click="userFilterOpen=!userFilterOpen">
-              <i class="el-icon-caret-bottom" v-if="!userFilterOpen"></i>
-              <i class="el-icon-caret-top" v-if="userFilterOpen"></i>
-
-            </div> -->
           </div>
           <ul class="user-list">
             <li v-for="user in userList" :key="user.user_id" :class="{active:user.server_id==currentUser.server_id}" @click="changeUser(user)"> {{user.title}}</li>
@@ -31,11 +25,6 @@
             </el-input>
           </div>
         </div>
-        <!-- <transition name="fade">
-          <div class="group-container" v-if="currentUser.user_id">
-            <select-group :static="true" :useing="['add','edit','remove']" :user_id="currentUser.user_id" :level.sync="groupData.level" :group_id.sync="groupData.group_id" :parentid.sync="groupData.parent_id" style="width:300px;height:100%;"></select-group>
-          </div>
-        </transition> -->
         <div class="transfer-container">
           <div class="transfer-filter">
             <div class="transfer-filter-item">
@@ -90,19 +79,12 @@
           </div>
         </div>
       </div>
-
     </el-card>
   </div>
 </template>
-
 <script>
 /* eslint-disable */
 import {
-  getUserList,
-  getVehicleBinding,
-  getVehicleUnBinding,
-  bindingGroup,
-  unBindingGroup,
   GetServerByPage,
   GetServerBindByPage, // 808或809已绑定车辆分页查询
   GetServerUnBindByPage, // 808或809未绑定车辆分页查询
@@ -146,7 +128,6 @@ export default {
         flag: 809,
         title: ""
       },
-
       groupData: {
         vehicle_ids: "",
         server_id: "",
@@ -168,7 +149,6 @@ export default {
         license: "",
         real_name: ""
       },
-
       // 未绑定查询
       unbindTableQuery: {
         size: 20,
@@ -185,10 +165,6 @@ export default {
     };
   },
   watch: {
-    "groupData.group_id": function() {
-      this.renderBind();
-      this.renderUnbind();
-    },
     agreement: {
       handler: function() {
         this.renderUser();
@@ -218,7 +194,6 @@ export default {
     // 已绑定车辆搜索
     renderBind() {
       this.$set(this.$data, "leftList", []);
-      // if (this.groupData.group_id) {
       var postData = Object.assign({}, this.bindTableQuery);
       GetServerBindByPage(postData).then(res => {
         if (res.data.code == 0) {
@@ -232,12 +207,10 @@ export default {
           this.bindTableQuery.total = 0;
         }
       });
-      // }
     },
     // 未绑定车辆搜索
     renderUnbind() {
       this.$set(this.$data, "rightList", []);
-      // if (this.groupData.group_id) {
       GetServerUnBindByPage(this.unbindTableQuery).then(res => {
         if (res.data.code == 0) {
           var arr = res.data.data.map(item => {
@@ -248,7 +221,6 @@ export default {
           this.unbindTableQuery.total = res.data.total;
         }
       });
-      // }
     },
     // 左侧列表
     renderUser() {
