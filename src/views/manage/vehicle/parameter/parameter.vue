@@ -64,7 +64,6 @@ import chooseAlarm from "./choose-alarm.vue";
 import chooseReport from "./choose-report.vue";
 import chooseDevice from "./choose-device.vue";
 import choosePicture from "./choose-picture.vue";
-import chooseText from "./choose-text.vue";
 import chooseOther from "./choose-other.vue";
 import chooseEvent from "./choose-event.vue";
 import chooseDemand from "./choose-demand.vue";
@@ -80,7 +79,6 @@ export default {
     chooseReport,
     chooseDevice,
     choosePicture,
-    chooseText,
     chooseOther,
     chooseEvent,
     chooseDemand,
@@ -99,7 +97,6 @@ export default {
     });
   },
   beforeDestroy() {
-    this.socket.close();
     this.timerDown();
   },
   props: {},
@@ -107,7 +104,6 @@ export default {
     return {
       respond: "",
       timer: {},
-      socket: {},
       selectedVehicles: [],
       length: 0,
       vehicleDialog: false,

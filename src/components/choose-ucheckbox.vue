@@ -100,7 +100,6 @@ export default {
           type: "error"
         });
       }
-      console.log(this.vehicle);
       getVehicleByPage({ user_ids: this.formData.user_ids }).then(res => {
         if (res.data.code == 0) {
           this.$set(this.tableQuery, "data", res.data.data);

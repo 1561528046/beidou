@@ -3,13 +3,13 @@
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="operating" label="操作状态"></el-table-column>
-      <el-table-column prop="O100" label="定时拍照控制" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="O101" label="定距拍照控制" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="O112" label="图像/视频质量" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="O113" label="亮度" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="O114" label="对比度" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="O115" label="饱和度" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="O116" label="色度" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="O100" label="定时拍照控制"> </el-table-column>
+      <el-table-column prop="O101" label="定距拍照控制"> </el-table-column>
+      <el-table-column prop="O112" label="图像/视频质量"> </el-table-column>
+      <el-table-column prop="O113" label="亮度"> </el-table-column>
+      <el-table-column prop="O114" label="对比度"> </el-table-column>
+      <el-table-column prop="O115" label="饱和度"> </el-table-column>
+      <el-table-column prop="O116" label="色度"> </el-table-column>
     </el-table>
     <el-form label-width="180px" label-position="left" class="table-search" size="small">
       <el-row :gutter="30">

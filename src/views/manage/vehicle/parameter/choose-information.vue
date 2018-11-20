@@ -210,7 +210,6 @@ export default {
               sim_id =
                 item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
               if (sim_id == data.SimID) {
-                console.log(ParameterId, ParameterValue);
                 this.$set(item, ParameterId, ParameterValue);
               }
             });

@@ -18,9 +18,9 @@ export default class Instruction {
     clearInterval(this.wsInterval);
     this.ws = new WebSocket(dict.INSTRUCTION_URL);
     this.ws.onopen = () => {
-      this.ws.send("^heart$");
+      this.ws.send('{"MessageID":"heart"}');
       this.wsInterval = setInterval(() => {
-        this.ws.send("^heart$");
+        this.ws.send('{"MessageID":"heart"}');
       }, 20000);
     };
     this.ws.addEventListener("message", evt => {

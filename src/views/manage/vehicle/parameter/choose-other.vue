@@ -3,7 +3,6 @@
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="operate" label="操作状态"></el-table-column>
-      <!-- <el-table-column prop="Ox8300" label="文本信息下发" :formatter="$utils.baseFormatter"> </el-table-column> -->
     </el-table>
     <el-form label-width="150px" label-position="left" class="table-search" size="small">
       <label>设置类型：</label>
@@ -108,6 +107,30 @@ export default {
     };
   },
   created() {
+    this.$instruction.on("x8300", eve => {
+      var data = JSON.parse(eve.data);
+      var sim_id = "";
+      if (data.code == "0") {
+        this.communication.data.map(item => {
+          sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+          if (sim_id == data.SimID) {
+            this.$set(item, "operate", "文本信息下发设置成功");
+          }
+        });
+      }
+    });
+    this.$instruction.on("x8304", eve => {
+      var data = JSON.parse(eve.data);
+      var sim_id = "";
+      if (data.code == "0") {
+        this.communication.data.map(item => {
+          sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+          if (sim_id == data.SimID) {
+            this.$set(item, "operate", "信息服务设置成功");
+          }
+        });
+      }
+    });
     this.$instruction.on("x8900", evs => {
       var data = JSON.parse(evs.data);
       var sim_id;
@@ -146,43 +169,6 @@ export default {
         this.$set(this.communication, "data", this.$props.message);
       },
       deep: true
-    },
-    respond: {
-      handler: function() {
-        this.$set(this.$data, "instruction", this.$props.respond);
-        var str;
-        this.instruction = this.instruction.split("|");
-        if (this.instruction[0] == "^x8300") {
-          str = this.instruction[4];
-          str = str[0];
-          if (str == "0") {
-            this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (this.instruction[3] == item.sim_id) {
-                this.$set(item, "operate", "文本信息下发设置成功");
-              }
-            });
-          }
-          //文本信息下发处理
-        } else if (this.instruction[0] == "^x8304") {
-          str = this.instruction[4];
-          str = str[0];
-          if (str == "0") {
-            this.communication.data.map(item => {
-              if (item.sim_id.length == 11) {
-                item.sim_id = "0" + item.sim_id;
-              }
-              if (this.instruction[3] == item.sim_id) {
-                this.$set(item, "operate", "信息服务设置成功");
-              }
-            });
-          }
-          //信息服务处理
-        }
-      },
-      deep: true
     }
   },
   computed: {},
@@ -216,8 +202,6 @@ export default {
           type: "error"
         });
       }
-      var parameter_id;
-      var instructionset;
       var sim_id = "";
       var type = "";
       var content = "";
@@ -230,7 +214,6 @@ export default {
             type: "error"
           });
         }
-        parameter_id = "x8300";
         var num = ["0", "0", "0", "0", "0", "0", "0", "0"];
         if (this.text.emergency) {
           num[7] = "1";
@@ -257,50 +240,38 @@ export default {
         num = parseInt(num.toString().replace(/,/g, ""), 2);
         content = this.text.text_content;
         this.communication.data.map(item => {
-          if (item.sim_id.length == 11) {
-            sim_id = "0" + item.sim_id;
-          } else {
-            sim_id = item.sim_id;
-          }
-          instructionset =
-            "^" + parameter_id + "|" + num + "|" + content + "|" + sim_id + "$";
-          this.$emit("setting", instructionset);
+          sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+          data = {
+            MessageID: "x8300",
+            SimID: sim_id,
+            Flag: num,
+            Text: content
+          };
+          data = JSON.stringify(data);
+          this.$instruction.send(data);
         });
       } else if (this.parameter == "2") {
-        parameter_id = "x8304";
         type = this.information.information_type;
         content = this.information.information_content;
         this.communication.data.map(item => {
-          if (item.sim_id.length == 11) {
-            sim_id = "0" + item.sim_id;
-          } else {
-            sim_id = item.sim_id;
-          }
-          instructionset =
-            "^" +
-            parameter_id +
-            "|" +
-            type +
-            "|" +
-            content +
-            "|" +
-            sim_id +
-            "$";
-          this.$emit("setting", instructionset);
+          sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+          data = {
+            MessageID: "x8304",
+            SimID: sim_id,
+            MessageServiceType: type,
+            MessageSerciceContent: content
+          };
+          data = JSON.stringify(data);
+          this.$instruction.send(data);
         });
       } else if (this.parameter == "3") {
-        parameter_id = "x8900";
         type = parseInt(this.reply.message_type, 16);
         content = this.reply.content;
         this.communication.data.map(item => {
-          if (item.sim_id.length == 11) {
-            sim_id = "0" + item.sim_id;
-          } else {
-            sim_id = item.sim_id;
-          }
+          sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
           data = {
             SimID: sim_id,
-            MessageID: parameter_id,
+            MessageID: "x8900",
             TransportType: type, //透传消息类型
             TransportContent: content //透传消息内容
           };

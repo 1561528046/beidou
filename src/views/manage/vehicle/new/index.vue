@@ -400,7 +400,6 @@ export default {
       });
     },
     compaynSelectImg(index, file) {
-      console.log(file);
       this.openCompany.postData["img" + index] = URL.createObjectURL(file);
       this.openCompany.postData["img" + index + "File"] = file;
     },

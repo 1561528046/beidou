@@ -25,7 +25,8 @@
         </el-form-item>
       </li>
       <li class="add">
-        <el-button @click="add"><i class="el-icon-plus"></i>添加答案</el-button>
+        <el-button @click="add">
+          <i class="el-icon-plus"></i>添加答案</el-button>
       </li>
     </ul>
 
@@ -79,7 +80,6 @@ export default {
       var msg = JSON.parse(evt.data);
       if (msg.code == 0) {
         this.$message.success("执行成功！");
-        console.log(this.$store);
         this.$store.commit("QA/addAsk", msg);
       } else {
         this.$message.warning("执行失败");

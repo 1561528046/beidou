@@ -329,9 +329,7 @@ export default {
         this.tableQuery.vehicleData.sim_id =
           "0" + this.tableQuery.vehicleData.sim_id;
       }
-      console.log(this.tableQuery.area);
       if (this.tableQuery.area == "4") {
-        console.log(this.areaValue);
         if (this.areaValue == "") {
           return this.$notify({
             message: "请选择区域类型!",

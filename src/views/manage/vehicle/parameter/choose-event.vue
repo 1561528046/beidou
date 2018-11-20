@@ -46,6 +46,13 @@
 export default {
   data() {
     return {
+      event: [
+        "删除终端现有所有事件",
+        "更新事件",
+        "追加事件",
+        "修改事件",
+        "删除特定几项事件"
+      ],
       formData: {
         rain: false,
         wet_road: false,
@@ -102,60 +109,6 @@ export default {
         this.$set(this.communication, "data", this.$props.message);
       },
       deep: true
-    },
-    respond: {
-      handler: function() {
-        var setType = [
-          "删除终端所有现有事件",
-          "更新事件",
-          "追加事件",
-          "修改事件",
-          "删除特定几项事件"
-        ];
-        this.$set(this.$data, "instruction", this.$props.respond);
-        this.instruction = this.instruction.split("|");
-        if (this.instruction[0] == "^x8301") {
-          // 设置项为0 this.instruction.length=4
-          if (this.instruction.length == 4) {
-            this.instruction[3] = this.instruction[3].substring(
-              0,
-              this.instruction[3].length - 1
-            );
-            if (this.instruction[3] == "0") {
-              this.communication.data.map(item => {
-                if (item.sim_id.length == 11) {
-                  item.sim_id = "0" + item.sim_id;
-                }
-                if (this.instruction[2] == item.sim_id) {
-                  this.instruction[1] = parseInt(this.instruction[1]);
-                  setType[this.instruction[1]] =
-                    setType[this.instruction[1]] + "成功";
-                  this.$set(item, "operate", setType[this.instruction[1]]);
-                }
-              });
-            }
-          } else {
-            this.instruction[4] = this.instruction[4].substring(
-              0,
-              this.instruction[4].length - 1
-            );
-            if (this.instruction[4] == "0") {
-              this.communication.data.map(item => {
-                if (item.sim_id.length == 11) {
-                  item.sim_id = "0" + item.sim_id;
-                }
-                if (this.instruction[3] == item.sim_id) {
-                  this.instruction[1] = parseInt(this.instruction[1]);
-                  setType[this.instruction[1]] =
-                    setType[this.instruction[1]] + "成功";
-                  this.$set(item, "operate", setType[this.instruction[1]]);
-                }
-              });
-            }
-          }
-        }
-      },
-      deep: true
     }
   },
   computed: {},
@@ -163,7 +116,21 @@ export default {
     message: Array,
     respond: String
   },
-  created() {},
+  created() {
+    this.$instruction.on("x8301", eve => {
+      var data = JSON.parse(eve.data);
+      var sim_id = "";
+      var key = parseInt(data.SetType);
+      if (data.code == "0") {
+        this.communication.data.map(item => {
+          sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+          if (sim_id == data.SimID) {
+            this.$set(item, "operate", this.event[key] + "设置成功");
+          }
+        });
+      }
+    });
+  },
   methods: {
     cunchu(label) {
       if (this.event_item.includes(label)) {
@@ -171,25 +138,6 @@ export default {
       } else {
         this.event_item.push(label);
       }
-    },
-    // 采集
-    collect(num) {
-      num = parseInt(num);
-      // ^get + 参数id+ sim_id+$
-      if (this.communication.data.length == 0) {
-        return this.$message.error("请选择车辆!");
-      }
-      var instructioncollect;
-      var simid;
-      this.communication.data.map(item => {
-        if (item.sim_id.length == 11) {
-          simid = "0" + item.sim_id;
-        } else {
-          simid = item.sim_id;
-        }
-        instructioncollect = "^x8106" + "|" + num + "|" + simid + "$";
-        this.$emit("instruction", instructioncollect);
-      });
     },
     // 设置
     setup() {
@@ -216,48 +164,59 @@ export default {
       }
       var arr = [];
       var simid;
-      var instructionset;
+      var data = {};
       this.event_item.map(item => {
         if (item == "雷雨天气") {
-          arr.push("1 雷雨天气");
+          arr.push({ EventID: 1, EventContent: "雷雨天气" });
         } else if (item == "路面潮湿") {
-          arr.push("2 路面潮湿");
+          arr.push({ EventID: 2, EventContent: "路面潮湿" });
         } else if (item == "雾天") {
-          arr.push("3 雾天");
+          arr.push({ EventID: 3, EventContent: "雾天" });
         } else if (item == "山体滑坡") {
-          arr.push("4 山体滑坡");
+          arr.push({ EventID: 4, EventContent: "山体滑坡" });
         } else if (item == "台风") {
-          arr.push("5 台风");
+          arr.push({ EventID: 5, EventContent: "台风" });
         } else if (item == "地震") {
-          arr.push("6 地震");
+          arr.push({ EventID: 6, EventContent: "地震" });
         } else if (item == "隧道冒顶") {
-          arr.push("7 隧道冒顶");
+          arr.push({ EventID: 7, EventContent: "隧道冒顶" });
         } else if (item == "洪水") {
-          arr.push("8 洪水");
+          arr.push({ EventID: 8, EventContent: "洪水" });
         } else if (item == "风沙") {
-          arr.push("9 风沙");
+          arr.push({ EventID: 9, EventContent: "风沙" });
         } else if (item == "泥石流") {
-          arr.push("10 泥石流");
+          arr.push({ EventID: 10, EventContent: "泥石流" });
         }
       });
-      arr = arr.toString();
-      var res = new RegExp(",", "g");
-      arr = arr.replace(res, ";");
-      var reg = new RegExp(" ", "g");
-      arr = arr.replace(reg, ",");
       this.communication.data.map(it => {
         if (it.sim_id.length == 11) {
           simid = "0" + it.sim_id;
         } else {
           simid = it.sim_id;
         }
-        if (arr != "") {
-          instructionset =
-            "^x8301" + "|" + this.event_type + "|" + arr + "|" + simid + "$";
-          this.$emit("setting", instructionset);
+        if (arr.length != 0) {
+          this.communication.data.map(item => {
+            simid = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+          });
+          data = {
+            MessageID: "x8301",
+            SimID: simid,
+            SetType: this.event_type,
+            EventItems: arr
+          };
+          data = JSON.stringify(data);
+          this.$instruction.send(data);
         } else {
-          instructionset = "^x8301" + "|" + this.event_type + "|" + simid + "$";
-          this.$emit("setting", instructionset);
+          this.communication.data.map(item => {
+            simid = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+          });
+          data = {
+            MessageID: "x8301",
+            SimID: simid,
+            SetType: this.event_type
+          };
+          data = JSON.stringify(data);
+          this.$instruction.send(data);
         }
       });
     }
