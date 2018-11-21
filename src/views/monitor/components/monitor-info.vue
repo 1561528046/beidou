@@ -3,7 +3,6 @@
     <div class="_close">
       <i class="iconfont icon-window-minimize window-ctrl" v-if="!smallSize" @click="smallSize = true" style="position:relative;top:-7px;"></i>
       <i class="iconfont icon-window-maximize window-ctrl" v-if="smallSize" @click="smallSize = false"></i>
-      <i class="iconfont icon-ziyuan" style="position:relative;right:47px;"></i>
     </div>
     <el-tabs v-model="currentTab" type="border-card" @tab-click="smallSize = false">
       <el-tab-pane :closable="false" name="QA">
@@ -73,11 +72,17 @@
         <list809-send></list809-send>
       </el-tab-pane>
       <el-tab-pane :closable="false" name="listmultimedia">
-        <span slot="label"> 多媒体事件信息上传
+        <span slot="label"> 多媒体事件
           <el-badge :max="99" :value="$store.getters['x0800/list'].length" class="monitor-badge"> </el-badge>
         </span>
         <list-multimedia></list-multimedia>
       </el-tab-pane>
+      <el-tab-pane :closable="false" name="customInstruction">
+        <span slot="label"> <i class="iconfont icon-ziyuan"></i>
+        </span>
+        <list-multimedia></list-multimedia>
+      </el-tab-pane>
+
     </el-tabs>
   </div>
 </template>
