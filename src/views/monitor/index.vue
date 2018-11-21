@@ -168,15 +168,22 @@ export default {
   },
   data() {
     return {
+      searchVehicle: "",
+      initLoader: {},
+      currentGroup: {},
+      alarmList: {},
+      errorList: {},
+      onlineList: {},
+      offlineList: {},
+      userList: [],
+      currentVehiclesSet: new Set(), //小地图查看的车SET
+      currentVehiclesLog: 0, //触发computed
       instructionCard: {
         component: null,
         show: false,
         title: "",
         vehicle: null
       },
-      searchVehicle: "",
-      initLoader: {},
-      currentGroup: {},
       showVehicle: {
         group_id: "",
         isShow: false,
@@ -184,25 +191,18 @@ export default {
         type: "",
         sub_title: ""
       },
-      alarmList: {},
-      errorList: {},
-      onlineList: {},
-      offlineList: {},
       vehicleCount: {
         alarm: 0,
         online: 0,
         offline: 0,
         error: 0
       },
-      userList: [],
       userListQuery: {
         real_name: "",
         size: 10,
         page: 1,
         total: 0
-      },
-      currentVehiclesSet: new Set(), //小地图查看的车SET
-      currentVehiclesLog: 0 //触发computed
+      }
     };
   },
   computed: {
@@ -377,6 +377,24 @@ export default {
           if (this.data.has(sim_id)) {
             //如果有当前车辆的监控权限,发送数据到$store
             vm.$store.commit("x0301/add", data);
+          }
+        });
+        vm.$instruction.on("x0303", evt => {
+          //信息点播数据
+          var data = JSON.parse(evt.data);
+          var sim_id = vm.$utils.unFormatSim(data.SimID);
+          if (this.data.has(sim_id)) {
+            //如果有当前车辆的监控权限,发送数据到$store
+            vm.$store.commit("x0303/add", data);
+          }
+        });
+        vm.$instruction.on("x0800", evt => {
+          //多媒体数据信息上传
+          var data = JSON.parse(evt.data);
+          var sim_id = vm.$utils.unFormatSim(data.SimID);
+          if (this.data.has(sim_id)) {
+            //如果有当前车辆的监控权限,发送数据到$store
+            vm.$store.commit("x0800/add", data);
           }
         });
       },

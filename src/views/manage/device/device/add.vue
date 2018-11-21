@@ -23,7 +23,6 @@
       <el-col :span="12">
         <el-form-item label="终端厂商" prop="company_id">
           <company-select v-model="formData.company_id" style="width: 100%;"></company-select>
-          <!-- <el-input v-model="formData.company_name"></el-input> -->
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -59,8 +58,6 @@
     <el-form-item style="text-align:center;">
       <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
     </el-form-item>
-
-    <!-- <button @click="$router.go(-1)">a</button> -->
   </el-form>
 </template>
 <script>
@@ -71,17 +68,13 @@ export default {
   data() {
     return {
       formData: {
-        area: [],
         device_type: "",
         device_no: "",
         company_id: "",
         sim_id: "",
         protocol_type: "",
-        install_date: "",
         camera_num: "",
-        save_media: "",
-        state: "",
-        time: ""
+        save_media: ""
       },
       rules: {
         ...rules,
@@ -119,6 +112,7 @@ export default {
   },
   created() {},
   methods: {
+    // 设备ID验证
     validateDeviceId(rule, value, callback) {
       if (value == "") {
         callback(new Error("请输入设备ID！"));
@@ -136,6 +130,7 @@ export default {
           callback(new Error("服务器重复验证失效，请稍候再试"));
         });
     },
+    // SIMID验证
     validateDeviceSimId(rule, value, callback) {
       if (value == "") {
         callback();
@@ -153,6 +148,7 @@ export default {
           callback(new Error("服务器重复验证失效，请稍候再试"));
         });
     },
+    // 添加
     formSubmit() {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

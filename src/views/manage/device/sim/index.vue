@@ -59,7 +59,6 @@
             <el-dropdown-item style="padding:2px 15px;">
               <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
                                     application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " class="o-el-upload--text">
-                <!-- <i class="el-icon-upload el-icon--right"></i> 点击上传 -->
                 <el-button size="small" icon="el-icon-upload2" type="primary" style="display: block;width:100%;">点击上传</el-button>
               </el-upload>
             </el-dropdown-item>
@@ -67,11 +66,9 @@
               <a href="/static/SIM卡导入模板.xls" download target="_blank" type="primary " class="el-button el-button--small el-button--primary" style=" display: block;">
                 <i class="el-icon-download"></i> 模版下载
               </a>
-
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-
       </div>
       <el-table :data="tableData.data " v-loading="tableLoading " style="width: 100% " class="admin-table-list">
         <el-table-column prop="time " label="添加时间 " :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
@@ -120,6 +117,7 @@ export default {
       updateId: "",
       addKey: 0,
       isCollapse: false,
+      tableLoading: true,
       dateRange: "",
       tableQuery: {
         sim_no: "",
@@ -137,8 +135,6 @@ export default {
         total: 0,
         data: []
       },
-      tableLoading: true,
-      addKey: 0,
       pickerOptions2: {
         shortcuts: [
           {
@@ -227,7 +223,6 @@ export default {
               title: "导入失败",
               message: res.data.msg
             });
-            // this.$message.error(res.data.msg);
           }
         })
         .catch((err, a) => {

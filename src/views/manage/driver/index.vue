@@ -86,6 +86,8 @@ export default {
       updateDialog: false,
       updateId: "",
       isCollapse: false,
+      tableLoading: true,
+      addKey: 0,
       tableQuery: {
         driver_name: "",
         driver_card_id: "",
@@ -96,9 +98,7 @@ export default {
       tableData: {
         total: 0,
         data: []
-      },
-      tableLoading: true,
-      addKey: 0
+      }
     };
   },
   methods: {

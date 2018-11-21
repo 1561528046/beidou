@@ -105,10 +105,6 @@
 <script>
 /* eslint-disable */
 import {
-  GetServerBindByPage, // 808或809已绑定车辆分页查询
-  GetServerUnBindByPage, // 808或809未绑定车辆分页查询
-  ServerBindVehicle, //808或809绑定车辆
-  ServerUnBindVehicle, //808或808解绑车辆
   GetRegionByPage, //查询围栏列表
   GetRegionBindByPage, // 查询围栏已绑定的车辆
   GetRegionUnBindByPage, // 查询围栏未绑定的车辆

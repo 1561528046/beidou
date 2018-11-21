@@ -14,9 +14,6 @@
         </el-col>
         <el-col :span="12">
           <el-form-item prop="belong" label="所属运营商">
-            <!-- <el-select v-model="belong" style="width: 100%;">
-                            <el-option v-for="belongItem in belongSelect" :key="belongItem" :label="belongItem" :value="belongItem"></el-option>
-                        </el-select> -->
             <el-input v-model="formData.belong" placeholder="填写运营商" disabled></el-input>
           </el-form-item>
         </el-col>
@@ -31,7 +28,6 @@
           </el-form-item>
         </el-col>
       </el-row>
-
       <el-form-item style="text-align:center;">
         <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
       </el-form-item>
@@ -72,7 +68,6 @@ export default {
           var tempBelong = mixinData.belong;
           this.$nextTick(() => {
             this.$set(this.formData, "belong", tempBelong);
-            //this.formData.belong = mixinData.belong;
           });
         } else {
           this.belong = mixinData.belong;

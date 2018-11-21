@@ -2,6 +2,10 @@ var BASE_URL = "http://192.168.88.100:725/";
 var API_URL = "http://192.168.88.100:725/api";
 var MONITOR_URL = "ws://192.168.88.125:5002";
 var INSTRUCTION_URL = "ws://192.168.88.125:5000";
+// var BASE_URL = "http://60.10.139.110:51023/";
+// var API_URL = "http://60.10.139.110:51023/api";
+// var INSTRUCTION_URL = "ws://60.10.139.108:5000";
+// var MONITOR_URL = "ws://60.10.139.108:5002";
 // || true
 if (process.env.NODE_ENV == "production") {
   // public/index.html中 最下方的script中会配置全局config
@@ -535,6 +539,13 @@ var dict = {
   },
   get_special: function(key) {
     return this.special[key] || "--";
+  },
+  demand: {
+    "1": "每日新闻",
+    "2": "天气预报"
+  },
+  get_demand: function(key) {
+    return this.demand[key] || "--";
   }
 };
 if (process.env.NODE_ENV == "production") {

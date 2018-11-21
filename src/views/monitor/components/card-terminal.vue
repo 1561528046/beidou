@@ -78,7 +78,6 @@ export default {
   },
   data() {
     return {
-      sim_id: "",
       device_type: "",
       CNSS: "",
       COMM: "",

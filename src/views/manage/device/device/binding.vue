@@ -14,11 +14,9 @@
                 </el-input>
               </el-form-item>
             </el-form>
-
             <!-- <div class="user-load-more" @click="userFilterOpen=!userFilterOpen">
               <i class="el-icon-caret-bottom" v-if="!userFilterOpen"></i>
               <i class="el-icon-caret-top" v-if="userFilterOpen"></i>
-
             </div> -->
           </div>
           <ul class="user-list">
@@ -188,6 +186,7 @@ export default {
       this.unbindTableQuery.page = val;
       this.renderUnbind();
     },
+    // 左侧搜索框
     renderBind() {
       this.$set(this.$data, "leftList", []);
       // this.bindTableQuery.total = 0;
@@ -207,6 +206,7 @@ export default {
         });
       }
     },
+    // 右侧搜索框
     renderUnbind() {
       this.$set(this.$data, "rightList", []);
       getDeviceAllUnbind(this.unbindTableQuery).then(res => {
@@ -221,6 +221,7 @@ export default {
         }
       });
     },
+    // 用户信息
     renderUser() {
       this.$set(this.$data, "userList", []);
       getDeviceUserList(this.userTableQuery).then(res => {
@@ -248,8 +249,8 @@ export default {
         this.userTableQuery.page = parseInt(this.userTableQuery.page) + 1;
       }
     },
+    //右到左
     onleft(items, next) {
-      //右到左
       if (!this.currentUser.user_id) {
         this.$message.warning("请选择一个用户！");
         next(false);
@@ -280,8 +281,8 @@ export default {
           next(false);
         });
     },
+    //左到右
     onright(items, next) {
-      //左到右
       var postData = {
         user_id: this.currentUser.user_id,
         device_ids: []

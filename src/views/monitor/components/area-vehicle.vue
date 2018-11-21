@@ -147,6 +147,8 @@ export default {
   computed: {},
   data() {
     return {
+      event_type: ["更新", "追加", "修改", "删除", "删除全部"],
+      area_type: ["圆形区域", "矩形区域", "多边形区域"],
       area_attribute: {
         according_time: false, //根据时间
         speed_limit: false, //限速
@@ -378,7 +380,6 @@ export default {
           // 删除
         } else {
           // 更新 追加 修改
-
           instruction = {
             SimID: this.tableQuery.vehicleData.sim_id,
             MessageID: "x8600",
