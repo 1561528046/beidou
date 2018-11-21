@@ -38,12 +38,7 @@ export default {
             message: "不允许输入空格等特殊符号"
           }
         ]
-      },
-      simss: [],
-      simee: {},
-      restaurants: [],
-      state1: "",
-      state2: ""
+      }
     };
   },
   props: {

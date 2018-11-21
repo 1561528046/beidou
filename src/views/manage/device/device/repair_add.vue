@@ -31,7 +31,7 @@
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
-import { updateDeviceRepair, getDeviceAll } from "@/api/index.js";
+import { updateDeviceRepair } from "@/api/index.js";
 import selectDevice from "@/components/select-device.vue";
 export default {
   data() {
@@ -46,13 +46,6 @@ export default {
       },
       rules: {
         ...rules,
-        //         ip: [
-        //   {
-        //     required: true,
-        //     trigger: "blur",
-        //     validator: this.validateIp
-        //   }
-        // ],
         remark: [
           { required: true, message: "请填写维修原因", trigger: "change" },
           { min: 2, message: "请输入不少于2个字符", trigger: "change" },
@@ -85,12 +78,7 @@ export default {
             message: "不允许输入空格等特殊符号"
           }
         ]
-      },
-      simss: [],
-      simee: {},
-      restaurants: [],
-      state1: "",
-      state2: ""
+      }
     };
   },
   props: {
@@ -98,41 +86,8 @@ export default {
   },
   computed: {},
   created() {},
-  mounted() {
-    this.restaurants = this.loadAll();
-  },
+  mounted() {},
   methods: {
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createFilter(queryString) {
-      return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        );
-      };
-    },
-    loadAll() {
-      getDeviceAll().then(res => {
-        if (res.data.code == 0) {
-          for (var i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].real_name !== " ") {
-              this.simss.push({ value: res.data.data[i].device_id });
-            }
-          }
-        }
-      });
-      return this.simss;
-    },
-    handleSelect(item) {
-      this.simee = { value: item.value };
-    },
     formSubmit() {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

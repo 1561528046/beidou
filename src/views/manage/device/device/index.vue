@@ -1,7 +1,6 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-
       <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small" @submit.native.prevent>
         <el-row :gutter="30">
           <el-col :span="6">
@@ -30,13 +29,9 @@
               <select-company v-model="tableQuery.company_id" style="width:100%;" :clearable="true"></select-company>
             </el-form-item>
           </el-col>
-
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="分配用户">
               <select-user v-model="tableQuery.user_id" style="width:100%;" :clearable="true"></select-user>
-              <!-- <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.real_name" :fetch-suggestions="querySearch"
-                placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect">
-              </el-autocomplete> -->
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -95,8 +90,6 @@
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
             <el-button size="small" type="primary" :disabled="scope.row.editDisabled" @click="updateForm(scope)" icon="el-icon-edit" v-rights="2-1-3">编辑</el-button>
-            <!-- <el-button size="small" :disabled="scope.row.disabled" :type="buttontype(scope)" @click="repair_addFrom(scope)">
-              <i class="el-icon-upload el-icon--right"></i>设备维修</el-button> -->
             <el-dropdown>
               <el-button :disabled="scope.row.deviceDisabled" size="small" style="margin-left: 15px;margin-right:15px;" type="primary" v-rights="2-2-1">
                 设备管理
@@ -176,6 +169,8 @@ export default {
       uploadDialog: false,
       isCollapse: false,
       dateRange: "",
+      tableLoading: true,
+      addKey: 0,
       tableQuery: {
         device_type: "",
         device_id: "",
@@ -194,8 +189,6 @@ export default {
         total: 0,
         data: []
       },
-      tableLoading: true,
-      addKey: 0,
       pickerOptions2: {
         shortcuts: [
           {
@@ -276,9 +269,6 @@ export default {
     //获取设备列表
     getTable() {
       this.tableLoading = true;
-      // if (this.tableQuery.real_name == "") {
-      //   this.tableQuery.user_id = "";
-      // }
       var query = Object.assign({}, this.tableQuery);
       getDeviceList(query)
         .then(res => {
@@ -360,12 +350,7 @@ export default {
     handleCurrentChange(val) {
       this.tableQuery.page = val;
       this.getTable();
-    },
-    uploadSuccess() {},
-    uploadError() {
-      alert(1);
-    },
-    uploadProgress() {}
+    }
   }
 };
 </script>

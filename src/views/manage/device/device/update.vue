@@ -23,7 +23,6 @@
       <el-col :span="12">
         <el-form-item label="终端厂商" prop="company_name">
           <company-select v-model="formData.company_id" style="width: 100%;"></company-select>
-          <!-- <el-input v-model="formData.company_name"></el-input> -->
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -80,11 +79,8 @@ export default {
         company_id: "",
         sim_id: "",
         protocol_type: "",
-        install_date: "",
         camera_num: "",
         save_media: "",
-        state: "",
-        time: "",
         company_name: ""
       },
       oldData: {},
@@ -127,6 +123,7 @@ export default {
     });
   },
   methods: {
+    // 设备ID验证
     validateDeviceId(rule, value, callback) {
       if (value == this.oldData.device_id) {
         //和旧值对比，如果相同则不验证
@@ -149,6 +146,7 @@ export default {
           callback(new Error("服务器重复验证失效，请稍候再试"));
         });
     },
+    // SIMID验证
     validateDeviceSimId(rule, value, callback) {
       if (value == this.oldData.sim_id) {
         //和旧值对比，如果相同则不验证

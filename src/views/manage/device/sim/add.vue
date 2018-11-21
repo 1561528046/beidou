@@ -31,7 +31,6 @@
           </el-form-item>
         </el-col>
       </el-row>
-
       <el-form-item style="text-align:center;">
         <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
       </el-form-item>
@@ -41,7 +40,6 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import { addSim, existSimNo, existIccId } from "@/api/index.js";
-// import userSelect from "@/components/select-user.vue";
 export default {
   data() {
     return {
@@ -87,6 +85,7 @@ export default {
   },
   created() {},
   methods: {
+    // SIM卡号验证
     validateSimNo(rule, value, callback) {
       if (value == "") {
         callback(new Error("请输入SIM卡号！"));
@@ -104,6 +103,7 @@ export default {
           callback(new Error("服务器重复验证失效，请稍候再试"));
         });
     },
+    // ICCID重复
     validateIccid(rule, value, callback) {
       if (value == "") {
         callback();
@@ -162,7 +162,6 @@ export default {
       });
     }
   }
-  // components: { userSelect }
 };
 </script>
 <style>

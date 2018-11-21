@@ -3,7 +3,6 @@
     <!-- 设备信息 -->
     <el-form-item label="终端厂商" prop="company_id">
       <company-select v-model="formData.company_id" style="width: 360px;"></company-select>
-      <!-- <el-input v-model="formData.company_name"></el-input> -->
     </el-form-item>
     <el-form-item v-if="formData.company_id">
       <el-upload action="medium" drag accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel " :http-request="uploadFunc " :show-file-list="false" class="o-el-upload--text">
@@ -13,8 +12,6 @@
         </div>
       </el-upload>
     </el-form-item>
-
-    <!-- <button @click="$router.go(-1)">a</button> -->
   </el-form>
 </template>
 <script>

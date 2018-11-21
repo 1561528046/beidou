@@ -18,7 +18,6 @@
             <!-- <div class="user-load-more" @click="userFilterOpen=!userFilterOpen">
               <i class="el-icon-caret-bottom" v-if="!userFilterOpen"></i>
               <i class="el-icon-caret-top" v-if="userFilterOpen"></i>
-
             </div> -->
           </div>
           <ul class="user-list">
@@ -122,6 +121,11 @@ export default {
   data() {
     return {
       userFilterOpen: false, //用户筛选展开关闭
+      currentUser: {},
+      titles: ["请选择用户", "未绑定SIM卡"],
+      userList: [],
+      leftList: [],
+      rightList: [],
       userTableQuery: {
         real_name: "",
         size: 20,
@@ -141,11 +145,6 @@ export default {
         page: 1,
         total: 0
       },
-      currentUser: {},
-      titles: ["请选择用户", "未绑定SIM卡"],
-      userList: [],
-      leftList: [],
-      rightList: [],
       leftCol: [
         { prop: "sim_no", label: "SIM卡号" },
         { prop: "icc_id", label: "ICCID" },
@@ -185,6 +184,7 @@ export default {
       this.unbindTableQuery.page = val;
       this.renderUnbind();
     },
+    // 左侧搜索框
     renderBind() {
       this.$set(this.$data, "leftList", []);
       if (this.currentUser.user_id) {
@@ -205,6 +205,7 @@ export default {
         });
       }
     },
+    // 右侧搜索框
     renderUnbind() {
       getSimAllUnbind(this.unbindTableQuery).then(res => {
         if (res.data.code == 0) {
@@ -217,6 +218,7 @@ export default {
         }
       });
     },
+    // 用户信息
     renderUser() {
       this.$set(this.$data, "userList", []);
       getDeviceSimUserList(this.userTableQuery).then(res => {
@@ -244,8 +246,8 @@ export default {
         this.userTableQuery.page = parseInt(this.userTableQuery.page) + 1;
       }
     },
+    //右到左
     onleft(items, next) {
-      //右到左
       if (!this.currentUser.user_id) {
         this.$message.warning("请选择一个用户！");
         next(false);
@@ -276,8 +278,8 @@ export default {
           next(false);
         });
     },
+    //左到右
     onright(items, next) {
-      //左到右
       var postData = {
         user_id: this.currentUser.user_id,
         sim_nos: []

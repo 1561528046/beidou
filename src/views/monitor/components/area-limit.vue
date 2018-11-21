@@ -26,12 +26,6 @@
             <el-input size="small" v-model="speed_limit.rules" style="width:20%"></el-input>
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="24">
-                    <el-form-item label="时间范围：">
-                        <el-date-picker v-model="speed_limit.time" value-format="yyyy-MM-DD HH:mm:ss" style="width:20%;" size="small" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-                        </el-date-picker>
-                    </el-form-item>
-                </el-col> -->
         <el-col v-if="attribute" :span="24">
           <el-form-item style="margin:0" label="路线属性:">
             <el-checkbox v-model="according_time" style="margin-left:0px;">根据时间</el-checkbox>
@@ -109,11 +103,9 @@ export default {
       speedDialog: false,
       lineData: [],
       line: "",
-      filterType: 0,
       RegionId: "",
       radio: false,
       label: "",
-      level: "",
       roadData: [],
       limit_road: [],
       vehicleData: {},
@@ -124,41 +116,15 @@ export default {
       outer_driver: false,
       enter_platform: false,
       outer_platform: false,
-      areaType: true,
-      custom: false,
-      nocustom: false,
       addDialog: false,
-      delDialog: false,
       addKey: 0,
       speed_limit: {
-        // time: "",
         event_type: "1",
         rules: ""
-      },
-      mapData: {
-        map: {},
-        mouseTool: {},
-        district: {},
-        polygons: [],
-        overlays: [],
-        radios: {}
       },
       tableQuery: {
         page: 1,
         size: 999
-      },
-      formdata: {
-        area: {},
-        name: "",
-        type: "",
-        time: "",
-        alarm_type: "",
-        start_time: "",
-        stop_time: ""
-      },
-      tableData: {
-        total: 0,
-        data: []
       }
     };
   },
@@ -178,7 +144,7 @@ export default {
     closeInterface() {
       this.itemDialog = false;
     },
-    // 区域列表
+    //区域列表
     getTable() {
       GetRegionByPage(this.tableQuery).then(res => {
         if (res.data.code == 0) {
@@ -196,7 +162,7 @@ export default {
         }
       });
     },
-    //   选择车辆
+    //选择车辆
     vehicleCallback(scope) {
       this.vehicleData = scope.row;
       this.license = scope.row.license;
@@ -272,11 +238,6 @@ export default {
         }
         var reg = new RegExp(",", "g");
         roadNum = parseInt(roadNum.toString().replace(reg, ""), 2);
-
-        var start_time = "";
-        //   start_time = this.speed_limit.time[0];
-        var end_time = "";
-        //   end_time = this.speed_limit.time[1];
         var TurnPoints = [];
         this.limit_road.map(it => {
           it.point.map(item => {

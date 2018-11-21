@@ -70,22 +70,14 @@ import moment from "moment";
 import { initMap } from "@/utils/map.js";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  created() {
-    // this.getTable();
-  },
+  created() {},
   components: { chooseVehicle },
   data() {
     return {
       copy_road: [],
-      machine_type: true,
-      route_type: false,
       label: "",
-      addKey: 0,
-      addDialog: false,
-      vehicleData: {},
       roadData: [],
       location: [],
-      arrData: [],
       mapData: {
         map: {},
         mouseTool: {},
@@ -127,8 +119,8 @@ export default {
     },
     getTable() {
       this.$set(this.$data, "roadData", this.$props.road);
-      var path = [];
       this.location = [];
+      var path = [];
       var lat = "";
       var lng = "";
       this.roadData[0].TurnPoints.map((item, index) => {
@@ -148,9 +140,7 @@ export default {
         strokeColor: "#3366FF",
         strokeOpacity: 1,
         strokeWeight: 6,
-        // 折线样式还支持 'dashed'
         strokeStyle: "solid",
-        // strokeStyle是dashed时有效
         strokeDasharray: [10, 5],
         lineJoin: "round",
         lineCap: "round",
