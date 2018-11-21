@@ -45,7 +45,7 @@
       <div v-if="passthrough" style="width:30%;margin:0 auto; text-align:center;">
         <el-form-item label="透传消息类型">
           <el-select v-model="reply.message_type" style="width:100%;">
-            <el-option value="0x00" label="CNSS模块详细定位数据">CNSS模块详细定位数据</el-option>
+            <el-option value="0x00" label="GNSS模块详细定位数据">GNSS模块详细定位数据</el-option>
             <el-option value="0x0B" label="道路运输证IC卡信息">道路运输证IC卡信息</el-option>
             <el-option value="0x41" label="串口1透传">串口1透传</el-option>
             <el-option value="0x42" label="串口2透传">串口2透传</el-option>

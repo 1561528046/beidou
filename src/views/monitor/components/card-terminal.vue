@@ -51,7 +51,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item prop="GNSSProperty" label="CNSS模块属性：">
+          <el-form-item prop="GNSSProperty" label="GNSS模块属性：">
             {{GNSSProperty}}
           </el-form-item>
         </el-col>
@@ -72,14 +72,14 @@ export default {
       var data = JSON.parse(eve.data);
       this.$set(this.$data, "formData", data);
       this.$set(this.$data, "device_type", this.formData.TerminalType);
-      this.$set(this.$data, "CNSS", this.formData.GNSSProperty);
+      this.$set(this.$data, "GNSS", this.formData.GNSSProperty);
       this.$set(this.$data, "COMM", this.formData.COMMProperty);
     });
   },
   data() {
     return {
       device_type: "",
-      CNSS: "",
+      GNSS: "",
       COMM: "",
       TerminalType: "",
       GNSSProperty: "",
@@ -148,39 +148,39 @@ export default {
       arr = arr.toString();
       this.$set(this.$data, "TerminalType", arr);
     },
-    CNSS: function() {
-      var cnss = this.CNSS.toString(2);
-      switch (cnss.length) {
+    GNSS: function() {
+      var gnss = this.GNSS.toString(2);
+      switch (gnss.length) {
         case 1:
-          cnss = "0000000" + cnss;
+          gnss = "0000000" + gnss;
           break;
         case 2:
-          cnss = "000000" + cnss;
+          gnss = "000000" + gnss;
           break;
         case 3:
-          cnss = "00000" + cnss;
+          gnss = "00000" + gnss;
           break;
         case 4:
-          cnss = "0000" + cnss;
+          gnss = "0000" + gnss;
           break;
       }
       var arr = [];
-      if (cnss[7] == 1) {
+      if (gnss[7] == 1) {
         arr.push("支持GPS定位");
       } else {
         arr.push("不支持GPS定位");
       }
-      if (cnss[6] == 1) {
+      if (gnss[6] == 1) {
         arr.push("支持北斗定位");
       } else {
         arr.push("不支持北斗定位");
       }
-      if (cnss[5] == 1) {
+      if (gnss[5] == 1) {
         arr.push("支持GLONASS定位");
       } else {
         arr.push("不支持GLONASS定位");
       }
-      if (cnss[4] == 1) {
+      if (gnss[4] == 1) {
         arr.push("支持Galileo定位");
       } else {
         arr.push("不支持Galileo定位");
