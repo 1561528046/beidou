@@ -23,14 +23,14 @@ export default new Promise(function(resolve, reject) {
         if (MessageID) {
           objectStore = objectStore.index("MessageID");
         }
-        var cursors = objectStore.openCursor();
+        var range = MessageID ? IDBKeyRange.only(MessageID) : null;
+        var cursors = objectStore.openCursor(range, "prev");
         cursors.onsuccess = function(event) {
           var cursor = event.target.result;
           if (cursor) {
-            results.push(cursor);
+            results.push(cursor.value);
             cursor.continue();
           } else {
-            console.log(results);
             resolve(results);
           }
         };

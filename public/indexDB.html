@@ -16,7 +16,10 @@
         var objectStore = db.transaction("log").objectStore("log");
         var index = objectStore.index("MessageID");
         var html = "";
-        index.openCursor().onsuccess = function(event) {
+        index.openCursor(
+          IDBKeyRange.only("x9300"),
+          "prev"
+        ).onsuccess = function(event) {
           var cursor = event.target.result;
           console.log(cursor);
           if (cursor) {
