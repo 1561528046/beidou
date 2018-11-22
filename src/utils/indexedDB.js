@@ -9,11 +9,11 @@ export default new Promise(function(resolve, reject) {
         .add(data);
 
       request.onsuccess = function() {
-        console.log("数据写入成功");
+        // console.log("数据写入成功");
       };
 
       request.onerror = function() {
-        console.log("数据写入失败");
+        // console.log("数据写入失败");
       };
     },
     readAll: function(MessageID) {
