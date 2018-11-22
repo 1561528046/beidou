@@ -50,8 +50,8 @@
             <el-radio v-model="area_attribute.open_door" label="2">禁止开门</el-radio>
             <el-radio v-model="area_attribute.communication_module" label="1">进区域开启通信模块</el-radio>
             <el-radio v-model="area_attribute.communication_module" label="2">进区域关闭通信模块</el-radio>
-            <el-radio v-model="area_attribute.CNSS_data" label="1">进区域不采集CNSS详细定位数据</el-radio>
-            <el-radio v-model="area_attribute.CNSS_data" label="2">进区域采集CNSS详细定位数据</el-radio>
+            <el-radio v-model="area_attribute.GNSS_data" label="1">进区域不采集GNSS详细定位数据</el-radio>
+            <el-radio v-model="area_attribute.GNSS_data" label="2">进区域采集GNSS详细定位数据</el-radio>
           </el-form-item>
         </el-col>
         <el-col v-if="speed" :span="24">
@@ -160,7 +160,7 @@ export default {
         longitude: "1", //经度
         open_door: "1", //是否允许开门
         communication_module: "1", //进区域是否开启通信模块
-        CNSS_data: "1" //进区域是否采集CNSS详细定位数据
+        GNSS_data: "1" //进区域是否采集GNSS详细定位数据
       },
       tableQuery: {
         MaxSpeed: "", //最高速度

@@ -78,11 +78,11 @@
         <list-multimedia></list-multimedia>
       </el-tab-pane>
       <el-tab-pane :closable="false" name="customInstruction">
-        <span slot="label"> <i class="iconfont icon-ziyuan"></i>
+        <span slot="label">
+          <i class="iconfont icon-ziyuan"></i>
         </span>
-        <list-multimedia></list-multimedia>
+        <list-custom></list-custom>
       </el-tab-pane>
-
     </el-tabs>
   </div>
 </template>
@@ -99,6 +99,7 @@ import list809Notice from "./list-809-notice.vue"; //809报文
 import list809In from "./list-809-in.vue"; //809查岗
 import list809Send from "./list-809-send.vue"; //809发送
 import listMultimedia from "./list-multimedia.vue"; //多媒体数据信息上传
+import listCustom from "./list-custom.vue"; //自定义指令下发
 export default {
   components: {
     qaList,
@@ -112,7 +113,8 @@ export default {
     list809In,
     list809Send,
     list809Notice,
-    listMultimedia
+    listMultimedia,
+    listCustom
   },
   data() {
     return {
