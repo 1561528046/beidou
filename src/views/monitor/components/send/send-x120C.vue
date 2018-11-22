@@ -4,7 +4,9 @@
       <el-row>
         <el-col :span="8">
           <el-form-item prop="VEHICLE_NO" label="车牌号：">
-            <el-input style="width:90%" v-model="formData.VEHICLE_NO" size="small"></el-input>
+            <!-- <el-input style="width:90%" v-model="formData.VEHICLE_NO" size="small"></el-input> -->
+            <el-autocomplete class="inline-input" size="small" style="width:90%" :popper-class="autoplate" v-model="formData.VEHICLE_NO" :fetch-suggestions="querySearch" placeholder="请输入车牌号" :trigger-on-focus="false" @select="selectVehicle">
+            </el-autocomplete>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -49,7 +51,8 @@
   </div>
 </template>
 <script>
-import { GetServerByPage } from "@/api/index.js";
+/*eslint-disable*/
+import { GetServerByPage, GetVehicleByLicense } from "@/api/index.js";
 export default {
   created() {
     GetServerByPage({ page: 1, size: 999, flag: 809, title: "" }).then(res => {
@@ -70,7 +73,11 @@ export default {
   },
   data() {
     return {
+      autoplate: "",
       tableData: [],
+      vehilceData: {
+        license: ""
+      },
       formData: {
         MessageID: "x1200",
         DATA_TYPE: 0x120c,
@@ -104,6 +111,40 @@ export default {
     send() {
       var data = JSON.stringify(this.formData);
       this.$instruction.send(data);
+    },
+    querySearch(queryString, cb) {
+      var vehicleList = Array.from(monitor.data.values());
+      console.log(vehicleList);
+      var arr = [];
+      if (queryString.length < 7 && queryString.length > 3) {
+        this.autoplate = "";
+        arr = this.fuzzyQuery(vehicleList, queryString);
+        cb(arr);
+      } else {
+        this.autoplate = "autoplate";
+      }
+    },
+    fuzzyQuery(list, keyWord) {
+      var arr = [];
+      list.map(item => {
+        if (item.license.split(keyWord).length > 1) {
+          item.value = item.license;
+          arr.push(item);
+        }
+      });
+      return arr;
+    },
+    selectVehicle() {
+      this.vehilceData.license = this.formData.VEHICLE_NO;
+      GetVehicleByLicense(this.vehilceData).then(res => {
+        if (res.data.code != 0) {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
+        }
+      });
     }
   }
 };

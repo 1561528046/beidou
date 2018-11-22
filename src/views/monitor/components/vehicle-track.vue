@@ -22,7 +22,7 @@
             <el-checkbox v-model="trackForm.invalid_type">过滤无效数据</el-checkbox>
             <el-checkbox v-model="trackForm.position_type">过滤无效定位</el-checkbox>
           </el-form-item>
-          <el-button type="primary" @click="selectForm" style="position:absolute;right:17px;top:55px;" size="small">查询</el-button>
+          <el-button :disabled="disabled" type="primary" @click="selectForm" style="position:absolute;right:17px;top:55px;" size="small">查询</el-button>
           <label style="position:absolute;left:230px;top:15px">{{vehicle_license}}</label>
           <i @click="down()" class="el-icon-circle-close-outline" style="font-size:20px;position:absolute;right:15px;top:10px;margin-top:5px;"></i>
         </el-form>
@@ -42,7 +42,7 @@
     </div>
     <!-- 左侧数据展示栏 -->
     <div style=" width:45%; height:90%;background-color:#fff;position:absolute;left:0;top:0;bottom:0;z-index:99;">
-      <el-table @row-click="tableCurrentChange" :row-style="{height:'71px'}" highlight-current-row ref="baseTable" :header-cell-style="{background:'#fafafa'}" :data="list" height="100%" border style="width: 100%">
+      <el-table element-loading-text="拼命加载中" v-loading="tableLoading" @row-click="tableCurrentChange" :row-style="{height:'71px'}" highlight-current-row ref="baseTable" :header-cell-style="{background:'#fafafa'}" :data="list" height="100%" border style="width: 100%">
         <el-table-column width="80px" prop="index" label="序号"></el-table-column>
         <el-table-column width="150px" label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
         <el-table-column label="速度" prop="speed"></el-table-column>
@@ -50,7 +50,7 @@
         <el-table-column label="位置" prop="address" :formatter="$utils.baseFormatter" width="400px"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableQuery.total" layout="total, sizes, prev, pager, next, jumper" background>
+        <el-pagination :disabled="paging" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableQuery.total" layout="total, sizes, prev, pager, next, jumper" background>
         </el-pagination>
       </div>
     </div>
@@ -76,6 +76,9 @@ export default {
   },
   data() {
     return {
+      tableLoading: false,
+      disabled: false,
+      paging: true,
       scroll_bar: "",
       player: false,
       vehicle_license: "",
@@ -159,19 +162,25 @@ export default {
       }
     },
     querySearch(queryString, cb) {
-      if (queryString.length < 7) {
+      var vehicleList = Array.from(monitor.data.values());
+      var arr = [];
+      if (queryString.length < 7 && queryString.length > 3) {
         this.autoplate = "";
-        GetVehicleByLicense({ license: queryString }).then(res => {
-          if (res.data.code == 0) {
-            res.data.data.map(item => {
-              item.value = item.license;
-            });
-            cb(res.data.data);
-          }
-        });
+        arr = this.fuzzyQuery(vehicleList, queryString);
+        cb(arr);
       } else {
         this.autoplate = "autoplate";
       }
+    },
+    fuzzyQuery(list, keyWord) {
+      var arr = [];
+      list.map(item => {
+        if (item.license.split(keyWord).length > 1) {
+          item.value = item.license;
+          arr.push(item);
+        }
+      });
+      return arr;
     },
     //移动位置(初始化位置)
     nextData() {
@@ -253,6 +262,8 @@ export default {
     },
     // 查询轨迹信息
     selectForm() {
+      this.tableLoading = true;
+      this.disabled = true;
       this.$refs.baseTable.$el.childNodes.forEach(item => {
         if (
           item.className &&
@@ -278,10 +289,14 @@ export default {
             this.mapData.map.clearMap();
             this.setMarker();
             this.setPolyline();
+            this.tableLoading = false;
+            this.disabled = false;
             if (this.tableQuery.data.length > 0) {
               this.player = true;
+              this.paging = false;
             } else {
               this.player = false;
+              this.paging = true;
             }
             gps2amap({
               data: this.tableQuery.data,
@@ -318,6 +333,7 @@ export default {
       this.mapData.map.clearMap();
       this.player = false;
       this.selectType = false;
+      this.vehicle_license = "";
       this.tableData.data = [];
       this.tableQuery.data = [];
       this.tableData.total = 0;
@@ -409,6 +425,9 @@ export default {
 };
 </script>
 <style>
+.btn-loading {
+  top: 90%;
+}
 .el-table .success-row {
   background: #cbf1b7;
 }
