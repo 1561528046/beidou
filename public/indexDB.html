@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div id="view"></div>
+    <script>
+      var db = null;
+      var request = indexedDB.open("BEIDOU", 1);
+      function readAll() {
+        var objectStore = db.transaction("log").objectStore("log");
+        var index = objectStore.index("MessageID");
+        var html = "";
+        index.openCursor(
+          IDBKeyRange.only("x9300"),
+          "prev"
+        ).onsuccess = function(event) {
+          var cursor = event.target.result;
+          console.log(cursor);
+          if (cursor) {
+            html += JSON.stringify(cursor.value);
+            cursor.continue();
+          } else {
+            console.log("没有更多数据了！");
+            document.querySelector("#view").innerHTML = html;
+          }
+        };
+      }
+
+      request.onsuccess = function() {
+        db = request.result;
+        readAll();
+      };
+    </script>
+  </body>
+</html>

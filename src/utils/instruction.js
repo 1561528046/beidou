@@ -1,5 +1,7 @@
 import { dict } from "./base.js";
 import utils from "./utils.js";
+import indexDB from "./indexedDB.js";
+var dbObj = null;
 export default class Instruction {
   constructor() {
     this.onceList = new Map();
@@ -15,6 +17,9 @@ export default class Instruction {
     this.init();
   }
   init() {
+    indexDB.then(db => {
+      dbObj = db;
+    });
     clearInterval(this.wsInterval);
     this.ws = new WebSocket(dict.INSTRUCTION_URL);
     this.ws.onopen = () => {
@@ -140,6 +145,9 @@ export default class Instruction {
     }
 
     if (messageId != "heart") {
+      if (data.code == undefined) {
+        dbObj.add(data);
+      }
       try {
         var key = messageId + sim_id || "";
         if (this.handlers.has(key)) {
