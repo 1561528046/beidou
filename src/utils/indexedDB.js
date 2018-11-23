@@ -39,6 +39,23 @@ export default new Promise(function(resolve, reject) {
           reject(err);
         };
       });
+    },
+    removeAll: function() {
+      var objectStore = this.db
+        .transaction("log", "readwrite")
+        .objectStore("log");
+      var cursors = objectStore.openCursor();
+      cursors.onsuccess = function(event) {
+        var cursor = event.target.result;
+        if (cursor) {
+          //只取前50条
+          cursor.delete();
+          cursor.continue();
+        }
+      };
+      cursors.onerror = function(err) {
+        reject(err);
+      };
     }
   };
   request.onupgradeneeded = function(event) {

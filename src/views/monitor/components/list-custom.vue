@@ -1,10 +1,14 @@
 <template>
   <div style="padding-top:20px;" class="log-container">
-    <ul class="log">
-      <li v-for="log in logs" :key="log.id">
-        {{log}}
-      </li>
-    </ul>
+    <div class="log">
+      <ul>
+        <li v-for="log in logs" :key="log.id">
+          {{log}}
+        </li>
+      </ul>
+      <el-button @click="clearDB" size="mini" class="remove">清空</el-button>
+    </div>
+
     <div class="send">
       指令类型：
       <el-select style="width:40%; margin-bottom:10px;" v-model="instruction" size="small">
@@ -22,28 +26,38 @@
 </template>
 <style lang="less">
 .log-container {
+  .remove {
+    position: absolute;
+    z-index: 2;
+    right: 30px;
+    bottom: 10px;
+  }
   .send {
     position: absolute;
     width: 45%;
     right: 5%;
   }
   .log {
-    font-size: 12px;
+    font-size: 13px;
     position: absolute;
     width: 45%;
     left: 0;
     top: 0;
     height: 100%;
+    background: #000;
+    color: rgb(192, 192, 192);
+  }
+  ul {
+    height: 100%;
     overflow: auto;
-    background: #001529;
-    color: #fff;
-    font-family: "宋体";
+    font-family: "点阵字体";
+    padding: 10px 0;
+    box-sizing: border-box;
   }
   li {
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
+    border-bottom: 1px solid #888;
     word-wrap: break-word;
+    padding: 8px 10px;
   }
   pre {
     font-size: 12px;
@@ -52,6 +66,7 @@
 </style>
 <script>
 import db from "@/utils/indexedDB.js";
+var dbObject = null;
 import { instruction809 } from "@/utils/809.js";
 export default {
   data() {
@@ -66,6 +81,7 @@ export default {
   created() {
     db.then(dbObj => {
       setInterval(() => {
+        dbObject = dbObj;
         dbObj
           .readAll()
           .then(res => {
@@ -91,6 +107,9 @@ export default {
     }
   },
   methods: {
+    clearDB() {
+      dbObject.removeAll();
+    },
     send() {
       this.$instruction.send(this.textarea);
     }
