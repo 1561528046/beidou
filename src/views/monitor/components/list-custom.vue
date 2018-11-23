@@ -1,15 +1,11 @@
 <template>
   <div style="padding-top:20px;" class="log-container">
-    <!-- <ul class="log">
+    <ul class="log">
       <li v-for="log in logs" :key="log.id">
         {{log}}
       </li>
-    </ul> -->
+    </ul>
     <div class="send">
-      指令类型：
-      <el-select style="width:40%; margin-bottom:10px;" v-model="instruction" size="small">
-        <el-option v-for="(item,index) in instruction809" :key="index" :value="index" :label="item.title"></el-option>
-      </el-select>
       <el-input style="margin-bottom:10px;" type="textarea" :rows="4" placeholder="请输入内容" v-model="textarea">
       </el-input>
       <el-button style="display:block;margin:0 auto;" @click="send" type="primary" size="small">发送</el-button>
@@ -17,6 +13,7 @@
 
   </div>
 </template>
+<<<<<<< HEAD
 <script>
 import { instruction809 } from "@/utils/809.js";
 export default {
@@ -46,6 +43,8 @@ export default {
   }
 };
 </script>
+=======
+>>>>>>> f1a7c649d693cd344e4725514549285e72197983
 <style lang="less">
 .log-container {
   .send {
@@ -72,4 +71,40 @@ export default {
     word-wrap: break-word;
   }
 }
+<<<<<<< HEAD
 </style>
+=======
+</style>
+<script>
+import db from "@/utils/indexedDB.js";
+export default {
+  data() {
+    return {
+      textarea: "",
+      logs: []
+    };
+  },
+  created() {
+    db.then(dbObj => {
+      setInterval(() => {
+        dbObj
+          .readAll()
+          .then(res => {
+            this.$set(this.$data, "logs", res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }, 1000);
+    }).catch(err => {
+      console.log(err);
+    });
+  },
+  methods: {
+    send() {
+      this.$instruction.send(this.textarea);
+    }
+  }
+};
+</script>
+>>>>>>> f1a7c649d693cd344e4725514549285e72197983

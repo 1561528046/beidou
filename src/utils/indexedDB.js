@@ -1,5 +1,5 @@
 export default new Promise(function(resolve, reject) {
-  var request = indexedDB.open("BEIDOU", 1);
+  var request = indexedDB.open("BEIDOU");
   var dbObj = {
     db: null,
     add: function(data) {
@@ -59,6 +59,7 @@ export default new Promise(function(resolve, reject) {
     resolve(dbObj);
   };
   request.onerror = function(err) {
-    reject(err);
+    // reject(err);
+    console.log(err);
   };
 });
