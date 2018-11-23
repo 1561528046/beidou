@@ -6,6 +6,10 @@
       </li>
     </ul>
     <div class="send">
+      指令类型：
+      <el-select style="width:40%; margin-bottom:10px;" v-model="instruction" size="small">
+        <el-option v-for="(item,index) in instruction809" :key="index" :value="index" :label="item.title"></el-option>
+      </el-select>
       <el-input style="margin-bottom:10px;" type="textarea" :rows="4" placeholder="请输入内容" v-model="textarea">
       </el-input>
       <el-button style="display:block;margin:0 auto;" @click="send" type="primary" size="small">发送</el-button>
@@ -42,28 +46,43 @@
 </style>
 <script>
 import db from "@/utils/indexedDB.js";
+import { instruction809 } from "@/utils/809.js";
 export default {
   data() {
     return {
       textarea: "",
-      logs: []
+      logs: [],
+      instruction: "",
+      instruction809: []
     };
   },
   created() {
-    db.then(dbObj => {
-      setInterval(() => {
-        dbObj
-          .readAll()
-          .then(res => {
-            this.$set(this.$data, "logs", res);
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }, 1000);
-    }).catch(err => {
-      console.log(err);
-    });
+    db
+      .then(dbObj => {
+        setInterval(() => {
+          dbObj
+            .readAll()
+            .then(res => {
+              this.$set(this.$data, "logs", res);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }, 1000);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    this.$set(this.$data, "instruction809", instruction809);
+  },
+  watch: {
+    instruction: function() {
+      this.$set(
+        this.$data,
+        "textarea",
+        JSON.stringify(this.instruction809[this.instruction].body)
+      );
+    }
   },
   methods: {
     send() {
