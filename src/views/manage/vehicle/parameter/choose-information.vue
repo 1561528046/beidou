@@ -5,7 +5,7 @@
       <el-table-column prop="operating" label="操作状态"></el-table-column>
       <el-table-column prop="O129" label="车辆所在的省域ID" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="O130" label="车辆所在的市域ID" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="O131" label="车牌颜色" :formatter="(row)=>{return this.$dict.get_color(row.Ox0084)}"> </el-table-column>
+      <el-table-column prop="O131" label="车牌颜色" :formatter="(row)=>{return this.$dict.get_color(row.O131)}"> </el-table-column>
       <el-table-column prop="O132" label="机动车号牌" :formatter="$utils.baseFormatter"> </el-table-column>
       <el-table-column prop="VIN" label="车辆识别码" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column prop="Plate" label="机动车号牌分类" :formatter="(row)=>{return this.$dict.get_license_species(row.Plate)}"></el-table-column>
@@ -89,7 +89,7 @@ export default {
           sim_id = item.sim_id;
         }
         if (sim_id == data.SimID) {
-          this.$set(item, "O131", data.PlateNo);
+          this.$set(item, "O132", data.PlateNo);
           this.$set(item, "VIN", data.VIN);
           this.$set(item, "Plate", data.PlateClassify);
         }
