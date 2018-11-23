@@ -1,32 +1,32 @@
 export const instruction809 = [
-  {
-    title: "主链路登录请求消息",
-    desc: `链路类型:主链路。
-        消息方向:下级平台往上级平台。
-        业务数据类型标识: UP_CONNECT_REQ。
-        描述:下级平台向上级平台发送用户名和密码等登录信息。`,
-    body: {
-      MessageID: "x1001",
-      MSG_GNSSCENTERID: "下级平台接入码",
-      userID: "用户名",
-      PASSWORD: "密码",
-      DOWN_LINK_IP: "下级平台提供对应的从链路服务端 IP 地址",
-      DOWN_LINK_PORT: "下级平台提供对应的从链路服务器端口号"
-    }
-  },
-  {
-    title: "主链路登录应答消息",
-    desc: `链路类型:主链路。消息方向:上级平台往下级平台。
-          业务数据类型标识:UP_CONNCCT_RSP。
-          描述:上级平台对下级平台登录请求信息、进行安全验证后，返回相应的验证结果`,
-    body: {
-      MessageID: "x1002",
-      MSG_GNSSCENTERID: "下级平台接入码",
-      RESUL:
-        "0x00:成功;0x01:IP 地址不正确；0x02:接入码不正确；0x03:用户没用注册；0x04:密码错误;0x05:资源紧张，稍后再连接(已经占用）；0x06：其他",
-      VERIFY_CODE: "校验码"
-    }
-  },
+  // {
+  //   title: "主链路登录请求消息",
+  //   desc: `链路类型:主链路。
+  //       消息方向:下级平台往上级平台。
+  //       业务数据类型标识: UP_CONNECT_REQ。
+  //       描述:下级平台向上级平台发送用户名和密码等登录信息。`,
+  //   body: {
+  //     MessageID: "x1001",
+  //     MSG_GNSSCENTERID: "下级平台接入码",
+  //     userID: "用户名",
+  //     PASSWORD: "密码",
+  //     DOWN_LINK_IP: "下级平台提供对应的从链路服务端 IP 地址",
+  //     DOWN_LINK_PORT: "下级平台提供对应的从链路服务器端口号"
+  //   }
+  // },
+  // {
+  //   title: "主链路登录应答消息",
+  //   desc: `链路类型:主链路。消息方向:上级平台往下级平台。
+  //         业务数据类型标识:UP_CONNCCT_RSP。
+  //         描述:上级平台对下级平台登录请求信息、进行安全验证后，返回相应的验证结果`,
+  //   body: {
+  //     MessageID: "x1002",
+  //     MSG_GNSSCENTERID: "下级平台接入码",
+  //     RESUL:
+  //       "0x00:成功;0x01:IP 地址不正确；0x02:接入码不正确；0x03:用户没用注册；0x04:密码错误;0x05:资源紧张，稍后再连接(已经占用）；0x06：其他",
+  //     VERIFY_CODE: "校验码"
+  //   }
+  // },
   {
     title: "主链路注销请求消息",
     desc: `链路类型:主链路。
@@ -42,66 +42,76 @@ export const instruction809 = [
     }
   },
   {
-    title: "主链路注销应答消息",
-    desc: `链路类型:主链路。
-    消息方向:上级平台往下级平台。
-    业务数据类型标识:UP_DISCONNECT_RSP。
-    描述:上级平台收到下级平台发送的主链路注销请求消息后，向下级平台返回主链路注应答消息，并记录链路注销日志，下级平台接收到应答消息后，可中断主从链路联接`,
+    title: "从链路注销请求消息",
+    desc: `描述:从链路建立后，上级平台在取消该链路时，应向下级平台发送从链路注销请求消
+    息`,
     body: {
-      MessageID: "x1004",
-      MSG_GNSSCENTERID: "下级平台接入码"
-    }
-  },
-  {
-    title: "主链路连接保持请求消息",
-    desc: `链路类型:主链路。
-    消息方向:下级平台往上级平台。
-    业务数据类型标识:UP_LINKTEST_REQ。
-    描述:下级平台向上级平台发送主链路连接保持清求消息，以保持主链路的连接`,
-    body: {
-      MessageID: "x1005",
-      MSG_GNSSCENTERID: "下级平台接入码"
-    }
-  },
-  {
-    title: "主链路连接保持应答消息",
-    desc: `链路类型:主链路。
-    消息方向:I 级平台往下级平台。
-    .业务数据类型标识:UP_LINKTEST_RSP。
-    描述:上级平台收到下级平台的主链路连接保持请求消息后，向下级平台返回.主链路连
-    接保持应答消息，保持主链路的连接状态。`,
-    body: {
-      MessageID: "x1006",
-      MSG_GNSSCENTERID: "下级平台接入码"
-    }
-  },
-  {
-    title: "主链路断开通知消息",
-    desc: `链路类型:从链路
-    消息方向:下级平台往上级平台。
-    业务数据类型标识:UP_DISCONNECT_INFORM。
-    描述:'当主链路中断后，下级平台可通过从链路向上级平台发送本消息通知上级平台主
-    链路中断，本条消息无需被通知方应答。`,
-    body: {
-      MessageID: "x1007",
+      MessageID: "x9003",
       MSG_GNSSCENTERID: "下级平台接入码",
-      ERROR_CODE: "0x00:主链路断开；0x01：其他原因"
+      VERIFY_CODE: "校验码"
     }
   },
-  {
-    title: "下级平台主动关闭主从链路通知消息",
-    desc: `链路类型:从链路。
-    消息方向:下级平台往上级平台。
-    业务数据类型标识:UP_CLOSELINK_INFORM。
-    描述:下级平台作为服务端，发现从链路出现异常时，下级平台通过从链路向上级平台
-    发送本消息，通知上级平台下级平台即将关闭主从链路，本条消息
-    无需被通知方应答;`,
-    body: {
-      MessageID: "x1008",
-      MSG_GNSSCENTERID: "下级平台接入码",
-      REASON_CODE: "0x00:网关重启； 0x01：其他原因"
-    }
-  },
+  // {
+  //   title: "主链路注销应答消息",
+  //   desc: `链路类型:主链路。
+  //   消息方向:上级平台往下级平台。
+  //   业务数据类型标识:UP_DISCONNECT_RSP。
+  //   描述:上级平台收到下级平台发送的主链路注销请求消息后，向下级平台返回主链路注应答消息，并记录链路注销日志，下级平台接收到应答消息后，可中断主从链路联接`,
+  //   body: {
+  //     MessageID: "x1004",
+  //     MSG_GNSSCENTERID: "下级平台接入码"
+  //   }
+  // },
+  // {
+  //   title: "主链路连接保持请求消息",
+  //   desc: `链路类型:主链路。
+  //   消息方向:下级平台往上级平台。
+  //   业务数据类型标识:UP_LINKTEST_REQ。
+  //   描述:下级平台向上级平台发送主链路连接保持清求消息，以保持主链路的连接`,
+  //   body: {
+  //     MessageID: "x1005",
+  //     MSG_GNSSCENTERID: "下级平台接入码"
+  //   }
+  // },
+  // {
+  //   title: "主链路连接保持应答消息",
+  //   desc: `链路类型:主链路。
+  //   消息方向:I 级平台往下级平台。
+  //   .业务数据类型标识:UP_LINKTEST_RSP。
+  //   描述:上级平台收到下级平台的主链路连接保持请求消息后，向下级平台返回.主链路连
+  //   接保持应答消息，保持主链路的连接状态。`,
+  //   body: {
+  //     MessageID: "x1006",
+  //     MSG_GNSSCENTERID: "下级平台接入码"
+  //   }
+  // },
+  // {
+  //   title: "主链路断开通知消息",
+  //   desc: `链路类型:从链路
+  //   消息方向:下级平台往上级平台。
+  //   业务数据类型标识:UP_DISCONNECT_INFORM。
+  //   描述:'当主链路中断后，下级平台可通过从链路向上级平台发送本消息通知上级平台主
+  //   链路中断，本条消息无需被通知方应答。`,
+  //   body: {
+  //     MessageID: "x1007",
+  //     MSG_GNSSCENTERID: "下级平台接入码",
+  //     ERROR_CODE: "0x00:主链路断开；0x01：其他原因"
+  //   }
+  // },
+  // {
+  //   title: "下级平台主动关闭主从链路通知消息",
+  //   desc: `链路类型:从链路。
+  //   消息方向:下级平台往上级平台。
+  //   业务数据类型标识:UP_CLOSELINK_INFORM。
+  //   描述:下级平台作为服务端，发现从链路出现异常时，下级平台通过从链路向上级平台
+  //   发送本消息，通知上级平台下级平台即将关闭主从链路，本条消息
+  //   无需被通知方应答;`,
+  //   body: {
+  //     MessageID: "x1008",
+  //     MSG_GNSSCENTERID: "下级平台接入码",
+  //     REASON_CODE: "0x00:网关重启； 0x01：其他原因"
+  //   }
+  // },
   {
     title: "上传车辆注册信息消息",
     desc: `描述:监控平台收到车载终端鉴权信息后，启动本命令向上级监管平台上传该车辆注册信息. 各级监管平台再逐级向上级平台上传该信息，其数据体规定见表 19。本条消息服务端无需
@@ -112,7 +122,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
       DATA_TYPE: "x1201",
-      DATA_LENGTH: "后续数据长度",
       PLATFORM_ID: "平台唯一编码，由平台所在地行政区划代码和平台编号组成。",
       PRODUCER_ID:
         "车载终端厂商唯一编码，由车载终端厂商所在地行政区划代码和制造商 ID 组成。",
@@ -131,7 +140,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照JT/T415-2006中5.4.12的规定",
       DATA_TYPE: "x1202",
-      DATA_LENGTH: "后续数据长度",
       GNSS_DATA:
         '{"EXCRYPT":1,"DATE":[30,10,7,219],"TIME":[17,50,9],"DATETIME":"10/30/2011 17:50:09","LON":117.17,"LAT":31.52,"VEC1":100,"VEC2":100,"VEC3":10000,"DIRECTION":300,"ALTITUDE":500,"STATE":0,"ALARM":0,"ErrorBytes":null}'
     }
@@ -149,7 +157,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照JT/T415-2006中5.4.12的规定",
       DATA_TYPE: "x1203",
-      DATA_LENGTH: "后续数据长度",
       GNSS_CNT: "该数据包里包含的微星定位数据个数1<=GNSS_CNT<=5。",
       GNSS_DATA:
         '{"EXCRYPT":1,"DATE":[30,10,7,219],"TIME":[17,50,9],"DATETIME":"10/30/2011 17:50:09","LON":117.17,"LAT":31.52,"VEC1":100,"VEC2":100,"VEC3":10000,"DIRECTION":300,"ALTITUDE":500,"STATE":0,"ALARM":0,"ErrorBytes":null}'
@@ -164,8 +171,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号，返回DOWN_EXG_MSG_RETURN_SARTUP 消息中的车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x1205",
-      DATA_LENGTH: "后续数据长度，值为 0x00000000"
+      DATA_TYPE: "x1205"
     }
   },
   {
@@ -177,8 +183,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号，返回DOWN_EXG_MSG_RETURN_SARTUP 消息中的车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x1206",
-      DATA_LENGTH: "后续数据长度，值为 0x00000000"
+      DATA_TYPE: "x1206"
     }
   },
   {
@@ -192,7 +197,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
       DATA_TYPE: "x1207",
-      DATA_LENGTH: "后续数据长度",
       START_TIME: "开始时间，用 UTC 时间表示",
       END_TIME: "结束时间，用 UTC 时间表示"
     }
@@ -205,8 +209,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x1208",
-      DATA_LENGTH: "后续数据长度,值为 0x00000000"
+      DATA_TYPE: "x1208"
     }
   },
   {
@@ -220,7 +223,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
       DATA_TYPE: "x1209",
-      DATA_LENGTH: "后续数据长度",
       START_TIME: "开始时间，用 UTC 时间表示",
       END_TIME: "结束时间，用 UTC 时间表示"
     }
@@ -235,7 +237,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
       DATA_TYPE: "x120A",
-      DATA_LENGTH: "后续数据长度",
       DRIVER_NAME: "驾驶员姓名",
       DRIVER_ID: "身份证编号",
       LICENCE: "从业资格证（备用）",
@@ -252,7 +253,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
       DATA_TYPE: "x120B",
-      DATA_LENGTH: "后续数据长度",
       EWAYBILL_LENGTH: "电子运单数据体长度",
       EWAYBILL_INFO: "电子运单数据内容"
     }
@@ -267,7 +267,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定",
       DATA_TYPE: "x120C",
-      DATA_LENGTH: "后续数据长度",
       DRIVER_NAME: "驾驶员姓名",
       DRIVER_ID: "身份证编号",
       LICENCE: "从业资格证号（备用）",
@@ -283,7 +282,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12的规定",
       DATA_TYPE: "x120D",
-      DATA_LENGTH: "后续数据长度",
       EWAYBILL_LENGTH: "电子运单数据体长度",
       EWAYBILL_INFO: "电子运单数据内容"
     }
@@ -296,7 +294,6 @@ export const instruction809 = [
       MessageID: "x1300",
       MSG_GNSSCENTERID: "下级平台接入码",
       DATA_TYPE: "x1301",
-      DATA_LENGTH: "后续数据长度",
       OBJECT_TYPE:
         "查岗对象的类型,当前连接的下级平台 0X01,下级平台所属单一业户 0X02,下级平台所属所有业户 0X03",
       OBJECT_ID:
@@ -314,7 +311,6 @@ export const instruction809 = [
       MessageID: "x1300",
       MSG_GNSSCENTERID: "下级平台接入码",
       DATA_TYPE: "x1302",
-      DATA_LENGTH: "后续数据长度",
       INFO_ID: "收到信息 ID"
     }
   },
@@ -327,7 +323,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006中 5.4.12 的规定",
       DATA_TYPE: "x1401",
-      DATA_LENGTH: "后续数据长度",
       SUPERVISION_ID: "报警督办 ID",
       RESULT:
         "报警处理结果，定义如下：0x00:处理中；0x01:以处理完毕；0x02:不作处理；0x03:将来处理"
@@ -342,7 +337,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006中 5.4.12 的规定",
       DATA_TYPE: "x1402",
-      DATA_LENGTH: "后续数据长度",
       WARN_SRC:
         "报警信息来源，定义如下：0x01:车载终端；0x02:企业监控平台；0x03:政府监管平台；0x09:其他",
       WARN_TYPE: "报警类型",
@@ -361,7 +355,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
       DATA_TYPE: "x1403",
-      DATA_LENGTH: "后续数据长度",
       INFO_ID: "报警信息 ID",
       RESULT:
         "报警处理结果，定义如下：0x00：处理中；0x01：已处理完毕；0x02：不作处理；0x03：将来处理。"
@@ -376,7 +369,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
       DATA_TYPE: "x1501",
-      DATA_LENGTH: "后续数据长度",
       RESULT: "车辆单向监听应答结果，定义如下：0x00：监听成功 0x01：监听失败"
     }
   },
@@ -389,7 +381,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
       DATA_TYPE: "x1502",
-      DATA_LENGTH: "后续数据长度",
       PHOTO_RSP_FLAG:
         "拍照应答标识，标识拍照后的结果或原因, 定义如下:0x00:布支持拍照;0x01:完成拍照:0x02:完成拍照、照片数据稍后传送;0x03:未拍照(不在线);0x04:未拍照;(无法使用指定镜头);0x05:未拍照(其他原因）；0x09:车牌号码错误",
       GNSS_DATA:
@@ -409,7 +400,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
       DATA_TYPE: "x1503",
-      DATA_LENGTH: "后续数据长度",
       MSG_ID: "对应“下发车辆报文请求消息”中的MSG_ID",
       RESULT: "下发车辆报文应答结果，定义如下：0x00：下发成功0x01：下发失败"
     }
@@ -424,7 +414,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
       DATA_TYPE: "x1504",
-      DATA_LENGTH: "后续数据长度",
       COMMAND_TYPE: "命令字，按照 GB/T 19056 中相关要求",
       TRAVELDATA_LENGTH: "车辆行驶记录数据体长度",
       TRAVELDATA_INFO: "车辆行驶记录信息，按照GB/T 19056 的规定。"
@@ -439,7 +428,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
       DATA_TYPE: "x1505",
-      DATA_LENGTH: "后续数据长度",
       RESULT: "0x00：车载终端成功收到该命令；0x01：无该车辆0x02：其他原因失败"
     }
   },
@@ -452,7 +440,6 @@ export const instruction809 = [
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
       DATA_TYPE: "x1505",
-      DATA_LENGTH: "后续数据长度",
       CAR_INFO: '{ "TRANS_TYPE": "030", "VIN": "测A12345" }'
     }
   }

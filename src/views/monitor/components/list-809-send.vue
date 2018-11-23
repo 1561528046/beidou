@@ -10,7 +10,7 @@
       <el-option value="x1401" label="报警督办应答(1401)">报警督办应答(1401)</el-option>
       <el-option value="x1402" label="上报报警信息(1402)">上报报警信息(1402)</el-option>
       <el-option value="x1403" label="主动上报报警处理结果(1403)">主动上报报警处理结果(1403)</el-option>
-      <el-option value="x1601" label="补报车辆静态信息请求消息(1601)">补报车辆静态信息请求消息(1601)</el-option>
+      <el-option value="x1601" label="补报车辆静态信息应答(1601)">补报车辆静态信息应答(1601)</el-option>
     </el-select>
     <div :is="component_name"></div>
   </div>

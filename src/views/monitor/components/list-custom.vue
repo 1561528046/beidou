@@ -30,8 +30,19 @@ export default {
       instruction809: []
     };
   },
+  watch: {
+    instruction: function() {
+      this.$set(
+        this.$data,
+        "textarea",
+        JSON.stringify(this.instruction809[this.instruction].body)
+      );
+    }
+  },
   methods: {
-    send() {}
+    send() {
+      this.$instruction.send(this.textarea);
+    }
   }
 };
 </script>
@@ -62,21 +73,3 @@ export default {
   }
 }
 </style>
-<script>
-import { instruction809 } from "@/utils/809.js";
-export default {
-  created() {
-    this.$set(this.$data, "instruction809", instruction809);
-  },
-  data() {
-    return {
-      textarea: "",
-      instruction: "",
-      instruction809: []
-    };
-  },
-  methods: {
-    send() {}
-  }
-};
-</script>
