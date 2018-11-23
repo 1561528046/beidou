@@ -96,5 +96,3 @@ export default {
   components: { citySelect }
 };
 </script>
-<style>
-</style>

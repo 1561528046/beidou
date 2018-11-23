@@ -131,5 +131,3 @@ export default {
   components: { selectDevice }
 };
 </script>
-<style>
-</style>

@@ -194,5 +194,3 @@ export default {
   components: { companySelect }
 };
 </script>
-<style>
-</style>
