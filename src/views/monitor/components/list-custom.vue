@@ -12,6 +12,9 @@
       </el-select>
       <el-input style="margin-bottom:10px;" type="textarea" :rows="4" placeholder="请输入内容" v-model="textarea">
       </el-input>
+      <pre>
+          {{desc}}
+        </pre>
       <el-button style="display:block;margin:0 auto;" @click="send" type="primary" size="small">发送</el-button>
     </div>
 
@@ -42,6 +45,9 @@
     margin-bottom: 10px;
     word-wrap: break-word;
   }
+  pre {
+    font-size: 12px;
+  }
 }
 </style>
 <script>
@@ -51,28 +57,27 @@ export default {
   data() {
     return {
       textarea: "",
+      desc: "",
       logs: [],
       instruction: "",
       instruction809: []
     };
   },
   created() {
-    db
-      .then(dbObj => {
-        setInterval(() => {
-          dbObj
-            .readAll()
-            .then(res => {
-              this.$set(this.$data, "logs", res);
-            })
-            .catch(err => {
-              console.log(err);
-            });
-        }, 1000);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    db.then(dbObj => {
+      setInterval(() => {
+        dbObj
+          .readAll()
+          .then(res => {
+            this.$set(this.$data, "logs", res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }, 1000);
+    }).catch(err => {
+      console.log(err);
+    });
     this.$set(this.$data, "instruction809", instruction809);
   },
   watch: {
@@ -80,8 +85,9 @@ export default {
       this.$set(
         this.$data,
         "textarea",
-        JSON.stringify(this.instruction809[this.instruction].body)
+        JSON.stringify(this.instruction809[this.instruction].body, null, 4)
       );
+      this.$set(this.$data, "desc", this.instruction809[this.instruction].desc);
     }
   },
   methods: {

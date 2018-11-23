@@ -27,7 +27,7 @@ export default new Promise(function(resolve, reject) {
         var cursors = objectStore.openCursor(range, "prev");
         cursors.onsuccess = function(event) {
           var cursor = event.target.result;
-          if (cursor && results.length >= 50) {
+          if (cursor && results.length < 50) {
             //只取前50条
             results.push(cursor.value);
             cursor.continue();
