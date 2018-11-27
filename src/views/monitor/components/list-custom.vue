@@ -106,7 +106,6 @@ export default {
         "textarea",
         JSON.stringify(this.instruction809[this.instruction].body, null, 4)
       );
-      console.log(this.textarea);
       this.$set(this.$data, "desc", this.instruction809[this.instruction].desc);
     }
   },
