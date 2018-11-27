@@ -58,6 +58,7 @@ export default class Instruction {
     if (!this.handlers.has(key)) {
       this.handlers.set(key, new Set());
     }
+
     this.handlers.get(key).add(fn);
   }
   once(event, sim_id, fn) {

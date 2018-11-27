@@ -422,7 +422,9 @@ export const instruction809 = [
       ],
       LENS_ID: "镜头 ID",
       SIZE_TYPE:
-        "图片大小，定义如下：Ox01:320x240:Ox02:640x480;Ox03:800x600;Ox04:1024x768;Ox05: l 76x 144[QCIF];0x06:352*288[CIF];0x07:704*288[HALF D1];0x08:704*576[D1]"
+        "图片大小，定义如下：Ox01:320x240:Ox02:640x480;Ox03:800x600;Ox04:1024x768;Ox05: l 76x 144[QCIF];0x06:352*288[CIF];0x07:704*288[HALF D1];0x08:704*576[D1]",
+      PHOTO_TYPE: "图像格式，定义如下：Ox0l:jpg:Ox02:gif;Ox03:tiff;Ox04:png",
+      PHOTO_CONTENT: "图片内容"
     }
   },
   {
