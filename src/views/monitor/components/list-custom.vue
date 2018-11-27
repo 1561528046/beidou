@@ -16,6 +16,7 @@
       </el-select>
       <el-input style="margin-bottom:10px;" type="textarea" :rows="4" placeholder="请输入内容" v-model="textarea">
       </el-input>
+
       <pre>
           {{desc}}
         </pre>
@@ -79,21 +80,23 @@ export default {
     };
   },
   created() {
-    db.then(dbObj => {
-      setInterval(() => {
-        dbObject = dbObj;
-        dbObj
-          .readAll()
-          .then(res => {
-            this.$set(this.$data, "logs", res);
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }, 1000);
-    }).catch(err => {
-      console.log(err);
-    });
+    db
+      .then(dbObj => {
+        setInterval(() => {
+          dbObject = dbObj;
+          dbObj
+            .readAll()
+            .then(res => {
+              this.$set(this.$data, "logs", res);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }, 1000);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     this.$set(this.$data, "instruction809", instruction809);
   },
   watch: {
@@ -103,6 +106,7 @@ export default {
         "textarea",
         JSON.stringify(this.instruction809[this.instruction].body, null, 4)
       );
+      console.log(this.textarea);
       this.$set(this.$data, "desc", this.instruction809[this.instruction].desc);
     }
   },
@@ -111,7 +115,26 @@ export default {
       dbObject.removeAll();
     },
     send() {
-      this.$instruction.send(this.textarea);
+      var data = JSON.parse(this.textarea);
+      if (data.DATA_TYPE) {
+        data.DATA_TYPE = parseInt(data.DATA_TYPE).toString();
+      }
+      if (data.RESULT) {
+        data.RESULT = parseInt(data.RESULT).toString();
+      }
+      if (data.WARN_SRC) {
+        data.WARN_SRC = parseInt(data.WARN_SRC).toString();
+      }
+      if (data.WARN_TYPE) {
+        data.WARN_TYPE = parseInt(data.WARN_TYPE).toString();
+      }
+      if (data.PHOTO_RSP_FLAG) {
+        data.PHOTO_RSP_FLAG = parseInt(data.PHOTO_RSP_FLAG).toString();
+      }
+      if (data.OBJECT_TYPE) {
+        data.OBJECT_TYPE = parseInt(data.OBJECT_TYPE).toString();
+      }
+      this.$instruction.send(JSON.stringify(data));
     }
   }
 };

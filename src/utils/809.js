@@ -121,7 +121,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
-      DATA_TYPE: "x1201",
+      DATA_TYPE: "0x1201",
       PLATFORM_ID: "平台唯一编码，由平台所在地行政区划代码和平台编号组成。",
       PRODUCER_ID:
         "车载终端厂商唯一编码，由车载终端厂商所在地行政区划代码和制造商 ID 组成。",
@@ -139,9 +139,22 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照JT/T415-2006中5.4.12的规定",
-      DATA_TYPE: "x1202",
-      GNSS_DATA:
-        '{"EXCRYPT":1,"DATE":[30,10,7,219],"TIME":[17,50,9],"DATETIME":"10/30/2011 17:50:09","LON":117.17,"LAT":31.52,"VEC1":100,"VEC2":100,"VEC3":10000,"DIRECTION":300,"ALTITUDE":500,"STATE":0,"ALARM":0,"ErrorBytes":null}'
+      DATA_TYPE: "0x1202",
+      GNSS_DATA: [
+        {
+          EXCRYPT: 1,
+          DATETIME: "10/30/2011 17:50:09",
+          LON: 117.17,
+          LAT: 31.52,
+          VEC1: 100,
+          VEC2: 100,
+          VEC3: 10000,
+          DIRECTION: 300,
+          ALTITUDE: 500,
+          STATE: 0,
+          ALARM: 0
+        }
+      ]
     }
   },
   {
@@ -156,10 +169,23 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照JT/T415-2006中5.4.12的规定",
-      DATA_TYPE: "x1203",
+      DATA_TYPE: "0x1203",
       GNSS_CNT: "该数据包里包含的微星定位数据个数1<=GNSS_CNT<=5。",
-      GNSS_DATA:
-        '{"EXCRYPT":1,"DATE":[30,10,7,219],"TIME":[17,50,9],"DATETIME":"10/30/2011 17:50:09","LON":117.17,"LAT":31.52,"VEC1":100,"VEC2":100,"VEC3":10000,"DIRECTION":300,"ALTITUDE":500,"STATE":0,"ALARM":0,"ErrorBytes":null}'
+      GNSS_DATAS: [
+        {
+          EXCRYPT: 1,
+          DATETIME: "10/30/2011 17:50:09",
+          LON: 117.17,
+          LAT: 31.52,
+          VEC1: 100,
+          VEC2: 100,
+          VEC3: 10000,
+          DIRECTION: 300,
+          ALTITUDE: 500,
+          STATE: 0,
+          ALARM: 0
+        }
+      ]
     }
   },
   {
@@ -171,7 +197,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号，返回DOWN_EXG_MSG_RETURN_SARTUP 消息中的车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x1205"
+      DATA_TYPE: "0x1205"
     }
   },
   {
@@ -183,7 +209,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号，返回DOWN_EXG_MSG_RETURN_SARTUP 消息中的车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x1206"
+      DATA_TYPE: "0x1206"
     }
   },
   {
@@ -196,9 +222,9 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x1207",
-      START_TIME: "开始时间，用 UTC 时间表示",
-      END_TIME: "结束时间，用 UTC 时间表示"
+      DATA_TYPE: "0x1207",
+      START_TIME: "开始时间，用 UTC 时间表示 ",
+      END_TIME: "结束时间，用 UTC 时间表示  "
     }
   },
   {
@@ -209,7 +235,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x1208"
+      DATA_TYPE: "0x1208"
     }
   },
   {
@@ -222,9 +248,9 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x1209",
+      DATA_TYPE: "0x1209",
       START_TIME: "开始时间，用 UTC 时间表示",
-      END_TIME: "结束时间，用 UTC 时间表示"
+      END_TIME: "结束时间，用 UTC 时间表示 "
     }
   },
   {
@@ -236,7 +262,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x120A",
+      DATA_TYPE: "0x120A",
       DRIVER_NAME: "驾驶员姓名",
       DRIVER_ID: "身份证编号",
       LICENCE: "从业资格证（备用）",
@@ -252,8 +278,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006 中5.4.12 的规定",
-      DATA_TYPE: "x120B",
-      EWAYBILL_LENGTH: "电子运单数据体长度",
+      DATA_TYPE: "0x120B",
       EWAYBILL_INFO: "电子运单数据内容"
     }
   },
@@ -266,7 +291,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定",
-      DATA_TYPE: "x120C",
+      DATA_TYPE: "0x120C",
       DRIVER_NAME: "驾驶员姓名",
       DRIVER_ID: "身份证编号",
       LICENCE: "从业资格证号（备用）",
@@ -281,8 +306,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12的规定",
-      DATA_TYPE: "x120D",
-      EWAYBILL_LENGTH: "电子运单数据体长度",
+      DATA_TYPE: "0x120D",
       EWAYBILL_INFO: "电子运单数据内容"
     }
   },
@@ -293,13 +317,12 @@ export const instruction809 = [
     body: {
       MessageID: "x1300",
       MSG_GNSSCENTERID: "下级平台接入码",
-      DATA_TYPE: "x1301",
+      DATA_TYPE: "0x1301",
       OBJECT_TYPE:
         "查岗对象的类型,当前连接的下级平台 0X01,下级平台所属单一业户 0X02,下级平台所属所有业户 0X03",
       OBJECT_ID:
         "查岗对象的 ID，长度不足时后补 0X00，定义如下：对象类型为平台时，由平台行政区划代码和平台唯一编码组成；对象类型为业户时，为业户经营许可证号",
       INFO_ID: "信息 ID，本 ID 跟下发的 ID 相同。",
-      INFO_LENGTH: "数据长度",
       INFO_CONTENT: "应答内容"
     }
   },
@@ -308,7 +331,7 @@ export const instruction809 = [
     desc: `描述:下级平台收到上级平台发送的下发平台间报文请求消息后，根据相应的下发报文
     对象类型，进行转发，并向上级平台发送应答消息`,
     body: {
-      MessageID: "x1300",
+      MessageID: "0x1300",
       MSG_GNSSCENTERID: "下级平台接入码",
       DATA_TYPE: "x1302",
       INFO_ID: "收到信息 ID"
@@ -322,7 +345,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006中 5.4.12 的规定",
-      DATA_TYPE: "x1401",
+      DATA_TYPE: "0x1401",
       SUPERVISION_ID: "报警督办 ID",
       RESULT:
         "报警处理结果，定义如下：0x00:处理中；0x01:以处理完毕；0x02:不作处理；0x03:将来处理"
@@ -336,13 +359,12 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车辆颜色，按照 JT/T415-2006中 5.4.12 的规定",
-      DATA_TYPE: "x1402",
+      DATA_TYPE: "0x1402",
       WARN_SRC:
         "报警信息来源，定义如下：0x01:车载终端；0x02:企业监控平台；0x03:政府监管平台；0x09:其他",
       WARN_TYPE: "报警类型",
       WARN_TIME: "报警时间，UTC 时间格式",
       INFO_ID: "信息 ID",
-      INFO_LENGTH: "报警数据长度，最长 1024 字节",
       INFO_CONTENT: "上报报警信息内容"
     }
   },
@@ -354,7 +376,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
-      DATA_TYPE: "x1403",
+      DATA_TYPE: "0x1403",
       INFO_ID: "报警信息 ID",
       RESULT:
         "报警处理结果，定义如下：0x00：处理中；0x01：已处理完毕；0x02：不作处理；0x03：将来处理。"
@@ -368,7 +390,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
-      DATA_TYPE: "x1501",
+      DATA_TYPE: "0x1501",
       RESULT: "车辆单向监听应答结果，定义如下：0x00：监听成功 0x01：监听失败"
     }
   },
@@ -380,13 +402,25 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
-      DATA_TYPE: "x1502",
+      DATA_TYPE: "0x1502",
       PHOTO_RSP_FLAG:
         "拍照应答标识，标识拍照后的结果或原因, 定义如下:0x00:布支持拍照;0x01:完成拍照:0x02:完成拍照、照片数据稍后传送;0x03:未拍照(不在线);0x04:未拍照;(无法使用指定镜头);0x05:未拍照(其他原因）；0x09:车牌号码错误",
-      GNSS_DATA:
-        '{"EXCRYPT":1,"DATE":[30,10,7,219],"TIME":[17,50,9],"DATETIME":"10/30/2011 17:50:09","LON":117.17,"LAT":31.52,"VEC1":100,"VEC2":100,"VEC3":10000,"DIRECTION":300,"ALTITUDE":500,"STATE":0,"ALARM":0,"ErrorBytes":null}',
+      GNSS_DATA: [
+        {
+          EXCRYPT: 1,
+          DATETIME: "10/30/2011 17:50:09",
+          LON: 117.17,
+          LAT: 31.52,
+          VEC1: 100,
+          VEC2: 100,
+          VEC3: 10000,
+          DIRECTION: 300,
+          ALTITUDE: 500,
+          STATE: 0,
+          ALARM: 0
+        }
+      ],
       LENS_ID: "镜头 ID",
-      PHOTO_LEN: "图片长度",
       SIZE_TYPE:
         "图片大小，定义如下：Ox01:320x240:Ox02:640x480;Ox03:800x600;Ox04:1024x768;Ox05: l 76x 144[QCIF];0x06:352*288[CIF];0x07:704*288[HALF D1];0x08:704*576[D1]"
     }
@@ -399,7 +433,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
-      DATA_TYPE: "x1503",
+      DATA_TYPE: "0x1503",
       MSG_ID: "对应“下发车辆报文请求消息”中的MSG_ID",
       RESULT: "下发车辆报文应答结果，定义如下：0x00：下发成功0x01：下发失败"
     }
@@ -413,9 +447,8 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
-      DATA_TYPE: "x1504",
+      DATA_TYPE: "0x1504",
       COMMAND_TYPE: "命令字，按照 GB/T 19056 中相关要求",
-      TRAVELDATA_LENGTH: "车辆行驶记录数据体长度",
       TRAVELDATA_INFO: "车辆行驶记录信息，按照GB/T 19056 的规定。"
     }
   },
@@ -427,7 +460,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
-      DATA_TYPE: "x1505",
+      DATA_TYPE: "0x1505",
       RESULT: "0x00：车载终端成功收到该命令；0x01：无该车辆0x02：其他原因失败"
     }
   },
@@ -439,7 +472,7 @@ export const instruction809 = [
       MSG_GNSSCENTERID: "下级平台接入码",
       VEHICLE_NO: "车牌号",
       VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
-      DATA_TYPE: "x1505",
+      DATA_TYPE: "0x1601",
       CAR_INFO: '{ "TRANS_TYPE": "030", "VIN": "测A12345" }'
     }
   }
