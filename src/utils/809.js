@@ -394,39 +394,39 @@ export const instruction809 = [
       RESULT: "车辆单向监听应答结果，定义如下：0x00：监听成功 0x01：监听失败"
     }
   },
-  {
-    title: "车辆拍照应答消息",
-    desc: `描述:下级平台应答上级平台发送的车辆拍照请求消息`,
-    body: {
-      MessageID: "x1500",
-      MSG_GNSSCENTERID: "下级平台接入码",
-      VEHICLE_NO: "车牌号",
-      VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
-      DATA_TYPE: "0x1502",
-      PHOTO_RSP_FLAG:
-        "拍照应答标识，标识拍照后的结果或原因, 定义如下:0x00:布支持拍照;0x01:完成拍照:0x02:完成拍照、照片数据稍后传送;0x03:未拍照(不在线);0x04:未拍照;(无法使用指定镜头);0x05:未拍照(其他原因）；0x09:车牌号码错误",
-      GNSS_DATA: [
-        {
-          EXCRYPT: 1,
-          DATETIME: "10/30/2011 17:50:09",
-          LON: 117.17,
-          LAT: 31.52,
-          VEC1: 100,
-          VEC2: 100,
-          VEC3: 10000,
-          DIRECTION: 300,
-          ALTITUDE: 500,
-          STATE: 0,
-          ALARM: 0
-        }
-      ],
-      LENS_ID: "镜头 ID",
-      SIZE_TYPE:
-        "图片大小，定义如下：Ox01:320x240:Ox02:640x480;Ox03:800x600;Ox04:1024x768;Ox05: l 76x 144[QCIF];0x06:352*288[CIF];0x07:704*288[HALF D1];0x08:704*576[D1]",
-      PHOTO_TYPE: "图像格式，定义如下：Ox0l:jpg:Ox02:gif;Ox03:tiff;Ox04:png",
-      PHOTO_CONTENT: "图片内容"
-    }
-  },
+  // {
+  //   title: "车辆拍照应答消息",
+  //   desc: `描述:下级平台应答上级平台发送的车辆拍照请求消息`,
+  //   body: {
+  //     MessageID: "x1500",
+  //     MSG_GNSSCENTERID: "下级平台接入码",
+  //     VEHICLE_NO: "车牌号",
+  //     VEHICLE_COLOR: "车牌颜色，按照 JT/T 415-2006 中 5.4.12 的规定。",
+  //     DATA_TYPE: "0x1502",
+  //     PHOTO_RSP_FLAG:
+  //       "拍照应答标识，标识拍照后的结果或原因, 定义如下:0x00:布支持拍照;0x01:完成拍照:0x02:完成拍照、照片数据稍后传送;0x03:未拍照(不在线);0x04:未拍照;(无法使用指定镜头);0x05:未拍照(其他原因）；0x09:车牌号码错误",
+  //     GNSS_DATA: [
+  //       {
+  //         EXCRYPT: 1,
+  //         DATETIME: "10/30/2011 17:50:09",
+  //         LON: 117.17,
+  //         LAT: 31.52,
+  //         VEC1: 100,
+  //         VEC2: 100,
+  //         VEC3: 10000,
+  //         DIRECTION: 300,
+  //         ALTITUDE: 500,
+  //         STATE: 0,
+  //         ALARM: 0
+  //       }
+  //     ],
+  //     LENS_ID: "镜头 ID",
+  //     SIZE_TYPE:
+  //       "图片大小，定义如下：Ox01:320x240:Ox02:640x480;Ox03:800x600;Ox04:1024x768;Ox05: l 76x 144[QCIF];0x06:352*288[CIF];0x07:704*288[HALF D1];0x08:704*576[D1]",
+  //     PHOTO_TYPE: "图像格式，定义如下：Ox0l:jpg:Ox02:gif;Ox03:tiff;Ox04:png",
+  //     PHOTO_CONTENT: "图片内容"
+  //   }
+  // },
   {
     title: "下发车辆报文应答消息",
     desc: `描述:下级平台应答上级平台下发的报文是否成功到达指定车辆`,
