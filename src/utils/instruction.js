@@ -134,7 +134,8 @@ export default class Instruction {
       }
       messageId = message[0];
     } else {
-      var data = JSON.parse(evt.data);
+      var str = evt.data.replace(/\0+/g, " ");
+      var data = JSON.parse(str); //删除所有空格;);
       sim_id = data.SimID;
       messageId = data.MessageID;
       // if (data.MSG_ID) {
