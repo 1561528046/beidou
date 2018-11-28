@@ -269,8 +269,7 @@ export default {
     x0104(evt) {
       this.x0104Loding = false;
       var msg = JSON.parse(evt.data);
-      var Parameters = JSON.parse(msg.Parameters);
-      Parameters.map(item => {
+      msg.Parameters.map(item => {
         var str = "O" + item.ParameterId;
         this.$set(this.deviceParam, str, item.ParameterValue);
       });
