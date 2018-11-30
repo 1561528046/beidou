@@ -3,47 +3,101 @@
     <div class="monitor-nav">
       <i class="iconfont icon-unorderedlist _header"></i>
       <div class="_list">
-        <a href="javascript:;" @click="openTab('track')">
+        <a
+          href="javascript:;"
+          @click="openTab('track')"
+        >
           <i class="iconfont icon-guiji"></i>
           <span>轨迹回放</span>
         </a>
-        <a href="javascript:;" @click="openTab('fence')">
+        <a
+          href="javascript:;"
+          @click="openTab('fence')"
+        >
           <i class="iconfont icon-weilan"></i>
           <span>围栏管理 </span>
         </a>
       </div>
     </div>
-    <el-tabs v-model="$store.state.monitor.currentTab" style="height:100%;" class="monitor-tabs" @tab-remove="tabRemove">
-      <el-tab-pane label="监控" :closable="false" name="index">
+    <el-tabs
+      v-model="$store.state.monitor.currentTab"
+      style="height:100%;"
+      class="monitor-tabs"
+      @tab-remove="tabRemove"
+    >
+      <el-tab-pane
+        label="监控"
+        :closable="false"
+        name="index"
+      >
         <div class="monitor">
           <!-- <qa-list></qa-list> -->
           <monitor-info></monitor-info>
-          <div id="container" style="width:100%;height:100%;"></div>
+          <div
+            id="container"
+            style="width:100%;height:100%;"
+          ></div>
           <div class="vehicle-search shadow-box">
-            <el-autocomplete v-model="searchVehicle" clearable :fetch-suggestions="vehicleSearch" placeholder="搜索车辆车牌号" @select="vehicleSelected" size="small" prefix-icon="el-icon-search" style="width:100%;">
+            <el-autocomplete
+              v-model="searchVehicle"
+              clearable
+              :fetch-suggestions="vehicleSearch"
+              placeholder="搜索车辆车牌号"
+              @select="vehicleSelected"
+              size="small"
+              prefix-icon="el-icon-search"
+              style="width:100%;"
+            >
             </el-autocomplete>
           </div>
-          <transition-group name="list-complete" tag="div" class="current-vehicle-container">
-            <vehicle-monitor class="list-complete-item" @close="removeCurrentVehicle(vehicle.sim_id)" v-for="(vehicle,index) in currentVehicles" :vehicle="vehicle" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
+          <transition-group
+            name="list-complete"
+            tag="div"
+            class="current-vehicle-container"
+          >
+            <vehicle-monitor
+              class="list-complete-item"
+              @close="removeCurrentVehicle(vehicle.sim_id)"
+              v-for="(vehicle,index) in currentVehicles"
+              :vehicle="vehicle"
+              :index="index"
+              :key="vehicle.vehicle_id"
+            ></vehicle-monitor>
           </transition-group>
 
-          <el-collapse accordion class="status-container shadow-box" @change="toggleUserList">
+          <el-collapse
+            accordion
+            class="status-container shadow-box"
+            @change="toggleUserList"
+          >
             <el-collapse-item>
               <template slot="title">
                 <div class="_header">
-                  <span class="_global-status" @click.stop="showVehicleAll('total')">平台车辆总数：
+                  <span
+                    class="_global-status"
+                    @click.stop="showVehicleAll('total')"
+                  >平台车辆总数：
                     <strong>{{vehicleCount.online + vehicleCount.offline}}</strong>
                   </span>
-                  <span class="_global-status _online" @click.stop="showVehicleAll('online')">在线车辆：
+                  <span
+                    class="_global-status _online"
+                    @click.stop="showVehicleAll('online')"
+                  >在线车辆：
                     <strong>{{vehicleCount.online}}</strong>
                   </span>
-                  <span class="_global-status _alarm" @click.stop="showVehicleAll('alarm')">报警车辆：
+                  <span
+                    class="_global-status _alarm"
+                    @click.stop="showVehicleAll('alarm')"
+                  >报警车辆：
                     <strong>{{vehicleCount.alarm}}</strong>
                   </span>
                   <!-- <span class="_global-status _error" @click.stop="showVehicleAll('error')">异常车辆：
                     <strong>{{vehicleCount.error}}</strong>
                   </span> -->
-                  <span class="_global-status _offline" @click.stop="showVehicleAll('offline')">离线车辆：
+                  <span
+                    class="_global-status _offline"
+                    @click.stop="showVehicleAll('offline')"
+                  >离线车辆：
                     <strong>{{vehicleCount.offline}}</strong>
                   </span>
                 </div>
@@ -53,67 +107,159 @@
                 </div>
               </template>
               <div class="_body">
-                <el-form :inline="true" size="mini" class="_search" @submit.native.prevent>
+                <el-form
+                  :inline="true"
+                  size="mini"
+                  class="_search"
+                  @submit.native.prevent
+                >
                   <el-form-item label="企业名称">
-                    <el-input placeholder="企业名称" v-model="userListQuery.real_name"></el-input>
+                    <el-input
+                      placeholder="企业名称"
+                      v-model="userListQuery.real_name"
+                    ></el-input>
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="primary" native-type="submit" @click="searchUserList">查询</el-button>
+                    <el-button
+                      type="primary"
+                      native-type="submit"
+                      @click="searchUserList"
+                    >查询</el-button>
                   </el-form-item>
                 </el-form>
                 <div class="_table">
-                  <el-table :data="userList" size="small" style="width: 100%" @cell-click="showVehicleWithGroup" key="user-table">
-                    <el-table-column prop="user_name" label="用户名称" width="180">
+                  <el-table
+                    :data="userList"
+                    size="small"
+                    style="width: 100%"
+                    @cell-click="showVehicleWithGroup"
+                    key="user-table"
+                  >
+                    <el-table-column
+                      prop="user_name"
+                      label="用户名称"
+                      width="180"
+                    >
                     </el-table-column>
-                    <el-table-column prop="total" label="车辆总数">
+                    <el-table-column
+                      prop="total"
+                      label="车辆总数"
+                    >
                       <template slot-scope="scope">
                         {{scope.row.online + scope.row.offline}}
                       </template>
                     </el-table-column>
-                    <el-table-column prop="online" label="在线车辆 ">
+                    <el-table-column
+                      prop="online"
+                      label="在线车辆 "
+                    >
                     </el-table-column>
-                    <el-table-column prop="alarm" label="报警车辆  ">
+                    <el-table-column
+                      prop="alarm"
+                      label="报警车辆  "
+                    >
                     </el-table-column>
                     <!-- <el-table-column prop="error" label="异常车辆  ">
                     </el-table-column> -->
-                    <el-table-column prop="offline" label="离线车辆 ">
+                    <el-table-column
+                      prop="offline"
+                      label="离线车辆 "
+                    >
                     </el-table-column>
                   </el-table>
                 </div>
                 <div class="_pager">
-                  <el-pagination background layout="prev, pager, next" :total="userListQuery.total" @current-change="userListCurrentChange" :page-size="userListQuery.size">
+                  <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :total="userListQuery.total"
+                    @current-change="userListCurrentChange"
+                    :page-size="userListQuery.size"
+                  >
                   </el-pagination>
                 </div>
               </div>
             </el-collapse-item>
           </el-collapse>
-          <transition name="fade" enter-active-class="fadeInLeft" leave-active-class="fadeOutLeft">
-            <vehicle-details @instruction="contextmenuInstruction" @close="closeShowVehicle" @open-single="addSingleVehicle" :vehicle="currentGroup" :show-vehicle="showVehicle"></vehicle-details>
+          <transition
+            name="fade"
+            enter-active-class="fadeInLeft"
+            leave-active-class="fadeOutLeft"
+          >
+            <vehicle-details
+              @instruction="contextmenuInstruction"
+              @close="closeShowVehicle"
+              @open-single="addSingleVehicle"
+              :vehicle="currentGroup"
+              :show-vehicle="showVehicle"
+            ></vehicle-details>
           </transition>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="围栏管理" :closable="true" name="fence" v-if="$store.state.monitor.tabs.indexOf('fence') !=-1">
+      <el-tab-pane
+        label="围栏管理"
+        :closable="true"
+        name="fence"
+        v-if="$store.state.monitor.tabs.indexOf('fence') !=-1"
+      >
         <vehicle-area></vehicle-area>
       </el-tab-pane>
-      <el-tab-pane label="报警车辆" :closable="true" name="alarm" v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1">
-        <vehicle-alarm :vehicle="$store.state.monitor.monitorAlarmVehicle" :actived="$store.state.monitor.currentTab=='alarm'" :key="$store.state.monitor.monitorAlarmVehicle.sim_id"></vehicle-alarm>
+      <el-tab-pane
+        label="报警车辆"
+        :closable="true"
+        name="alarm"
+        v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1"
+      >
+        <vehicle-alarm
+          :vehicle="$store.state.monitor.monitorAlarmVehicle"
+          :actived="$store.state.monitor.currentTab=='alarm'"
+          :key="$store.state.monitor.monitorAlarmVehicle.sim_id"
+        ></vehicle-alarm>
       </el-tab-pane>
-      <el-tab-pane label="轨迹回放" :closable="true" name="track" v-if="$store.state.monitor.tabs.indexOf('track') !=-1">
+      <el-tab-pane
+        label="轨迹回放"
+        :closable="true"
+        name="track"
+        v-if="$store.state.monitor.tabs.indexOf('track') !=-1"
+      >
         <vehicle-track :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-track>
       </el-tab-pane>
       <!-- <el-tab-pane label="数据异常" :closable="true" name="error" v-if="$store.state.monitor.tabs.indexOf('error') !=-1">
         <vehicle-error :vehicle="$store.state.monitor.monitorErrorVehicle"></vehicle-error>
       </el-tab-pane> -->
-      <el-tab-pane label="媒体列表" :closable="true" name="media" v-if="$store.state.monitor.tabs.indexOf('media') !=-1">
+      <el-tab-pane
+        label="媒体列表"
+        :closable="true"
+        name="media"
+        v-if="$store.state.monitor.tabs.indexOf('media') !=-1"
+      >
         <vehicle-media :vehicle="$store.state.monitor.monitorMediaVehicle"></vehicle-media>
       </el-tab-pane>
       <!-- 单车标签 -->
-      <el-tab-pane :label="vehicle.license" :closable="true" v-for="vehicle in $store.getters.singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
+      <el-tab-pane
+        :label="vehicle.license"
+        :closable="true"
+        v-for="vehicle in $store.getters.singleVehicles"
+        :name="'single-'+vehicle.sim_id"
+        :key="'single-'+vehicle.sim_id"
+      >
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog :title="instructionCard.title" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="instructionCard.show" width="50%">
-      <div :is="instructionCard.component" :key="instructionCard.vehicle.sim_id" :vehicle="instructionCard.vehicle" v-if="instructionCard.vehicle"></div>
+    <el-dialog
+      :title="instructionCard.title"
+      append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="instructionCard.show"
+      width="50%"
+    >
+      <div
+        :is="instructionCard.component"
+        :key="instructionCard.vehicle.sim_id"
+        :vehicle="instructionCard.vehicle"
+        v-if="instructionCard.vehicle"
+      ></div>
     </el-dialog>
 
   </div>
@@ -128,7 +274,8 @@ import {
   getUserList,
   getGroupByUser,
   getUser,
-  GetRegionByPage
+  GetRegionByPage,
+  GetServerByPage
 } from "@/api/index.js";
 import { initMap } from "@/utils/map.js";
 import { GPS } from "@/utils/map-tools.js";
@@ -221,6 +368,7 @@ export default {
   created() {
     this.init();
     var vm = this;
+
     //创建全局监控对象
     window.monitor = {
       socketDataWorker: new Worker("/map/worker-socket.js"),
@@ -234,6 +382,7 @@ export default {
       data: new Map(), //所有数据
       dict: {
         //字典
+        gnssCenter: new Map(), //809上级平台字典
         fence: new Map(),
         alarm: new Set(), //报警
         online: new Set(), //在线
@@ -243,6 +392,19 @@ export default {
       },
       init(data, groups) {
         vm.initLoader.setText("建立数据字典");
+        //创建809上级平台字典
+        GetServerByPage({
+          title: "",
+          flag: 808,
+          size: 100,
+          page: 1
+        }).then(res => {
+          if (res.data.code == 0) {
+            res.data.data.map(item => {
+              this.dict.gnssCenter.set(item.access_code, item.title);
+            });
+          }
+        });
         //建立分组字典
         this.initGroupDict(groups);
         //初始化车辆
@@ -305,6 +467,38 @@ export default {
       },
       initInstructionListen() {
         //初始化各种组件的指令监听
+
+        vm.$instruction.on("x1004", evt => {
+          //主链路关闭
+          var data = JSON.parse(evt.data);
+          var name = this.dict.gnssCenter.get(data.MSG_GNSSCENTERID) || "";
+          vm.$notify({
+            title: "链路通知",
+            message: name + "主链路关闭",
+            type: "warning"
+          });
+        });
+        vm.$instruction.on("x9007", evt => {
+          //主链路关闭
+          var data = JSON.parse(evt.data);
+          var name = this.dict.gnssCenter.get(data.MSG_GNSSCENTERID) || "";
+          vm.$notify({
+            title: "链路通知",
+            message: name + "从链路关闭",
+            type: "warning"
+          });
+        });
+        vm.$instruction.on("x9008", evt => {
+          //主链路关闭
+          var data = JSON.parse(evt.data);
+          var name = this.dict.gnssCenter.get(data.MSG_GNSSCENTERID) || "";
+          vm.$notify({
+            title: "链路通知",
+            message: name + "主从连路即将关闭",
+            type: "warning"
+          });
+        });
+
         vm.$instruction.on("x9200", evt => {
           //809 9200
           var data = JSON.parse(evt.data);
