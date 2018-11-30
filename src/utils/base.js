@@ -65,7 +65,7 @@ var dict = {
     "4": "白色",
     "9": "其他"
   },
-  get_color: function (key) {
+  get_color: function(key) {
     return this.color[key] || "--";
   },
   alarm: {
@@ -99,7 +99,7 @@ var dict = {
     "1073741824": "侧翻预警",
     "2147483648": "非法开门报警"
   },
-  getAlarm: function (num) {
+  getAlarm: function(num) {
     var str = [];
     for (var key in this.alarm) {
       if ((num & key) == key) {
@@ -108,7 +108,7 @@ var dict = {
     }
     return str.join(",");
   },
-  getAlarmKey: function (num) {
+  getAlarmKey: function(num) {
     var keys = [];
     for (var key in this.alarm) {
       if ((num & key) == key) {
@@ -133,10 +133,10 @@ var dict = {
     "13": "超时驾驶报警",
     "14": "其他报警"
   },
-  get_vehicle_alarm: function (key) {
+  get_vehicle_alarm: function(key) {
     return this.vehicle_alarm[key] || "--";
   },
-  get_license_color: function (key) {
+  get_license_color: function(key) {
     return this.license_color[key] || {};
   },
   fuel_type: {
@@ -147,21 +147,21 @@ var dict = {
     "5": "液化天然气(LNG)",
     "6": "压缩天然气(CNG)"
   },
-  get_fuel_type: function (key) {
+  get_fuel_type: function(key) {
     return this.fuel_type[key] || {};
   },
   device_type: {
     "1": "定位终端",
     "2": "视频终端"
   },
-  get_device_type: function (key) {
+  get_device_type: function(key) {
     return this.device_type[key] || "--";
   },
   protocol_type: {
     "1": "808部标协议",
     "2": "1078部标协议"
   },
-  get_protocol_type: function (key) {
+  get_protocol_type: function(key) {
     return this.protocol_type[key] || "--";
   },
   device_state: {
@@ -170,14 +170,14 @@ var dict = {
     "3": "维修中",
     "4": "报废"
   },
-  get_device_state: function (key) {
+  get_device_state: function(key) {
     return this.device_state[key] || "--";
   },
   save_media: {
     "1": "硬盘",
     "2": "sd卡"
   },
-  get_save_media: function (key) {
+  get_save_media: function(key) {
     return this.save_media[key] || "--";
   },
   repair_state: {
@@ -187,7 +187,7 @@ var dict = {
     "4": "修复",
     "5": "报废"
   },
-  get_repair_state: function (key) {
+  get_repair_state: function(key) {
     return this.repair_state[key] || "--";
   },
   company_type: {
@@ -199,10 +199,10 @@ var dict = {
     "2": "已修复",
     "3": "已更换"
   },
-  get_vehiclerepair_state: function (key) {
+  get_vehiclerepair_state: function(key) {
     return this.vehiclerepair_state[key] || "--";
   },
-  get_company_type: function (key) {
+  get_company_type: function(key) {
     return this.company_type[key] || "--";
   },
   fence_type: {
@@ -211,7 +211,7 @@ var dict = {
     "4194304": "路段行驶时间不足/过长",
     "8388608": "路线偏离"
   },
-  get_fence_type: function (key) {
+  get_fence_type: function(key) {
     return this.fence_type[key] || "--";
   },
   alarm_type: {
@@ -247,16 +247,16 @@ var dict = {
     "4096": "道路运输证 IC 卡模块故障",
     "16777216": "车辆 VSS 故障"
   },
-  get_fault_type: function (key) {
+  get_fault_type: function(key) {
     return this.fault_type[key] || "--";
   },
   vehiclefault_type: {
     "1": "设备故障"
   },
-  get_vehiclefault_type: function (key) {
+  get_vehiclefault_type: function(key) {
     return this.vehiclefault_type[key] || "--";
   },
-  get_alarm_type: function (key) {
+  get_alarm_type: function(key) {
     return this.alarm_type[key] || "--";
   },
   //所属行业(单纯记录 非必填):普货，长途，出租，校车，公交车等等
@@ -272,21 +272,21 @@ var dict = {
     "9": "警务车辆",
     "10": "其他车辆"
   },
-  get_industry: function (key) {
+  get_industry: function(key) {
     return this.industry[key] || "--";
   },
   sim_state: {
     "1": "已使用",
     "2": "未使用"
   },
-  get_sim_state: function (key) {
+  get_sim_state: function(key) {
     return this.sim_state[key] || "未使用";
   },
   order_paytype: {
     "1": "计费",
     "2": "扣费"
   },
-  get_order_paytype: function (key) {
+  get_order_paytype: function(key) {
     return this.order_paytype[key] || "--";
   },
   order_state: {
@@ -297,7 +297,7 @@ var dict = {
     "5": "取消订单审核",
     "6": "取消订单审核未通过"
   },
-  get_order_state: function (key) {
+  get_order_state: function(key) {
     return this.order_state[key] || "--";
   },
   order_detailtype: {
@@ -306,7 +306,7 @@ var dict = {
     "3": "短信",
     "4": "SIM卡"
   },
-  get_order_detailtype: function (key) {
+  get_order_detailtype: function(key) {
     return this.order_detailtype[key] || "--";
   },
   license_species: {
@@ -330,7 +330,7 @@ var dict = {
     "18": "临时入境摩托车号牌",
     "19": "拖拉机号牌"
   },
-  get_license_species: function (key) {
+  get_license_species: function(key) {
     return this.license_species[key] || "--";
   },
   vehicle: {
@@ -364,7 +364,7 @@ var dict = {
     "64": "特种拖拉机",
     "90": "其他车辆"
   },
-  get_vehicle: function (key) {
+  get_vehicle: function(key) {
     return this.vehicle[key] || "--";
   },
   //所属行业(单纯记录 非必填):普货，长途，出租，校车，公交车等等
@@ -380,7 +380,7 @@ var dict = {
     // "9": "警务车辆",
     // "10": "其他车辆"
   },
-  get_vehicle_type: function (key) {
+  get_vehicle_type: function(key) {
     return this.vehicle_type[key] || "--";
   },
   vtype: {
@@ -453,7 +453,7 @@ var dict = {
     t111: "专用运输车",
     t106: "自卸车"
   },
-  get_vtype: function (key) {
+  get_vtype: function(key) {
     // key = key.slice(1);
     return this.vtype[key] || "--";
   },
@@ -518,7 +518,7 @@ var dict = {
     Ox0083: "机动车号牌",
     Ox0084: "车牌颜色"
   },
-  get_communication: function (key) {
+  get_communication: function(key) {
     return this.communication[key] || "";
   },
   special: {
@@ -533,14 +533,14 @@ var dict = {
     "9": "风沙",
     "10": "泥石流"
   },
-  get_special: function (key) {
+  get_special: function(key) {
     return this.special[key] || "--";
   },
   demand: {
     "1": "每日新闻",
     "2": "天气预报"
   },
-  get_demand: function (key) {
+  get_demand: function(key) {
     return this.demand[key] || "--";
   }
 };
@@ -548,7 +548,4 @@ if (process.env.NODE_ENV == "production") {
   dict = Object.assign(dict, window.BEIDOU_CONFIG);
 }
 import utils from "@/utils/utils";
-export {
-  utils,
-  dict
-};
+export { utils, dict };

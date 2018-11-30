@@ -44,6 +44,9 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <el-button type="primary" @click="exportExcel" size="small">
+        <i class="el-icon-download"></i> 导出
+      </el-button>
       <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
         <el-table-column prop="last_backtime" label="返厂时间" :formatter="(row)=>{return this.$utils.formatDate(row.last_backtime)}"> </el-table-column>
         <el-table-column prop="device_no" label="终端ID" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -196,6 +199,34 @@ export default {
     };
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "返厂时间",
+          B: "终端ID",
+          C: "维修原因",
+          D: "物流信息",
+          E: "物流单号",
+          F: "维修状态"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: this.$utils.formatDate(data.last_backtime),
+          B: data.device_no,
+          C: data.last_reason,
+          D: data.last_logistics,
+          E: data.last_logistics_no,
+          F: this.$dict.get_repair_state(data.state)
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "维修设备管理",
+        fileName: "维修设备管理.xlsx"
+      });
+    },
     formatChildTime(row) {
       return this.$utils.formatDate(row.time);
     },

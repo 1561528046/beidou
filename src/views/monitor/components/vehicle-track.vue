@@ -43,13 +43,17 @@
     <!-- 左侧数据展示栏 -->
     <div style=" width:45%; height:90%;background-color:#fff;position:absolute;left:0;top:0;bottom:0;z-index:99;">
       <el-table element-loading-text="拼命加载中" v-loading="tableLoading" @row-click="tableCurrentChange" :row-style="{height:'71px'}" highlight-current-row ref="baseTable" :header-cell-style="{background:'#fafafa'}" :data="list" height="100%" border style="width: 100%">
-        <el-table-column width="80px" prop="index" label="序号"></el-table-column>
+        <el-table-column width="50px" prop="index" label="序号"></el-table-column>
         <el-table-column width="150px" label="时间" prop="time" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
         <el-table-column label="速度" prop="speed"></el-table-column>
         <el-table-column label="当日里程" prop="em_0x01" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column label="位置" prop="address" :formatter="$utils.baseFormatter" width="400px"></el-table-column>
+        <el-table-column label="经纬度" prop="" :formatter="(row)=>{return (row.longitude+','+row.latitude)}" width="100px"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
+        <el-button style="float:left;margin-left:10px" type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-pagination :disabled="paging" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableQuery.total" layout="total, sizes, prev, pager, next, jumper" background>
         </el-pagination>
       </div>
@@ -146,6 +150,32 @@ export default {
     });
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "时间",
+          B: "速度",
+          C: "当日里程",
+          D: "位置",
+          E: "经纬度"
+        }
+      ];
+      this.list.map(data => {
+        wsCol.push({
+          A: this.$utils.formatDate14(JSON.stringify(data.time)),
+          B: data.speed,
+          C: data.em_0x01,
+          D: data.address,
+          E: data.longitude + "," + data.latitude
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "轨迹回放",
+        fileName: "轨迹回放.xlsx"
+      });
+    },
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(3, "days");
       date = moment(date).format("YYYY-MM-DD HH:mm:ss");

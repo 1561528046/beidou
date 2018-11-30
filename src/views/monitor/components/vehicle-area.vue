@@ -75,7 +75,7 @@
         <el-radio @change="selectRadio" v-model="radio" label="circle">画圆</el-radio>
         <el-radio @change="selectRadio" v-model="radio" label="rectangle">画矩形</el-radio>
         <el-radio style="margin-left:0;" @change="selectRadio" v-model="radio" label="polygon">画多边形</el-radio>
-        <!-- <el-radio style="margin-left:0;" @change="selectRadio" v-model="radio" label="marker">画点</el-radio> -->
+        <el-radio style="margin-left:6px;" @change="selectRadio" v-model="radio" label="marker">画点</el-radio>
       </div>
       <div class="input-item item-btn" style="margin-top:24px; width:227px;margin:0 auto;">
         <el-button @click="close" size="mini" icon="iconfont icon-tuodong"></el-button>
@@ -654,6 +654,8 @@ export default {
             });
           }
         });
+      } else if (this.label == "marker") {
+        console.log(1);
       }
     },
     // 选择划分区域工具

@@ -74,6 +74,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="cdate" label="订单日期" :formatter="(row)=>{return this.$utils.formatDate(row.cdate)}"> </el-table-column>
@@ -231,6 +234,44 @@ export default {
     // this.restaurants = this.loadAll();
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "订单日期",
+          B: "订单号",
+          C: "订单类型",
+          D: "车牌号",
+          E: "车辆类型",
+          F: "终端厂商",
+          G: "终端类型",
+          H: "订单金额",
+          I: "支付方式",
+          J: "收费单项",
+          K: "订单状态"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: this.$utils.formatDate(data.cdate),
+          B: data.order_no,
+          C: this.$dict.get_order_detailtype(data.fees_detail_type),
+          D: data.license,
+          E: this.$dict.get_vehicle_type(data.car_type),
+          F: data.fees_detail_company_name,
+          G: his.$dict.get_device_type(row.fees_detail_device_type),
+          H: data.order_amount,
+          I: this.$dict.get_order_paytype(data.pay_type),
+          J: data.fees_detail_name,
+          K: this.$dict.get_order_state(data.state)
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "订单审核管理",
+        fileName: "订单审核管理.xlsx"
+      });
+    },
     // 查看资料
     enquiry(scope) {
       this.addKey++;

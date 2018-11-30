@@ -79,6 +79,9 @@
             <i class="el-icon-plus"></i> 添加
           </el-button>
         </router-link>
+        <el-button style="margin-left:10px" type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         &nbsp;
         <!-- <el-button type="primary" size="small" v-if="$props.state==2">
           <i class="el-icon-tickets"></i> 单车导入
@@ -383,6 +386,54 @@ export default {
     }
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "首次入网时间",
+          B: "车牌号",
+          C: "车架号",
+          D: "终端ID",
+          E: "SIM ID",
+          F: "业户",
+          G: "联系人",
+          H: "电话",
+          I: "到期日期"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: this.$utils.formatDate(data.first_time),
+          B: data.license,
+          C: data.vin,
+          D: data.device_no,
+          E: data.sim_id,
+          F: data.owner,
+          G: data.linkman,
+          H: data.tel,
+          I: this.$utils.formatDate(data.contract_date)
+        });
+      });
+      if (this.state == 1) {
+        this.$utils.exportExcel({
+          data: wsCol,
+          sheetName: "新增车辆管理",
+          fileName: "新增车辆管理.xlsx"
+        });
+      } else if (this.state == 2) {
+        this.$utils.exportExcel({
+          data: wsCol,
+          sheetName: "定位车辆管理",
+          fileName: "定位车辆管理.xlsx"
+        });
+      } else if (this.state == 3) {
+        this.$utils.exportExcel({
+          data: wsCol,
+          sheetName: "到期车辆管理",
+          fileName: "到期车辆管理.xlsx"
+        });
+      }
+    },
     checkOrderRights() {
       if (this.$store.state.user.user_id == 1) {
         this.renew_platform = true;
@@ -586,7 +637,6 @@ export default {
       getVehicleList(query)
         .then(res => {
           if (res.data.code == 0) {
-            console.log(res);
             this.$set(this.$data, "tableData", res.data);
           } else {
             this.$set(this.$data, "tableData", []);

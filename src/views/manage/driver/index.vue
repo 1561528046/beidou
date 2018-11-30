@@ -32,6 +32,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-button type="primary" size="small" @click="addFrom" v-rights="6-1-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -102,6 +105,32 @@ export default {
     };
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "司机卡编号",
+          B: "姓名",
+          C: "联系电话",
+          D: "驾驶证有效期",
+          E: "身份证"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.driver_card_id,
+          B: data.driver_name,
+          C: data.tel,
+          D: this.$utils.formatDate(data.license_validity),
+          E: data.identity_id
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "司机信息管理",
+        fileName: "司机信息管理.xlsx"
+      });
+    },
     openBindingVehicle(scope) {
       this.bindingDialog = true;
       this.$set(this.$data, "bindingDriver", scope.row);

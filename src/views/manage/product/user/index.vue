@@ -28,6 +28,9 @@
       </el-form>
     </el-card>
     <el-card shadow="always">
+      <el-button type="primary" @click="exportExcel" size="small">
+        <i class="el-icon-download"></i> 导出
+      </el-button>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="province_name" label="所属地区" :formatter="$utils.areaFormatter"> </el-table-column>
@@ -96,6 +99,32 @@ export default {
   watch: {},
   mounted() {},
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "用户名称",
+          B: "所属地区",
+          C: "联系人",
+          D: "联系电话",
+          E: "产品名称"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.real_name,
+          B: this.$utils.areaFormatter(data),
+          C: data.linkman,
+          D: data.tel,
+          E: data.title
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "订单查询管理",
+        fileName: "订单查询管理.xlsx"
+      });
+    },
     //查询用户列表
     getTable() {
       this.tableQuery.city_id = this.tableQuery.area.city_id

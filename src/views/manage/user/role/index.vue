@@ -2,6 +2,9 @@
   <div class="admin-table-container">
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-button type="primary" size="small" @click="addFrom" v-rights="4-2-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -49,6 +52,24 @@ export default {
     };
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "角色名"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.role_name
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "角色管理",
+        fileName: "角色管理.xlsx"
+      });
+    },
     delRow(scope) {
       //删除
       this.$confirm("确认删除？")

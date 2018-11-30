@@ -2,6 +2,12 @@
   <div class="vehicle-info-container" :class="{'single':$props.single}" :style="{left:position.left+'px',top:position.top+'px'}">
     <div class="_tools shadow-box" v-if="$props.single">
       <el-radio-group v-model="mapTools" @change="changeTools" size="mini">
+        <el-radio-button label="big" title="拉框放大">
+          <i class="el-icon-zoom-in"></i>
+        </el-radio-button>
+        <el-radio-button label="small" title="拉框缩小">
+          <i class="el-icon-zoom-out"></i>
+        </el-radio-button>
         <el-radio-button label="rule" title="测距工具">
           <i class="iconfont icon-ruler"></i>
         </el-radio-button>
@@ -313,6 +319,7 @@ export default {
         //rule:{},
         // map:{},
         // marker:{},
+        mouseTool: {},
         vehicleAddress: "",
         vehicle: {
           info: {}
@@ -428,6 +435,7 @@ export default {
     },
     initMap() {
       initMap(() => {
+        var thas = this;
         var AMap = window.AMap;
         // eslint-disable-next-line
         var position = new AMap.LngLat(
@@ -444,6 +452,12 @@ export default {
           // keyboardEnable: false,
           zoom: 15
         });
+        AMap.plugin(["AMap.OverView"], function() {
+          var OverView = new AMap.OverView({ isOpen: true });
+
+          console.log(OverView);
+          thas.mapData.map.addControl(OverView);
+        });
         this.mapData.marker = createMarker(this.mapData.vehicle, AMap);
         this.mapData.marker.setMap(this.mapData.map);
         if (!this.$props.single) {
@@ -454,6 +468,10 @@ export default {
       });
     },
     changeTools(name) {
+      var that = this;
+      this.mapData.map.plugin(["AMap.MouseTool"], function() {
+        that.mapData.mouseTool = new window.AMap.MouseTool(that.mapData.map);
+      });
       switch (name) {
         case "rule":
           if (!this.mapData.rule) {
@@ -470,6 +488,22 @@ export default {
           break;
         case "multi":
           this.openOtherVehicle();
+          break;
+        case "big":
+          this.mapData.mouseTool.rectZoomIn({
+            strokeColor: "#80d8ff",
+            fillColor: "#80d8ff",
+            fillOpacity: 0.3
+            //同 Polygon 的 Option 设置
+          });
+          break;
+        case "small":
+          this.mapData.mouseTool.rectZoomOut({
+            strokeColor: "#80d8ff",
+            fillColor: "#80d8ff",
+            fillOpacity: 0.3
+            //同 Polygon 的 Option 设置
+          });
           break;
       }
     },
@@ -689,7 +723,7 @@ export default {
     }
     ._tools {
       position: absolute;
-      right: 20px;
+      right: 150px;
       bottom: 20px;
       z-index: 10;
       background: #fff;

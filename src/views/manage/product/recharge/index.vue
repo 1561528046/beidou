@@ -19,6 +19,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="real_name" label="公司名称" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -93,6 +96,34 @@ export default {
   },
   mounted() {},
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "公司名称",
+          B: "登录帐号",
+          C: "联系人",
+          D: "联系电话",
+          E: "已绑定产品",
+          F: "余额"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.real_name,
+          B: data.user_name,
+          C: data.linkman,
+          D: data.tel,
+          E: data.title,
+          F: data.balance
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "充值管理",
+        fileName: "充值管理.xlsx"
+      });
+    },
     // 时间转换
     formatChildTime(row) {
       return this.$utils.formatDate(row.cdate);

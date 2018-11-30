@@ -148,6 +148,11 @@
           </el-row>
         </el-form>
         <el-card shadow="always">
+          <div class="admin-table-actions">
+            <el-button style="margin-left:10px" type="primary" @click="exportExcel" size="small">
+              <i class="el-icon-download"></i> 导出
+            </el-button>
+          </div>
           <el-table :data="tableData.data" style="width: 100%" class="admin-table-list" v-loading="tableLoading">
             <el-table-column prop="fault_time" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"> </el-table-column>
             <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -251,6 +256,11 @@
           </el-row>
         </el-form>
         <el-card shadow="always">
+          <div class="admin-table-actions">
+            <el-button style="margin-left:10px" type="primary" @click="exportExcel" size="small">
+              <i class="el-icon-download"></i> 导出
+            </el-button>
+          </div>
           <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
             <el-table-column prop="fault_time" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"> </el-table-column>
             <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -354,6 +364,11 @@
           </el-row>
         </el-form>
         <el-card shadow="always">
+          <div class="admin-table-actions">
+            <el-button style="margin-left:10px" type="primary" @click="exportExcel" size="small">
+              <i class="el-icon-download"></i> 导出
+            </el-button>
+          </div>
           <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
             <el-table-column prop="fault_time" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"> </el-table-column>
             <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -509,6 +524,38 @@ export default {
     }
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "故障时间",
+          B: "车牌号",
+          C: "联系人",
+          D: "联系方式",
+          E: "所属公司/用户",
+          F: "故障类型",
+          G: "故障原因",
+          H: "状态"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: this.$utils.formatDate(data.fault_time),
+          B: data.license,
+          C: data.linkman,
+          D: data.tel,
+          E: data.owner,
+          F: this.$dict.get_vehiclefault_type(data.fault_type),
+          G: data.reason,
+          H: this.$dict.get_vehiclerepair_state(data.repair_state)
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "维修车辆管理",
+        fileName: "维修车辆管理.xlsx"
+      });
+    },
     repairtime(row) {
       return this.$utils.formatDate14(row.RepairTime);
     },

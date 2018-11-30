@@ -19,6 +19,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-button type="primary" size="small" style="margin-right:10px;" @click="addForm">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -96,6 +99,36 @@ export default {
   },
   watch: {},
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "标注",
+          B: "IP",
+          C: "端口号",
+          D: "状态"
+        }
+      ];
+      this.tableData.data.map(data => {
+        var enable = "";
+        if (data.enable == "1") {
+          enable = "启用";
+        } else if (data.enable == "2") {
+          enable = "未启用";
+        }
+        wsCol.push({
+          A: data.title,
+          B: data.ip,
+          C: data.port,
+          D: enable
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "808管理",
+        fileName: "808管理.xlsx"
+      });
+    },
     // 编辑成功回调
     success() {
       this.getTable();

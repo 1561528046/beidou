@@ -46,6 +46,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-button type="primary" size="small" @click="addFrom" v-rights="2-1-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -234,6 +237,38 @@ export default {
     }
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "添加时间",
+          B: "终端类型",
+          C: "终端厂商",
+          D: "终端ID",
+          E: "SIM ID",
+          F: "协议类型",
+          G: "分配用户",
+          H: "状态"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: this.$utils.formatDate(data.time),
+          B: this.$dict.get_device_type(data.device_type),
+          C: data.company_name,
+          D: data.device_no,
+          E: data.sim_id,
+          F: this.$dict.get_protocol_type(data.protocol_type),
+          G: data.real_name,
+          H: this.$dict.get_device_state(data.state)
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "终端管理",
+        fileName: "终端管理.xlsx"
+      });
+    },
     //上传
     openUpload() {
       this.addKey++;

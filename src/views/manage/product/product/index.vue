@@ -21,6 +21,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-button type="primary" size="small" @click="addFrom" v-rights="3-1-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -34,9 +37,6 @@
             <i class="el-icon-upload el-icon--right"></i> 添加
           </el-button>
         </router-link> -->
-        <!-- <el-button type="primary" size="small">导出
-                    <i class="el-icon-upload el-icon--right"></i>
-                </el-button> -->
       </div>
       <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="title" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
@@ -105,6 +105,24 @@ export default {
   },
   mounted() {},
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "产品名称"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.title
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "产品管理",
+        fileName: "产品管理.xlsx"
+      });
+    },
     handleSizeChange(val) {
       this.tableQuery.page = 1;
       this.tableQuery.size = 20;

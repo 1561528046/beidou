@@ -42,6 +42,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-button type="primary" size="small" @click="addFrom" v-rights="2-3-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -179,6 +182,34 @@ export default {
     }
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "添加时间",
+          B: "ICCID",
+          C: "Sim卡号",
+          D: "所属运营商",
+          E: "分配用户",
+          F: "当前状态"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: this.$utils.formatDate(data.time),
+          B: data.icc_id,
+          C: data.sim_no,
+          D: data.belong,
+          E: data.real_name,
+          F: this.$dict.get_sim_state(data.state)
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "Sim卡管理",
+        fileName: "Sim卡管理.xlsx"
+      });
+    },
     //输入选择框
     realNameQuerySearch(queryString, cb) {
       var results = [];

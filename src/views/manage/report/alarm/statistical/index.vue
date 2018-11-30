@@ -54,8 +54,6 @@
         <el-table-column width="110px" prop="feifaweiyi" label="车辆非法位移"> </el-table-column>
         <el-table-column prop="pengzhuang_yujing" label="碰撞预警"> </el-table-column>
         <el-table-column prop="cefan_yujing" label="侧翻预警"> </el-table-column>
-        <el-table-column prop="pengzhuang_yujing" label="碰撞预警"> </el-table-column>
-        <el-table-column prop="pengzhuang_yujing" label="碰撞预警"> </el-table-column>
         <el-table-column width="110px" prop="feifakaimen" label="非法开门报警"> </el-table-column>
         <el-table-column prop="jinchuluxian" label="进出路线"> </el-table-column>
         <el-table-column prop="jinchuquyu" label="进出区域"> </el-table-column>
@@ -185,14 +183,52 @@ export default {
         {
           A: "车牌号",
           B: "开始时间",
-          C: "结束时间"
+          C: "结束时间",
+          D: "紧急报警",
+          E: "超速报警",
+          F: "疲劳驾驶",
+          G: "危险预警",
+          H: "超速预警",
+          I: "疲劳驾驶预警",
+          J: "当天累计驾驶超时",
+          K: "超时停车",
+          L: "车辆被盗",
+          M: "车辆非法点火",
+          N: "车辆非法位移",
+          O: "碰撞预警",
+          P: "侧翻预警",
+          Q: "非法开门报警",
+          R: "进出路线",
+          S: "进出区域",
+          T: "路段行驶时间不足/过长报警",
+          U: "路线偏离报警",
+          V: "车辆油量异常"
         }
       ];
       this.tableData.data.map(data => {
         wsCol.push({
           A: data.license,
           B: this.$utils.formatDate14(data.start_time),
-          C: this.$utils.formatDate14(data.stop_time)
+          C: this.$utils.formatDate14(data.stop_time),
+          D: data.jinji,
+          E: data.chaosu,
+          F: data.pilao,
+          G: data.weixian,
+          H: data.chaosu_yujing,
+          I: data.pilao_yujing,
+          J: data.leijijiashichaoshi,
+          K: data.chaoshitingche,
+          L: data.cheliangbeidao,
+          M: data.feifadianhuo,
+          N: data.feifaweiyi,
+          O: data.pengzhuang_yujing,
+          P: data.cefan_yujing,
+          Q: data.feifakaimen,
+          R: data.jinchuluxian,
+          S: data.jinchuquyu,
+          T: data.luduanshijian,
+          U: data.luxianpianli,
+          V: data.youliangyichang
         });
       });
       this.$utils.exportExcel({

@@ -36,6 +36,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-button type="primary" size="small" @click="addFrom" v-rights="4-1-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -47,6 +50,8 @@
         <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="道路运输许可证" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="" label="核发机关" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="updateForm(scope)" icon="el-icon-edit" v-rights="4-1-3">编辑</el-button>
@@ -123,6 +128,34 @@ export default {
   },
   computed: {},
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "登陆帐号",
+          B: "所属地区",
+          C: "企业名称",
+          D: "联系电话",
+          E: "授权终端数量",
+          F: "所属角色"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.user_name,
+          B: data.province_name,
+          C: data.real_name,
+          D: data.tel,
+          E: data.device_total,
+          F: data.role_name
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "企业管理",
+        fileName: "企业管理.xlsx"
+      });
+    },
     delRow(scope) {
       //删除
       this.$confirm("确认删除？")

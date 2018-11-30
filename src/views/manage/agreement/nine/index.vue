@@ -19,6 +19,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-button type="primary" size="small" style="margin-right:10px;" @click="addForm">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -107,6 +110,48 @@ export default {
   },
   watch: {},
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "标注",
+          B: "远程IP",
+          C: "远程端口",
+          D: "用户ID",
+          E: "密码",
+          F: "本地端口",
+          G: "M1",
+          H: "IA1",
+          I: "IC1",
+          j: "接入码",
+          K: "Keys",
+          L: "版本号",
+          M: "有效时间"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.title,
+          B: data.remote_ip,
+          C: data.remote_port,
+          D: data.user_name,
+          E: data.password,
+          F: data.local_port,
+          G: data.M1,
+          H: data.IA1,
+          I: data.IC1,
+          j: data.access_code,
+          K: data.key_value,
+          L: data.version_flag,
+          M: data.no_transmit_hour
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "809管理",
+        fileName: "809管理.xlsx"
+      });
+    },
     // 编辑成功回调
     success() {
       this.getTable();

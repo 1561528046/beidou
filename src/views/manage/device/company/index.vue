@@ -18,6 +18,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
+        <el-button type="primary" @click="exportExcel" size="small">
+          <i class="el-icon-download"></i> 导出
+        </el-button>
         <el-button type="primary" size="small" @click="addFrom" v-rights="2-4-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
@@ -94,6 +97,24 @@ export default {
     this.restaurants = this.loadAll();
   },
   methods: {
+    //导出excel
+    exportExcel() {
+      var wsCol = [
+        {
+          A: "终端厂商名称"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.company_name
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "终端厂商管理",
+        fileName: "终端厂商管理.xlsx"
+      });
+    },
     // 删除厂商
     delRow(scope) {
       this.$confirm("确认删除？")
