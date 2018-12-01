@@ -41,13 +41,13 @@
               <el-option label="视频" value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="通道">
+          <el-form-item label="通道" v-if="searchOrigin!=3">
             <el-radio v-model="message.ChannelId" label="0">所有通道</el-radio>
             <el-radio v-model="message.ChannelId" label="1">通道1</el-radio>
             <el-radio v-model="message.ChannelId" label="2">通道2</el-radio>
           </el-form-item>
 
-          <el-form-item label="事件项">
+          <el-form-item label="事件项" v-if="searchOrigin!=3">
             <el-select v-model="message.EventCode" style="width:100%;">
               <el-option label="平台下发指令" value="0"></el-option>
               <el-option label="定时动作" value="1"></el-option>
@@ -61,7 +61,18 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="getMediaList" :loading="loading">立即下发</el-button>
+            <el-button
+              type="primary"
+              @click="getMediaList"
+              :loading="loading"
+              v-if="searchOrigin!=3"
+            >立即下发</el-button>
+            <el-button
+              type="primary"
+              @click="getMediaListOnServer"
+              :loading="loading"
+              v-if="searchOrigin==3"
+            >查询</el-button>
           </el-form-item>
         </div>
       </el-col>
@@ -90,6 +101,12 @@
                 <label v-if="scope.row.EventCode=='5'">门关拍照</label>
                 <label v-if="scope.row.EventCode=='6'">车门由开变关</label>
                 <label v-if="scope.row.EventCode=='7'">定距拍照</label>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="操作" v-if="viewmodel=='server'">
+              <template slot-scope="scope">
+                <el-button @click="getMediaUrl(scope.row)">查看</el-button>
               </template>
             </el-table-column>
             <el-table-column label="操作" v-if="viewmodel=='x8802'">
@@ -255,6 +272,30 @@ export default {
     getMediaList() {
       this.viewmodel = this.message.MessageID;
       this.$instruction.send(JSON.stringify(this.message));
+    },
+    getMediaListOnServer() {
+      var postData = {
+        page: 1,
+        size: 999,
+        SimID: this.message.SimID,
+        MultimediaType: this.message.MultimediaType,
+        StartTime: "20" + this.message.StartTime,
+        EndTime: "20" + this.message.EndTime
+      };
+      this.$ajax
+        .get("/MultiMedia/GetMultiMediaList", {
+          params: postData
+        })
+        .then(res => {
+          if (res.data.code == 0) {
+            this.viewmodel = "server";
+            res.data.data.map(item => {
+              item.MultimediaDataID = item.MediaId;
+              item.MultimediaType = item.MediaType;
+            });
+            this.$set(this.$data, "list", res.data.data);
+          }
+        });
     }
   },
   beforeDestroy() {
