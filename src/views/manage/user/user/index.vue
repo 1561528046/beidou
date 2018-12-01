@@ -50,8 +50,8 @@
         <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="道路运输许可证" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="" label="核发机关" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="user_transport_license" label="道路运输许可证" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="user_issue_office" label="核发机关" :formatter="$utils.baseFormatter"> </el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="updateForm(scope)" icon="el-icon-edit" v-rights="4-1-3">编辑</el-button>

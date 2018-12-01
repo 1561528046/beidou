@@ -32,9 +32,11 @@
     </div>
 </template>
 <script>
+import { getDriverByID } from "@/api/index.js";
 export default {
   created() {
-    this.$instruction.send(JSON.stringify(this.form));
+    // this.$instruction.send(JSON.stringify(this.form));
+    this.getDriver();
     this.vehicle.driver = this.vehicle.driver || {};
   },
   data() {
@@ -47,7 +49,21 @@ export default {
     };
   },
   props: ["vehicle"],
-  methods: {}
+  methods: {
+    getDriver() {
+      getDriverByID({ sim_id: "" }).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.$data, "formData", res.data.data[0]);
+        } else {
+          return this.$nitify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
+        }
+      });
+    }
+  }
 };
 </script>
 <style scoped lang="less">

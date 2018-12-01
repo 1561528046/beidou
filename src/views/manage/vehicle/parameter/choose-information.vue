@@ -106,7 +106,7 @@ export default {
             sim_id = item.sim_id;
           }
           if (data.SimID == sim_id) {
-            this.$set(item, "operating", "设置成功");
+            this.$set(item, "operating", "指令发送成功");
           }
         });
       }
@@ -184,7 +184,7 @@ export default {
                 sim_id =
                   item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
                 if (sim_id == data.SimID) {
-                  this.$set(item, "operating", "设置成功");
+                  this.$set(item, "operating", "指令发送成功");
                 }
               });
             }
@@ -202,7 +202,7 @@ export default {
             }
           }
         } else if (data.MessageID == "x0104") {
-          var Parameters = JSON.parse(data.Parameters);
+          var Parameters = data.Parameters;
           if (Parameters.length != 0) {
             var ParameterId = "O" + Parameters[0].ParameterId;
             var ParameterValue = Parameters[0].ParameterValue;

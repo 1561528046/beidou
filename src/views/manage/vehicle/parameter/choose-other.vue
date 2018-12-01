@@ -114,7 +114,7 @@ export default {
         this.communication.data.map(item => {
           sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
           if (sim_id == data.SimID) {
-            this.$set(item, "operate", "文本信息下发设置成功");
+            this.$set(item, "operate", "文本信息下发指令发送成功");
           }
         });
       }
@@ -126,7 +126,7 @@ export default {
         this.communication.data.map(item => {
           sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
           if (sim_id == data.SimID) {
-            this.$set(item, "operate", "信息服务设置成功");
+            this.$set(item, "operate", "信息服务指令发送成功");
           }
         });
       }
@@ -142,7 +142,7 @@ export default {
             sim_id = item.sim_id;
           }
           if (data.SimID == sim_id) {
-            this.$set(item, "operate", "数据下行透传设置成功");
+            this.$set(item, "operate", "数据下行透传指令发送成功");
           }
         });
       }

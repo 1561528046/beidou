@@ -25,6 +25,11 @@
               </el-time-picker>
             </el-form-item>
           </el-col>
+          <el-col v-if="label=='marker'" :span="24">
+            <el-form-item label="半径" prop="time">
+              <el-input size="small" v-model="formdata.radius" style="width:100%"></el-input>
+            </el-form-item>
+          </el-col>
         </el-row>
         <div style="width:150px;margin:0 auto;">
           <el-button @click="save" type="primary">保存</el-button>
@@ -196,6 +201,7 @@ export default {
             overlays[0] = Polygon;
           } else if (vm.label == "marker") {
             var Marker = e.obj.getPosition();
+            overlays[0] = Marker;
           } else if (vm.label == "polyline") {
             var Polyline = e.obj.getPath();
             overlays[0] = Polyline;
@@ -266,6 +272,7 @@ export default {
         name: "",
         type: "",
         time: "",
+        radius: "",
         alarm_type: "",
         start_time: "",
         stop_time: ""
@@ -655,7 +662,34 @@ export default {
           }
         });
       } else if (this.label == "marker") {
-        console.log(1);
+        data = {
+          AreaProperty: this.formdata.alarm_type,
+          RegionName: this.formdata.name,
+          StartTime: this.formdata.start_time,
+          EndTime: this.formdata.stop_time,
+          CenterLatitude: this.mapData.overlays[0].lat,
+          CenterLongitude: this.mapData.overlays[0].lng,
+          Radius: this.formdata.radius,
+          Type: "6"
+        };
+        AddRegion(data).then(res => {
+          if (res.data.code == 0) {
+            this.getTable();
+            this.down();
+            this.mapData.map.clearMap();
+            return this.$notify({
+              message: res.data.msg,
+              title: "提示",
+              type: "success"
+            });
+          } else {
+            return this.$notify({
+              message: res.data.msg,
+              title: "提示",
+              type: "error"
+            });
+          }
+        });
       }
     },
     // 选择划分区域工具
