@@ -14,3 +14,14 @@ export const getAreaByName = query => {
     params: query
   });
 };
+export const getWarnList = query => {
+  Object.assign({
+    page: "1",
+    size: "10",
+    StartTime: "",
+    EndTime: ""
+  }, query)
+  return ajax.get("/report/GetAlarmProcessList", {
+    params: query
+  });
+};

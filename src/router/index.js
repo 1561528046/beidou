@@ -8,9 +8,13 @@ import report from "@/router/report.js";
 import agreement from "@/router/agreement.js";
 import store from "@/store";
 import NProgress from "nprogress"; // progress bar
-import { Message } from "element-ui";
+import {
+  Message
+} from "element-ui";
 import "nprogress/nprogress.css";
-NProgress.configure({ showSpinner: false }); // 隐藏右上loading图标
+NProgress.configure({
+  showSpinner: false
+}); // 隐藏右上loading图标
 Vue.use(Router);
 
 var routers = [
@@ -25,38 +29,51 @@ var routers = [
     name: "home",
     redirect: "/manage",
     component: () => import("@/views/home.vue"),
-    meta: { name: "首页", hidden: true }
+    meta: {
+      name: "首页",
+      hidden: true
+    }
   },
   {
     path: "fence-platform",
     name: "fence-platform",
-    meta: { name: "平台", hidden: true },
+    meta: {
+      name: "平台",
+      hidden: true
+    },
     component: () => import("@/views/monitor/components/area-platform.vue")
   },
   {
     path: "fence-vehicle",
     name: "fence-vehicle",
-    meta: { name: "车机", hidden: true },
+    meta: {
+      name: "车机",
+      hidden: true
+    },
     component: () => import("@/views/monitor/components/area-machine.vue")
   },
   {
     path: "/monitor",
     name: "monitor",
     component: () => import("@/views/monitor/index.vue"),
-    meta: { name: "地图监控" },
-    children: [
-      {
-        path: "map",
-        name: "map",
-        meta: { name: "地图" }
-        //component:()=>import('@/views/Map.vue')
+    meta: {
+      name: "地图监控"
+    },
+    children: [{
+      path: "map",
+      name: "map",
+      meta: {
+        name: "地图"
       }
-    ]
+      //component:()=>import('@/views/Map.vue')
+    }]
   },
   {
     path: "/manage",
     name: "manage",
-    meta: { name: "运营管理" },
+    meta: {
+      name: "运营管理"
+    },
     component: () => import("@/views/manage/index.vue"),
     children: [
       vehicle,
@@ -64,6 +81,16 @@ var routers = [
       product,
       user,
       agreement,
+      {
+        path: "warn",
+        name: "warn",
+        meta: {
+          p: "6-1-4",
+          name: "报警信息管理",
+          icon: "iconfont icon-driver"
+        },
+        component: () => import("@/views/manage/warn/index.vue")
+      },
       {
         path: "group_binding",
         name: "group_binding",
@@ -90,13 +117,19 @@ var routers = [
       {
         path: "driver_add",
         name: "driver_add",
-        meta: { name: "添加司机", hidden: true },
+        meta: {
+          name: "添加司机",
+          hidden: true
+        },
         component: () => import("@/views/manage/driver/add.vue")
       },
       {
         path: "driver_update/:driver_card_id",
         name: "driver_update",
-        meta: { name: "编辑司机", hidden: true },
+        meta: {
+          name: "编辑司机",
+          hidden: true
+        },
         component: () => import("@/views/manage/driver/update.vue")
       },
       report
@@ -113,17 +146,31 @@ var routers = [
   {
     path: "/login",
     name: "login",
-    meta: { name: "登陆", hidden: true, fullscreen: true },
+    meta: {
+      name: "登陆",
+      hidden: true,
+      fullscreen: true
+    },
     component: () => import("@/views/login.vue")
   },
   {
     path: "/404",
-    meta: { hidden: true },
+    meta: {
+      hidden: true
+    },
     component: () => import("@/views/404.vue")
   },
-  { path: "*", redirect: "/404", meta: { hidden: true, fullscreen: true } }
+  {
+    path: "*",
+    redirect: "/404",
+    meta: {
+      hidden: true,
+      fullscreen: true
+    }
+  }
 ];
 permissions(routers);
+
 function permissions(routers) {
   var userRights = store.state.user.rights;
   routers.map(router => {
@@ -159,12 +206,16 @@ router.beforeEach((to, from, next) => {
   NProgress.inc();
   if (store.getters.isLogin && localStorage.BEIDOU) {
     if (to.name == "login") {
-      next({ path: "/" });
+      next({
+        path: "/"
+      });
     }
     next();
   } else {
     if (to.name != "login") {
-      next({ name: "login" });
+      next({
+        name: "login"
+      });
       Message({
         showClose: true,
         message: "请重新登录！",
