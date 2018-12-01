@@ -1,5 +1,11 @@
 <template>
-  <el-form ref="baseForm" :model="message" label-width="90px" size="small" style="position:relative;z-index:99;">
+  <el-form
+    ref="baseForm"
+    :model="message"
+    label-width="90px"
+    size="small"
+    style="position:relative;z-index:99;"
+  >
     <el-row :gutter="30" style="margin:0;">
       <el-col :span="6">
         <div class="shadow-box" style="background:#FFF; padding:15px; margin-top:20px;">
@@ -7,15 +13,26 @@
             <el-select v-model="searchOrigin" style="width:100%;">
               <el-option label="设备终端" value="1"></el-option>
               <el-option label="指定上传" value="2"></el-option>
+              <el-option label="查询服务器" value="3"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="开始时间">
-            <el-date-picker v-model="message.StartTime" type="datetime" placeholder="选择日期时间" value-format="yyMMddHHmmss" style="width:100%;">
-            </el-date-picker>
+            <el-date-picker
+              v-model="message.StartTime"
+              type="datetime"
+              placeholder="选择日期时间"
+              value-format="yyMMddHHmmss"
+              style="width:100%;"
+            ></el-date-picker>
           </el-form-item>
           <el-form-item label="结束时间">
-            <el-date-picker v-model="message.EndTime" type="datetime" placeholder="选择日期时间" value-format="yyMMddHHmmss" style="width:100%;">
-            </el-date-picker>
+            <el-date-picker
+              v-model="message.EndTime"
+              type="datetime"
+              placeholder="选择日期时间"
+              value-format="yyMMddHHmmss"
+              style="width:100%;"
+            ></el-date-picker>
           </el-form-item>
           <el-form-item label="多媒体类型">
             <el-select v-model="message.MultimediaType" style="width:100%;">
@@ -52,9 +69,7 @@
         <div class="shadow-box" style="background:#FFF; padding:15px; margin-top:20px;">
           <el-table :data="list" size="mini">
             <el-table-column prop="SimID" label="sim id">
-              <template slot-scope="scope">
-                {{$props.vehicle.sim_id}}
-              </template>
+              <template slot-scope="scope">{{$props.vehicle.sim_id}}</template>
             </el-table-column>
             <el-table-column prop="MultimediaDataID" label="媒体ID"></el-table-column>
             <el-table-column prop="MultimediaType" label="媒体类型">
@@ -85,20 +100,33 @@
             <el-table-column label="媒体" width="300">
               <template slot-scope="scope">
                 <span v-if="viewmodel=='x8803' && !scope.row.media_url">
-                  <i class="el-icon-loading"></i> 媒体资源正在上传</span>
+                  <i class="el-icon-loading"></i> 媒体资源正在上传
+                </span>
                 <div v-if="scope.row.media_url">
-                  <img :src="scope.row.media_url" v-if="scope.row.MultimediaType==0" style="width:100%;" />
-                  <audio :src="scope.row.media_url" controls v-if="scope.row.MultimediaType==1" style="width:100%;"></audio>
-                  <video :src="scope.row.media_url" controls v-if="scope.row.MultimediaType==2" style="width:100%;"></video>
+                  <img
+                    :src="scope.row.media_url"
+                    v-if="scope.row.MultimediaType==0"
+                    style="width:100%;"
+                  >
+                  <audio
+                    :src="scope.row.media_url"
+                    controls
+                    v-if="scope.row.MultimediaType==1"
+                    style="width:100%;"
+                  ></audio>
+                  <video
+                    :src="scope.row.media_url"
+                    controls
+                    v-if="scope.row.MultimediaType==2"
+                    style="width:100%;"
+                  ></video>
                 </div>
               </template>
             </el-table-column>
           </el-table>
         </div>
       </el-col>
-
     </el-row>
-
   </el-form>
 </template>
 <style lang="less" scoped>

@@ -21,29 +21,43 @@
         <v-contextmenu-item @click="sendInstruction" data-index="x8105|6">关闭数据通信</v-contextmenu-item>
         <v-contextmenu-item @click="sendInstruction" data-index="x8105|7">关闭所有无线通信</v-contextmenu-item>
       </v-contextmenu-submenu>
-
     </v-contextmenu>
     <div class="_header">
-      <div class="_title">
-        {{getShowVehicleTitle()}}
-      </div>
-      <div class="_text">
-        {{showVehicle.sub_title}}
-      </div>
+      <div class="_title">{{getShowVehicleTitle()}}</div>
+      <div class="_text">{{showVehicle.sub_title}}</div>
       <div class="_close">
         <i class="el-icon-close" @click="closeShowVehicle"></i>
       </div>
     </div>
     <div class="_body" v-show="showVehicle.isShowAll" v-contextmenu:contextmenu>
       <el-input v-model="searchText" placeholder="请输入车牌号进行搜索"></el-input>
-      <el-table :data="list" size="small" style="width: 100%" @row-click="openTab" @row-contextmenu="showContextmenu" highlight-current-row ref="vehicleList">
-        <el-table-column prop="license" label="车牌号">
-        </el-table-column>
-        <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="allalarm">
-        </el-table-column>
-        <el-table-column prop="error_count" label="今日异常数" v-if="showVehicle.type=='error'" key="allerror">
-        </el-table-column>
-        <el-table-column label="在线状态" v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1" key="allOnline">
+      <el-table
+        :data="list"
+        size="small"
+        style="width: 100%"
+        @row-click="openTab"
+        @row-contextmenu="showContextmenu"
+        highlight-current-row
+        ref="vehicleList"
+      >
+        <el-table-column prop="license" label="车牌号"></el-table-column>
+        <el-table-column
+          prop="alarm_count"
+          label="今日报警总数"
+          v-if="showVehicle.type=='alarm'"
+          key="allalarm"
+        ></el-table-column>
+        <el-table-column
+          prop="error_count"
+          label="今日异常数"
+          v-if="showVehicle.type=='error'"
+          key="allerror"
+        ></el-table-column>
+        <el-table-column
+          label="在线状态"
+          v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1"
+          key="allOnline"
+        >
           <template slot-scope="scope">
             <span class="vehicle-online" v-if="scope.row.online">在线</span>
             <span class="vehicle-offline" v-if="!scope.row.online">离线</span>
@@ -51,38 +65,84 @@
         </el-table-column>
       </el-table>
       <div class="_pager">
-        <el-pagination background @current-change="changePager" small :page-size="pager.size" :pager-count="5" layout="prev, pager, next" :total="pager.total">
-        </el-pagination>
+        <el-pagination
+          background
+          @current-change="changePager"
+          small
+          :page-size="pager.size"
+          :pager-count="5"
+          layout="prev, pager, next"
+          :total="pager.total"
+        ></el-pagination>
       </div>
     </div>
     <div class="_body" v-if="!showVehicle.isShowAll" v-contextmenu:contextmenu>
-      <el-collapse accordion v-model="currentGroup" @change="groupChange" :key="'other'+showVehicle.group_id" :name="'other'+showVehicle.group_id">
+      <el-collapse
+        accordion
+        v-model="currentGroup"
+        @change="groupChange"
+        :key="'other'+showVehicle.group_id"
+        :name="'other'+showVehicle.group_id"
+      >
         <!-- <el-collapse-item class="group-container">
           <template slot="title">
             <div class="group-name">
               未分配车辆
             </div>
           </template>
-        </el-collapse-item> -->
-        <el-collapse-item class="group-container" v-for="group in currentGroupSon" :key="'collapse'+group.group_id" :name="group.group_id">
+        </el-collapse-item>-->
+        <el-collapse-item
+          class="group-container"
+          v-for="group in currentGroupSon"
+          :key="'collapse'+group.group_id"
+          :name="group.group_id"
+        >
           <template slot="title">
-            <div class="group-name">
-              {{group.group_name}}
-            </div>
+            <div class="group-name">{{group.group_name}}</div>
           </template>
           <div class="group-body">
-            <el-select v-model="currentGroupFilter" placeholder="全部分组" size="mini" style="width:100%;" v-if="currentGroupSonChildrens.length">
-              <el-option label="全部分组" value=""></el-option>
-              <el-option :label="childrenGroup.group_name" :value="childrenGroup.group_id" v-for="childrenGroup in currentGroupSonChildrens" :key="'select'+childrenGroup.group_id"></el-option>
+            <el-select
+              v-model="currentGroupFilter"
+              placeholder="全部分组"
+              size="mini"
+              style="width:100%;"
+              v-if="currentGroupSonChildrens.length"
+            >
+              <el-option label="全部分组" value></el-option>
+              <el-option
+                :label="childrenGroup.group_name"
+                :value="childrenGroup.group_id"
+                v-for="childrenGroup in currentGroupSonChildrens"
+                :key="'select'+childrenGroup.group_id"
+              ></el-option>
             </el-select>
-            <el-table :data="list" size="small" style="width: 100%" @row-click="openTab" @row-contextmenu="showContextmenu" highlight-current-row ref="vehicleList">
-              <el-table-column prop="license" label="车牌号">
-              </el-table-column>
-              <el-table-column prop="alarm_count" label="今日报警总数" v-if="showVehicle.type=='alarm'" key="tablealarm">
-              </el-table-column>
-              <el-table-column prop="error_count" label="今日异常数" v-if="showVehicle.type=='error'" key="tableerror">
-              </el-table-column>
-              <el-table-column label="在线状态" v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1" key="tableOnline">
+            <el-table
+              :data="list"
+              size="small"
+              style="width: 100%"
+              @row-click="openTab"
+              @row-contextmenu="showContextmenu"
+              highlight-current-row
+              ref="vehicleList"
+            >
+              <el-table-column prop="license" label="车牌号"></el-table-column>
+              <el-table-column
+                prop="alarm_count"
+                label="今日报警总数"
+                v-if="showVehicle.type=='alarm'"
+                key="tablealarm"
+              ></el-table-column>
+              <el-table-column
+                prop="error_count"
+                label="今日异常数"
+                v-if="showVehicle.type=='error'"
+                key="tableerror"
+              ></el-table-column>
+              <el-table-column
+                label="在线状态"
+                v-if="['online','offline','total'].indexOf(showVehicle.type)!=-1"
+                key="tableOnline"
+              >
                 <template slot-scope="scope">
                   <span class="vehicle-online" v-if="scope.row.online">在线</span>
                   <span class="vehicle-offline" v-if="!scope.row.online">离线</span>
@@ -90,8 +150,15 @@
               </el-table-column>
             </el-table>
             <div class="_pager">
-              <el-pagination background @current-change="changePager" small :page-size="pager.size" :pager-count="5" layout="prev, pager, next" :total="pager.total">
-              </el-pagination>
+              <el-pagination
+                background
+                @current-change="changePager"
+                small
+                :page-size="pager.size"
+                :pager-count="5"
+                layout="prev, pager, next"
+                :total="pager.total"
+              ></el-pagination>
             </div>
           </div>
         </el-collapse-item>
@@ -297,7 +364,7 @@ export default {
   z-index: 11;
   right: 20px;
   top: 20px;
-  bottom: 20px;
+  bottom: 70px;
   background: #fff;
   z-index: 100;
   ._header {

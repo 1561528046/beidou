@@ -3,19 +3,13 @@
     <div class="monitor-nav">
       <i class="iconfont icon-unorderedlist _header"></i>
       <div class="_list">
-        <a
-          href="javascript:;"
-          @click="openTab('track')"
-        >
+        <a href="javascript:;" @click="openTab('track')">
           <i class="iconfont icon-guiji"></i>
           <span>轨迹回放</span>
         </a>
-        <a
-          href="javascript:;"
-          @click="openTab('fence')"
-        >
+        <a href="javascript:;" @click="openTab('fence')">
           <i class="iconfont icon-weilan"></i>
-          <span>围栏管理 </span>
+          <span>围栏管理</span>
         </a>
       </div>
     </div>
@@ -25,18 +19,12 @@
       class="monitor-tabs"
       @tab-remove="tabRemove"
     >
-      <el-tab-pane
-        label="监控"
-        :closable="false"
-        name="index"
-      >
+      <el-tab-pane label="监控" :closable="false" name="index">
         <div class="monitor">
           <!-- <qa-list></qa-list> -->
           <monitor-info></monitor-info>
-          <div
-            id="container"
-            style="width:100%;height:100%;"
-          ></div>
+          <div class="shadow-box monitor-map-tools">地图工具</div>
+          <div id="container" style="width:100%;height:100%;"></div>
           <div class="vehicle-search shadow-box">
             <el-autocomplete
               v-model="searchVehicle"
@@ -47,14 +35,9 @@
               size="small"
               prefix-icon="el-icon-search"
               style="width:100%;"
-            >
-            </el-autocomplete>
+            ></el-autocomplete>
           </div>
-          <transition-group
-            name="list-complete"
-            tag="div"
-            class="current-vehicle-container"
-          >
+          <transition-group name="list-complete" tag="div" class="current-vehicle-container">
             <vehicle-monitor
               class="list-complete-item"
               @close="removeCurrentVehicle(vehicle.sim_id)"
@@ -65,39 +48,27 @@
             ></vehicle-monitor>
           </transition-group>
 
-          <el-collapse
-            accordion
-            class="status-container shadow-box"
-            @change="toggleUserList"
-          >
+          <el-collapse accordion class="status-container shadow-box" @change="toggleUserList">
             <el-collapse-item>
               <template slot="title">
                 <div class="_header">
-                  <span
-                    class="_global-status"
-                    @click.stop="showVehicleAll('total')"
-                  >平台车辆总数：
+                  <span class="_global-status" @click.stop="showVehicleAll('total')">
+                    平台车辆总数：
                     <strong>{{vehicleCount.online + vehicleCount.offline}}</strong>
                   </span>
-                  <span
-                    class="_global-status _online"
-                    @click.stop="showVehicleAll('online')"
-                  >在线车辆：
+                  <span class="_global-status _online" @click.stop="showVehicleAll('online')">
+                    在线车辆：
                     <strong>{{vehicleCount.online}}</strong>
                   </span>
-                  <span
-                    class="_global-status _alarm"
-                    @click.stop="showVehicleAll('alarm')"
-                  >报警车辆：
+                  <span class="_global-status _alarm" @click.stop="showVehicleAll('alarm')">
+                    报警车辆：
                     <strong>{{vehicleCount.alarm}}</strong>
                   </span>
                   <!-- <span class="_global-status _error" @click.stop="showVehicleAll('error')">异常车辆：
                     <strong>{{vehicleCount.error}}</strong>
-                  </span> -->
-                  <span
-                    class="_global-status _offline"
-                    @click.stop="showVehicleAll('offline')"
-                  >离线车辆：
+                  </span>-->
+                  <span class="_global-status _offline" @click.stop="showVehicleAll('offline')">
+                    离线车辆：
                     <strong>{{vehicleCount.offline}}</strong>
                   </span>
                 </div>
@@ -107,24 +78,12 @@
                 </div>
               </template>
               <div class="_body">
-                <el-form
-                  :inline="true"
-                  size="mini"
-                  class="_search"
-                  @submit.native.prevent
-                >
+                <el-form :inline="true" size="mini" class="_search" @submit.native.prevent>
                   <el-form-item label="企业名称">
-                    <el-input
-                      placeholder="企业名称"
-                      v-model="userListQuery.real_name"
-                    ></el-input>
+                    <el-input placeholder="企业名称" v-model="userListQuery.real_name"></el-input>
                   </el-form-item>
                   <el-form-item>
-                    <el-button
-                      type="primary"
-                      native-type="submit"
-                      @click="searchUserList"
-                    >查询</el-button>
+                    <el-button type="primary" native-type="submit" @click="searchUserList">查询</el-button>
                   </el-form-item>
                 </el-form>
                 <div class="_table">
@@ -135,37 +94,15 @@
                     @cell-click="showVehicleWithGroup"
                     key="user-table"
                   >
-                    <el-table-column
-                      prop="user_name"
-                      label="用户名称"
-                      width="180"
-                    >
+                    <el-table-column prop="user_name" label="用户名称" width="180"></el-table-column>
+                    <el-table-column prop="total" label="车辆总数">
+                      <template slot-scope="scope">{{scope.row.online + scope.row.offline}}</template>
                     </el-table-column>
-                    <el-table-column
-                      prop="total"
-                      label="车辆总数"
-                    >
-                      <template slot-scope="scope">
-                        {{scope.row.online + scope.row.offline}}
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      prop="online"
-                      label="在线车辆 "
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="alarm"
-                      label="报警车辆  "
-                    >
-                    </el-table-column>
+                    <el-table-column prop="online" label="在线车辆 "></el-table-column>
+                    <el-table-column prop="alarm" label="报警车辆  "></el-table-column>
                     <!-- <el-table-column prop="error" label="异常车辆  ">
-                    </el-table-column> -->
-                    <el-table-column
-                      prop="offline"
-                      label="离线车辆 "
-                    >
-                    </el-table-column>
+                    </el-table-column>-->
+                    <el-table-column prop="offline" label="离线车辆 "></el-table-column>
                   </el-table>
                 </div>
                 <div class="_pager">
@@ -175,17 +112,12 @@
                     :total="userListQuery.total"
                     @current-change="userListCurrentChange"
                     :page-size="userListQuery.size"
-                  >
-                  </el-pagination>
+                  ></el-pagination>
                 </div>
               </div>
             </el-collapse-item>
           </el-collapse>
-          <transition
-            name="fade"
-            enter-active-class="fadeInLeft"
-            leave-active-class="fadeOutLeft"
-          >
+          <transition name="fade" enter-active-class="fadeInLeft" leave-active-class="fadeOutLeft">
             <vehicle-details
               @instruction="contextmenuInstruction"
               @close="closeShowVehicle"
@@ -226,7 +158,7 @@
       </el-tab-pane>
       <!-- <el-tab-pane label="数据异常" :closable="true" name="error" v-if="$store.state.monitor.tabs.indexOf('error') !=-1">
         <vehicle-error :vehicle="$store.state.monitor.monitorErrorVehicle"></vehicle-error>
-      </el-tab-pane> -->
+      </el-tab-pane>-->
       <el-tab-pane
         label="媒体列表"
         :closable="true"
@@ -261,7 +193,6 @@
         v-if="instructionCard.vehicle"
       ></div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -1311,6 +1242,16 @@ export default {
 </script>
 <style lang="less">
 @import "../../style/var.less";
+.monitor-map-tools {
+  position: absolute;
+  width: 17%;
+  right: 20px;
+  bottom: 0;
+  background-color: #f5f7fa;
+  border: 1px solid #e4e7ed;
+  height: 41px;
+  z-index: 99;
+}
 .monitor-nav {
   position: absolute;
   width: 50px;

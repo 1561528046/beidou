@@ -21,13 +21,11 @@
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-                            <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button> -->
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>-->
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
-
         </el-row>
-
       </el-form>
     </el-card>
     <el-card shadow="always">
@@ -39,34 +37,90 @@
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+      <el-table
+        :data="tableData.data"
+        v-loading="tableLoading"
+        style="width: 100%"
+        class="admin-table-list"
+      >
         <el-table-column prop="driver_card_id" label="司机卡编号" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="driver_name" label="姓名" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="tel" label="联系电话" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="license_validity" label="驾驶证有效期" :formatter="(row)=>{return $utils.formatDate(row.license_validity)}">
-        </el-table-column>
-        <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="tel" label="联系电话" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="license_validity"
+          label="驾驶证有效期"
+          :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"
+        ></el-table-column>
+        <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit" v-rights="6-1-3">编辑</el-button>
-            <!-- <el-button size="small" type="primary" icon="el-icon-edit" @click="openBindingVehicle(scope)">绑定车辆</el-button> -->
+            <el-button
+              size="small"
+              @click="updateForm(scope)"
+              type="primary"
+              icon="el-icon-edit"
+              v-rights="6-1-3"
+            >编辑</el-button>
+            <el-button
+              size="small"
+              type="primary"
+              icon="el-icon-edit"
+              @click="openBindingVehicle(scope)"
+            >绑定车辆</el-button>
             <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="6-1-2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="tableQuery.page"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="tableQuery.size"
+          :total="tableData.total"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+        ></el-pagination>
       </div>
     </el-card>
-    <!-- <el-dialog title="选择车辆" :visible.sync="bindingDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog
+      title="选择车辆"
+      :visible.sync="bindingDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
       <choose-vehicle @button="bindingVehicle"></choose-vehicle>
-    </el-dialog> -->
-    <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    </el-dialog>
+    <el-dialog
+      title="添加"
+      :visible.sync="addDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
       <add-components @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
     </el-dialog>
-    <el-dialog width="44%" title="编辑" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <update-components :driver_card_id="updateId" @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-components>
+    <el-dialog
+      width="44%"
+      title="编辑"
+      :visible.sync="updateDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <update-components
+        :driver_card_id="updateId"
+        @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}"
+        :key="addKey"
+      ></update-components>
     </el-dialog>
   </div>
 </template>

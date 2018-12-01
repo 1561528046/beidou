@@ -1,4 +1,6 @@
-import { dict } from "./base.js";
+import {
+  dict
+} from "./base.js";
 import utils from "./utils.js";
 import indexDB from "./indexedDB.js";
 var dbObj = null;
