@@ -125,7 +125,7 @@ export default {
         this.communication.data.map(item => {
           sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
           if (sim_id == data.SimID) {
-            this.$set(item, "operate", this.event[key] + "设置成功");
+            this.$set(item, "operate", this.event[key] + "指令发送成功");
           }
         });
       }

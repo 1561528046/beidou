@@ -507,6 +507,7 @@ export default {
           break;
       }
     },
+
     openOtherVehicle() {
       this.otherVehicleDialog = true;
     },

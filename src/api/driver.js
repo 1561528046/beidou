@@ -2,6 +2,11 @@
 import ajax from "./ajax.js";
 import qs from "qs";
 //司机信息管理
+export const getDriverByID = query => {
+  return ajax.get("", {
+    param: query
+  });
+};
 export const getDriverAll = query => {
   return ajax.get("/driver/GetAll", {
     params: query

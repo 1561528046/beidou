@@ -87,7 +87,7 @@ export default {
       var data = JSON.parse(eve.data);
       if (data.code == "0") {
         return this.$notify({
-          message: "设置成功",
+          message: "指令发送成功",
           title: "提示",
           type: "success"
         });
@@ -97,7 +97,7 @@ export default {
       var data = JSON.parse(eve.data);
       if (data.code == "0") {
         return this.$notify({
-          message: "设置成功",
+          message: "指令发送成功",
           title: "提示",
           type: "success"
         });
@@ -107,7 +107,7 @@ export default {
       var data = JSON.parse(eve.data);
       if (data.code == "0") {
         return this.$notify({
-          message: "设置成功",
+          message: "指令发送成功",
           title: "提示",
           type: "success"
         });
@@ -117,7 +117,7 @@ export default {
       var data = JSON.parse(eve.data);
       if (data.code == "0") {
         return this.$notify({
-          message: "设置成功",
+          message: "指令发送成功",
           title: "提示",
           type: "success"
         });
@@ -127,7 +127,7 @@ export default {
       var data = JSON.parse(eve.data);
       if (data.code == "0") {
         return this.$notify({
-          message: "设置成功",
+          message: "指令发送成功",
           title: "提示",
           type: "success"
         });
@@ -137,7 +137,7 @@ export default {
       var data = JSON.parse(eve.data);
       if (data.code == "0") {
         return this.$notify({
-          message: "设置成功",
+          message: "指令发送成功",
           title: "提示",
           type: "success"
         });

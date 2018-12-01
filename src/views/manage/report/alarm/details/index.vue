@@ -49,8 +49,8 @@
         <el-table-column prop="stop_speed" label="结束速度" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="start_address" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
         <el-table-column prop="stop_address" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="处理状态" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="处理结果" :formatter="$utils.baseFormatter "> </el-table-column>
+        <!-- <el-table-column prop="" label="处理状态" :formatter="$utils.baseFormatter "> </el-table-column> -->
+        <!-- <el-table-column prop="" label="处理结果" :formatter="$utils.baseFormatter "> </el-table-column> -->
       </el-table>
       <div class="admin-table-pager">
         <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>

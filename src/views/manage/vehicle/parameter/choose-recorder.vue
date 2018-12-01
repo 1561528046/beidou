@@ -222,19 +222,19 @@ export default {
           }
           if (data.CommandWord == 131) {
             if (data.SimID == sim_id) {
-              this.$set(item, "operating", "记录仪初次安装日期设置成功");
+              this.$set(item, "operating", "记录仪初次安装日期指令发送成功");
             }
           } else if (data.CommandWord == 194) {
             if (data.SimID == sim_id) {
-              this.$set(item, "operating", "记录仪时间设置成功");
+              this.$set(item, "operating", "记录仪时间指令发送成功");
             }
           } else if (data.CommandWord == 195) {
             if (data.SimID == sim_id) {
-              this.$set(item, "operating", "记录仪脉冲系数设置成功");
+              this.$set(item, "operating", "记录仪脉冲系数指令发送成功");
             }
           } else if (data.CommandWord == 196) {
             if (data.SimID == sim_id) {
-              this.$set(item, "operating", "初始里程设置成功");
+              this.$set(item, "operating", "初始里程指令发送成功");
             }
           }
         });
