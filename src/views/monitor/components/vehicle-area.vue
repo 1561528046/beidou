@@ -160,6 +160,16 @@
         </el-pagination>
       </div>
     </div>
+    <el-dialog title="线路" width="25%" :visible.sync="lineDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+      <template>
+        <label style="display:inline-block;width:68px;">类型：</label>
+        <el-select size="small" v-model="area_type">
+          <el-option value="7" label="线路偏移">线路偏移</el-option>
+          <el-option value="5" label="分段限速">分段限速</el-option>
+        </el-select>
+        <div :is="area_name"></div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -169,10 +179,24 @@ import moment from "moment";
 import { AddRegion, GetRegionByPage, DeleteRegion } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import areaRoute from "./area-route.vue";
+import areaSpeed from "./area/area-speed.vue";
+import areaOffset from "./area/area-offset.vue";
 export default {
-  components: { selectCityInput, areaRoute },
+  components: { selectCityInput, areaRoute, areaSpeed, areaOffset },
   created() {
     this.getTable();
+  },
+  watch: {
+    area_type: function() {
+      switch (this.area_type) {
+        case "5":
+          this.area_name = areaSpeed;
+          break;
+        case "7":
+          this.area_name = areaOffset;
+          break;
+      }
+    }
   },
   mounted() {
     var vm = this;
@@ -193,21 +217,25 @@ export default {
             var Radius = e.obj.getRadius();
             overlays[0] = Center;
             overlays[1] = Radius;
+            vm.addDialog = true;
           } else if (vm.label == "rectangle") {
             var Rectangle = e.obj.getOptions();
             overlays[0] = Rectangle;
+            vm.addDialog = true;
           } else if (vm.label == "polygon") {
             var Polygon = e.obj.getPath();
             overlays[0] = Polygon;
+            vm.addDialog = true;
           } else if (vm.label == "marker") {
             var Marker = e.obj.getPosition();
             overlays[0] = Marker;
+            vm.addDialog = true;
           } else if (vm.label == "polyline") {
             var Polyline = e.obj.getPath();
             overlays[0] = Polyline;
+            vm.lineDialog = true;
           }
           map.remove(overlays);
-          vm.addDialog = true;
         });
         vm.$set(vm.mapData, "overlays", overlays);
       });
@@ -225,8 +253,11 @@ export default {
   },
   data() {
     return {
+      lineDialog: false,
       itemDialog: false,
       speedDialog: false,
+      area_name: "",
+      area_type: "",
       lineData: [],
       line: "",
       filterType: 0,
