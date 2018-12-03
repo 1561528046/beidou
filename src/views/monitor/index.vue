@@ -711,7 +711,6 @@ export default {
 
               this.dict.fence.set(fence.RegionId, fence);
             });
-            // console.log(this.dict.fence);
           }
         });
       },
@@ -723,16 +722,22 @@ export default {
         //Type 区域类型：1自定义圆形，2自定义矩形，3自定义多边形，4行政区域,5分段限速,6关键点 7线路偏移
         var sim_id = vehicleData.sim_id;
         var vehicle = this.data.get(sim_id);
-        var inAlarm = false; //禁入报警  如果为true就不做判断了
-        var isInSafeArea = false; //是否在安全区
-        var outAlarm = false; //禁出报警(只要在符合规范的地区中的一个，就不做判断了)
+        var isInSafeArea = false; //是否在安全区(因驶出可同时存在多可，所以只做一个判断)
+        var isInSafeLine = false; //是否在安全线路内行驶（多条线路偏移围栏时，如果车辆正常行驶在某围栏其中的一个线段内，其他不做判断）
         if (!vehicle.fence_ids) {
           return false;
         }
+        var fenceResult = {
+          alarmList: [], //是否报警（都哪些围栏触发了报警，存放对应key值） 例如 ["inAlarm","lineOut"];可通过循环此数组直接取到报警对象
+          inAlarm: [], //禁入报警  如果为true就不做判断了
+          outAlarm: [], //禁出报警(只要在符合规范的地区中的一个，就不做判断了)
+          lineOut: [], //线路偏移是否报警
+          splitPolylineSpeed: [] //分段限速是否报警
+        };
         vehicle.fence_ids.map(fence_id => {
           if (this.dict.fence.has(fence_id)) {
             var fence = this.dict.fence.get(fence_id);
-            if (inAlarm && fence.AreaProperty == "3") {
+            if (fenceResult.inAlarm.length && fence.AreaProperty == "3") {
               //禁入报警  如果为true就不做判断了
               return false;
             }
@@ -740,6 +745,21 @@ export default {
               //禁出报警(只要有符合一个围栏规范，就不做判断了)
               return false;
             }
+
+            if (fenceResult.splitPolylineSpeed.length && fence.Type == "5") {
+              //分段线路只做一次判断
+              return false;
+            }
+
+            if (
+              fenceResult.lineOut.length &&
+              fence.Type == "7" &&
+              isInSafeLine == false
+            ) {
+              //线路偏移 只做一次判断
+              return false;
+            }
+
             //先判断围栏生效时间
             var startSetting = [],
               endSetting = [];
@@ -769,7 +789,7 @@ export default {
                 endSetting[1],
                 endSetting[2]
               );
-              var now = new Date(vehicle.time);
+              var now = new Date(vehicleData.time);
               if ((start < now && end > now) == false) {
                 //如果不在范围时间内
                 return false;
@@ -793,17 +813,93 @@ export default {
                   fence.rings
                 );
                 break;
+              case "5": //分段限速
+                if (
+                  this.checkFenceSplitPolylineSpeed(fence, point, vehicleData)
+                ) {
+                  fenceResult.splitPolylineSpeed.push(fence);
+                  fenceResult.alarmList.push("splitPolylineSpeed");
+                }
+                break;
+              case "6": //关键点
+                // this.checkFenceKeyPoint(fence, point, vehicleData);
+                break;
+              case "7": //线路偏移
+                if (this.checkFenceLineOut(fence, point, vehicleData)) {
+                  fenceResult.lineOut.push(fence);
+                  fenceResult.alarmList.push("lineOut");
+                  isInSafeLine = true;
+                }
+                break;
             }
             if (fence.AreaProperty == "3") {
-              inAlarm = isInArea;
+              if (isInArea) {
+                fenceResult.inAlarm.push(fence);
+                fenceResult.alarmList.push("inAlarm");
+              }
             }
             if (fence.AreaProperty == "5") {
-              outAlarm = !isInArea;
-              isInSafeArea = isInArea;
+              if (!isInArea) {
+                fenceResult.outAlarm.push(fence);
+                isInSafeArea = isInArea;
+                fenceResult.alarmList.push("outAlarm");
+              }
             }
           }
         });
-        return { inAlarm: inAlarm, outAlarm: outAlarm };
+        return fenceResult;
+      },
+      checkFenceSplitPolylineSpeed(fence, point, vehicleData, arr) {
+        //分段限速判断
+        var result = false;
+        for (var i = 0, len = fence.TurnPoints.length - 1; i < len; i++) {
+          var points = fence.TurnPoints;
+          var line = [
+            [points[i].TurnPointLongitude, points[i].TurnPointLatitude],
+            [points[i + 1].TurnPointLongitude, points[i + 1].TurnPointLatitude]
+          ];
+          if (
+            AMap.GeometryUtil.isPointOnLine(
+              point,
+              line,
+              points[i].RouteSegmentWidth
+            )
+          ) {
+            //如果在某个线段上，开始判断速度
+            if (points[i].MaxSpeedLimited < vehicleData.speed) {
+              // console.log("超速!");
+              result = true;
+            }
+            break;
+          }
+        }
+        return result;
+      },
+      checkFenceKeyPoint(fence, point) {
+        //关键点
+      },
+      checkFenceLineOut(fence, point) {
+        //线路偏移
+        var result = true;
+        for (var i = 0, len = fence.TurnPoints.length - 1; i < len; i++) {
+          var points = fence.TurnPoints;
+          var line = [
+            [points[i].TurnPointLongitude, points[i].TurnPointLatitude],
+            [points[i + 1].TurnPointLongitude, points[i + 1].TurnPointLatitude]
+          ];
+          if (
+            AMap.GeometryUtil.isPointOnLine(
+              point,
+              line,
+              points[i].RouteSegmentWidth
+            )
+          ) {
+            // 如果在其中任意一个线段中，即未偏移，否则就是偏移线路
+            result = false;
+            break;
+          }
+        }
+        return result;
       },
       initGroupDict(groups) {
         //后台接口、根据当前用户分组 获取所有分组（平铺）
@@ -962,34 +1058,17 @@ export default {
           if (
             vehicleData.alarm != "0" ||
             vehicleData.alarm != "" ||
-            fence_alarm.inAlarm ||
-            fence_alarm.outAlarm
+            fence_alarm.alarmList.length ||
+            vehicleData.alarm != "0" ||
+            vehicleData.alarm != ""
           ) {
-            //进出围栏报警、或者车机自身报警
+            //进出围栏报警、或者车机自身报警加入到监控对象列表中，以及报警的store中
             this.setAlarm(vehicleData);
-          }
-          if (vehicleData.alarm != "0" || vehicleData.alarm != "") {
-            //车辆需要人工确认的报警加入$store
             vm.$store.commit("alarm/add", vehicleData);
           }
-          //初始化围栏报警数据
-          vehicle.fence_alarm_text = "";
-          vehicle.fence_alarm.inAlarm = false;
-          vehicle.fence_alarm.outAlarm = false;
-          if (fence_alarm.inAlarm || fence_alarm.outAlarm) {
-            //检测围栏
-            var fence_alarm_arr = [];
-            if (fence_alarm.inAlarm) {
-              fence_alarm_arr.push("进围栏(平台)");
-            }
-            if (fence_alarm.outAlarm) {
-              fence_alarm_arr.push("出围栏(平台)");
-            }
-            vehicle.fence_alarm_text = fence_alarm_arr.join(",");
-            vehicle.fence_alarm.inAlarm = fence_alarm.inAlarm;
-            vehicle.fence_alarm.outAlarm = fence_alarm.outAlarm;
-          }
-          // debugger;
+          //设置围栏报警数据
+          vm.$set(vehicle, "fence_alarm", fence_alarm);
+
           if (
             new Date() - new Date(vehicleData.time) <
             vm.$dict.ONLINE_TIMEOUT
@@ -1264,7 +1343,6 @@ export default {
               group_path: item[10].split(","), //车辆对应分组路径 [path1,path2,path3....]
               fence_ids: item[8] ? item[8].split(",") : [], //围栏ID列表
               fence_alarm: {}, //围栏报警信息
-              fence_alarm_text: "", // 出围栏，进围栏
               speed: 0,
               speed1: 0,
               alarm: 0,

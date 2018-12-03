@@ -1,17 +1,34 @@
 <template>
   <div style="height:100%">
     <div style="width:50%;height:100%" ref="tableParent">
-      <el-table style="height:100%" highlight-current-row :data="list" @row-click="showPosition" :max-height="tableHeight" size="small" v-loading="alarmLoading" element-loading-text="载入当天报警记录">
-        <el-table-column prop="License" label="车牌号" :formatter="formatLicense"> </el-table-column>
-        <el-table-column prop="" label="报警类型" :formatter="formatAlarm"> </el-table-column>
-        <el-table-column prop="" label="报警时间" :formatter="formatTime "> </el-table-column>
-        <el-table-column prop="address" label="当时位置"> </el-table-column>
-        <el-table-column prop="" label="行驶速度" :formatter="formatSpeed"> </el-table-column>
-        <el-table-column prop="EM0x30" label="信号质量"> </el-table-column>
+      <el-table
+        style="height:100%"
+        highlight-current-row
+        :data="list"
+        @row-click="showPosition"
+        :max-height="tableHeight"
+        size="small"
+        v-loading="alarmLoading"
+        element-loading-text="载入当天报警记录"
+      >
+        <el-table-column prop="License" label="车牌号" :formatter="formatLicense"></el-table-column>
+        <el-table-column prop label="报警类型" :formatter="formatAlarm"></el-table-column>
+        <el-table-column prop label="报警时间" :formatter="formatTime "></el-table-column>
+        <el-table-column prop="address" label="当时位置"></el-table-column>
+        <el-table-column prop label="行驶速度" :formatter="formatSpeed"></el-table-column>
+        <el-table-column prop="EM0x30" label="信号质量"></el-table-column>
       </el-table>
       <div style="text-align:center;padding-top:10px;">
-        <el-pagination background @current-change="changePager" @size-change="(size)=>{this.pager.size=size}" small :page-size="pager.size" :pager-count="5" layout="sizes,prev, pager, next,jumper" :total="pager.total">
-        </el-pagination>
+        <el-pagination
+          background
+          @current-change="changePager"
+          @size-change="(size)=>{this.pager.size=size}"
+          small
+          :page-size="pager.size"
+          :pager-count="5"
+          layout="sizes,prev, pager, next,jumper"
+          :total="pager.total"
+        ></el-pagination>
       </div>
     </div>
     <div style="width:50%; position:absolute;right:0;top:0;bottom:0; " ref="map"></div>
@@ -62,7 +79,7 @@ export default {
       if (
         this.vehicle.alarm != "0" ||
         this.vehicle.alarm != "" ||
-        this.vehicle.fence_alarm_text != ""
+        this.vehicle.fence_alarm.alarmList.length
       ) {
         //监控vehicle的time变化 ，如果alarm不为0 则list增加一条记录
         this.addAlarm();

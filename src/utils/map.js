@@ -5,10 +5,10 @@
  * @param {Function} callback 地图文件加载完成回调
  */
 var callbackList = [];
-export const initMap = function(callback) {
+export const initMap = function (callback) {
   callbackList.push(callback);
   if (!window.AMap) {
-    window.mapOnLoad = function() {
+    window.mapOnLoad = function () {
       var callbackFunc = callbackList.pop();
       callbackFunc && callbackFunc();
     };
@@ -24,7 +24,7 @@ export const initMap = function(callback) {
   }
 };
 
-export const createMarker = function(vehicleData, AMap, stateImg) {
+export const createMarker = function (vehicleData, AMap, stateImg) {
   var img = "/static/offline.png";
   if (vehicleData.alarmCount == "0") {
     img = "/static/alarm.png";
@@ -33,7 +33,7 @@ export const createMarker = function(vehicleData, AMap, stateImg) {
     img = "/static/online.png";
     if (
       (vehicleData.alarm != "0" && vehicleData.alarm != "") ||
-      vehicleData.fence_alarm_text != ""
+      vehicleData.fence_alarm.alarmList.length
     ) {
       img = "/static/alarm.png";
     }
@@ -56,7 +56,7 @@ export const createMarker = function(vehicleData, AMap, stateImg) {
   });
 };
 
-export const setMarker = function(marker, vehicleData, AMap, stateImg) {
+export const setMarker = function (marker, vehicleData, AMap, stateImg) {
   var img = "/static/offline.png";
   if (vehicleData.alarmCount == "0") {
     img = "/static/alarm.png";
@@ -65,7 +65,7 @@ export const setMarker = function(marker, vehicleData, AMap, stateImg) {
     img = "/static/online.png";
     if (
       (vehicleData.alarm != "0" && vehicleData.alarm != "") ||
-      vehicleData.fence_alarm_text != ""
+      vehicleData.fence_alarm.alarmList.length
     ) {
       img = "/static/alarm.png";
     }
