@@ -13,27 +13,57 @@
         </a>
       </div>
     </div>
-    <el-tabs v-model="$store.state.monitor.currentTab" style="height:100%;" class="monitor-tabs" @tab-remove="tabRemove">
+    <el-tabs
+      v-model="$store.state.monitor.currentTab"
+      style="height:100%;"
+      class="monitor-tabs"
+      @tab-remove="tabRemove"
+    >
       <el-tab-pane label="监控" :closable="false" name="index">
         <div class="monitor">
           <!-- <qa-list></qa-list> -->
           <monitor-info></monitor-info>
           <div class="shadow-box monitor-map-tools">
             <el-radio-group v-model="mapTools" @change="changeTools" size="small">
+<<<<<<< HEAD
               <el-radio-button style="margin:5px" label="current" title="查找当前终端">
                 查找当前终端
               </el-radio-button>
               <el-radio-button style="margin-top:5px" label="history" title="查找历史终端">
                 查找历史终端
               </el-radio-button>
+=======
+              <el-radio-button
+                style="margin-left:10px;margin-right:10px;"
+                label="current"
+                title="查找当前终端"
+              >查找当前终端</el-radio-button>
+              <el-radio-button label="history" title="查找历史终端">查找历史终端</el-radio-button>
+>>>>>>> 33dfbfac33b3eef742a7cc5879ef969d5a1c4d7a
             </el-radio-group>
           </div>
           <div id="container" style="width:100%;height:100%;"></div>
           <div class="vehicle-search shadow-box">
-            <el-autocomplete v-model="searchVehicle" clearable :fetch-suggestions="vehicleSearch" placeholder="搜索车辆车牌号" @select="vehicleSelected" size="small" prefix-icon="el-icon-search" style="width:100%;"></el-autocomplete>
+            <el-autocomplete
+              v-model="searchVehicle"
+              clearable
+              :fetch-suggestions="vehicleSearch"
+              placeholder="搜索车辆车牌号"
+              @select="vehicleSelected"
+              size="small"
+              prefix-icon="el-icon-search"
+              style="width:100%;"
+            ></el-autocomplete>
           </div>
           <transition-group name="list-complete" tag="div" class="current-vehicle-container">
-            <vehicle-monitor class="list-complete-item" @close="removeCurrentVehicle(vehicle.sim_id)" v-for="(vehicle,index) in currentVehicles" :vehicle="vehicle" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
+            <vehicle-monitor
+              class="list-complete-item"
+              @close="removeCurrentVehicle(vehicle.sim_id)"
+              v-for="(vehicle,index) in currentVehicles"
+              :vehicle="vehicle"
+              :index="index"
+              :key="vehicle.vehicle_id"
+            ></vehicle-monitor>
           </transition-group>
 
           <el-collapse accordion class="status-container shadow-box" @change="toggleUserList">
@@ -75,7 +105,13 @@
                   </el-form-item>
                 </el-form>
                 <div class="_table">
-                  <el-table :data="userList" size="small" style="width: 100%" @cell-click="showVehicleWithGroup" key="user-table">
+                  <el-table
+                    :data="userList"
+                    size="small"
+                    style="width: 100%"
+                    @cell-click="showVehicleWithGroup"
+                    key="user-table"
+                  >
                     <el-table-column prop="user_name" label="用户名称" width="180"></el-table-column>
                     <el-table-column prop="total" label="车辆总数">
                       <template slot-scope="scope">{{scope.row.online + scope.row.offline}}</template>
@@ -88,55 +124,135 @@
                   </el-table>
                 </div>
                 <div class="_pager">
-                  <el-pagination background layout="prev, pager, next" :total="userListQuery.total" @current-change="userListCurrentChange" :page-size="userListQuery.size"></el-pagination>
+                  <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :total="userListQuery.total"
+                    @current-change="userListCurrentChange"
+                    :page-size="userListQuery.size"
+                  ></el-pagination>
                 </div>
               </div>
             </el-collapse-item>
           </el-collapse>
           <transition name="fade" enter-active-class="fadeInLeft" leave-active-class="fadeOutLeft">
-            <vehicle-details @instruction="contextmenuInstruction" @close="closeShowVehicle" @open-single="addSingleVehicle" :vehicle="currentGroup" :show-vehicle="showVehicle"></vehicle-details>
+            <vehicle-details
+              @instruction="contextmenuInstruction"
+              @close="closeShowVehicle"
+              @open-single="addSingleVehicle"
+              :vehicle="currentGroup"
+              :show-vehicle="showVehicle"
+            ></vehicle-details>
           </transition>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="围栏管理" :closable="true" name="fence" v-if="$store.state.monitor.tabs.indexOf('fence') !=-1">
+      <el-tab-pane
+        label="围栏管理"
+        :closable="true"
+        name="fence"
+        v-if="$store.state.monitor.tabs.indexOf('fence') !=-1"
+      >
         <vehicle-area></vehicle-area>
       </el-tab-pane>
-      <el-tab-pane label="报警车辆" :closable="true" name="alarm" v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1">
-        <vehicle-alarm :vehicle="$store.state.monitor.monitorAlarmVehicle" :actived="$store.state.monitor.currentTab=='alarm'" :key="$store.state.monitor.monitorAlarmVehicle.sim_id"></vehicle-alarm>
+      <el-tab-pane
+        label="报警车辆"
+        :closable="true"
+        name="alarm"
+        v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1"
+      >
+        <vehicle-alarm
+          :vehicle="$store.state.monitor.monitorAlarmVehicle"
+          :actived="$store.state.monitor.currentTab=='alarm'"
+          :key="$store.state.monitor.monitorAlarmVehicle.sim_id"
+        ></vehicle-alarm>
       </el-tab-pane>
-      <el-tab-pane label="轨迹回放" :closable="true" name="track" v-if="$store.state.monitor.tabs.indexOf('track') !=-1">
+      <el-tab-pane
+        label="轨迹回放"
+        :closable="true"
+        name="track"
+        v-if="$store.state.monitor.tabs.indexOf('track') !=-1"
+      >
         <vehicle-track :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-track>
       </el-tab-pane>
       <!-- <el-tab-pane label="数据异常" :closable="true" name="error" v-if="$store.state.monitor.tabs.indexOf('error') !=-1">
         <vehicle-error :vehicle="$store.state.monitor.monitorErrorVehicle"></vehicle-error>
       </el-tab-pane>-->
-      <el-tab-pane label="媒体列表" :closable="true" name="media" v-if="$store.state.monitor.tabs.indexOf('media') !=-1">
+      <el-tab-pane
+        label="媒体列表"
+        :closable="true"
+        name="media"
+        v-if="$store.state.monitor.tabs.indexOf('media') !=-1"
+      >
         <vehicle-media :vehicle="$store.state.monitor.monitorMediaVehicle"></vehicle-media>
       </el-tab-pane>
       <!-- 单车标签 -->
-      <el-tab-pane :label="vehicle.license" :closable="true" v-for="vehicle in $store.getters.singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
+      <el-tab-pane
+        :label="vehicle.license"
+        :closable="true"
+        v-for="vehicle in $store.getters.singleVehicles"
+        :name="'single-'+vehicle.sim_id"
+        :key="'single-'+vehicle.sim_id"
+      >
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog :title="instructionCard.title" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="instructionCard.show" width="50%">
-      <div :is="instructionCard.component" :key="instructionCard.vehicle.sim_id" :vehicle="instructionCard.vehicle" v-if="instructionCard.vehicle"></div>
+    <el-dialog
+      :title="instructionCard.title"
+      append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="instructionCard.show"
+      width="50%"
+    >
+      <div
+        :is="instructionCard.component"
+        :key="instructionCard.vehicle.sim_id"
+        :vehicle="instructionCard.vehicle"
+        v-if="instructionCard.vehicle"
+      ></div>
     </el-dialog>
-    <el-dialog @close="down()" title="查找当前终端" width="25%" :visible.sync="currentDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog
+      @close="down()"
+      title="查找当前终端"
+      width="25%"
+      :visible.sync="currentDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
       <template>
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="license" label="车牌号">
-          </el-table-column>
+          <el-table-column prop="license" label="车牌号"></el-table-column>
         </el-table>
       </template>
     </el-dialog>
-    <el-dialog @close="down()" title="查找历史终端" width="40%" :visible.sync="historyDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog
+      @close="down()"
+      title="查找历史终端"
+      width="40%"
+      :visible.sync="historyDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
       <template>
         <el-form ref="form">
           <el-row>
             <el-col :span="14">
               <el-form-item label="时间">
-                <el-date-picker size="small" style="width:80%" v-model="time" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-                </el-date-picker>
+                <el-date-picker
+                  size="small"
+                  style="width:80%"
+                  v-model="time"
+                  type="datetimerange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -153,16 +269,30 @@
           </el-row>
         </el-form>
         <el-table :data="tableHistory" style="width: 100%">
-          <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}">
-          </el-table-column>
-          <el-table-column prop="license" label="车牌号">
-          </el-table-column>
-          <el-table-column prop="" :formatter="(row)=>{return (row.longitude+','+row.latitude)}" label="位置">
-          </el-table-column>
+          <el-table-column
+            prop="time"
+            label="时间"
+            :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"
+          ></el-table-column>
+          <el-table-column prop="license" label="车牌号"></el-table-column>
+          <el-table-column
+            prop
+            :formatter="(row)=>{return (row.longitude+','+row.latitude)}"
+            label="位置"
+          ></el-table-column>
         </el-table>
       </template>
     </el-dialog>
-    <el-dialog title="选择车辆" width="50%" :visible.sync="vehicleDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog
+      title="选择车辆"
+      width="50%"
+      :visible.sync="vehicleDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
       <choose-vehicle @button="bindingVehicle"></choose-vehicle>
     </el-dialog>
   </div>
@@ -590,7 +720,6 @@ export default {
 
               this.dict.fence.set(fence.RegionId, fence);
             });
-            // console.log(this.dict.fence);
           }
         });
       },
@@ -599,19 +728,25 @@ export default {
         // Region==fence 围栏
         //AreaProperty 3禁入 5禁出
         //StartTime ` EndTime 限制时间
-        //Type 区域类型：1自定义圆形，2自定义矩形，3自定义多边形，4行政区域
+        //Type 区域类型：1自定义圆形，2自定义矩形，3自定义多边形，4行政区域,5分段限速,6关键点 7线路偏移
         var sim_id = vehicleData.sim_id;
         var vehicle = this.data.get(sim_id);
-        var inAlarm = false; //禁入报警  如果为true就不做判断了
-        var isInSafeArea = false; //是否在安全区
-        var outAlarm = false; //禁出报警(只要在符合规范的地区中的一个，就不做判断了)
+        var isInSafeArea = false; //是否在安全区(因驶出可同时存在多可，所以只做一个判断)
+        var isInSafeLine = false; //是否在安全线路内行驶（多条线路偏移围栏时，如果车辆正常行驶在某围栏其中的一个线段内，其他不做判断）
         if (!vehicle.fence_ids) {
           return false;
         }
+        var fenceResult = {
+          alarmList: [], //是否报警（都哪些围栏触发了报警，存放对应key值） 例如 ["inAlarm","lineOut"];可通过循环此数组直接取到报警对象
+          inAlarm: [], //禁入报警  如果为true就不做判断了
+          outAlarm: [], //禁出报警(只要在符合规范的地区中的一个，就不做判断了)
+          lineOut: [], //线路偏移是否报警
+          splitPolylineSpeed: [] //分段限速是否报警
+        };
         vehicle.fence_ids.map(fence_id => {
           if (this.dict.fence.has(fence_id)) {
             var fence = this.dict.fence.get(fence_id);
-            if (inAlarm && fence.AreaProperty == "3") {
+            if (fenceResult.inAlarm.length && fence.AreaProperty == "3") {
               //禁入报警  如果为true就不做判断了
               return false;
             }
@@ -619,6 +754,21 @@ export default {
               //禁出报警(只要有符合一个围栏规范，就不做判断了)
               return false;
             }
+
+            if (fenceResult.splitPolylineSpeed.length && fence.Type == "5") {
+              //分段线路只做一次判断
+              return false;
+            }
+
+            if (
+              fenceResult.lineOut.length &&
+              fence.Type == "7" &&
+              isInSafeLine == false
+            ) {
+              //线路偏移 只做一次判断
+              return false;
+            }
+
             //先判断围栏生效时间
             var startSetting = [],
               endSetting = [];
@@ -648,7 +798,7 @@ export default {
                 endSetting[1],
                 endSetting[2]
               );
-              var now = new Date(vehicle.time);
+              var now = new Date(vehicleData.time);
               if ((start < now && end > now) == false) {
                 //如果不在范围时间内
                 return false;
@@ -672,17 +822,93 @@ export default {
                   fence.rings
                 );
                 break;
+              case "5": //分段限速
+                if (
+                  this.checkFenceSplitPolylineSpeed(fence, point, vehicleData)
+                ) {
+                  fenceResult.splitPolylineSpeed.push(fence);
+                  fenceResult.alarmList.push("splitPolylineSpeed");
+                }
+                break;
+              case "6": //关键点
+                // this.checkFenceKeyPoint(fence, point, vehicleData);
+                break;
+              case "7": //线路偏移
+                if (this.checkFenceLineOut(fence, point, vehicleData)) {
+                  fenceResult.lineOut.push(fence);
+                  fenceResult.alarmList.push("lineOut");
+                  isInSafeLine = true;
+                }
+                break;
             }
             if (fence.AreaProperty == "3") {
-              inAlarm = isInArea;
+              if (isInArea) {
+                fenceResult.inAlarm.push(fence);
+                fenceResult.alarmList.push("inAlarm");
+              }
             }
             if (fence.AreaProperty == "5") {
-              outAlarm = !isInArea;
-              isInSafeArea = isInArea;
+              if (!isInArea) {
+                fenceResult.outAlarm.push(fence);
+                isInSafeArea = isInArea;
+                fenceResult.alarmList.push("outAlarm");
+              }
             }
           }
         });
-        return { inAlarm: inAlarm, outAlarm: outAlarm };
+        return fenceResult;
+      },
+      checkFenceSplitPolylineSpeed(fence, point, vehicleData, arr) {
+        //分段限速判断
+        var result = false;
+        for (var i = 0, len = fence.TurnPoints.length - 1; i < len; i++) {
+          var points = fence.TurnPoints;
+          var line = [
+            [points[i].TurnPointLongitude, points[i].TurnPointLatitude],
+            [points[i + 1].TurnPointLongitude, points[i + 1].TurnPointLatitude]
+          ];
+          if (
+            AMap.GeometryUtil.isPointOnLine(
+              point,
+              line,
+              points[i].RouteSegmentWidth
+            )
+          ) {
+            //如果在某个线段上，开始判断速度
+            if (points[i].MaxSpeedLimited < vehicleData.speed) {
+              // console.log("超速!");
+              result = true;
+            }
+            break;
+          }
+        }
+        return result;
+      },
+      checkFenceKeyPoint(fence, point) {
+        //关键点
+      },
+      checkFenceLineOut(fence, point) {
+        //线路偏移
+        var result = true;
+        for (var i = 0, len = fence.TurnPoints.length - 1; i < len; i++) {
+          var points = fence.TurnPoints;
+          var line = [
+            [points[i].TurnPointLongitude, points[i].TurnPointLatitude],
+            [points[i + 1].TurnPointLongitude, points[i + 1].TurnPointLatitude]
+          ];
+          if (
+            AMap.GeometryUtil.isPointOnLine(
+              point,
+              line,
+              points[i].RouteSegmentWidth
+            )
+          ) {
+            // 如果在其中任意一个线段中，即未偏移，否则就是偏移线路
+            result = false;
+            break;
+          }
+        }
+        return result;
       },
       initGroupDict(groups) {
         //后台接口、根据当前用户分组 获取所有分组（平铺）
@@ -841,34 +1067,17 @@ export default {
           if (
             vehicleData.alarm != "0" ||
             vehicleData.alarm != "" ||
-            fence_alarm.inAlarm ||
-            fence_alarm.outAlarm
+            fence_alarm.alarmList.length ||
+            vehicleData.alarm != "0" ||
+            vehicleData.alarm != ""
           ) {
-            //进出围栏报警、或者车机自身报警
+            //进出围栏报警、或者车机自身报警加入到监控对象列表中，以及报警的store中
             this.setAlarm(vehicleData);
-          }
-          if (vehicleData.alarm != "0" || vehicleData.alarm != "") {
-            //车辆需要人工确认的报警加入$store
             vm.$store.commit("alarm/add", vehicleData);
           }
-          //初始化围栏报警数据
-          vehicle.fence_alarm_text = "";
-          vehicle.fence_alarm.inAlarm = false;
-          vehicle.fence_alarm.outAlarm = false;
-          if (fence_alarm.inAlarm || fence_alarm.outAlarm) {
-            //检测围栏
-            var fence_alarm_arr = [];
-            if (fence_alarm.inAlarm) {
-              fence_alarm_arr.push("进围栏(平台)");
-            }
-            if (fence_alarm.outAlarm) {
-              fence_alarm_arr.push("出围栏(平台)");
-            }
-            vehicle.fence_alarm_text = fence_alarm_arr.join(",");
-            vehicle.fence_alarm.inAlarm = fence_alarm.inAlarm;
-            vehicle.fence_alarm.outAlarm = fence_alarm.outAlarm;
-          }
-          // debugger;
+          //设置围栏报警数据
+          vm.$set(vehicle, "fence_alarm", fence_alarm);
+
           if (
             new Date() - new Date(vehicleData.time) <
             vm.$dict.ONLINE_TIMEOUT
@@ -1143,7 +1352,6 @@ export default {
               group_path: item[10].split(","), //车辆对应分组路径 [path1,path2,path3....]
               fence_ids: item[8] ? item[8].split(",") : [], //围栏ID列表
               fence_alarm: {}, //围栏报警信息
-              fence_alarm_text: "", // 出围栏，进围栏
               speed: 0,
               speed1: 0,
               alarm: 0,
