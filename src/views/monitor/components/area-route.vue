@@ -8,14 +8,14 @@
             <el-col :span="8">
               <el-form-item label="开始位置">
                 <el-select v-model="formData.start" size="small">
-                  <el-option v-for="(item,index) in location" :key="item.id" :value="item.id" :label="index+1">{{index +1}},{{item.lng}} {{item.lat}}</el-option>
+                  <el-option v-for="(item,index) in location" :key="JSON.stringify(index)" :value="JSON.stringify(index)" :label="index+1">{{index +1}},{{item.lng}} {{item.lat}}</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="结束位置">
                 <el-select v-model="formData.end" size="small">
-                  <el-option v-for="(item,index) in location" :key="item.id" :value="item.id" :label="index+1">{{index +1}},{{item.lng}} {{item.lat}}</el-option>
+                  <el-option v-for="(item,index) in location" :key="JSON.stringify(index)" :value="JSON.stringify(index)" :label="index+1">{{index +1}},{{item.lng}} {{item.lat}}</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -70,18 +70,20 @@ import moment from "moment";
 import { initMap } from "@/utils/map.js";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  created() {},
+  created() {
+    this.$set(this.$data, "roadData", this.$props.road);
+    this.$set(this.$data, "roadIndex", this.$props.Index);
+  },
   components: { chooseVehicle },
   data() {
     return {
       copy_road: [],
       label: "",
       roadData: [],
+      roadIndex: [],
       location: [],
       mapData: {
-        map: {},
-        mouseTool: {},
-        path: []
+        map: {}
       },
       formData: {
         travel_time: false,
@@ -101,37 +103,30 @@ export default {
       }
     };
   },
-  watch: {},
-  props: ["road"],
+  props: {
+    road: Array,
+    Index: Array
+  },
   mounted() {
     var that = this;
     initMap(() => {
       var map = new AMap.Map(this.$refs.map, {
         zoom: 14
       });
-      that.$set(that.mapData, "map", map);
+      that.mapData.map = map;
+      that.getRoda();
     });
-    this.getTable();
   },
   methods: {
     down() {
       this.$emit("down", 1);
     },
-    getTable() {
-      this.$set(this.$data, "roadData", this.$props.road);
-      this.location = [];
+    getRoda() {
       var path = [];
-      var lat = "";
-      var lng = "";
-      this.roadData[0].TurnPoints.map((item, index) => {
-        lng = parseFloat(item.TurnPointLongitude);
-        lat = parseFloat(item.TurnPointLatitude);
-        path.push([lng, lat]);
-        this.location.push({ id: index, lng: lng, lat: lat });
+      this.roadData.map((item, index) => {
+        path.push([item.lng, item.lat]);
       });
-      this.location.map(icar => {
-        icar.id = JSON.stringify(icar.id);
-      });
+      this.location = path;
       var polyline = new AMap.Polyline({
         path: path,
         isOutline: true,
@@ -150,6 +145,13 @@ export default {
       this.mapData.map.setFitView([polyline]);
     },
     setItem() {
+      if (this.roadIndex.includes(parseInt(this.formData.start))) {
+        return this.$notify({
+          message: "请检查您当前设置路段是否存在被其他路段占用的情况",
+          title: "提示",
+          type: "error"
+        });
+      }
       if (this.formData.start == "") {
         return this.$notify({
           message: "请选择开始位置!",
@@ -203,13 +205,6 @@ export default {
           });
         }
       }
-      if (this.roadData[0].copy.includes(this.formData.start)) {
-        return this.$notify({
-          message: "请检查您当前设置路段是否存在被其他路段占用的情况",
-          title: "提示",
-          type: "error"
-        });
-      }
       var num = [0, 0, 0, 0, 0, 0, 0, 0];
       if (this.formData.travel_time) {
         num[7] = 1;
@@ -227,44 +222,24 @@ export default {
       } else {
         num[4] = 1;
       }
-      var point = [];
-      var data = [];
-      var arr = [];
       var reg = new RegExp(",", "g");
       num = parseInt(num.toString().replace(reg, ""), 2);
-      this.formData.road = num;
-      var start = parseInt(this.formData.start);
-      var end = parseInt(this.formData.end);
-      this.formData.start_location = this.location[start];
-      this.formData.end_location = this.location[end];
-      this.location.map(item => {
-        if (item.id >= start && item.id <= end) {
-          this.copy_road.push(item.id);
-        }
-        arr.push(item.id);
-        if (item.id >= start) {
-          if (item.id <= end) {
-            point.push(item);
-          }
-        }
-      });
-      this.copy_road.map(icc => {
-        this.roadData[0].copy.push(icc);
-      });
-      data = [
-        {
-          copy: this.roadData.copy,
-          start: start,
-          end: end,
-          point: point,
-          RouteSegmentWidth: this.formData.road_width,
-          RouteSegmentProperty: this.formData.road,
-          MaxDriveTimeLimited: this.formData.long_threshold,
-          MinDriveTimeLimited: this.formData.lack_threshold,
-          MaxSpeedLimited: this.formData.MaxSpeed,
-          OverMaxSpeedLastTime: this.formData.OverMaxSpeedLastTime
-        }
-      ];
+      // var arr=[]
+      var data = {};
+      data = {
+        start: parseInt(this.formData.start),
+        end: parseInt(this.formData.end),
+        road_width: this.formData.road_width,
+        RouteSegmentProperty: num,
+        long_threshold: this.formData.long_threshold, //路段行驶过长阈值
+        lack_threshold: this.formData.lack_threshold, //路段行驶不足阈值
+        MaxSpeed: this.formData.MaxSpeed, //最高速度
+        OverMaxSpeedLastTime: this.formData.OverMaxSpeedLastTime, //超速持续时间
+        start_lng: "",
+        start_lat: "",
+        end_lng: "",
+        end_lat: ""
+      };
       this.$emit("reply", data);
     }
   }

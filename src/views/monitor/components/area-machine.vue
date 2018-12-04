@@ -10,9 +10,9 @@
         <el-tab-pane label="设置区域" name="area">
           <area-vehicle></area-vehicle>
         </el-tab-pane>
-        <el-tab-pane label="设置路线" name="machine">
+        <!-- <el-tab-pane label="设置路线" name="machine">
           <area-limit></area-limit>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </div>
   </div>

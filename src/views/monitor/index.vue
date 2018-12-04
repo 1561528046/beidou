@@ -25,12 +25,21 @@
           <monitor-info></monitor-info>
           <div class="shadow-box monitor-map-tools">
             <el-radio-group v-model="mapTools" @change="changeTools" size="small">
+<<<<<<< HEAD
+              <el-radio-button style="margin:5px" label="current" title="查找当前终端">
+                查找当前终端
+              </el-radio-button>
+              <el-radio-button style="margin-top:5px" label="history" title="查找历史终端">
+                查找历史终端
+              </el-radio-button>
+=======
               <el-radio-button
                 style="margin-left:10px;margin-right:10px;"
                 label="current"
                 title="查找当前终端"
               >查找当前终端</el-radio-button>
               <el-radio-button label="history" title="查找历史终端">查找历史终端</el-radio-button>
+>>>>>>> 33dfbfac33b3eef742a7cc5879ef969d5a1c4d7a
             </el-radio-group>
           </div>
           <div id="container" style="width:100%;height:100%;"></div>

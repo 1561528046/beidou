@@ -92,6 +92,15 @@ var routers = [
         },
         component: () => import("@/views/manage/group/binding.vue")
       },
+      {
+        path: "server-state",
+        name: "server-state",
+        meta: {
+          name: "服务器状态",
+          icon: "iconfont icon-fuwuqi1"
+        },
+        component: () => import("@/views/manage/server/index.vue")
+      },
       /**
        * 司机信息
        */
