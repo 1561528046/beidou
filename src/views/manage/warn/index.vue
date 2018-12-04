@@ -38,14 +38,12 @@
         style="width: 100%"
         class="admin-table-list"
       >
-        <el-table-column prop="driver_card_id" label="司机卡编号" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="driver_name" label="姓名" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="tel" label="联系电话" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column
-          prop="license_validity"
-          label="驾驶证有效期"
-          :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"
-        ></el-table-column>
+        <el-table-column prop="driver_card_id" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Alarm_Type_808" label="报警类型" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Create_Time" label="时间" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Id_Info" label="INFO ID" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Create_Time" label="时间" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Create_Time" label="时间" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">

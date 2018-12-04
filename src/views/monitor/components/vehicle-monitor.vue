@@ -68,11 +68,10 @@
             v-if="mapData.vehicle.fence_alarm&&mapData.vehicle.fence_alarm.alarmList&&mapData.vehicle.fence_alarm.alarmList.length"
           >
             平台围栏报警
-            {{mapData.vehicle.fence_alarm.alarmList}}
             <span
               v-for="key in mapData.vehicle.fence_alarm.alarmList"
               :key="key"
-            >&#x3000;{{mapData.vehicle.fence_alarm[key][0].RegionName}}</span>
+            >&#x3000;{{getFenceAlarmType(mapData.vehicle.fence_alarm[key][0])}} {{mapData.vehicle.fence_alarm[key][0].RegionName}}</span>
           </el-col>
           <el-col :span="12">高程 {{mapData.vehicle.altitude||"--"}} （米）</el-col>
           <el-col :span="12">车头方向 {{$utils.getAngleText(mapData.vehicle.angle)}}</el-col>
@@ -466,6 +465,19 @@ export default {
     }
   },
   methods: {
+    getFenceAlarmType(fence) {
+      if (!fence) {
+        return "";
+      }
+      // 区域类型：1自定义圆形，2自定义矩形，3自定义多边形，4行政区域,5分段限速,6关键点 7线路偏移
+      if (fence.Type <= 4) {
+        return { "3": "禁入区域", "5": "禁出区域" }[fence.AreaProperty];
+      }
+      if (fence.Type == 6) {
+        return { "3": "未离开关键点", "5": "未到达关键点" }[fence.AreaProperty];
+      }
+      return { "5": "分段限速", "7": "线路偏移" }[fence.Type];
+    },
     // 查询终端属性
     getTerminal() {
       var data = {};

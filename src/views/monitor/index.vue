@@ -747,11 +747,15 @@ export default {
         vehicle.fence_ids.map(fence_id => {
           if (this.dict.fence.has(fence_id)) {
             var fence = this.dict.fence.get(fence_id);
-            if (fenceResult.inAlarm.length && fence.AreaProperty == "3") {
+            if (
+              fenceResult.inAlarm.length &&
+              fence.AreaProperty == "3" &&
+              fence.Type <= 4
+            ) {
               //禁入报警  如果为true就不做判断了
               return false;
             }
-            if (isInSafeArea && fence.AreaProperty == "5") {
+            if (isInSafeArea && fence.AreaProperty == "5" && fence.Type <= 4) {
               //禁出报警(只要有符合一个围栏规范，就不做判断了)
               return false;
             }
