@@ -68,6 +68,7 @@
             v-if="mapData.vehicle.fence_alarm&&mapData.vehicle.fence_alarm.alarmList&&mapData.vehicle.fence_alarm.alarmList.length"
           >
             平台围栏报警
+            {{mapData.vehicle.fence_alarm.alarmList}}
             <span
               v-for="key in mapData.vehicle.fence_alarm.alarmList"
               :key="key"

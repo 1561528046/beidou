@@ -707,6 +707,15 @@ export default {
                     );
                   });
                   break;
+                case "6": //关键点
+                  fence.polygon = new AMap.Circle({
+                    center: new AMap.LngLat(
+                      fence.CenterLongitude,
+                      fence.CenterLatitude
+                    ),
+                    radius: fence.Radius
+                  });
+                  break;
               }
 
               this.dict.fence.set(fence.RegionId, fence);
@@ -732,7 +741,8 @@ export default {
           inAlarm: [], //禁入报警  如果为true就不做判断了
           outAlarm: [], //禁出报警(只要在符合规范的地区中的一个，就不做判断了)
           lineOut: [], //线路偏移是否报警
-          splitPolylineSpeed: [] //分段限速是否报警
+          splitPolylineSpeed: [], //分段限速是否报警
+          keyPoint: [] //关键点报警
         };
         vehicle.fence_ids.map(fence_id => {
           if (this.dict.fence.has(fence_id)) {
@@ -822,7 +832,19 @@ export default {
                 }
                 break;
               case "6": //关键点
-                // this.checkFenceKeyPoint(fence, point, vehicleData);
+                if (fence.polygon.contains(point)) {
+                  if (fence.AreaProperty == 3) {
+                    //未离开
+                    fenceResult.keyPoint.push(fence);
+                    fenceResult.alarmList.push("keyPoint");
+                  }
+                } else {
+                  if (fence.AreaProperty == 5) {
+                    //未到达
+                    fenceResult.keyPoint.push(fence);
+                    fenceResult.alarmList.push("keyPoint");
+                  }
+                }
                 break;
               case "7": //线路偏移
                 if (this.checkFenceLineOut(fence, point, vehicleData)) {
@@ -832,13 +854,13 @@ export default {
                 }
                 break;
             }
-            if (fence.AreaProperty == "3") {
+            if (fence.Type <= 4 && fence.AreaProperty == "3") {
               if (isInArea) {
                 fenceResult.inAlarm.push(fence);
                 fenceResult.alarmList.push("inAlarm");
               }
             }
-            if (fence.AreaProperty == "5") {
+            if (fence.Type <= 4 && fence.AreaProperty == "5") {
               if (!isInArea) {
                 fenceResult.outAlarm.push(fence);
                 isInSafeArea = isInArea;
