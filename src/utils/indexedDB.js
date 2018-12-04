@@ -1,22 +1,25 @@
-export default new Promise(function(resolve, reject) {
+export default new Promise(function (resolve, reject) {
   var request = indexedDB.open("BEIDOU");
   var dbObj = {
     db: null,
-    add: function(data) {
+    add: function (data) {
+      if (data.DATA_TYPE) {
+        data.DATA_TYPE = parseInt(data.DATA_TYPE).toString(16);
+      }
       var request = this.db
         .transaction(["log"], "readwrite")
         .objectStore("log")
         .add(data);
 
-      request.onsuccess = function() {
+      request.onsuccess = function () {
         // console.log("数据写入成功");
       };
 
-      request.onerror = function() {
+      request.onerror = function () {
         // console.log("数据写入失败");
       };
     },
-    readAll: function(MessageID) {
+    readAll: function (MessageID) {
       return new Promise(resolve => {
         var objectStore = this.db.transaction("log").objectStore("log");
         var results = [];
@@ -25,7 +28,7 @@ export default new Promise(function(resolve, reject) {
         }
         var range = MessageID ? IDBKeyRange.only(MessageID) : null;
         var cursors = objectStore.openCursor(range, "prev");
-        cursors.onsuccess = function(event) {
+        cursors.onsuccess = function (event) {
           var cursor = event.target.result;
           if (cursor && results.length < 50) {
             //只取前50条
@@ -35,17 +38,17 @@ export default new Promise(function(resolve, reject) {
             resolve(results);
           }
         };
-        cursors.onerror = function(err) {
+        cursors.onerror = function (err) {
           reject(err);
         };
       });
     },
-    removeAll: function() {
+    removeAll: function () {
       var objectStore = this.db
         .transaction("log", "readwrite")
         .objectStore("log");
       var cursors = objectStore.openCursor();
-      cursors.onsuccess = function(event) {
+      cursors.onsuccess = function (event) {
         var cursor = event.target.result;
         if (cursor) {
           //只取前50条
@@ -53,12 +56,12 @@ export default new Promise(function(resolve, reject) {
           cursor.continue();
         }
       };
-      cursors.onerror = function(err) {
+      cursors.onerror = function (err) {
         reject(err);
       };
     }
   };
-  request.onupgradeneeded = function(event) {
+  request.onupgradeneeded = function (event) {
     var db = event.target.result;
     var objectStore;
     if (!db.objectStoreNames.contains("log")) {
@@ -72,11 +75,11 @@ export default new Promise(function(resolve, reject) {
     }
   };
 
-  request.onsuccess = function() {
+  request.onsuccess = function () {
     dbObj.db = request.result;
     resolve(dbObj);
   };
-  request.onerror = function(err) {
+  request.onerror = function (err) {
     // reject(err);
     console.log(err);
   };

@@ -85,9 +85,9 @@ var routers = [
         path: "warn",
         name: "warn",
         meta: {
-          p: "6-1-4",
+          p: "8-1-1",
           name: "报警信息管理",
-          icon: "iconfont icon-driver"
+          icon: "iconfont icon-alert-fill"
         },
         component: () => import("@/views/manage/warn/index.vue")
       },
