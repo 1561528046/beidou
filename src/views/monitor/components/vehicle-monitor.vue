@@ -59,7 +59,14 @@
           <el-col :span="24">当前报警信息 {{$dict.getAlarm(mapData.vehicle.alarm)||"--"}}</el-col>
           <el-col :span="24" v-if="mapData.vehicle.fence_alarm&&mapData.vehicle.fence_alarm.alarmList&&mapData.vehicle.fence_alarm.alarmList.length">
             平台围栏报警
+<<<<<<< HEAD
             <span v-for="key in mapData.vehicle.fence_alarm.alarmList" :key="key">&#x3000;{{mapData.vehicle.fence_alarm[key][0].RegionName}}</span>
+=======
+            <span
+              v-for="key in mapData.vehicle.fence_alarm.alarmList"
+              :key="key"
+            >&#x3000;{{getFenceAlarmType(mapData.vehicle.fence_alarm[key][0])}} {{mapData.vehicle.fence_alarm[key][0].RegionName}}</span>
+>>>>>>> 5dad2a85f640b8c668c87a78618461d5d4a55c64
           </el-col>
           <el-col :span="12">高程 {{mapData.vehicle.altitude||"--"}} （米）</el-col>
           <el-col :span="12">车头方向 {{$utils.getAngleText(mapData.vehicle.angle)}}</el-col>
@@ -245,7 +252,18 @@
         <i class="iconfont icon-error-fill _error" @click="showCard('repairCard','故障申报')" title="故障申报"></i>
         <!-- <i class="iconfont icon-video" @click="openCard('media')" title="媒体列表"></i> -->
       </div>
+<<<<<<< HEAD
       <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%" :close-on-click-modal="false" :close-on-press-escape="false">
+=======
+      <el-dialog
+        :title="card.title"
+        append-to-body
+        :visible.sync="card.show"
+        width="50%"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+      >
+>>>>>>> 5dad2a85f640b8c668c87a78618461d5d4a55c64
         <div :is="card.component" :vehicle="$props.vehicle" v-if="card.show"></div>
       </el-dialog>
       <el-dialog title="终端属性" :visible.sync="terminalDialog" append-to-body width="50%" :close-on-click-modal="false" :close-on-press-escape="false">
@@ -385,6 +403,19 @@ export default {
     }
   },
   methods: {
+    getFenceAlarmType(fence) {
+      if (!fence) {
+        return "";
+      }
+      // 区域类型：1自定义圆形，2自定义矩形，3自定义多边形，4行政区域,5分段限速,6关键点 7线路偏移
+      if (fence.Type <= 4) {
+        return { "3": "禁入区域", "5": "禁出区域" }[fence.AreaProperty];
+      }
+      if (fence.Type == 6) {
+        return { "3": "未离开关键点", "5": "未到达关键点" }[fence.AreaProperty];
+      }
+      return { "5": "分段限速", "7": "线路偏移" }[fence.Type];
+    },
     // 查询终端属性
     getTerminal() {
       var data = {};

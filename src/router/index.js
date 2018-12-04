@@ -8,7 +8,9 @@ import report from "@/router/report.js";
 import agreement from "@/router/agreement.js";
 import store from "@/store";
 import NProgress from "nprogress"; // progress bar
-import { Message } from "element-ui";
+import {
+  Message
+} from "element-ui";
 import "nprogress/nprogress.css";
 NProgress.configure({
   showSpinner: false
@@ -57,16 +59,14 @@ var routers = [
     meta: {
       name: "地图监控"
     },
-    children: [
-      {
-        path: "map",
-        name: "map",
-        meta: {
-          name: "地图"
-        }
-        //component:()=>import('@/views/Map.vue')
+    children: [{
+      path: "map",
+      name: "map",
+      meta: {
+        name: "地图"
       }
-    ]
+      //component:()=>import('@/views/Map.vue')
+    }]
   },
   {
     path: "/manage",
@@ -81,16 +81,7 @@ var routers = [
       product,
       user,
       agreement,
-      {
-        path: "warn",
-        name: "warn",
-        meta: {
-          p: "8-1-1",
-          name: "报警信息管理",
-          icon: "iconfont icon-alert-fill"
-        },
-        component: () => import("@/views/manage/warn/index.vue")
-      },
+
       {
         path: "group_binding",
         name: "group_binding",
@@ -141,7 +132,27 @@ var routers = [
         },
         component: () => import("@/views/manage/driver/update.vue")
       },
-      report
+      report,
+      {
+        path: "warn",
+        name: "warn",
+        meta: {
+          // p: "8-1-1",
+          p: "7-1-1,7-1-2,7-1-3,7-1-4,7-1-5,7-1-6,7-1-7,7-1-8,7-1-9,7-1-10",
+          name: "报警信息管理",
+          icon: "iconfont icon-alert-fill"
+        },
+        component: () => import("@/views/manage/warn/index.vue")
+      }
+
+      // {
+      //   path: "server-state",
+      //   name: "server-state",
+      //   meta: {
+      //     name: "服务器状态",
+      //     icon: "iconfont icon-fuwuqi1"
+      //   }
+      // }
     ]
   },
   {

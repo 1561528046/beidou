@@ -20,7 +20,15 @@
           <monitor-info></monitor-info>
           <div class="shadow-box monitor-map-tools">
             <el-radio-group v-model="mapTools" @change="changeTools" size="small">
+<<<<<<< HEAD
               <el-radio-button style="margin-left:10px;margin-right:10px;" label="current" title="查找当前终端">查找当前终端</el-radio-button>
+=======
+              <el-radio-button
+                style="margin-left:10px;margin-right:10px;"
+                label="current"
+                title="查找当前终端"
+              >查找当前终端</el-radio-button>
+>>>>>>> 5dad2a85f640b8c668c87a78618461d5d4a55c64
               <el-radio-button label="history" title="查找历史终端">查找历史终端</el-radio-button>
             </el-radio-group>
           </div>
@@ -577,6 +585,15 @@ export default {
                     );
                   });
                   break;
+                case "6": //关键点
+                  fence.polygon = new AMap.Circle({
+                    center: new AMap.LngLat(
+                      fence.CenterLongitude,
+                      fence.CenterLatitude
+                    ),
+                    radius: fence.Radius
+                  });
+                  break;
               }
 
               this.dict.fence.set(fence.RegionId, fence);
@@ -602,16 +619,21 @@ export default {
           inAlarm: [], //禁入报警  如果为true就不做判断了
           outAlarm: [], //禁出报警(只要在符合规范的地区中的一个，就不做判断了)
           lineOut: [], //线路偏移是否报警
-          splitPolylineSpeed: [] //分段限速是否报警
+          splitPolylineSpeed: [], //分段限速是否报警
+          keyPoint: [] //关键点报警
         };
         vehicle.fence_ids.map(fence_id => {
           if (this.dict.fence.has(fence_id)) {
             var fence = this.dict.fence.get(fence_id);
-            if (fenceResult.inAlarm.length && fence.AreaProperty == "3") {
+            if (
+              fenceResult.inAlarm.length &&
+              fence.AreaProperty == "3" &&
+              fence.Type <= 4
+            ) {
               //禁入报警  如果为true就不做判断了
               return false;
             }
-            if (isInSafeArea && fence.AreaProperty == "5") {
+            if (isInSafeArea && fence.AreaProperty == "5" && fence.Type <= 4) {
               //禁出报警(只要有符合一个围栏规范，就不做判断了)
               return false;
             }
@@ -692,7 +714,19 @@ export default {
                 }
                 break;
               case "6": //关键点
-                // this.checkFenceKeyPoint(fence, point, vehicleData);
+                if (fence.polygon.contains(point)) {
+                  if (fence.AreaProperty == 3) {
+                    //未离开
+                    fenceResult.keyPoint.push(fence);
+                    fenceResult.alarmList.push("keyPoint");
+                  }
+                } else {
+                  if (fence.AreaProperty == 5) {
+                    //未到达
+                    fenceResult.keyPoint.push(fence);
+                    fenceResult.alarmList.push("keyPoint");
+                  }
+                }
                 break;
               case "7": //线路偏移
                 if (this.checkFenceLineOut(fence, point, vehicleData)) {
@@ -702,13 +736,13 @@ export default {
                 }
                 break;
             }
-            if (fence.AreaProperty == "3") {
+            if (fence.Type <= 4 && fence.AreaProperty == "3") {
               if (isInArea) {
                 fenceResult.inAlarm.push(fence);
                 fenceResult.alarmList.push("inAlarm");
               }
             }
-            if (fence.AreaProperty == "5") {
+            if (fence.Type <= 4 && fence.AreaProperty == "5") {
               if (!isInArea) {
                 fenceResult.outAlarm.push(fence);
                 isInSafeArea = isInArea;
