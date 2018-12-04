@@ -312,9 +312,6 @@
         ></i>
         <!-- <i class="iconfont icon-video" @click="openCard('media')" title="媒体列表"></i> -->
       </div>
-<<<<<<< HEAD
-      <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="60%" :close-on-click-modal="false" :close-on-press-escape="false">
-=======
       <el-dialog
         :title="card.title"
         append-to-body
@@ -323,7 +320,6 @@
         :close-on-click-modal="false"
         :close-on-press-escape="false"
       >
->>>>>>> 33dfbfac33b3eef742a7cc5879ef969d5a1c4d7a
         <div :is="card.component" :vehicle="$props.vehicle" v-if="card.show"></div>
       </el-dialog>
       <el-dialog
