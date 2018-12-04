@@ -137,7 +137,9 @@ export default {
           C: "企业名称",
           D: "联系电话",
           E: "授权终端数量",
-          F: "所属角色"
+          F: "所属角色",
+          G: "道路运输许可证",
+          H: "核发机关"
         }
       ];
       this.tableData.data.map(data => {
@@ -147,7 +149,9 @@ export default {
           C: data.real_name,
           D: data.tel,
           E: data.device_total,
-          F: data.role_name
+          F: data.role_name,
+          G: data.user_transport_license,
+          H: data.user_issue_office
         });
       });
       this.$utils.exportExcel({

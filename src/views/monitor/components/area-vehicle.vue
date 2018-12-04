@@ -8,9 +8,18 @@
             {{license}}
           </el-form-item>
         </el-col>
+        <el-col :span="24">
+          <el-form-item label="选择事件">
+            <el-radio v-model="tableQuery.area" label="0">更新区域</el-radio>
+            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="1">追加区域</el-radio>
+            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="2">修改区域</el-radio>
+            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="3">删除区域</el-radio>
+            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="4">删除全部区域</el-radio>
+          </el-form-item>
+        </el-col>
         <el-col v-if="!delType" :span="24">
           <el-form-item label="选择区域">
-            <el-select style="width:20%;" v-model="areaType" size="small" clearable>
+            <el-select style="width:20%;" v-model="areaName" size="small" clearable>
               <el-option v-for="fence in fenceData" :key="fence.RegionId" :value="fence.RegionName" :label="fence.RegionName">{{fence.RegionName}}</el-option>
             </el-select>
           </el-form-item>
@@ -21,19 +30,20 @@
               <el-option value="1" label="圆形">圆形</el-option>
               <el-option value="2" label="矩形">矩形</el-option>
               <el-option value="3" label="多边形">多边形</el-option>
+              <el-option value="5" label="分段限速">分段限速</el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
-          <el-form-item label="选择事件">
-            <el-radio v-if="update_state" v-model="tableQuery.area" label="0">更新区域</el-radio>
-            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="1">追加区域</el-radio>
-            <el-radio style="margin-left:12px;" v-if="modify_state" v-model="tableQuery.area" label="2">修改区域</el-radio>
-            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="3">删除区域</el-radio>
-            <el-radio style="margin-left:12px;" v-model="tableQuery.area" label="4">删除全部区域</el-radio>
+        <el-col v-if="lineType" :span="24">
+          <el-form-item style="margin:0" label="路线属性:">
+            <el-checkbox v-model="route.according_time">根据时间</el-checkbox>
+            <el-checkbox v-model="route.enter_driver">进路线报警给驾驶员</el-checkbox>
+            <el-checkbox v-model="route.outer_driver">进路线报警给平台</el-checkbox>
+            <el-checkbox v-model="route.enter_platform">出路线报警给驾驶员</el-checkbox>
+            <el-checkbox v-model="route.outer_platform">出路线报警给平台</el-checkbox>
           </el-form-item>
         </el-col>
-        <el-col v-if="areaState" :span="24">
+        <el-col v-if="areaType" :span="24">
           <el-form-item label="区域属性">
             <el-checkbox v-model="area_attribute.according_time">根据时间</el-checkbox>
             <el-checkbox v-model="area_attribute.speed_limit">限速</el-checkbox>
@@ -54,12 +64,12 @@
             <el-radio v-model="area_attribute.GNSS_data" label="2">进区域采集GNSS详细定位数据</el-radio>
           </el-form-item>
         </el-col>
-        <el-col v-if="speed" :span="24">
+        <el-col v-if="areaType" :span="24">
           <el-form-item label="最高速度(km/h)">
             <el-input v-model="tableQuery.MaxSpeed" style="width:20%;" size="small"></el-input>
           </el-form-item>
         </el-col>
-        <el-col v-if="speed" :span="24">
+        <el-col v-if="areaType" :span="24">
           <el-form-item label="超速持续时间(秒)">
             <el-input v-model="tableQuery.OverSpeedLastTime" style="width:20%;" size="small"></el-input>
           </el-form-item>
@@ -143,12 +153,20 @@ export default {
         });
       }
     });
+    this.$instruction.on("x8607", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "指令发送成功",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
   },
   computed: {},
   data() {
     return {
-      event_type: ["更新", "追加", "修改", "删除", "删除全部"],
-      area_type: ["圆形区域", "矩形区域", "多边形区域"],
       area_attribute: {
         according_time: false, //根据时间
         speed_limit: false, //限速
@@ -161,6 +179,13 @@ export default {
         open_door: "1", //是否允许开门
         communication_module: "1", //进区域是否开启通信模块
         GNSS_data: "1" //进区域是否采集GNSS详细定位数据
+      },
+      route: {
+        according_time: false,
+        enter_driver: false,
+        outer_driver: false,
+        enter_platform: false,
+        outer_platform: false
       },
       tableQuery: {
         MaxSpeed: "", //最高速度
@@ -175,64 +200,55 @@ export default {
         RegionName: "",
         Type: ""
       },
+      lineType: false,
+      areaType: false,
       areaValue: "",
-      speed: false,
       update_state: true,
       modify_state: true,
       addKey: 0,
       addDialog: false,
       license: "",
-      areaType: "",
+      areaName: "",
       delType: false,
-      areaState: true,
       fenceData: []
     };
   },
   watch: {
-    area_attribute: {
-      handler: function() {
-        if (!this.area_attribute.speed_limit) {
-          this.speed = false;
-        } else {
-          this.speed = true;
-        }
-      },
-      deep: true
-    },
     tableQuery: {
       handler: function() {
         if (this.tableQuery.area == "3") {
-          this.areaState = false;
           this.delType = false;
-          this.speed = false;
+          this.lineType = false;
+          this.areaType = false;
         } else if (this.tableQuery.area == "4") {
-          this.areaState = false;
           this.delType = true;
+          this.lineType = false;
+          this.areaType = false;
         } else {
-          if (this.area_attribute.speed_limit) {
-            this.speed = true;
-          } else {
-            this.speed = false;
-          }
           this.delType = false;
-          this.areaState = true;
+          this.lineType = true;
+          this.areaType = true;
         }
       },
       deep: true
     },
-    areaType: function() {
-      this.formData.RegionName = this.areaType;
-      this.tableQuery.area = false;
+    areaName: function() {
+      this.formData.RegionName = this.areaName;
       GetRegionByPage(this.formData).then(res => {
         if (res.data.code == 0) {
           this.$set(this.tableQuery, "areaData", res.data.data[0]);
         }
-        if (this.tableQuery.areaData.Type == "3") {
-          this.update_state = false;
-          this.modify_state = false;
+        if (this.tableQuery.area == "3" || this.tableQuery.area == "4") {
+          this.lineType = false;
+          this.areaType = false;
         } else {
-          this.update_state = true;
-          this.modify_state = true;
+          if (this.tableQuery.areaData.Type == "5") {
+            this.lineType = true;
+            this.areaType = false;
+          } else {
+            this.lineType = false;
+            this.areaType = true;
+          }
         }
       });
     }
@@ -285,19 +301,31 @@ export default {
       }
       var reg = new RegExp(",", "g");
       num = parseInt(num.toString().replace(reg, ""), 2);
-      // 0x8600 设置圆形区域
-      // 0x8601 删除圆形区域
-      // 0x8602 设置矩形区域
-      // 0x8603 删除矩形区域
-      // 0x8604 设置多边形区域
-      // 0x8605 删除多边形区域
+      var roadNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      if (this.route.according_time) {
+        roadNum[15] = 1;
+      }
+      if (this.route.enter_driver) {
+        roadNum[13] = 1;
+      }
+      if (this.route.outer_driver) {
+        roadNum[12] = 1;
+      }
+      if (this.route.enter_platform) {
+        roadNum[11] = 1;
+      }
+      if (this.route.outer_platform) {
+        roadNum[10] = 1;
+      }
+      var ref = new RegExp(",", "g");
+      roadNum = parseInt(roadNum.toString().replace(ref, ""), 2);
       if (this.license == "") {
         return this.$notify({
           message: "请选择车辆!",
           title: "提示",
           type: "error"
         });
-      } else if (this.areaType == "" && this.areaValue == "") {
+      } else if (this.areaName == "" && this.areaValue == "") {
         return this.$notify({
           message: "请选择区域!",
           title: "提示",
@@ -332,13 +360,7 @@ export default {
           "0" + this.tableQuery.vehicleData.sim_id;
       }
       if (this.tableQuery.area == "4") {
-        if (this.areaValue == "") {
-          return this.$notify({
-            message: "请选择区域类型!",
-            title: "提示",
-            type: "error"
-          });
-        } else if (this.areaValue == "1") {
+        if (this.areaValue == "1") {
           instruction = {
             SimID: this.tableQuery.vehicleData.sim_id,
             MessageID: "x8601",
@@ -361,6 +383,15 @@ export default {
             SimID: this.tableQuery.vehicleData.sim_id,
             MessageID: "x8605",
             PolygonAreasCount: "0"
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+          return;
+        } else if (this.areaValue == "5") {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8607",
+            RoutesCount: "0"
           };
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
@@ -468,7 +499,7 @@ export default {
         if (res.data.code == 0) {
           var arr = [];
           res.data.data.map(item => {
-            if (item.Type == "4" || item.Type == "5") {
+            if (item.Type == "4") {
               return;
             }
             arr.push(item);

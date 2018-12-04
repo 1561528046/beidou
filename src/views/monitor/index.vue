@@ -20,10 +20,10 @@
           <monitor-info></monitor-info>
           <div class="shadow-box monitor-map-tools">
             <el-radio-group v-model="mapTools" @change="changeTools" size="small">
-              <el-radio-button style="margin-left:10px;margin-right:10px;" label="current" title="查找当前终端">
+              <el-radio-button style="margin:5px" label="current" title="查找当前终端">
                 查找当前终端
               </el-radio-button>
-              <el-radio-button label="history" title="查找历史终端">
+              <el-radio-button style="margin-top:5px" label="history" title="查找历史终端">
                 查找历史终端
               </el-radio-button>
             </el-radio-group>

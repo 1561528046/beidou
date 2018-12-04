@@ -270,7 +270,7 @@
         <i class="iconfont icon-error-fill _error" @click="showCard('repairCard','故障申报')" title="故障申报"></i>
         <!-- <i class="iconfont icon-video" @click="openCard('media')" title="媒体列表"></i> -->
       </div>
-      <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="50%" :close-on-click-modal="false" :close-on-press-escape="false">
+      <el-dialog :title="card.title" append-to-body :visible.sync="card.show" width="60%" :close-on-click-modal="false" :close-on-press-escape="false">
         <div :is="card.component" :vehicle="$props.vehicle" v-if="card.show"></div>
       </el-dialog>
       <el-dialog title="终端属性" :visible.sync="terminalDialog" append-to-body width="50%" :close-on-click-modal="false" :close-on-press-escape="false">

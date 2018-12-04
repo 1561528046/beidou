@@ -8,9 +8,7 @@ import report from "@/router/report.js";
 import agreement from "@/router/agreement.js";
 import store from "@/store";
 import NProgress from "nprogress"; // progress bar
-import {
-  Message
-} from "element-ui";
+import { Message } from "element-ui";
 import "nprogress/nprogress.css";
 NProgress.configure({
   showSpinner: false
@@ -59,14 +57,16 @@ var routers = [
     meta: {
       name: "地图监控"
     },
-    children: [{
-      path: "map",
-      name: "map",
-      meta: {
-        name: "地图"
+    children: [
+      {
+        path: "map",
+        name: "map",
+        meta: {
+          name: "地图"
+        }
+        //component:()=>import('@/views/Map.vue')
       }
-      //component:()=>import('@/views/Map.vue')
-    }]
+    ]
   },
   {
     path: "/manage",
@@ -101,6 +101,15 @@ var routers = [
         },
         component: () => import("@/views/manage/group/binding.vue")
       },
+      {
+        path: "server-state",
+        name: "server-state",
+        meta: {
+          name: "服务器状态",
+          icon: "iconfont icon-fuwuqi1"
+        },
+        component: () => import("@/views/manage/server/index.vue")
+      },
       /**
        * 司机信息
        */
@@ -133,14 +142,6 @@ var routers = [
         component: () => import("@/views/manage/driver/update.vue")
       },
       report
-      // {
-      //   path: "server-state",
-      //   name: "server-state",
-      //   meta: {
-      //     name: "服务器状态",
-      //     icon: "iconfont icon-fuwuqi1"
-      //   }
-      // }
     ]
   },
   {

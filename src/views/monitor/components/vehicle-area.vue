@@ -11,7 +11,7 @@
               <el-input size="small" v-model="formdata.name"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col v-if="label!='marker'" :span="24">
             <el-form-item label="报警类型" prop="alarm_type">
               <el-select v-model="formdata.alarm_type" style="width:100%;">
                 <el-option label="禁入" value="3">禁入</el-option>
@@ -28,6 +28,14 @@
           <el-col v-if="label=='marker'" :span="24">
             <el-form-item label="半径" prop="time">
               <el-input size="small" v-model="formdata.radius" style="width:100%"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col v-if="label=='marker'" :span="24">
+            <el-form-item label="报警类型" prop="time">
+              <el-select v-model="formdata.alarm_type" style="width:100%;">
+                <el-option label="未离开" value="3">未离开</el-option>
+                <el-option label="未到达" value="5">未到达</el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -101,9 +109,10 @@
               <el-select style="width:100%;" v-model="tableQuery.Type" clearable size="small">
                 <el-option label="圆形" value="1">圆形</el-option>
                 <el-option label="矩形" value="2">矩形</el-option>
-                <el-option label="线路" value="5">线路</el-option>
                 <el-option label="多边形" value="3">多边形</el-option>
                 <el-option label="行政区域" value="4">行政区域</el-option>
+                <el-option label="分段限速" value="5">分段限速</el-option>
+                <el-option label="线路偏移" value="7">线路偏移</el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -130,7 +139,8 @@
             <label v-if="scope.row.Type=='2'">矩形</label>
             <label v-if="scope.row.Type=='3'">多边形</label>
             <label v-if="scope.row.Type=='4'">行政区域</label>
-            <label v-if="scope.row.Type=='5'">线路</label>
+            <label v-if="scope.row.Type=='5'">分段限速</label>
+            <label v-if="scope.row.Type=='7'">线路偏移</label>
           </template>
         </el-table-column>
         <el-table-column prop="RegionName" label="名称 " :formatter="$utils.baseFormatter "> </el-table-column>
@@ -160,15 +170,16 @@
         </el-pagination>
       </div>
     </div>
-    <el-dialog title="线路" width="25%" :visible.sync="lineDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog title="线路" width="30%" :visible.sync="lineDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
       <template>
-        <label style="display:inline-block;width:68px;">类型：</label>
-        <el-select size="small" v-model="area_type">
+        <label style="display:inline-block;width:82px;margin-bottom: 22px;">类型：</label>
+        <el-select size="small" style="width:42.2%" v-model="area_type">
           <el-option value="7" label="线路偏移">线路偏移</el-option>
           <el-option value="5" label="分段限速">分段限速</el-option>
         </el-select>
-        <div :is="area_name"></div>
       </template>
+      <area-speed :line="mapData.overlays[0]" @data="setData" v-if="area_type=='5'"></area-speed>
+      <area-offset @type="offsetType" :line="mapData.overlays[0]" v-if="area_type=='7'"></area-offset>
     </el-dialog>
   </div>
 </template>
@@ -179,25 +190,14 @@ import moment from "moment";
 import { AddRegion, GetRegionByPage, DeleteRegion } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import areaRoute from "./area-route.vue";
-import areaSpeed from "./area/area-speed.vue";
-import areaOffset from "./area/area-offset.vue";
+import areaSpeed from "./area-speed.vue";
+import areaOffset from "./area-offset.vue";
 export default {
   components: { selectCityInput, areaRoute, areaSpeed, areaOffset },
   created() {
     this.getTable();
   },
-  watch: {
-    area_type: function() {
-      switch (this.area_type) {
-        case "5":
-          this.area_name = areaSpeed;
-          break;
-        case "7":
-          this.area_name = areaOffset;
-          break;
-      }
-    }
-  },
+  watch: {},
   mounted() {
     var vm = this;
     var district,
@@ -323,6 +323,28 @@ export default {
     };
   },
   methods: {
+    setData(data) {
+      this.lineDialog = false;
+      this.areaType = true;
+      this.mapData.map.clearMap();
+      this.getTable();
+      return this.$notify({
+        message: "添加成功",
+        title: "提示",
+        type: "success"
+      });
+    },
+    offsetType() {
+      this.lineDialog = false;
+      this.areaType = true;
+      this.mapData.map.clearMap();
+      this.getTable();
+      return this.$notify({
+        message: "添加成功",
+        title: "提示",
+        type: "success"
+      });
+    },
     // 删除路段项
     deleteItem(data) {
       var limit = [];
