@@ -1,6 +1,12 @@
 <template>
   <!-- 线路偏移 -->
-  <el-form style="margin-bottom:0" label-width="82px" label-position="left" :model="formData" ref="baseform">
+  <el-form
+    style="margin-bottom:0"
+    label-width="82px"
+    label-position="left"
+    :model="formData"
+    ref="baseform"
+  >
     <el-form-item label="规则名称">
       <el-input size="small" v-model="formData.RegionName" style="width:50%"></el-input>
     </el-form-item>
@@ -11,8 +17,17 @@
       <el-input size="small" v-model="formData.RouteSegmentWidth" style="width:50%"></el-input>
     </el-form-item>
     <el-form-item label="时间范围">
-      <el-time-picker v-model="time" is-range value-format="HHmmss" style="width:50%" size="small" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" placeholder="选择时间范围">
-      </el-time-picker>
+      <el-time-picker
+        v-model="time"
+        is-range
+        value-format="HHmmss"
+        style="width:50%"
+        size="small"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        placeholder="选择时间范围"
+      ></el-time-picker>
     </el-form-item>
     <el-form-item>
       <el-button size="small" type="primary" @click="formSubmit">提交</el-button>
@@ -41,6 +56,20 @@ export default {
   watch: {},
   methods: {
     formSubmit() {
+      if (this.formData.RegionName == "") {
+        return this.$notify({
+          message: "请输入规则名称",
+          title: "提示",
+          type: "error"
+        });
+      }
+      if (this.time == "" || this.time == null) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.$set(this.$data, "routeData", this.$props.line);
       var turnPoints = [];
       this.formData.StartTime = "000000" + this.time[0];

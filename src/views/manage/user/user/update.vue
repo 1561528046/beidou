@@ -1,40 +1,39 @@
 <template>
   <div class="post-form">
-    <el-form label-position="top" :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form" @submit.native.prevent>
-
+    <el-form
+      label-position="top"
+      :rules="rules"
+      :model="formData"
+      size="small"
+      ref="baseForm"
+      class="msg-form"
+      @submit.native.prevent
+    >
       <el-collapse v-model="opened" class="user-collapse">
         <el-collapse-item title="帐号登录信息" name="1">
           <template slot="title">
-            <div class="user-form-header">
-              帐号登录信息
-            </div>
+            <div class="user-form-header">帐号登录信息</div>
           </template>
           <div class="user-form-body">
-
             <el-row :gutter="30">
               <el-col :span="6">
-                <el-form-item label="登陆帐号" prop="user_name">
-                  {{formData.user_name||"--"}}
-                </el-form-item>
+                <el-form-item label="登陆帐号" prop="user_name">{{formData.user_name||"--"}}</el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="所属用户" prop="parent_id">
-                  {{formData.parent_real_name||"--"}}
-                </el-form-item>
+                <el-form-item label="所属用户" prop="parent_id">{{formData.parent_real_name||"--"}}</el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="所属分组" prop="group_id" v-if="formData.parent_id">
-                  {{formData.group_name||"--"}}
-                </el-form-item>
+                <el-form-item
+                  label="所属分组"
+                  prop="group_id"
+                  v-if="formData.parent_id"
+                >{{formData.group_name||"--"}}</el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="所属角色" prop="role_id">
-                  {{formData.role_name||"--"}}
-                </el-form-item>
+                <el-form-item label="所属角色" prop="role_id">{{formData.role_name||"--"}}</el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="30">
-
               <el-col :span="12">
                 <el-form-item label="密码" prop="pass_word">
                   <el-input v-model="formData.pass_word" type="password" placeholder="******"></el-input>
@@ -47,13 +46,10 @@
               </el-col>
             </el-row>
           </div>
-
         </el-collapse-item>
         <el-collapse-item title="企业信息" name="2">
           <template slot="title">
-            <div class="user-form-header">
-              企业信息
-            </div>
+            <div class="user-form-header">企业信息</div>
           </template>
           <div class="user-form-body">
             <el-row :gutter="30">
@@ -98,36 +94,50 @@
                   <el-input v-model="formData.tel" maxlength="20"></el-input>
                 </el-form-item>
               </el-col>
-
             </el-row>
           </div>
-
         </el-collapse-item>
         <el-collapse-item name="3">
           <template slot="title">
-            <div class="user-form-header">
-              帐号授权信息
-            </div>
+            <div class="user-form-header">帐号授权信息</div>
           </template>
           <div class="user-form-body">
             <el-row :gutter="30">
               <el-col :span="24">
                 <el-form-item label="授权终端数量">
-                  <el-switch v-model="device_total_turn"> </el-switch>
+                  <el-switch v-model="device_total_turn"></el-switch>
                 </el-form-item>
-                <el-form-item label="" prop="device_total" v-if="device_total_turn" style="width:150px;">
-                  <el-input-number :min="1" :precision="0" :step="1" type="number" v-model="formData.device_total" style="width:100%">
+                <el-form-item
+                  label
+                  prop="device_total"
+                  v-if="device_total_turn"
+                  style="width:150px;"
+                >
+                  <el-input-number
+                    :min="1"
+                    :precision="0"
+                    :step="1"
+                    type="number"
+                    v-model="formData.device_total"
+                    style="width:100%"
+                  >
                     <template slot="append">台</template>
                   </el-input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="24">
                 <el-form-item label="帐号到期时间">
-                  <el-switch v-model="expiry_time_turn"> </el-switch>
+                  <el-switch v-model="expiry_time_turn"></el-switch>
                 </el-form-item>
-                <el-form-item label="" prop="expiry_time" v-if="expiry_time_turn" style="width:350px;">
-                  <el-date-picker v-model="formData.expiry_time" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd" style="width:100%;">
-                  </el-date-picker>
+                <el-form-item label prop="expiry_time" v-if="expiry_time_turn" style="width:350px;">
+                  <el-date-picker
+                    v-model="formData.expiry_time"
+                    type="date"
+                    placeholder="选择日期"
+                    format="yyyy 年 MM 月 dd 日"
+                    value-format="yyyyMMdd"
+                    style="width:100%;"
+                  ></el-date-picker>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -136,7 +146,13 @@
       </el-collapse>
 
       <el-form-item style="text-align:center; padding-top:20px;">
-        <el-button type="primary" @click="formSubmit" native-type="submit" size="large" :loading="postloading">提交</el-button>
+        <el-button
+          type="primary"
+          @click="formSubmit"
+          native-type="submit"
+          size="large"
+          :loading="postloading"
+        >提交</el-button>
       </el-form-item>
     </el-form>
   </div>

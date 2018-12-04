@@ -1,7 +1,14 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" label-width="82px" label-position="left" class="table-search" size="small" @submit.native.prevent>
+      <el-form
+        :model="tableQuery"
+        label-width="82px"
+        label-position="left"
+        class="table-search"
+        size="small"
+        @submit.native.prevent
+      >
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="登录账号">
@@ -16,7 +23,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="所属地区">
-              <select-city-input :area.sync="tableQuery.area" :select-all="true" style="width:100%;" clearable></select-city-input>
+              <select-city-input
+                :area.sync="tableQuery.area"
+                :select-all="true"
+                style="width:100%;"
+                clearable
+              ></select-city-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
@@ -43,32 +55,79 @@
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading " style="width: 100% " class="admin-table-list ">
+      <el-table
+        :data="tableData.data"
+        v-loading="tableLoading "
+        style="width: 100% "
+        class="admin-table-list"
+      >
         <el-table-column prop="user_name" label="登陆帐号 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="province_name" label="所属地区 " :formatter="$utils.areaFormatter"></el-table-column>
         <el-table-column prop="real_name" label="企业名称" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="user_transport_license" label="道路运输许可证" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="user_issue_office" label="核发机关" :formatter="$utils.baseFormatter"> </el-table-column>
+        <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="user_transport_license"
+          label="道路运输许可证"
+          :formatter="$utils.baseFormatter"
+        ></el-table-column>
+        <el-table-column prop="user_issue_office" label="核发机关" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="updateForm(scope)" icon="el-icon-edit" v-rights="4-1-3">编辑</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="updateForm(scope)"
+              icon="el-icon-edit"
+              v-rights="4-1-3"
+            >编辑</el-button>
             <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)" v-rights="4-1-2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="tableQuery.page"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="tableQuery.size"
+          :total="tableData.total"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+        ></el-pagination>
       </div>
     </el-card>
-    <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <add-components :parent_id="parent_id" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-components>
+    <el-dialog
+      title="添加"
+      :visible.sync="addDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <add-components
+        :parent_id="parent_id"
+        @success=" () => {this.getTable();this.addDialog = false;}"
+        :key="addKey"
+      ></add-components>
     </el-dialog>
-    <el-dialog title="编辑" :visible.sync="updateDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <update-components :user_id="updateId" @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-components>
+    <el-dialog
+      title="编辑"
+      :visible.sync="updateDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <update-components
+        :user_id="updateId"
+        @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}"
+        :key="addKey"
+      ></update-components>
     </el-dialog>
   </div>
 </template>

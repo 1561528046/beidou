@@ -1,18 +1,38 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form
+        :model="tableQuery"
+        ref="baseForm"
+        :rules="rules"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        size="small"
+      >
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
-              </el-date-picker>
+              <el-date-picker
+                v-model="tableQuery.time"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                format="yyyy-MM-dd HH:mm"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="7">
             <el-form-item prop="license" label="选择车辆">
               <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
-                <el-input type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
+                <el-input
+                  type="text"
+                  v-model="tableQuery.license"
+                  style="position: absolute;left: 0px; top: 0px;"
+                ></el-input>
               </el-button>
             </el-form-item>
           </el-col>
@@ -38,28 +58,65 @@
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
-            <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
+            <span
+              class="license-card"
+              :style="$dict.get_license_color(scope.row.license_color).style"
+              @click="showDetails(scope)"
+            >{{scope.row.license}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="alarm_type" label="报警类型" :formatter="(row)=>{return this.$dict.get_fence_type(row.alarm_type)} "> </el-table-column>
-        <el-table-column prop="" label="报警来源" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="报警信息" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="报警时长" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="区域名称" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
-        <el-table-column prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
-        <el-table-column prop="start_speed" label="开始速度" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="stop_speed" label="结束速度" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="start_address" label="开始位置" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="stop_address" label="结束位置" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column
+          prop="alarm_type"
+          label="报警类型"
+          :formatter="(row)=>{return this.$dict.get_fence_type(row.alarm_type)} "
+        ></el-table-column>
+        <el-table-column prop="source" label="报警来源" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="alarm_info" label="报警信息" :formatter="$utils.baseFormatter "></el-table-column>
+        <!-- <el-table-column prop="" label="报警时长" :formatter="$utils.baseFormatter "> </el-table-column> -->
+        <el-table-column prop="area_name" label="区域名称" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column
+          prop="start_time"
+          label="开始时间"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"
+        ></el-table-column>
+        <el-table-column
+          prop="stop_time"
+          label="结束时间"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"
+        ></el-table-column>
+        <el-table-column prop="start_speed" label="开始速度" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="stop_speed" label="结束速度" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="start_address" label="开始位置" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="stop_address" label="结束位置" :formatter="$utils.baseFormatter "></el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange "
+          @current-change="handleCurrentChange "
+          :current-page="tableQuery.page "
+          :page-sizes="[10, 20, 50, 100] "
+          :page-size="tableQuery.size "
+          :total="tableData.total "
+          layout="total, sizes, prev, pager, next, jumper "
+          background
+        ></el-pagination>
       </div>
     </el-card>
-    <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-vehicle @button="vehicleCallback" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-vehicle>
+    <el-dialog
+      width="50%"
+      title="选择信息"
+      :visible.sync="addDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <choose-vehicle
+        @button="vehicleCallback"
+        @success=" () => {this.getTable();this.addDialog = false;}"
+        :key="addKey"
+      ></choose-vehicle>
     </el-dialog>
   </div>
 </template>
@@ -161,12 +218,12 @@ export default {
           M: "结束位置经纬度"
         }
       ];
-      this.tableData.data.map(data => {
+      this.list.map(data => {
         wsCol.push({
           A: data.license,
           B: this.$dict.get_alarm_type(data.alarm_type),
-          C: "",
-          D: "",
+          C: data.source,
+          D: data.alarm_info,
           E: "",
           F: this.$utils.formatDate14(data.start_time),
           G: this.$utils.formatDate14(data.stop_time),

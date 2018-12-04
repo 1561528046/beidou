@@ -3,29 +3,21 @@
     <el-form :model="formData" size="small" ref="baseForm">
       <el-row :gutter="30">
         <el-col :span="8">
-          <el-form-item label="驾驶员姓名">
-            {{formData.driver_name||"--"}}
-          </el-form-item>
+          <el-form-item label="驾驶员姓名">{{formData.driver_name||"--"}}</el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="驾驶员身份证编码">
-            {{formData.driver_document||"--"}}
-          </el-form-item>
+          <el-form-item label="驾驶员身份证编码">{{formData.driver_document||"--"}}</el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="从业资格证编码">
-            {{vehicle.job_no||"--"}}
-          </el-form-item>
+          <el-form-item label="从业资格证编码">{{formData.job_no||"--"}}</el-form-item>
         </el-col>
         <!-- <el-col :span="8">
                     <el-form-item label="发证机构名称民度">
                          {{vehicle.driver.?}}
                     </el-form-item>
-                </el-col> -->
+        </el-col>-->
         <el-col :span="8">
-          <el-form-item label="发证机构名称 ">
-            {{vehicle.agency_name||"--"}}
-          </el-form-item>
+          <el-form-item label="发证机构名称 ">{{formData.agency_name||"--"}}</el-form-item>
         </el-col>
       </el-row>
     </el-form>

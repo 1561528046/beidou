@@ -166,6 +166,20 @@ export const getDeviceLogByPage = query => {
     params: query
   });
 };
+// 车辆上下线统计表
+export const GetOnlineSummaryByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/report/GetOnlineSummaryByPage", queryQS, {
+    params: query
+  });
+};
+// 车辆上下线明细表
+export const GetOnlineDetailByPage = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/report/GetOnlineDetailByPage", queryQS, {
+    params: query
+  });
+};
 
 // 导出在线时长统计
 // 导出用户登录明细

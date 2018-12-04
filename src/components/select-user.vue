@@ -1,7 +1,18 @@
 <template>
-  <el-select v-model="user_id" :placeholder="placeholder" filterable :loading="loading" style="width: 100%;" :clearable="clearable">
-    <el-option v-for="item in users" :key="item.user_id" :label="item.real_name" :value="item.user_id">
-    </el-option>
+  <el-select
+    v-model="user_id"
+    :placeholder="placeholder"
+    filterable
+    :loading="loading"
+    style="width: 100%;"
+    :clearable="clearable"
+  >
+    <el-option
+      v-for="item in users"
+      :key="item.user_id"
+      :label="item.real_name"
+      :value="item.user_id"
+    ></el-option>
   </el-select>
 </template>
 <script>
@@ -44,6 +55,7 @@ export default {
       });
     },
     setUser() {
+      console.log(1);
       getUser({ user_id: this.user_id }).then(res => {
         if (res.data.code == 0) {
           this.$set(this.$data, "users", res.data.data);

@@ -20,7 +20,12 @@
         <el-col v-if="!delType" :span="24">
           <el-form-item label="选择区域">
             <el-select style="width:20%;" v-model="areaName" size="small" clearable>
-              <el-option v-for="fence in fenceData" :key="fence.RegionId" :value="fence.RegionName" :label="fence.RegionName">{{fence.RegionName}}</el-option>
+              <el-option
+                v-for="fence in fenceData"
+                :key="fence.RegionId"
+                :value="fence.RegionName"
+                :label="fence.RegionName"
+              >{{fence.RegionName}}</el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -51,7 +56,7 @@
             <el-checkbox v-model="area_attribute.out_driver">出区域报警给驾驶员</el-checkbox>
             <el-checkbox v-model="area_attribute.enter_platform">进区域报警给平台</el-checkbox>
             <el-checkbox v-model="area_attribute.out_platform">出区域报警给平台</el-checkbox>
-            <br/>
+            <br>
             <el-radio v-model="area_attribute.latitude" label="1">北纬</el-radio>
             <el-radio v-model="area_attribute.latitude" label="2">南纬</el-radio>
             <el-radio v-model="area_attribute.longitude" label="1">东经</el-radio>
@@ -75,12 +80,30 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-button @click="setting" style="display:block; margin:0 auto;" size="small" type="primary">设置</el-button>
+          <el-button
+            @click="setting"
+            style="display:block; margin:0 auto;"
+            size="small"
+            type="primary"
+          >设置</el-button>
         </el-col>
       </el-row>
     </el-form>
-    <el-dialog width="50%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-vehicle @button="vehicleCallback" @success=" () => {this.addDialog = false;}" :key="addKey"></choose-vehicle>
+    <el-dialog
+      width="50%"
+      title="选择信息"
+      :visible.sync="addDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <choose-vehicle
+        @button="vehicleCallback"
+        @success=" () => {this.addDialog = false;}"
+        :key="addKey"
+      ></choose-vehicle>
     </el-dialog>
   </div>
 </template>
@@ -226,8 +249,6 @@ export default {
           this.areaType = false;
         } else {
           this.delType = false;
-          this.lineType = true;
-          this.areaType = true;
         }
       },
       deep: true
@@ -488,6 +509,10 @@ export default {
           instruction = JSON.stringify(instruction);
           this.$instruction.send(instruction);
         }
+      } else if (this.tableQuery.areaData.Type == "5") {
+        // "x8606"
+        console.log(roadNum);
+        console.log(this.tableQuery.vehicleData.sim_id);
       }
     },
     addForm() {
@@ -499,7 +524,7 @@ export default {
         if (res.data.code == 0) {
           var arr = [];
           res.data.data.map(item => {
-            if (item.Type == "4") {
+            if (item.Type == "4" || item.Type == "7" || item.Type == "6") {
               return;
             }
             arr.push(item);

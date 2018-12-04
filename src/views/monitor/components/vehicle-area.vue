@@ -1,9 +1,21 @@
 <template>
-  <div style="width:760px; height:420px; border:1px solid #777; background-color:#fff;" class="vehicle-area">
+  <div
+    style="width:760px; height:420px; border:1px solid #777; background-color:#fff;"
+    class="vehicle-area"
+  >
     <!-- 地图 -->
     <div style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
     <!-- 自定义区域 -->
-    <el-dialog width="20%" @close="down(2)" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
+    <el-dialog
+      width="20%"
+      @close="down(2)"
+      :visible.sync="addDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
       <el-form :model="formdata" :key="addKey">
         <el-row :gutter="30">
           <el-col :span="24">
@@ -21,8 +33,16 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="时间" prop="time">
-              <el-time-picker size="small" style="width:100%;" is-range v-model="formdata.time" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" placeholder="选择时间范围">
-              </el-time-picker>
+              <el-time-picker
+                size="small"
+                style="width:100%;"
+                is-range
+                v-model="formdata.time"
+                range-separator="至"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                placeholder="选择时间范围"
+              ></el-time-picker>
             </el-form-item>
           </el-col>
           <el-col v-if="label=='marker'" :span="24">
@@ -32,7 +52,7 @@
           </el-col>
           <el-col v-if="label=='marker'" :span="24">
             <el-form-item label="报警类型" prop="time">
-              <el-select v-model="formdata.alarm_type" style="width:100%;">
+              <el-select size="small" v-model="formdata.alarm_type" style="width:100%;">
                 <el-option label="未离开" value="3">未离开</el-option>
                 <el-option label="未到达" value="5">未到达</el-option>
               </el-select>
@@ -46,7 +66,16 @@
       </el-form>
     </el-dialog>
     <!-- 行政区域 -->
-    <el-dialog width="20%" @close="down(1)" :visible.sync="nocustom" :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
+    <el-dialog
+      width="20%"
+      @close="down(1)"
+      :visible.sync="nocustom"
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
       <el-form :model="formdata" :key="addKey">
         <el-row :gutter="30">
           <el-col :span="24">
@@ -70,8 +99,16 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="时间" prop="time" style="margin-bottom:0">
-              <el-time-picker size="small" style="width:100%;" is-range v-model="formdata.time" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" placeholder="选择时间范围">
-              </el-time-picker>
+              <el-time-picker
+                size="small"
+                style="width:100%;"
+                is-range
+                v-model="formdata.time"
+                range-separator="至"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                placeholder="选择时间范围"
+              ></el-time-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -96,7 +133,10 @@
       </div>
     </div>
     <!-- 列表 -->
-    <div v-show="areaType" style="width:760px;height:420px; position:absolute;left:2px;right:0;top:0;bottom:0;border:1px solid #777; z-index:99;background-color:#fff; ">
+    <div
+      v-show="areaType"
+      style="width:760px;height:420px; position:absolute;left:2px;right:0;top:0;bottom:0;border:1px solid #777; z-index:99;background-color:#fff; "
+    >
       <el-form :model="tableQuery" @submit.native.prevent ref="baseForm ">
         <el-row :gutter="30 ">
           <el-col :span="10 ">
@@ -110,6 +150,7 @@
                 <el-option label="圆形" value="1">圆形</el-option>
                 <el-option label="矩形" value="2">矩形</el-option>
                 <el-option label="多边形" value="3">多边形</el-option>
+                <el-option label="关键点" value="6">关键点</el-option>
                 <el-option label="行政区域" value="4">行政区域</el-option>
                 <el-option label="分段限速" value="5">分段限速</el-option>
                 <el-option label="线路偏移" value="7">线路偏移</el-option>
@@ -132,25 +173,33 @@
         </router-link>
       </el-form>
       <el-table height="200" :data="tableData.data" size="small">
-        <el-table-column prop="RegionId" label="序号 " :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="RegionId" label="序号 " :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column prop="Type" label="管理类型 " :formatter="$utils.baseFormatter ">
           <template slot-scope="scope">
             <label v-if="scope.row.Type=='1'">圆形</label>
             <label v-if="scope.row.Type=='2'">矩形</label>
             <label v-if="scope.row.Type=='3'">多边形</label>
+            <label v-if="scope.row.Type=='6'">关键点</label>
             <label v-if="scope.row.Type=='4'">行政区域</label>
             <label v-if="scope.row.Type=='5'">分段限速</label>
             <label v-if="scope.row.Type=='7'">线路偏移</label>
           </template>
         </el-table-column>
-        <el-table-column prop="RegionName" label="名称 " :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="RegionName" label="名称 " :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column prop="AreaProperty" label="报警类型 " :formatter="$utils.baseFormatter ">
           <template slot-scope="scope">
             <label v-if="scope.row.AreaProperty=='3'">禁入</label>
             <label v-if="scope.row.AreaProperty=='5'">禁出</label>
+            <!-- <label v-if="scope.row.AreaProperty=='3'">未离开</label>
+            <label v-if="scope.row.AreaProperty=='5'">未到达</label>-->
           </template>
         </el-table-column>
-        <el-table-column prop="Time" width="150" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(row.Time)}"> </el-table-column>
+        <el-table-column
+          prop="Time"
+          width="150"
+          label="时间"
+          :formatter="(row)=>{return this.$utils.formatDate14(row.Time)}"
+        ></el-table-column>
         <el-table-column width="150" label="操作 ">
           <template slot-scope="scope ">
             <el-popover placement="top" width="160" v-model="scope.row.delDialog">
@@ -159,18 +208,40 @@
                 <el-button size="mini" type="text" @click="scope.row.delDialog = false">取消</el-button>
                 <el-button @click="del(scope)" type="primary" size="mini">确定</el-button>
               </div>
-              <el-button @click="delForm(scope)" size="mini" style="margin-right:3px; " slot="reference">删除</el-button>
+              <el-button
+                @click="delForm(scope)"
+                size="mini"
+                style="margin-right:3px; "
+                slot="reference"
+              >删除</el-button>
             </el-popover>
             <el-button size="mini" @click="selceForm(scope)">查看</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div class="admin-table-pager ">
-        <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
-        </el-pagination>
+      <div class="admin-table-pager">
+        <el-pagination
+          @size-change="handleSizeChange "
+          @current-change="handleCurrentChange "
+          :current-page="tableQuery.page "
+          :page-sizes="[10, 20, 50, 100] "
+          :page-size="tableQuery.size "
+          :total="tableData.total "
+          layout="total, sizes, prev, pager, next, jumper "
+          background
+        ></el-pagination>
       </div>
     </div>
-    <el-dialog title="线路" width="30%" :visible.sync="lineDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog
+      title="线路"
+      width="30%"
+      :visible.sync="lineDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
       <template>
         <label style="display:inline-block;width:82px;margin-bottom: 22px;">类型：</label>
         <el-select size="small" style="width:42.2%" v-model="area_type">
@@ -327,6 +398,7 @@ export default {
       this.lineDialog = false;
       this.areaType = true;
       this.mapData.map.clearMap();
+      this.down();
       this.getTable();
       return this.$notify({
         message: "添加成功",
@@ -339,6 +411,7 @@ export default {
       this.areaType = true;
       this.mapData.map.clearMap();
       this.getTable();
+      this.down();
       return this.$notify({
         message: "添加成功",
         title: "提示",
@@ -462,34 +535,68 @@ export default {
           this.mapData.map.setFitView([poly]);
           arr = [];
         });
-      } else {
-        var line = [];
-        var lng = "";
-        var lat = "";
+      } else if (scope.row.Type == "5") {
         this.mapData.map.clearMap();
+        var speed = [];
         scope.row.TurnPoints.map(item => {
-          lng = parseFloat(item.TurnPointLongitude);
-          lat = parseFloat(item.TurnPointLatitude);
-          line.push([lng, lat]);
+          speed.push([
+            JSON.parse(item.TurnPointLongitude),
+            JSON.parse(item.TurnPointLatitude)
+          ]);
         });
-        var polyline = new AMap.Polyline({
-          path: line,
+        var speedLine = new AMap.Polyline({
+          path: speed,
           isOutline: true,
           outlineColor: "#ffeeff",
           borderWeight: 3,
           strokeColor: "#3366FF",
           strokeOpacity: 1,
           strokeWeight: 6,
-          // 折线样式还支持 'dashed'
           strokeStyle: "solid",
-          // strokeStyle是dashed时有效
           strokeDasharray: [10, 5],
           lineJoin: "round",
           lineCap: "round",
           zIndex: 50
         });
-        polyline.setMap(this.mapData.map);
-        this.mapData.map.setFitView([polyline]);
+        speedLine.setMap(this.mapData.map);
+        this.mapData.map.setFitView([speedLine]);
+      } else if (scope.row.Type == "6") {
+        this.mapData.map.clearMap();
+        var markerPath = [];
+        markerPath = [
+          JSON.parse(scope.row.CenterLongitude),
+          JSON.parse(scope.row.CenterLatitude)
+        ];
+        var marker = new AMap.Marker({
+          position: markerPath
+        });
+        this.mapData.map.add(marker);
+        this.mapData.map.setFitView([marker]);
+      } else if (scope.row.Type == "7") {
+        this.mapData.map.clearMap();
+        var offsetLine = [];
+        scope.row.TurnPoints.map(item => {
+          offsetLine.push([
+            JSON.parse(item.TurnPointLongitude),
+            JSON.parse(item.TurnPointLatitude)
+          ]);
+        });
+        var line = new AMap.Polyline({
+          path: offsetLine,
+          isOutline: true,
+          outlineColor: "#ffeeff",
+          borderWeight: 3,
+          strokeColor: "#3366FF",
+          strokeOpacity: 1,
+          strokeWeight: 6,
+          strokeStyle: "solid",
+          strokeDasharray: [10, 5],
+          lineJoin: "round",
+          lineCap: "round",
+          zIndex: 50
+        });
+        line.setMap(this.mapData.map);
+        this.mapData.map.setFitView([line]);
       }
     },
     // 删除区域
@@ -580,6 +687,20 @@ export default {
     // 弹出块保存发送指令
     save() {
       var data = {};
+      if (this.formdata.name == "") {
+        return this.$notify({
+          message: "请输入规则名称",
+          title: "提示",
+          type: "error"
+        });
+      }
+      if (this.formdata.time == "" || this.formdata.time == null) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.formdata.start_time =
         "000000" + moment(this.formdata.time[0]).format("HHmmss");
       this.formdata.stop_time =

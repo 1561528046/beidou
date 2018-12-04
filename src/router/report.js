@@ -296,37 +296,37 @@ export default {
         //     import("@/views/manage/report/userbehavior/device/index.vue")
         // }
       ]
-    }
+    },
     // 车辆连接统计表
-    // {
-    //   path: "vehiclelink",
-    //   name: "report-vehiclelink",
-    //   meta: {
-    //     name: "车辆连接统计表",
-    //     icon: "iconfont icon-vehicle_connection",
-    //     p: "7-1-9"
-    //   },
-    //   component: () => import("@/views/manage/report/vehiclelink/index.vue"),
-    //   children: [
-    //     {
-    //       path: "vehiclelink-summary",
-    //       name: "vehiclelink-summary",
-    //       meta: {
-    //         name: "车辆上线下线汇总表",
-    //         icon: "iconfont icon-huizong"
-    //       },
-    //       component: () =>
-    //         import("@/views/manage/report/vehiclelink/summary/index.vue")
-    //     },
-    //     {
-    //       path: "vehiclelink-details",
-    //       name: "vehiclelink-details",
-    //       meta: { name: "车辆上线下线明细表", icon: "iconfont icon-mingxi" },
-    //       component: () =>
-    //         import("@/views/manage/report/vehiclelink/details/index.vue")
-    //     }
-    //   ]
-    // },
+    {
+      path: "vehiclelink",
+      name: "report-vehiclelink",
+      meta: {
+        name: "车辆连接统计表",
+        icon: "iconfont icon-vehicle_connection",
+        p: "7-1-9"
+      },
+      component: () => import("@/views/manage/report/vehiclelink/index.vue"),
+      children: [
+        {
+          path: "vehiclelink-summary",
+          name: "vehiclelink-summary",
+          meta: {
+            name: "车辆上线下线统计表",
+            icon: "iconfont icon-huizong"
+          },
+          component: () =>
+            import("@/views/manage/report/vehiclelink/summary/index.vue")
+        },
+        {
+          path: "vehiclelink-details",
+          name: "vehiclelink-details",
+          meta: { name: "车辆上线下线明细表", icon: "iconfont icon-mingxi" },
+          component: () =>
+            import("@/views/manage/report/vehiclelink/details/index.vue")
+        }
+      ]
+    }
     // 视频报警报表
     // {
     //   path: "video",

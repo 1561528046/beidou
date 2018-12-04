@@ -1,22 +1,51 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form
+        :model="tableQuery"
+        ref="baseForm"
+        :rules="rules"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        size="small"
+      >
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item prop="time" label="时间">
-              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
-              </el-date-picker>
+              <el-date-picker
+                style="width:347px;"
+                v-model="tableQuery.time"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                format="yyyy-MM-dd HH:mm"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="license" label="车辆">
-              <el-input :disabled="vehicleAlert" @focus="selectvehicle" type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
+              <el-input
+                :disabled="vehicleAlert"
+                @focus="selectvehicle"
+                type="text"
+                v-model="tableQuery.license"
+                style="position: absolute;left: 0px; top: 0px;"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="real_name" label="用户">
-              <el-input :disabled="userAlert" @focus="selectuser" type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
+              <el-input
+                :disabled="userAlert"
+                @focus="selectuser"
+                type="text"
+                v-model="tableQuery.real_name"
+                style="position: absolute;left: 0px; top: 0px;"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4" style="text-align: right;">
@@ -36,32 +65,74 @@
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
-            <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
+            <span
+              class="license-card"
+              :style="$dict.get_license_color(scope.row.license_color).style"
+              @click="showDetails(scope)"
+            >{{scope.row.license}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="user_real_name" label="用户名称" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="operate_type_name" label="类型" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="device_no" label="设备号" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="log_time" label="时间" :formatter="(row)=>{ return this.$utils.formatDate14(JSON.stringify(row.log_time))}"> </el-table-column>
-        <el-table-column prop="desc" label="描述" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column prop="user_real_name" label="用户名称" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="operate_type_name" label="类型" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="device_no" label="设备号" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column
+          prop="log_time"
+          label="时间"
+          :formatter="(row)=>{ return this.$utils.formatDate14(JSON.stringify(row.log_time))}"
+        ></el-table-column>
+        <el-table-column prop="desc" label="描述" :formatter="$utils.baseFormatter "></el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange "
+          @current-change="handleCurrentChange "
+          :current-page="tableQuery.page "
+          :page-sizes="[10, 20, 50, 100] "
+          :page-size="tableQuery.size "
+          :total="tableData.total "
+          layout="total, sizes, prev, pager, next, jumper "
+          background
+        ></el-pagination>
       </div>
     </el-card>
-    <el-dialog width="50%" title="选择信息" :visible.sync="vehicleDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-vcheckbox @button="xz" @success=" () => {this.getTable();this.vehicleDialog = false;}" :key="addKey"></choose-vcheckbox>
+    <el-dialog
+      width="50%"
+      title="选择信息"
+      :visible.sync="vehicleDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <choose-vcheckbox
+        @button="xz"
+        @success=" () => {this.getTable();this.vehicleDialog = false;}"
+        :key="addKey"
+      ></choose-vcheckbox>
     </el-dialog>
-    <el-dialog width="30%" title="选择信息" :visible.sync="userDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-ucheckbox @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-ucheckbox>
+    <el-dialog
+      width="30%"
+      title="选择信息"
+      :visible.sync="userDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <choose-ucheckbox
+        @button="user"
+        @success=" () => {this.getTable();this.userDialog = false;}"
+        :key="addKey"
+      ></choose-ucheckbox>
     </el-dialog>
   </div>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import qs from "qs";
+// import qs from "qs";
 import { getUserOperateLogByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
@@ -166,17 +237,32 @@ export default {
   },
   methods: {
     exportExcel() {
-      var str = qs.stringify({
-        page: 1,
-        size: this.count,
-        start_time: this.tableQuery.start_time,
-        stop_time: this.tableQuery.stop_time,
-        user_ids: this.tableQuery.user_ids,
-        vehicle_ids: this.tableQuery.vehicle_ids
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "用户名称",
+          C: "类型",
+          D: "设备号",
+          E: "时间",
+          F: "描述"
+        }
+      ];
+      this.list.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: data.user_real_name,
+          C: data.operate_type_name,
+          D: data.device_no,
+          E: this.$utils.formatDate14(JSON.stringify(data.log_time)),
+          F: data.desc
+        });
       });
-      var url =
-        this.$dict.API_URL + "/Report/ExportUserOperateLogByPage?" + str;
-      this.$utils.downloadFile("用户操作日志", url);
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "用户操作日志",
+        fileName: "用户操作日志.xlsx"
+      });
     },
     // 查询时间验证
     validateTime(rule, value, callback) {
