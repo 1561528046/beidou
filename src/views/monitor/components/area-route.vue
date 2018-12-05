@@ -1,21 +1,36 @@
 <template>
   <div style="width:760px; height:550px;">
-    <div style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:0; width:100%;height:80%;" ref="map"></div>
+    <div
+      style="position:absolute;left:0;right:0;top:0;bottom:0; z-index:0; width:100%;height:80%;"
+      ref="map"
+    ></div>
+
     <div style="position:absolute;bottom:0; z-index:99;margin-left:-21px;" class="admin-dialog">
       <div style="width:100%;height:100%;background-color:#fff;">
         <el-form label-position="left" :model="formData" ref="baseForm">
           <el-row :gutter="30 ">
             <el-col :span="8">
+              {{roadIndex}}
               <el-form-item label="开始位置">
                 <el-select v-model="formData.start" size="small">
-                  <el-option v-for="(item,index) in location" :key="JSON.stringify(index)" :value="JSON.stringify(index)" :label="index+1">{{index +1}},{{item.lng}} {{item.lat}}</el-option>
+                  <el-option
+                    v-for="(item,index) in location"
+                    :key="JSON.stringify(index)"
+                    :value="JSON.stringify(index)"
+                    :label="index+1"
+                  >{{index +1}},{{item.lng}} {{item.lat}}</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="结束位置">
                 <el-select v-model="formData.end" size="small">
-                  <el-option v-for="(item,index) in location" :key="JSON.stringify(index)" :value="JSON.stringify(index)" :label="index+1">{{index +1}},{{item.lng}} {{item.lat}}</el-option>
+                  <el-option
+                    v-for="(item,index) in location"
+                    :key="JSON.stringify(index)"
+                    :value="JSON.stringify(index)"
+                    :label="index+1"
+                  >{{index +1}},{{item.lng}} {{item.lat}}</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -151,6 +166,18 @@ export default {
           title: "提示",
           type: "error"
         });
+      }
+      if (this.roadIndex.length != 0) {
+        if (
+          this.formData.start !=
+          this.roadIndex[this.roadIndex.length - 1] + 1
+        ) {
+          return this.$notify({
+            message: "请重新选择开始位置",
+            title: "提示",
+            type: "error"
+          });
+        }
       }
       if (this.formData.start == "") {
         return this.$notify({
