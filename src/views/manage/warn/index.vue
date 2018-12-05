@@ -38,29 +38,19 @@
         style="width: 100%"
         class="admin-table-list"
       >
-        <el-table-column prop="driver_card_id" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="Alarm_Type_808" label="报警类型" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="Create_Time" label="时间" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="Id_Info" label="INFO ID" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="Create_Time" label="时间" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="Create_Time" label="时间" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Vehicle_No" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Alarm_Type_809" label="报警类型">
+          <template slot-scope="scope">{{$dict.get_vehicle_alarm(scope.row.Alarm_Type_809)}}</template>
+        </el-table-column>
+        <el-table-column prop="Create_Time" label="时间">
+          <template slot-scope="scope">{{$utils.formatDate14(scope.row.Create_Time)}}</template>
+        </el-table-column>
+        <!-- <el-table-column prop="Id_Info" label="INFO ID" :formatter="$utils.baseFormatter"></el-table-column> -->
+        <el-table-column prop="Process_State" label="处理状态" :formatter="format_Process_State"></el-table-column>
+        <!-- <el-table-column prop="Process_Desc" label="处理结果 " :formatter="$utils.baseFormatter"></el-table-column> -->
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button
-              size="small"
-              @click="updateForm(scope)"
-              type="primary"
-              icon="el-icon-edit"
-              v-rights="6-1-3"
-            >编辑</el-button>
-            <el-button
-              size="small"
-              type="primary"
-              icon="el-icon-edit"
-              @click="openBindingVehicle(scope)"
-            >绑定车辆</el-button>
-            <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="6-1-2">删除</el-button>
+            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit">处理</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -77,10 +67,32 @@
         ></el-pagination>
       </div>
     </el-card>
+
+    <el-dialog
+      width="40%"
+      title
+      :visible.sync="updateDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <el-select v-model="postData.RESULT" placeholder="选择处理结果" style="width:100%;">
+        <el-option label="处理中" value="0"></el-option>
+        <el-option label="已处理完毕" value="1"></el-option>
+        <el-option label="不作处理" value="2"></el-option>
+        <el-option label="将来处理" value="3"></el-option>
+      </el-select>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="updateDialog = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { getWarnList } from "@/api/index.js";
+import { getWarnList, UpdateAlarmHandler } from "@/api/index.js";
 import moment from "moment";
 export default {
   created() {
@@ -101,6 +113,17 @@ export default {
   },
   data() {
     return {
+      currentRow: {},
+      postData: {
+        MessageID: "x1400",
+        MSG_GNSSCENTERID: "",
+        VEHICLE_NO: "",
+        VEHICLE_COLOR: "",
+        DATA_TYPE: 0x1403,
+        INFO_ID: "",
+        RESULT: ""
+      },
+      updateDialog: false,
       dateRange: [],
       pickerOptions2: {
         shortcuts: [
@@ -148,30 +171,68 @@ export default {
     };
   },
   methods: {
+    format_Process_State(row) {
+      return (
+        ["处理中", "已处理完毕", "不作处理", "将来处理"][row.Process_State] ||
+        "--"
+      );
+    },
+    updateForm(scope) {
+      this.currentRow = scope.row;
+      this.updateDialog = true;
+    },
+    submitForm() {
+      UpdateAlarmHandler({
+        id: this.currentRow.Id,
+        state: this.postData.RESULT,
+        remark: ""
+      }).then(res => {
+        if (res.data.code == 0) {
+          this.$message.success(res.data.msg);
+          this.getTable();
+          this.postData.MSG_GNSSCENTERID = this.currentRow.Gnss_Centerid;
+          this.postData.VEHICLE_NO = this.currentRow.Vehicle_No;
+          this.postData.VEHICLE_COLOR = this.currentRow.Vehicle_Color;
+          this.postData.INFO_ID = this.currentRow.Id_Info;
+          this.$instruction.send(JSON.stringify(this.postData));
+        } else {
+          this.$message.warning(res.data.msg);
+        }
+        this.updateDialog = false;
+        this.currentRow = {};
+        this.postData = {
+          MessageID: "x1400",
+          MSG_GNSSCENTERID: "",
+          VEHICLE_NO: "",
+          VEHICLE_COLOR: "",
+          DATA_TYPE: 0x1403,
+          INFO_ID: "",
+          RESULT: ""
+        };
+      });
+    },
     //导出excel
     exportExcel() {
       var wsCol = [
         {
-          A: "司机卡编号",
-          B: "姓名",
-          C: "联系电话",
-          D: "驾驶证有效期",
-          E: "身份证"
+          A: "车牌号",
+          B: "报警类型",
+          C: "时间",
+          D: "处理状态"
         }
       ];
       this.tableData.data.map(data => {
         wsCol.push({
-          A: data.driver_card_id,
-          B: data.driver_name,
-          C: data.tel,
-          D: this.$utils.formatDate(data.license_validity),
-          E: data.identity_id
+          A: data.Vehicle_No,
+          B: this.$dict.get_vehicle_alarm(data.Alarm_Type_809),
+          C: this.$utils.formatDate14(data.Create_Time),
+          D: this.format_Process_State(data)
         });
       });
       this.$utils.exportExcel({
         data: wsCol,
-        sheetName: "司机信息管理",
-        fileName: "司机信息管理.xlsx"
+        sheetName: "报警信息管理",
+        fileName: "报警信息管理.xlsx"
       });
     },
 
@@ -182,7 +243,8 @@ export default {
       getWarnList(query)
         .then(res => {
           if (res.data.code == 0) {
-            this.$set(this.$data, "tableData", res.data);
+            this.$set(this.tableData, "data", res.data.data);
+            this.tableData.total = res.data.count;
           } else {
             this.$set(this.$data, "tableData", []);
             this.$message.error(res.data.msg);
