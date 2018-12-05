@@ -10,7 +10,6 @@
         <el-form label-position="left" :model="formData" ref="baseForm">
           <el-row :gutter="30 ">
             <el-col :span="8">
-              {{roadIndex}}
               <el-form-item label="开始位置">
                 <el-select v-model="formData.start" size="small">
                   <el-option

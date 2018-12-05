@@ -46,7 +46,7 @@
             </el-form-item>
           </el-col>
           <el-col v-if="label=='marker'" :span="24">
-            <el-form-item label="半径" prop="time">
+            <el-form-item label="半径" prop="radius">
               <el-input size="small" v-model="formdata.radius" style="width:100%"></el-input>
             </el-form-item>
           </el-col>
@@ -188,10 +188,10 @@
         <el-table-column prop="RegionName" label="名称 " :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column prop="AreaProperty" label="报警类型 " :formatter="$utils.baseFormatter ">
           <template slot-scope="scope">
-            <label v-if="scope.row.AreaProperty=='3'">禁入</label>
-            <label v-if="scope.row.AreaProperty=='5'">禁出</label>
-            <!-- <label v-if="scope.row.AreaProperty=='3'">未离开</label>
-            <label v-if="scope.row.AreaProperty=='5'">未到达</label>-->
+            <label v-if="scope.row.AreaProperty=='3' && scope.row.Type!='6'">禁入</label>
+            <label v-if="scope.row.AreaProperty=='5' && scope.row.Type!='6'">禁出</label>
+            <label v-if="scope.row.AreaProperty=='3' && scope.row.Type=='6'">未离开</label>
+            <label v-if="scope.row.AreaProperty=='5' && scope.row.Type=='6'">未到达</label>
           </template>
         </el-table-column>
         <el-table-column
@@ -431,18 +431,6 @@ export default {
         title: "提示",
         type: "success"
       });
-    },
-    // 删除路段项
-    deleteItem(data) {
-      var limit = [];
-      this.limit_road.map((item, index) => {
-        if (item.start == data.start) {
-          this.limit_road.splice(index - 1, 1);
-          return false;
-        }
-        limit.push(item);
-      });
-      this.$set(this.$data, "limit_road", limit);
     },
     // 查看所画区域
     selceForm(scope) {
@@ -915,6 +903,7 @@ export default {
       this.formdata.time = "";
       this.formdata.name = "";
       this.formdata.area = {};
+      this.formdata.radius = "";
       this.formdata.alarm_type = "";
       this.formdata.start_time = "";
       this.formdata.stop_time = "";

@@ -114,21 +114,15 @@ export default {
     // 删除路段项
     deleteItem(data) {
       var limit = [];
-      console.log(this.roadIndex);
-      // this.roadIndex.map((itam, index) => {
-      //   if (index < data.end + 1 && index > data.start - 1) {
-      //     this.roadIndex.splice(index, 1);
-      //   }
-      // });
+      this.roadIndex.map((itam, index) => {
+        if (itam < data.end + 1 && itam > data.start - 1) {
+          return;
+        } else {
+          limit.push(itam);
+        }
+      });
+      this.roadIndex = limit;
       this.limit_road.splice(this.limit_road.indexOf(data), 1);
-      // this.limit_road.map((item, index) => {
-      //   if (item.start == data.start) {
-      //     this.limit_road.splice(index - 1, 1);
-      //     return false;
-      //   }
-      //   limit.push(item);
-      // });
-      // this.$set(this.$data, "limit_road", limit);
     },
     // 添加分段限速信息
     sendInstruction() {
