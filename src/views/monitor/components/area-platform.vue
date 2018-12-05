@@ -2,16 +2,18 @@
   <div class="admin-table-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
     <!-- 返回 -->
     <router-link :to="{name:'map'}">
-      <el-button style="position:absolute;top:-30px;right:31px;" size="small" icon="el-icon-arrow-left">
+      <el-button
+        style="position:absolute;top:-30px;right:31px;"
+        size="small"
+        icon="el-icon-arrow-left"
+      >
         <span>返回</span>
       </el-button>
     </router-link>
     <el-card shadow="always" class="full-box">
       <div class="bind-box">
         <div class="user-box">
-          <div class="user-header">
-            区域列表
-          </div>
+          <div class="user-header">区域列表</div>
           <div class="user-filter" :class="{active:userFilterOpen}">
             <el-form :model="areaList" size="small">
               <el-form-item>
@@ -25,16 +27,30 @@
               <i class="el-icon-caret-bottom" v-if="!userFilterOpen"></i>
               <i class="el-icon-caret-top" v-if="userFilterOpen"></i>
 
-            </div> -->
-
+            </div>-->
           </div>
           <ul class="user-list">
-            <li v-for="areaitem in area" :class="{active:areaitem.RegionId==currentUser.RegionId}" :key="areaitem.RegionId" @click="changeUser(areaitem)"> {{areaitem.RegionName}}</li>
+            <li
+              v-for="areaitem in area"
+              :class="{active:areaitem.RegionId==currentUser.RegionId}"
+              :key="areaitem.RegionId"
+              @click="changeUser(areaitem)"
+            >{{areaitem.RegionName}}</li>
           </ul>
           <div class="user-pager">
             <el-input placeholder="页码" size="small" v-model="areaList.page">
-              <el-button slot="prepend" icon="el-icon-caret-left" @click="userPagerPrev()" :disabled="userPagerPrevState"></el-button>
-              <el-button slot="append" icon="el-icon-caret-right" @click="userPagerNext()" :disabled="userPagerNextState"></el-button>
+              <el-button
+                slot="prepend"
+                icon="el-icon-caret-left"
+                @click="userPagerPrev()"
+                :disabled="userPagerPrevState"
+              ></el-button>
+              <el-button
+                slot="append"
+                icon="el-icon-caret-right"
+                @click="userPagerNext()"
+                :disabled="userPagerNextState"
+              ></el-button>
             </el-input>
           </div>
         </div>
@@ -42,7 +58,7 @@
           <div class="group-container" v-if="currentUser.user_id">
             <select-group :static="true" :useing="['add','edit','remove']" :user_id="currentUser.user_id" :level.sync="groupData.level" :group_id.sync="groupData.group_id" :parentid.sync="groupData.parent_id" style="width:300px;height:100%;"></select-group>
           </div>
-        </transition> -->
+        </transition>-->
         <div class="transfer-container">
           <div class="transfer-filter">
             <div class="transfer-filter-item">
@@ -56,7 +72,7 @@
                   <el-input placeholder="用户" v-model="bindTableQuery.real_name">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
-                </el-form-item> -->
+                </el-form-item>-->
                 <el-form-item>
                   <el-button @click="renderBind()">搜索</el-button>
                 </el-form-item>
@@ -74,7 +90,7 @@
                   <el-input placeholder="用户" v-model="unbindTableQuery.real_name">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
-                </el-form-item> -->
+                </el-form-item>-->
                 <el-form-item>
                   <el-button @click="renderUnbind()">搜索</el-button>
                 </el-form-item>
@@ -82,22 +98,45 @@
             </div>
           </div>
           <div class="transfer-list">
-            <admin-transfer @onLeft="onleft" :lists="list" :titles="titles" @onRight="onright" :leftCol="leftCol" :rightCol="rightCol" style="width:100%;height:100%;"></admin-transfer>
+            <admin-transfer
+              @onLeft="onleft"
+              :lists="list"
+              :titles="titles"
+              @onRight="onright"
+              :leftCol="leftCol"
+              :rightCol="rightCol"
+              style="width:100%;height:100%;"
+            ></admin-transfer>
           </div>
           <div class="transfer-pager">
             <div class="transfer-pager-item">
-              <el-pagination @size-change="bindSizeChange" @current-change="bindcurrentChange" :current-page="bindTableQuery.page" :page-sizes="[20, 50, 100,300,600,1000]" :page-size="bindTableQuery.size" :total="bindTableQuery.total" layout="total, sizes, prev,  next, jumper" background>
-              </el-pagination>
+              <el-pagination
+                @size-change="bindSizeChange"
+                @current-change="bindcurrentChange"
+                :current-page="bindTableQuery.page"
+                :page-sizes="[20, 50, 100,300,600,1000]"
+                :page-size="bindTableQuery.size"
+                :total="bindTableQuery.total"
+                layout="total, sizes, prev,  next, jumper"
+                background
+              ></el-pagination>
             </div>
             <div style="width:100px;"></div>
             <div class="transfer-pager-item">
-              <el-pagination @size-change="unbindSizeChange" @current-change="unbindcurrentChange" :current-page="unbindTableQuery.page" :page-sizes="[20, 50, 100,300,600,1000]" :page-size="unbindTableQuery.size" :total="unbindTableQuery.total" layout="total, sizes, prev,  next, jumper" background>
-              </el-pagination>
+              <el-pagination
+                @size-change="unbindSizeChange"
+                @current-change="unbindcurrentChange"
+                :current-page="unbindTableQuery.page"
+                :page-sizes="[20, 50, 100,300,600,1000]"
+                :page-size="unbindTableQuery.size"
+                :total="unbindTableQuery.total"
+                layout="total, sizes, prev,  next, jumper"
+                background
+              ></el-pagination>
             </div>
           </div>
         </div>
       </div>
-
     </el-card>
   </div>
 </template>
@@ -143,7 +182,7 @@ export default {
       area: [],
       areaList: {
         page: 1,
-        size: 10,
+        size: 999,
         RegionName: "",
         Type: "",
         total: 0

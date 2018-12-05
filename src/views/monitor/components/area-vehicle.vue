@@ -176,6 +176,16 @@ export default {
         });
       }
     });
+    this.$instruction.on("x8606", eve => {
+      var data = JSON.parse(eve.data);
+      if (data.code == "0") {
+        return this.$notify({
+          message: "指令发送成功",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
     this.$instruction.on("x8607", eve => {
       var data = JSON.parse(eve.data);
       if (data.code == "0") {
@@ -510,9 +520,29 @@ export default {
           this.$instruction.send(instruction);
         }
       } else if (this.tableQuery.areaData.Type == "5") {
-        // "x8606"
-        console.log(roadNum);
-        console.log(this.tableQuery.vehicleData.sim_id);
+        console.log(1);
+        if (this.tableQuery.area == "3") {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8607",
+            RouteIDs: this.tableQuery.areaData.RegionId
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+          return;
+        } else {
+          instruction = {
+            SimID: this.tableQuery.vehicleData.sim_id,
+            MessageID: "x8606",
+            RouteId: this.tableQuery.areaData.RegionId,
+            RouteProperty: roadNum,
+            StartTime: this.tableQuery.areaData.StartTime,
+            EndTime: this.tableQuery.areaData.EndTime,
+            TurnPoints: this.tableQuery.areaData.TurnPoints
+          };
+          instruction = JSON.stringify(instruction);
+          this.$instruction.send(instruction);
+        }
       }
     },
     addForm() {

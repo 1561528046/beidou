@@ -25,11 +25,7 @@
           <monitor-info></monitor-info>
           <div class="shadow-box monitor-map-tools">
             <el-radio-group v-model="mapTools" @change="changeTools" size="small">
-              <el-radio-button
-                style="margin-left:10px;margin-right:10px;"
-                label="current"
-                title="查找当前终端"
-              >查找当前终端</el-radio-button>
+              <el-radio-button style="margin:5px;" label="current" title="查找当前终端">查找当前终端</el-radio-button>
               <el-radio-button label="history" title="查找历史终端">查找历史终端</el-radio-button>
             </el-radio-group>
           </div>
@@ -1187,6 +1183,20 @@ export default {
     },
     // 查找历史终端
     getHistory() {
+      if (this.time == "" || this.time == null) {
+        return this.$notify({
+          message: "请选择时间",
+          title: "提示",
+          type: "error"
+        });
+      }
+      if (this.vehicle.license == undefined) {
+        return this.$notify({
+          message: "请选择车辆",
+          title: "提示",
+          type: "error"
+        });
+      }
       var vehicle = Array.from(monitor.data.values());
       var ring = [];
       var isPointInRing = "";
@@ -1208,7 +1218,7 @@ export default {
             point = new AMap.LngLat(itcm.longitude, itcm.latitude);
             isPointInRing = AMap.GeometryUtil.isPointInRing(point, ring);
             if (isPointInRing) {
-              this.tableHistory.push(item);
+              this.tableHistory.push(itcm);
               return;
             }
           });

@@ -1,10 +1,7 @@
 <template>
-  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
-    <!-- 设备信息 -->
-    <el-form-item label="终端厂商" prop="company_id">
-      <company-select v-model="formData.company_id" style="width: 360px;"></company-select>
-    </el-form-item>
-    <el-form-item v-if="formData.company_id">
+  <el-form status-icon :model="formData" size="small" ref="baseForm">
+    <!-- 车辆信息 -->
+    <el-form-item>
       <el-upload
         action="medium"
         drag
@@ -23,18 +20,10 @@
   </el-form>
 </template>
 <script>
-import companySelect from "@/components/select-company.vue";
 export default {
   data() {
     return {
-      formData: {
-        company_id: ""
-      },
-      rules: {
-        company_id: [
-          { required: true, trigger: "change", message: "必须选择终端厂商" }
-        ]
-      }
+      formData: {}
     };
   },
   created() {},
@@ -44,12 +33,12 @@ export default {
         if (isVaildate) {
           var formData = new FormData();
           formData.append("ff", uploadObj.file);
-          console.log(formData);
           this.$ajax
             .post("/public/UploadExcel", formData, {
-              params: { table: 2, company_id: this.formData.company_id }
+              params: { table: 3 }
             })
             .then(res => {
+              console.log(res);
               if (res.data.code == 0) {
                 this.$emit("success");
                 this.$notify({
@@ -77,7 +66,6 @@ export default {
         }
       });
     }
-  },
-  components: { companySelect }
+  }
 };
 </script>

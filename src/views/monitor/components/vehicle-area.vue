@@ -241,6 +241,7 @@
       :close-on-press-escape="false"
       :center="true"
       class="admin-dialog"
+      @close="shutDown()"
     >
       <template>
         <label style="display:inline-block;width:82px;margin-bottom: 22px;">类型：</label>
@@ -249,8 +250,13 @@
           <el-option value="5" label="分段限速">分段限速</el-option>
         </el-select>
       </template>
-      <area-speed :line="mapData.overlays[0]" @data="setData" v-if="area_type=='5'"></area-speed>
-      <area-offset @type="offsetType" :line="mapData.overlays[0]" v-if="area_type=='7'"></area-offset>
+      <area-speed :line="mapData.overlays[0]" @data="setData" v-if="area_type=='5'" :key="addKey"></area-speed>
+      <area-offset
+        @type="offsetType"
+        :line="mapData.overlays[0]"
+        v-if="area_type=='7'"
+        :key="addKey"
+      ></area-offset>
     </el-dialog>
   </div>
 </template>
@@ -394,6 +400,14 @@ export default {
     };
   },
   methods: {
+    shutDown() {
+      this.area_type = "";
+      this.lineDialog = false;
+      this.areaType = true;
+      this.mapData.map.clearMap();
+      this.getTable();
+      this.down();
+    },
     setData(data) {
       this.lineDialog = false;
       this.areaType = true;
@@ -607,6 +621,7 @@ export default {
     del(scope) {
       DeleteRegion({ RegionId: this.RegionId }).then(res => {
         if (res.data.code == 0) {
+          this.tableQuery.page = 1;
           this.getTable();
           scope.row.delDialog = false;
           this.mapData.map.clearMap();
@@ -889,11 +904,11 @@ export default {
         this.filterType = 1;
         this.nocustom = false;
         this.mapData.map.remove(this.mapData.polygons);
-      } else if (type == 2) {
-        this.custom = false;
       } else {
         this.speedDialog = false;
       }
+      this.addKey++;
+      this.custom = false;
       this.addDialog = false;
       this.areaType = true;
       this.radio = false;

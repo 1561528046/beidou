@@ -118,6 +118,9 @@
         </router-link>
         <el-button style="margin-left:10px" type="primary" @click="exportExcel" size="small">
           <i class="el-icon-download"></i> 导出
+        </el-button>
+        <el-button style="margin-left:10px" type="primary" @click="openUpload" size="small">
+          <i class="el-icon-download"></i> 导入
         </el-button>&nbsp;
         <!-- <el-button type="primary" size="small" v-if="$props.state==2">
           <i class="el-icon-tickets"></i> 单车导入
@@ -349,6 +352,18 @@
         </el-row>
       </el-form>
     </el-dialog>
+    <el-dialog
+      width="21%"
+      title="上传"
+      :visible.sync="uploadDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
+      <device-upload @success=" ()=> {this.getTable();this.uploadDialog = false;}" :key="addKey"></device-upload>
+    </el-dialog>
   </div>
 </template>
 <style lang="less">
@@ -406,8 +421,9 @@ import {
 } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import viewVehicle from "@/components/view-vehicle.vue";
+import deviceUpload from "./upload.vue";
 export default {
-  components: { selectCityInput, viewVehicle },
+  components: { selectCityInput, viewVehicle, deviceUpload },
   created() {
     this.getTable();
     this.checkOrderRights();
@@ -423,6 +439,8 @@ export default {
       renew_company: false,
       active_company: false,
       platformTime: "",
+      addKey: 0,
+      uploadDialog: false,
       renew: {
         plateformDate: "",
         companyDate: "",
@@ -541,6 +559,11 @@ export default {
     }
   },
   methods: {
+    // 上传
+    openUpload() {
+      this.addKey++;
+      this.uploadDialog = true;
+    },
     //导出excel
     exportExcel() {
       var wsCol = [

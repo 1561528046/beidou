@@ -9,8 +9,17 @@
         </el-col>
         <el-col :span="24">
           <el-form-item label="时间范围：">
-            <el-time-picker v-model="time" is-range value-format="HHmmss" style="width:50%" size="small" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" placeholder="选择时间范围">
-            </el-time-picker>
+            <el-time-picker
+              v-model="time"
+              is-range
+              value-format="HHmmss"
+              style="width:50%"
+              size="small"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              placeholder="选择时间范围"
+            ></el-time-picker>
           </el-form-item>
         </el-col>
         <el-col v-if="attribute" :span="24">
@@ -22,7 +31,13 @@
               <el-table-column prop="MaxSpeed" label="最高速度" :formatter="$utils.baseFormatter"></el-table-column>
               <el-table-column label="操作">
                 <template slot-scope="scope">
-                  <el-button @click="deleteItem(scope.row)" type="danger" icon="el-icon-delete" size="mini" circle></el-button>
+                  <el-button
+                    @click="deleteItem(scope.row)"
+                    type="danger"
+                    icon="el-icon-delete"
+                    size="mini"
+                    circle
+                  ></el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -33,8 +48,23 @@
         </el-col>
       </el-row>
     </el-form>
-    <el-dialog width="60%" title="分段限速" :visible.sync="itemDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="true" :center="true" class="admin-dialog">
-      <area-route @down="closeInterface" @reply="storageItem" :Index="roadIndex" :road="roadData" :key="addKey"></area-route>
+    <el-dialog
+      width="60%"
+      title="分段限速"
+      :visible.sync="itemDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="true"
+      :center="true"
+      class="admin-dialog"
+    >
+      <area-route
+        @down="closeInterface"
+        @reply="storageItem"
+        :Index="roadIndex"
+        :road="roadData"
+        :key="addKey"
+      ></area-route>
     </el-dialog>
   </div>
 </template>
@@ -84,19 +114,21 @@ export default {
     // 删除路段项
     deleteItem(data) {
       var limit = [];
-      this.roadIndex.map((itam, index) => {
-        if (index < data.end + 1 && index > data.start - 1) {
-          this.roadIndex.splice(index, 1);
-        }
-      });
-      this.limit_road.map((item, index) => {
-        if (item.start == data.start) {
-          this.limit_road.splice(index - 1, 1);
-          return false;
-        }
-        limit.push(item);
-      });
-      this.$set(this.$data, "limit_road", limit);
+      console.log(this.roadIndex);
+      // this.roadIndex.map((itam, index) => {
+      //   if (index < data.end + 1 && index > data.start - 1) {
+      //     this.roadIndex.splice(index, 1);
+      //   }
+      // });
+      this.limit_road.splice(this.limit_road.indexOf(data), 1);
+      // this.limit_road.map((item, index) => {
+      //   if (item.start == data.start) {
+      //     this.limit_road.splice(index - 1, 1);
+      //     return false;
+      //   }
+      //   limit.push(item);
+      // });
+      // this.$set(this.$data, "limit_road", limit);
     },
     // 添加分段限速信息
     sendInstruction() {
@@ -109,7 +141,7 @@ export default {
               RouteSegmentId: item.start, //路段id
               TurnPointLatitude: itam.lat, //拐点经度
               TurnPointLongitude: itam.lng, //拐点纬度
-              RouteSegmentWidth: item.RouteSegmentWidth, //路段宽度或偏移宽度
+              RouteSegmentWidth: item.road_width, //路段宽度或偏移宽度
               MaxSpeedLimited: item.MaxSpeedLimited, //路段最高速度
               RouteSegmentProperty: item.RouteSegmentProperty, //路段属性
               MaxDriveTimeLimited: item.MaxDriveTimeLimited, //路段行驶过长阈值
@@ -143,7 +175,7 @@ export default {
       this.itemDialog = false;
       this.limit_road.push(data);
       this.roadData.map((item, index) => {
-        if (index <= data.end) {
+        if (index < data.end + 1 && index > data.start - 1) {
           this.roadIndex.push(index);
         }
       });
