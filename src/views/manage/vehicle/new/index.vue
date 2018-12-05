@@ -100,7 +100,7 @@
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
               <el-button
                 type="primary"
-                @click="getTable"
+                @click="searchTable"
                 :loading="tableLoading"
                 native-type="submit"
               >查询</el-button>
@@ -806,10 +806,13 @@ export default {
       this.tableQuery.page = val;
       this.getTable();
     },
+    searchTable() {
+      this.tableQuery.page = 1;
+      this.getTable();
+    },
     getTable() {
       //获取列表
       this.tableLoading = true;
-      this.tableQuery.page = 1;
       var query = Object.assign({}, this.tableQuery, this.tableQuery.area);
       delete query.area;
       getVehicleList(query)

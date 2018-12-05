@@ -180,6 +180,18 @@ export const GetOnlineDetailByPage = query => {
     params: query
   });
 };
+//报警信息处理
+export const UpdateAlarmHandler = query => {
+  query = Object.assign({
+    id: "",
+    state: "",
+    remark: ""
+  }, query)
+  var queryQS = qs.stringify(query);
+  return ajax.post("/report/UpdateAlarmHandler", queryQS, {
+    params: query
+  });
+};
 
 // 导出在线时长统计
 // 导出用户登录明细
