@@ -4,58 +4,6 @@
 //A B1,B2
 //A1,A2 B
 //AB,CD
-var DICT = {
-  ALARM: {
-    "1": "紧急报警",
-    "2": "超速报警",
-    "4": "疲劳驾驶",
-    "8": "危险预警",
-    "16": "GNSS 模块发生故障",
-    "32": "GNSS 天线未接或被剪断",
-    "64": "GNSS 天线短路",
-    "128": "终端主电源欠压",
-    "256": "终端主电源掉电",
-    "512": "终端 LCD 或显示器故障",
-    "1024": "TTS 模块故障",
-    "2048": "摄像头故障",
-    "4096": "IC 卡模块故障",
-    "8192": "超速预警",
-    "16384": "疲劳驾驶预警",
-    "262144": "当天累计驾驶超时",
-    "524288": "超时停车",
-    "1048576": "进出区域",
-    "2097152": "进出路线",
-    "4194304": "路段行驶时间不足/过长",
-    "8388608": "路线偏离报警",
-    "16777216": "车辆 VSS 故障",
-    "33554432": "车辆油量异常",
-    "67108864": "车辆被盗",
-    "134217728": "车辆非法点火",
-    "268435456": "车辆非法位移",
-    "536870912": "碰撞预警",
-    "1073741824": "侧翻预警",
-    "2147483648": "非法开门报警"
-  },
-  getx30: function(sign) {
-    var xh = "弱";
-    if (sign > 10 && sign < 21) {
-      xh = "中";
-    }
-    if (sign > 20) {
-      xh = "强";
-    }
-    return xh;
-  },
-  getAlarm: function(num) {
-    var str = [];
-    for (var key in DICT.ALARM) {
-      if ((num & key) == key) {
-        str.push(DICT.ALARM[key]);
-      }
-    }
-    return str.join(",");
-  }
-};
 
 self.onmessage = function(e) {
   format(e.data).map(item => {
@@ -179,7 +127,6 @@ function concatBuffer(type, ...arrays) {
   }
   return result;
 }
-
 function serialize(buffer) {
   var arr = [];
   var result = {};
@@ -218,6 +165,7 @@ function serialize(buffer) {
 //     return total + (num << ((totalLength - index - 1) * 8));
 //   }, 0);
 // }
+
 //0200定位数据
 function x0200(buffer) {
   var result = {};
@@ -332,6 +280,7 @@ function x0200(buffer) {
   }
   return result;
 }
+
 function x0704(buffer) {
   var arr = [];
   var x0200Count = (buffer[0] << 8) + buffer[1];
@@ -346,6 +295,7 @@ function x0704(buffer) {
   }
   return arr;
 }
+
 function formatSim(buffer) {
   var sim_id = "";
   buffer.map(item => {
@@ -354,6 +304,7 @@ function formatSim(buffer) {
   });
   return sim_id;
 }
+
 function formatTime(buffer) {
   var code = [];
   buffer.map(item => {
