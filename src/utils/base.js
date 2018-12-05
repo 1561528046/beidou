@@ -1,5 +1,5 @@
-var BASE_URL = "http://192.168.88.88:10462/";
-var API_URL = "http://192.168.88.88:10462/api";
+var BASE_URL = "http://192.168.88.100:725/";
+var API_URL = "http://192.168.88.100:725/api";
 var MONITOR_URL = "ws://192.168.88.125:5002";
 var INSTRUCTION_URL = "ws://192.168.88.125:5000";
 // || true

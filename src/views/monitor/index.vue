@@ -210,6 +210,7 @@
       class="admin-dialog"
     >
       <template>
+        <!--  :loading="areaLoading" -->
         <el-table :data="tableData" style="width: 100%">
           <el-table-column prop="license" label="车牌号"></el-table-column>
         </el-table>
@@ -340,6 +341,7 @@ export default {
         map: {}
       },
       time: "",
+      // areaLoading: false,
       tableData: [],
       tableHistory: [],
       vehicle: {},
@@ -1014,6 +1016,7 @@ export default {
             overlays[0] = Rectangle;
             if (vm.mapTools == "current") {
               vm.currentDialog = true;
+              // vm.areaLoading = true;
             } else if (vm.mapTools == "history") {
               vm.historyDialog = true;
             }
@@ -1180,6 +1183,7 @@ export default {
           this.tableData.push(item);
         }
       });
+      // this.areaLoading = false;
     },
     // 查找历史终端
     getHistory() {
