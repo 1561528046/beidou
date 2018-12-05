@@ -135,7 +135,7 @@
     <!-- 列表 -->
     <div
       v-show="areaType"
-      style="width:760px;height:420px; position:absolute;left:2px;right:0;top:0;bottom:0;border:1px solid #777; z-index:99;background-color:#fff; "
+      style="width:760px;height:420px; padding:10px; position:absolute;left:10px;right:0;top:10px;bottom:0;border:1px solid #777; z-index:99;background-color:#fff; "
     >
       <el-form :model="tableQuery" @submit.native.prevent ref="baseForm ">
         <el-row :gutter="30 ">

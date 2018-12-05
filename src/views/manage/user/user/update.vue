@@ -94,6 +94,16 @@
                   <el-input v-model="formData.tel" maxlength="20"></el-input>
                 </el-form-item>
               </el-col>
+              <el-col :span="12">
+                <el-form-item label="道路运输许可证" prop="tel">
+                  <el-input v-model="formData.user_transport_license" maxlength="20"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="核发机关" prop="tel">
+                  <el-input v-model="formData.user_issue_office" maxlength="20"></el-input>
+                </el-form-item>
+              </el-col>
             </el-row>
           </div>
         </el-collapse-item>
@@ -175,6 +185,8 @@ export default {
       expiry_time_turn: false,
       formData: {
         area: [],
+        user_transport_license: "",
+        user_issue_office: "",
         user_name: "",
         pass_word: "",
         re_pass_word: "",

@@ -1,10 +1,22 @@
 <template>
-  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" style="width:800px;">
+  <el-form
+    status-icon
+    :rules="rules"
+    :model="formData"
+    size="small"
+    ref="baseForm"
+    style="width:800px;"
+  >
     <!-- 设备信息 -->
     <el-row :gutter="30">
       <el-col :span="12">
         <el-form-item label="终端类型" prop="device_type">
-          <el-select v-model="formData.device_type" placeholder="选择终端类型" style="width:100%;" disabled>
+          <el-select
+            v-model="formData.device_type"
+            placeholder="选择终端类型"
+            style="width:100%;"
+            disabled
+          >
             <el-option label="定位终端" value="1"></el-option>
             <el-option label="视频终端" value="2"></el-option>
           </el-select>
@@ -100,7 +112,17 @@ export default {
             message: "只能输入字母和数字！"
           }
         ],
-        sim_id: [{ trigger: "blur", validator: this.validateDeviceSimId }]
+        sim_id: [
+          { trigger: "blur", validator: this.validateDeviceSimId },
+          {
+            pattern: /^\d{11,}$/,
+            message: "SimID最少为11位！"
+          },
+          {
+            pattern: /^[0-9a-zA-Z]+$/,
+            message: "只能输入字母和数字！"
+          }
+        ]
       }
     };
   },

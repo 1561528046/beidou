@@ -64,23 +64,19 @@
         </el-button>-->
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
+        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column
-          prop="license"
-          label="车牌号"
-          :formatter="(row)=>{return this.$utils.get_license_color(row.license_color)}"
-        ></el-table-column>
-        <el-table-column
-          prop="time"
+          prop="start_time"
           label="开始时间"
-          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"
         ></el-table-column>
         <el-table-column
-          prop="time"
+          prop="stop_time"
           label="结束时间"
-          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"
         ></el-table-column>
-        <el-table-column prop label="上线总数" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column prop label="下线总数" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="GoOnlineTimes" label="上线总数" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="OfflineTimes" label="下线总数" :formatter="$utils.baseFormatter "></el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination
@@ -319,7 +315,6 @@ export default {
     },
     //查询产品列表
     getTable() {
-      console.log(this.tableQuery.sim_ids);
       if (this.tableQuery.real_name == "" && this.tableQuery.license == "") {
         return this.$notify({
           message: "请选择车辆或用户",
@@ -348,12 +343,8 @@ export default {
                 res.data.data.map(item => {
                   item.sim_id =
                     item.sim_id[0] == "0" ? item.sim_id.slice(1) : item.sim_id;
-                  var obj = arr[item.sim_id];
-                  if (!obj) {
-                    return false;
-                  }
-                  item.license = obj.license;
-                  item.license_color = obj.license_color;
+                  item.license = item.license;
+                  item.license_color = item.license_color;
                 });
                 data = res.data.data;
                 this.$set(this.tableData, "data", Object.freeze(data));

@@ -16,10 +16,8 @@
             <label v-if="scope.row.position=='4'">存储端</label>
           </template>
         </el-table-column>
-        <el-table-column prop="CPU" label="CPU利用率">
-        </el-table-column>
-        <el-table-column prop="memory" label="内存利用率">
-        </el-table-column>
+        <el-table-column prop="CPU" label="CPU利用率"></el-table-column>
+        <el-table-column prop="memory" label="内存利用率"></el-table-column>
       </el-table>
     </el-card>
   </div>

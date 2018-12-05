@@ -1,5 +1,12 @@
 <template>
-  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+  <el-form
+    status-icon
+    :rules="rules"
+    :model="formData"
+    size="small"
+    ref="baseForm"
+    class="msg-form"
+  >
     <!-- 设备信息 -->
     <el-row :gutter="30">
       <el-col :span="12">
@@ -97,6 +104,10 @@ export default {
         ],
         sim_id: [
           { trigger: "blur", validator: this.validateDeviceSimId },
+          {
+            pattern: /^\d{11,}$/,
+            message: "SimID最少为11位！"
+          },
           {
             pattern: /^[0-9a-zA-Z]+$/,
             message: "只能输入字母和数字！"
