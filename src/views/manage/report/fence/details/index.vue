@@ -72,7 +72,7 @@
         ></el-table-column>
         <el-table-column prop="source" label="报警来源" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column prop="alarm_info" label="报警信息" :formatter="$utils.baseFormatter "></el-table-column>
-        <!-- <el-table-column prop="" label="报警时长" :formatter="$utils.baseFormatter "> </el-table-column> -->
+        <el-table-column prop="alertTime" label="报警时长" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column prop="area_name" label="区域名称" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column
           prop="start_time"
@@ -224,7 +224,7 @@ export default {
           B: this.$dict.get_alarm_type(data.alarm_type),
           C: data.source,
           D: data.alarm_info,
-          E: "",
+          E: data.alertTime,
           F: this.$utils.formatDate14(data.start_time),
           G: this.$utils.formatDate14(data.stop_time),
           H: data.start_speed,
@@ -297,15 +297,19 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
-                for (var i = 0; i < res.data.data.length; i++) {
-                  res.data.data[i].license = this.tableQuery.license;
-                  res.data.data[
-                    i
-                  ].license_color = this.tableQuery.license_color;
-                  res.data.data[i].alertTime =
-                    res.data.data[i].stop_time - res.data.data[i].start_time;
-                  data.push(res.data.data[i]);
-                }
+                res.data.data.map(item => {
+                  item.alertTime =
+                    new Date(
+                      this.$utils.formatDate14(JSON.stringify(item.stop_time))
+                    ).getTime() -
+                    new Date(
+                      this.$utils.formatDate14(JSON.stringify(item.start_time))
+                    ).getTime();
+                  item.alertTime = this.$utils.DateTime(item.alertTime);
+                  item.license = this.tableQuery.license;
+                  item.license_color = this.tableQuery.license_color;
+                  data.push(item);
+                });
                 Promise.all([
                   gps2amap({
                     data: data,
