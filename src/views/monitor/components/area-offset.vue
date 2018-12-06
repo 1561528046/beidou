@@ -36,6 +36,7 @@
 </template>
 <script>
 import { AddRegion } from "@/api/index.js";
+import { GPS } from "@/utils/map-tools.js";
 export default {
   components: { AddRegion },
   data() {
@@ -74,12 +75,14 @@ export default {
       var turnPoints = [];
       this.formData.StartTime = "000000" + this.time[0];
       this.formData.EndTime = "000000" + this.time[1];
+      var location = null;
       this.routeData.map((item, index) => {
+        location = GPS.gcj_decrypt(item.lat, item.lng);
         turnPoints.push({
           RoutePointId: index, //拐点id
           RouteSegmentId: "0", //路段id
-          TurnPointLatitude: item.lat, //拐点经度
-          TurnPointLongitude: item.lng, //拐点纬度
+          TurnPointLatitude: location.lat, //拐点经度
+          TurnPointLongitude: location.lon, //拐点纬度
           RouteSegmentWidth: this.formData.RouteSegmentWidth, //路段宽度或偏移宽度
           MaxSpeedLimited: this.formData.MaxSpeedLimited, //路段最高速度
           RouteSegmentProperty: "0", //路段属性

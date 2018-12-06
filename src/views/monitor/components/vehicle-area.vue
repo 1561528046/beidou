@@ -192,6 +192,7 @@
             <label v-if="scope.row.AreaProperty=='5' && scope.row.Type!='6'">禁出</label>
             <label v-if="scope.row.AreaProperty=='3' && scope.row.Type=='6'">未离开</label>
             <label v-if="scope.row.AreaProperty=='5' && scope.row.Type=='6'">未到达</label>
+            <label v-if="scope.row.AreaProperty==''">--</label>
           </template>
         </el-table-column>
         <el-table-column
@@ -265,6 +266,7 @@
 import { initMap } from "@/utils/map.js";
 import moment from "moment";
 import { AddRegion, GetRegionByPage, DeleteRegion } from "@/api/index.js";
+import { location2address, gps2amap, GPS } from "@/utils/map-tools.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import areaRoute from "./area-route.vue";
 import areaSpeed from "./area-speed.vue";
@@ -690,6 +692,7 @@ export default {
     // 弹出块保存发送指令
     save() {
       var data = {};
+      var location = null;
       if (this.formdata.name == "") {
         return this.$notify({
           message: "请输入规则名称",
@@ -709,14 +712,18 @@ export default {
       this.formdata.stop_time =
         "000000" + moment(this.formdata.time[1]).format("HHmmss");
       if (this.label == "circle") {
+        location = GPS.gcj_decrypt(
+          this.mapData.overlays[0].lat,
+          this.mapData.overlays[0].lng
+        );
         var radius = Math.round(this.mapData.overlays[1]);
         data = {
           AreaProperty: this.formdata.alarm_type,
           RegionName: this.formdata.name,
           StartTime: this.formdata.start_time,
           EndTime: this.formdata.stop_time,
-          CenterLatitude: this.mapData.overlays[0].lat,
-          CenterLongitude: this.mapData.overlays[0].lng,
+          CenterLatitude: location.lat,
+          CenterLongitude: location.lon,
           Radius: radius,
           Type: "1"
         };
@@ -739,15 +746,23 @@ export default {
           }
         });
       } else if (this.label == "rectangle") {
+        var LeftTop = GPS.gcj_decrypt(
+          this.mapData.overlays[0].path[0].lat,
+          this.mapData.overlays[0].path[0].lng
+        );
+        var RightBottom = GPS.gcj_decrypt(
+          this.mapData.overlays[0].path[2].lat,
+          this.mapData.overlays[0].path[2].lng
+        );
         data = {
           AreaProperty: this.formdata.alarm_type,
           RegionName: this.formdata.name,
           StartTime: this.formdata.start_time,
           EndTime: this.formdata.stop_time,
-          LeftTopLatitude: this.mapData.overlays[0].path[0].lat,
-          LeftTopLongitude: this.mapData.overlays[0].path[0].lng,
-          RightBottomLatitude: this.mapData.overlays[0].path[2].lat,
-          RightBottomLongitude: this.mapData.overlays[0].path[2].lng,
+          LeftTopLatitude: LeftTop.lat,
+          LeftTopLongitude: LeftTop.lon,
+          RightBottomLatitude: RightBottom.lat,
+          RightBottomLongitude: RightBottom.lon,
           Type: "2"
         };
         AddRegion(data).then(res => {
@@ -772,8 +787,9 @@ export default {
         var lat = "";
         var lng = "";
         this.mapData.overlays[0].map(item => {
-          lat = lat + item.lat + ",";
-          lng = lng + item.lng + ",";
+          location = GPS.gcj_decrypt(item.lat, item.lng);
+          lat = lat + location.lat + ",";
+          lng = lng + location.lon + ",";
         });
         lat = lat.substring(0, lat.lastIndexOf(","));
         lng = lng.substring(0, lng.lastIndexOf(","));
@@ -804,48 +820,18 @@ export default {
             });
           }
         });
-      } else if (this.label == "polyline") {
-        var polyline = [];
-        this.mapData.overlays[0].map(item => {
-          polyline.push({
-            TurnPointLatitude: item.lat,
-            TurnPointLongitude: item.lng
-          });
-        });
-        data = {
-          AreaProperty: this.formdata.alarm_type,
-          RegionName: this.formdata.name,
-          StartTime: this.formdata.start_time,
-          EndTime: this.formdata.stop_time,
-          Type: "5",
-          TurnPoints: polyline
-        };
-        AddRegion(data).then(res => {
-          if (res.data.code == 0) {
-            this.getTable();
-            this.down();
-            this.mapData.map.clearMap();
-            return this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "success"
-            });
-          } else {
-            return this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        });
       } else if (this.label == "marker") {
+        var Center = GPS.gcj_decrypt(
+          this.mapData.overlays[0].lat,
+          this.mapData.overlays[0].lng
+        );
         data = {
           AreaProperty: this.formdata.alarm_type,
           RegionName: this.formdata.name,
           StartTime: this.formdata.start_time,
           EndTime: this.formdata.stop_time,
-          CenterLatitude: this.mapData.overlays[0].lat,
-          CenterLongitude: this.mapData.overlays[0].lng,
+          CenterLatitude: Center.lat,
+          CenterLongitude: Center.lon,
           Radius: this.formdata.radius,
           Type: "6"
         };
@@ -868,6 +854,42 @@ export default {
           }
         });
       }
+      // else if (this.label == "polyline") {
+      //   console.log(1);
+      //   var polyline = [];
+      //   this.mapData.overlays[0].map(item => {
+      //     polyline.push({
+      //       TurnPointLatitude: item.lat,
+      //       TurnPointLongitude: item.lng
+      //     });
+      //   });
+      //   data = {
+      //     AreaProperty: this.formdata.alarm_type,
+      //     RegionName: this.formdata.name,
+      //     StartTime: this.formdata.start_time,
+      //     EndTime: this.formdata.stop_time,
+      //     Type: "5",
+      //     TurnPoints: polyline
+      //   };
+      //   AddRegion(data).then(res => {
+      //     if (res.data.code == 0) {
+      //       this.getTable();
+      //       this.down();
+      //       this.mapData.map.clearMap();
+      //       return this.$notify({
+      //         message: res.data.msg,
+      //         title: "提示",
+      //         type: "success"
+      //       });
+      //     } else {
+      //       return this.$notify({
+      //         message: res.data.msg,
+      //         title: "提示",
+      //         type: "error"
+      //       });
+      //     }
+      //   });
+      // }
     },
     // 选择划分区域工具
     selectRadio(label) {

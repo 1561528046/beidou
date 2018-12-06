@@ -208,14 +208,15 @@ export default {
           C: "报警来源",
           D: "报警信息",
           E: "报警时长",
-          F: "开始时间",
-          G: "结束时间",
-          H: "开始速度",
-          I: "结束速度",
-          J: "开始位置",
-          K: "结束位置",
-          L: "开始位置经纬度",
-          M: "结束位置经纬度"
+          F: "区域名称",
+          G: "开始时间",
+          H: "结束时间",
+          I: "开始速度",
+          J: "结束速度",
+          K: "开始位置",
+          L: "结束位置",
+          M: "开始位置经纬度",
+          N: "结束位置经纬度"
         }
       ];
       this.list.map(data => {
@@ -225,14 +226,15 @@ export default {
           C: data.source,
           D: data.alarm_info,
           E: data.alertTime,
-          F: this.$utils.formatDate14(data.start_time),
-          G: this.$utils.formatDate14(data.stop_time),
-          H: data.start_speed,
-          I: data.stop_speed,
-          J: data.start_address,
-          K: data.stop_address,
-          L: data.start_longitude + "," + data.start_latitude,
-          M: data.stop_longitude + "," + data.stop_latitude
+          F: data.area_name,
+          G: this.$utils.formatDate14(data.start_time),
+          H: this.$utils.formatDate14(data.stop_time),
+          I: data.start_speed,
+          J: data.stop_speed,
+          K: data.start_address,
+          L: data.stop_address,
+          M: data.start_longitude + "," + data.start_latitude,
+          N: data.stop_longitude + "," + data.stop_latitude
         });
       });
       this.$utils.exportExcel({
