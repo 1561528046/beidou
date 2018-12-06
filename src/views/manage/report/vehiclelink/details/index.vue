@@ -212,7 +212,7 @@ export default {
     },
     //查询列表
     getTable() {
-      if (this.tableQuery.alarm_type == "" && this.tableQuery.license == "") {
+      if (this.tableQuery.license == "") {
         return this.$notify({
           message: "请选择车辆和报警类型",
           title: "提示",
@@ -238,20 +238,6 @@ export default {
                   res.data.data[
                     i
                   ].license_color = this.tableQuery.license_color;
-                  res.data.data[i].alertTime =
-                    new Date(
-                      this.$utils.formatDate14(
-                        JSON.stringify(res.data.data[i].stop_time)
-                      )
-                    ).getTime() -
-                    new Date(
-                      this.$utils.formatDate14(
-                        JSON.stringify(res.data.data[i].start_time)
-                      )
-                    ).getTime();
-                  res.data.data[i].alertTime = this.$utils.DateTime(
-                    res.data.data[i].alertTime
-                  );
                   data.push(res.data.data[i]);
                 }
                 Promise.all([

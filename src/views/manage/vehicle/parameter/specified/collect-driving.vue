@@ -2,12 +2,9 @@
   <!-- 行驶速度记录 -->
   <div>
     <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="StartTime" label="开始时间">
-      </el-table-column>
-      <el-table-column prop="average" label="平局速度">
-      </el-table-column>
-      <el-table-column prop="signal" label="状态信号">
-      </el-table-column>
+      <el-table-column prop="StartTime" label="开始时间"></el-table-column>
+      <el-table-column prop="average" label="平局速度"></el-table-column>
+      <el-table-column prop="signal" label="状态信号"></el-table-column>
     </el-table>
   </div>
 </template>
@@ -26,9 +23,7 @@ export default {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
         if (this.collectData.CommandWord == 8) {
-          var UnitMinutesSpeeds = JSON.parse(
-            this.collectData.UnitMinutesSpeeds
-          );
+          var UnitMinutesSpeeds = this.collectData.UnitMinutesSpeeds;
           this.$set(this.$data, "tableData", UnitMinutesSpeeds);
           var speed = 0;
           var state = 0;

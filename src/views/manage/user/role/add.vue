@@ -1,7 +1,15 @@
 <template>
   <div class="post-form">
     <div style="display:none;">{{rightsAll}}</div>
-    <el-form label-position="top" status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+    <el-form
+      label-position="top"
+      status-icon
+      :rules="rules"
+      :model="formData"
+      size="small"
+      ref="baseForm"
+      class="msg-form"
+    >
       <el-row :gutter="30">
         <el-col :span="24">
           <el-form-item label="角色名称" prop="role_name">
@@ -9,37 +17,65 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-alert title="注意：权限勾选自动选中有依赖关系的权限，并且为禁用状态" type="warning" close-text="知道了" style="margin-bottom:15px;">
-          </el-alert>
+          <el-alert
+            title="注意：权限勾选自动选中有依赖关系的权限，并且为禁用状态"
+            type="warning"
+            close-text="知道了"
+            style="margin-bottom:15px;"
+          ></el-alert>
           <el-collapse v-model="activeNames" class="rights-container">
-            <el-collapse-item :name="key_1" v-for="(level_1,key_1) in rightsDict" :key="level_1.name">
+            <el-collapse-item
+              :name="key_1"
+              v-for="(level_1,key_1) in rightsDict"
+              :key="level_1.name"
+            >
               <template slot="title">
                 <div class="_level_1-header">
-                  <el-checkbox :indeterminate="level_1.indeterminate" v-model="level_1.checked" @change="(val)=>{ rightsCheckAll(val,'1',level_1)}">{{level_1.name}}</el-checkbox>
+                  <el-checkbox
+                    :indeterminate="level_1.indeterminate"
+                    v-model="level_1.checked"
+                    @change="(val)=>{ rightsCheckAll(val,'1',level_1)}"
+                  >{{level_1.name}}</el-checkbox>
                   <span v-if="countDict[key_1]" style="padding-left:30px;">
-                    <el-tag size="mini">
-                      总共：{{countDict[key_1].total}} / 已选：{{countDict[key_1].selected}}
-                    </el-tag>
+                    <el-tag
+                      size="mini"
+                    >总共：{{countDict[key_1].total}} / 已选：{{countDict[key_1].selected}}</el-tag>
                   </span>
                 </div>
               </template>
               <div class="_level_1-body">
                 <div v-for="(level_2) in level_1.children" :key="level_2.name" class="_level_2">
                   <div class="_level_2-title">
-                    <el-checkbox :indeterminate="level_2.indeterminate" v-model="level_2.checked" @change="(val)=>{ rightsCheckAll(val,'2',level_2)}" style="font-weight:bold;">{{level_2.name}}</el-checkbox>
+                    <el-checkbox
+                      :indeterminate="level_2.indeterminate"
+                      v-model="level_2.checked"
+                      @change="(val)=>{ rightsCheckAll(val,'2',level_2)}"
+                      style="font-weight:bold;"
+                    >{{level_2.name}}</el-checkbox>
                   </div>
                   <div class="_level_3">
-                    <el-checkbox class="_level_3_label" :disabled="right.disabled" @change="(val)=>{rightChange(val,right,level_2)}" v-for="right in level_2.children" :label="right.name" v-model="right.checked" :key="right.rights_id">
+                    <el-checkbox
+                      class="_level_3_label"
+                      :disabled="right.disabled"
+                      @change="(val)=>{rightChange(val,right,level_2)}"
+                      v-for="right in level_2.children"
+                      :label="right.name"
+                      v-model="right.checked"
+                      :key="right.rights_id"
+                    >
                       {{right.name}}
-                      <el-tooltip effect="dark" :content="right.relation+'个权限依赖此项，不能操作！'" placement="right" v-if="right.relation>0">
+                      <el-tooltip
+                        effect="dark"
+                        :content="right.relation+'个权限依赖此项，不能操作！'"
+                        placement="right"
+                        v-if="right.relation>0"
+                      >
                         <i class="el-icon-info"></i>
                       </el-tooltip>
-
                     </el-checkbox>
                   </div>
                 </div>
               </div>
-
             </el-collapse-item>
           </el-collapse>
         </el-col>
@@ -179,7 +215,7 @@ export default {
     },
     rightsCheckAll(isChecked, level, levelObj) {
       //全选处理
-      //levelObj.indeterminate = false;
+      // levelObj.indeterminate = false;
       if (level == "2") {
         //levelObj.selected = [];
         Object.keys(levelObj.children).map(key => {

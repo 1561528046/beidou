@@ -73,6 +73,7 @@
 import { initMap } from "@/utils/map.js";
 import moment from "moment";
 import { AddRegion, GetRegionByPage, DeleteRegion } from "@/api/index.js";
+import { GPS } from "@/utils/map-tools.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 import areaRoute from "./area-route.vue";
@@ -127,19 +128,21 @@ export default {
     // 添加分段限速信息
     sendInstruction() {
       var turnPoints = [];
+      var location = null;
       this.limit_road.map(item => {
         this.roadData.map((itam, index) => {
           if (index <= item.end && index >= item.start) {
+            location = GPS.gcj_decrypt(itam.lat, itam.lng);
             turnPoints.push({
               RoutePointId: index, //拐点id
               RouteSegmentId: item.start, //路段id
-              TurnPointLatitude: itam.lat, //拐点经度
-              TurnPointLongitude: itam.lng, //拐点纬度
+              TurnPointLatitude: location.lat, //拐点经度
+              TurnPointLongitude: location.lon, //拐点纬度
               RouteSegmentWidth: item.road_width, //路段宽度或偏移宽度
-              MaxSpeedLimited: item.MaxSpeedLimited, //路段最高速度
+              MaxSpeedLimited: item.MaxSpeed, //路段最高速度
               RouteSegmentProperty: item.RouteSegmentProperty, //路段属性
-              MaxDriveTimeLimited: item.MaxDriveTimeLimited, //路段行驶过长阈值
-              MinDriveTimeLimited: item.MinDriveTimeLimited, //路段行驶不足阈值
+              MaxDriveTimeLimited: item.long_threshold, //路段行驶过长阈值
+              MinDriveTimeLimited: item.lack_threshold, //路段行驶不足阈值
               OverMaxSpeedLastTime: item.OverMaxSpeedLastTime //路段超速持续时间
             });
           }
