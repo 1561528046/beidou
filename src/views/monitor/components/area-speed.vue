@@ -139,10 +139,10 @@ export default {
               TurnPointLatitude: location.lat, //拐点经度
               TurnPointLongitude: location.lon, //拐点纬度
               RouteSegmentWidth: item.road_width, //路段宽度或偏移宽度
-              MaxSpeedLimited: item.MaxSpeedLimited, //路段最高速度
+              MaxSpeedLimited: item.MaxSpeed, //路段最高速度
               RouteSegmentProperty: item.RouteSegmentProperty, //路段属性
-              MaxDriveTimeLimited: item.MaxDriveTimeLimited, //路段行驶过长阈值
-              MinDriveTimeLimited: item.MinDriveTimeLimited, //路段行驶不足阈值
+              MaxDriveTimeLimited: item.long_threshold, //路段行驶过长阈值
+              MinDriveTimeLimited: item.lack_threshold, //路段行驶不足阈值
               OverMaxSpeedLastTime: item.OverMaxSpeedLastTime //路段超速持续时间
             });
           }

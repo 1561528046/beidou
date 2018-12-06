@@ -2,16 +2,11 @@
   <!-- 速度状态日志 -->
   <div>
     <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="SpeedState" label="记录仪速度状态">
-      </el-table-column>
-      <el-table-column prop="StartTime" label="速度状态判定的开始时间">
-      </el-table-column>
-      <el-table-column prop="EndTime" label="速度状态判定的结束时间">
-      </el-table-column>
-      <el-table-column prop="record" label="记录速度">
-      </el-table-column>
-      <el-table-column prop="reference" label="参考速度">
-      </el-table-column>
+      <el-table-column prop="SpeedState" label="记录仪速度状态"></el-table-column>
+      <el-table-column prop="StartTime" label="速度状态判定的开始时间"></el-table-column>
+      <el-table-column prop="EndTime" label="速度状态判定的结束时间"></el-table-column>
+      <el-table-column prop="record" label="记录速度"></el-table-column>
+      <el-table-column prop="reference" label="参考速度"></el-table-column>
     </el-table>
   </div>
 </template>
@@ -30,7 +25,7 @@ export default {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
         if (this.collectData.CommandWord == 21) {
-          var SpeedStateLogs = JSON.parse(this.collectData.SpeedStateLogs);
+          var SpeedStateLogs = this.collectData.SpeedStateLogs;
           this.$set(this.$data, "tableData", SpeedStateLogs);
           var speed = 0;
           var state = 0;

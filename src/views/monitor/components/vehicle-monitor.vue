@@ -315,7 +315,7 @@
         :title="card.title"
         append-to-body
         :visible.sync="card.show"
-        width="50%"
+        width="60%"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
       >
