@@ -246,9 +246,9 @@ export default {
     },
     updateForm(scope) {
       //编辑
+      this.addKey++;
       this.updateDialog = true;
       this.updateId = scope.row.user_id;
-      this.addKey++;
     },
     handleSizeChange(val) {
       this.tableQuery.page = 1;
