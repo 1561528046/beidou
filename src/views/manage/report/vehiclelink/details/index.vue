@@ -46,9 +46,9 @@
     </el-card>
     <el-card shadow="always">
       <div class="admin-table-actions">
-        <!-- <el-button type="primary" @click="exportExcel" size="small">
+        <el-button type="primary" @click="exportExcel" size="small">
           <i class="el-icon-download"></i> 导出
-        </el-button>-->
+        </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
         <el-table-column
@@ -175,6 +175,28 @@ export default {
     }
   },
   methods: {
+    exportExcel() {
+      //导出excel
+      var wsCol = [
+        {
+          A: "车牌号",
+          B: "上线时间",
+          C: "下线时间"
+        }
+      ];
+      this.tableData.data.map(data => {
+        wsCol.push({
+          A: data.license,
+          B: this.$utils.formatDate14(JSON.stringify(data.GoOnlineTime)),
+          C: this.$utils.formatDate14(JSON.stringify(data.OffTime))
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "车辆上下线统计表",
+        fileName: "车辆上下线统计表.xlsx"
+      });
+    },
     // 选择查询方式
     addFrom() {
       this.addKey++;
