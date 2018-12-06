@@ -109,6 +109,7 @@
       class="admin-dialog"
     >
       <add-components
+        v-if="this.addDialog"
         :parent_id="parent_id"
         @success=" () => {this.getTable();this.addDialog = false;}"
         :key="addKey"
@@ -124,6 +125,7 @@
       class="admin-dialog"
     >
       <update-components
+        v-if="this.updateDialog"
         :user_id="updateId"
         @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}"
         :key="addKey"

@@ -68,10 +68,12 @@
             v-if="mapData.vehicle.fence_alarm&&mapData.vehicle.fence_alarm.alarmList&&mapData.vehicle.fence_alarm.alarmList.length"
           >
             平台围栏报警
-            <span
-              v-for="key in mapData.vehicle.fence_alarm.alarmList"
-              :key="key"
-            >&#x3000;{{getFenceAlarmType(mapData.vehicle.fence_alarm[key][0])}} {{mapData.vehicle.fence_alarm[key][0].RegionName}}</span>
+            <span v-for="key in mapData.vehicle.fence_alarm.alarmList" :key="key">
+              <span
+                v-for="fenceItem in mapData.vehicle.fence_alarm[key]"
+                :key="fenceItem.RegionId"
+              >&#x3000;{{getFenceAlarmType(fenceItem)}} {{fenceItem.RegionName}}</span>
+            </span>
           </el-col>
           <el-col :span="12">高程 {{mapData.vehicle.altitude||"--"}} （米）</el-col>
           <el-col :span="12">车头方向 {{$utils.getAngleText(mapData.vehicle.angle)}}</el-col>
