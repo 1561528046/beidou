@@ -436,10 +436,15 @@ export default {
     },
     // 查看所画区域
     selceForm(scope) {
+      var location = "";
       if (scope.row.Type == "1") {
         this.mapData.map.clearMap();
         // 圆形
-        var circle = [scope.row.CenterLongitude, scope.row.CenterLatitude];
+        location = GPS.gcj_encrypt(
+          scope.row.CenterLatitude,
+          scope.row.CenterLongitude
+        );
+        var circle = [location.lon, location.lat];
         var Radius = scope.row.Radius;
         var circle = new AMap.Circle({
           center: circle,
@@ -463,12 +468,16 @@ export default {
       } else if (scope.row.Type == "2") {
         this.mapData.map.clearMap();
         // 矩形
-        var leftlng = Number(scope.row.RightBottomLongitude);
-        var leftlat = Number(scope.row.LeftTopLatitude);
-        var rightlng = Number(scope.row.LeftTopLongitude);
-        var rightlat = Number(scope.row.RightBottomLatitude);
-        var southWest = new AMap.LngLat(leftlng, leftlat);
-        var northEast = new AMap.LngLat(rightlng, rightlat);
+        var left = GPS.gcj_encrypt(
+          Number(scope.row.LeftTopLatitude),
+          Number(scope.row.LeftTopLongitude)
+        );
+        var right = GPS.gcj_encrypt(
+          Number(scope.row.RightBottomLatitude),
+          Number(scope.row.RightBottomLongitude)
+        );
+        var southWest = new AMap.LngLat(left.lon, left.lat);
+        var northEast = new AMap.LngLat(right.lon, right.lat);
         var bounds = new AMap.Bounds(southWest, northEast);
         var rectangle = new AMap.Rectangle({
           bounds: bounds,
@@ -493,7 +502,8 @@ export default {
         var longitude = scope.row.Longitude.split(",");
         var path = [];
         latitude.map((item, index) => {
-          path.push([longitude[index], item]);
+          location = GPS.gcj_encrypt(item, longitude[index]);
+          path.push(location.lon, location.lat);
         });
         var polygon = new AMap.Polygon({
           path: path,
@@ -520,7 +530,8 @@ export default {
             it = it.split(" ");
             it[0] = parseFloat(it[0]);
             it[1] = parseFloat(it[1]);
-            it = new AMap.LngLat(it[0], it[1]);
+            location = GPS.gcj_encrypt(it[1], it[0]);
+            it = new AMap.LngLat(location.lon, location.lat);
             arr.push(it);
           });
           var poly = new AMap.Polygon({
@@ -543,10 +554,11 @@ export default {
         this.mapData.map.clearMap();
         var speed = [];
         scope.row.TurnPoints.map(item => {
-          speed.push([
-            JSON.parse(item.TurnPointLongitude),
-            JSON.parse(item.TurnPointLatitude)
-          ]);
+          location = GPS.gcj_encrypt(
+            item.TurnPointLatitude,
+            item.TurnPointLongitude
+          );
+          speed.push([JSON.parse(location.lon), JSON.parse(location.lat)]);
         });
         var speedLine = new AMap.Polyline({
           path: speed,
@@ -567,10 +579,11 @@ export default {
       } else if (scope.row.Type == "6") {
         this.mapData.map.clearMap();
         var markerPath = [];
-        markerPath = [
-          JSON.parse(scope.row.CenterLongitude),
-          JSON.parse(scope.row.CenterLatitude)
-        ];
+        location = GPS.gcj_encrypt(
+          JSON.parse(scope.row.CenterLatitude),
+          JSON.parse(scope.row.CenterLongitude)
+        );
+        markerPath = [location.lon, location.lat];
         var marker = new AMap.Marker({
           position: markerPath
         });
@@ -580,10 +593,11 @@ export default {
         this.mapData.map.clearMap();
         var offsetLine = [];
         scope.row.TurnPoints.map(item => {
-          offsetLine.push([
-            JSON.parse(item.TurnPointLongitude),
-            JSON.parse(item.TurnPointLatitude)
-          ]);
+          location = GPS.gcj_encrypt(
+            JSON.parse(item.TurnPointLatitude),
+            JSON.parse(item.TurnPointLongitude)
+          );
+          offsetLine.push([location.lon, location.lat]);
         });
         var line = new AMap.Polyline({
           path: offsetLine,
