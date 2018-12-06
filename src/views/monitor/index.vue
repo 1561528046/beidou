@@ -744,32 +744,32 @@ export default {
         vehicle.fence_ids.map(fence_id => {
           if (this.dict.fence.has(fence_id)) {
             var fence = this.dict.fence.get(fence_id);
-            if (
-              fenceResult.inAlarm.length &&
-              fence.AreaProperty == "3" &&
-              fence.Type <= 4
-            ) {
-              //禁入报警  如果为true就不做判断了
-              return false;
-            }
-            if (isInSafeArea && fence.AreaProperty == "5" && fence.Type <= 4) {
-              //禁出报警(只要有符合一个围栏规范，就不做判断了)
-              return false;
-            }
+            // if (
+            //   fenceResult.inAlarm.length &&
+            //   fence.AreaProperty == "3" &&
+            //   fence.Type <= 4
+            // ) {
+            //   //禁入报警  如果为true就不做判断了
+            //   return false;
+            // }
+            // if (isInSafeArea && fence.AreaProperty == "5" && fence.Type <= 4) {
+            //   //禁出报警(只要有符合一个围栏规范，就不做判断了)
+            //   return false;
+            // }
 
-            if (fenceResult.splitPolylineSpeed.length && fence.Type == "5") {
-              //分段线路只做一次判断
-              return false;
-            }
+            // if (fenceResult.splitPolylineSpeed.length && fence.Type == "5") {
+            //   //分段线路只做一次判断
+            //   return false;
+            // }
 
-            if (
-              fenceResult.lineOut.length &&
-              fence.Type == "7" &&
-              isInSafeLine == false
-            ) {
-              //线路偏移 只做一次判断
-              return false;
-            }
+            // if (
+            //   fenceResult.lineOut.length &&
+            //   fence.Type == "7" &&
+            //   isInSafeLine == false
+            // ) {
+            //   //线路偏移 只做一次判断
+            //   return false;
+            // }
 
             //先判断围栏生效时间
             var startSetting = [],
@@ -829,7 +829,9 @@ export default {
                   this.checkFenceSplitPolylineSpeed(fence, point, vehicleData)
                 ) {
                   fenceResult.splitPolylineSpeed.push(fence);
-                  fenceResult.alarmList.push("splitPolylineSpeed");
+                  if (!fenceResult.alarmList.includes("splitPolylineSpeed")) {
+                    fenceResult.alarmList.push("splitPolylineSpeed");
+                  }
                 }
                 break;
               case "6": //关键点
@@ -837,20 +839,27 @@ export default {
                   if (fence.AreaProperty == 3) {
                     //未离开
                     fenceResult.keyPoint.push(fence);
-                    fenceResult.alarmList.push("keyPoint");
+                    if (!fenceResult.alarmList.includes("keyPoint")) {
+                      fenceResult.alarmList.push("keyPoint");
+                    }
                   }
                 } else {
                   if (fence.AreaProperty == 5) {
                     //未到达
                     fenceResult.keyPoint.push(fence);
-                    fenceResult.alarmList.push("keyPoint");
+                    if (!fenceResult.alarmList.includes("keyPoint")) {
+                      fenceResult.alarmList.push("keyPoint");
+                    }
                   }
                 }
                 break;
               case "7": //线路偏移
                 if (this.checkFenceLineOut(fence, point, vehicleData)) {
                   fenceResult.lineOut.push(fence);
-                  fenceResult.alarmList.push("lineOut");
+                  if (!fenceResult.alarmList.includes("lineOut")) {
+                    fenceResult.alarmList.push("lineOut");
+                  }
+
                   isInSafeLine = true;
                 }
                 break;
@@ -858,21 +867,25 @@ export default {
             if (fence.Type <= 4 && fence.AreaProperty == "3") {
               if (isInArea) {
                 fenceResult.inAlarm.push(fence);
-                fenceResult.alarmList.push("inAlarm");
+                if (!fenceResult.alarmList.includes("inAlarm")) {
+                  fenceResult.alarmList.push("inAlarm");
+                }
               }
             }
             if (fence.Type <= 4 && fence.AreaProperty == "5") {
               if (!isInArea) {
                 fenceResult.outAlarm.push(fence);
-                isInSafeArea = isInArea;
-                fenceResult.alarmList.push("outAlarm");
+                // isInSafeArea = isInArea;
+                if (!fenceResult.alarmList.includes("outAlarm")) {
+                  fenceResult.alarmList.push("outAlarm");
+                }
               }
             }
           }
         });
         return fenceResult;
       },
-      checkFenceSplitPolylineSpeed(fence, point, vehicleData, arr) {
+      checkFenceSplitPolylineSpeed(fence, point, vehicleData) {
         //分段限速判断
         var result = false;
         for (var i = 0, len = fence.TurnPoints.length - 1; i < len; i++) {
