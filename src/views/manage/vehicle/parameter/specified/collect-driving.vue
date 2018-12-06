@@ -32,7 +32,7 @@ export default {
               speed = speed + itca.AverageSpeed;
               state = state + itca.StateSignal;
             });
-            speed = speed / 60;
+            speed = (speed / 60).toFixed(2);
             state = state / 60;
             this.$set(item, "average", speed);
             this.$set(item, "signal", state);

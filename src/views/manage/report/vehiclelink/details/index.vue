@@ -57,17 +57,15 @@
           :formatter="(row)=>{return this.$utils.get_license_color(row.license_color)}"
         ></el-table-column>
         <el-table-column
-          prop
+          prop="GoOnlineTime"
           label="上线时间"
-          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.GoOnlineTime))}"
         ></el-table-column>
-        <el-table-column prop label="上线位置"></el-table-column>
         <el-table-column
-          prop
+          prop="OffTime"
           label="下线时间"
-          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.OffTime))}"
         ></el-table-column>
-        <el-table-column prop label="下线位置"></el-table-column>>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination

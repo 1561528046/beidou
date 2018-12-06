@@ -34,7 +34,7 @@ export default {
               speed = speed + itca.RecordSpeed;
               state = state + itca.ReferenceSpeed;
             });
-            speed = speed / 60;
+            speed = (speed / 60).toFixed(2);
             state = state / 60;
             this.$set(item, "record", speed);
             this.$set(item, "reference", state);

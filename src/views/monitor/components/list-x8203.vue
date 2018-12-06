@@ -73,7 +73,6 @@ export default {
   },
   watch: {
     "$store.state.alarm.dataVersion": function() {
-      console.log(this.$store.getters["alarm/list"]);
       this.pager.total = this.$store.getters["alarm/list"].length;
     }
   },
