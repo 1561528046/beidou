@@ -55,7 +55,6 @@ export default {
       });
     },
     setUser() {
-      console.log(1);
       getUser({ user_id: this.user_id }).then(res => {
         if (res.data.code == 0) {
           this.$set(this.$data, "users", res.data.data);
