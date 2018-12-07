@@ -58,7 +58,7 @@ export default {
   methods: {
     getTable() {
       this.$set(this.$data, "tableData", this.collectData.OverTimeRecords);
-      this.$set(this.$data, "tableData", this.tableData.length);
+      this.$set(this.$data, "total", this.tableData.length);
     },
     // 分页
     handleSizeChange(val) {
