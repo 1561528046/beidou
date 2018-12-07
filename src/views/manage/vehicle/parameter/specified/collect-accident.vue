@@ -27,49 +27,25 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        // if (this.collectData.CommandWord == 16) {
-        var AccidentRecords = [
-          {
-            SpeedAndStateSignals: [
-              { Speed: 4, StateSignal: 0 },
-              { Speed: 5, StateSignal: 0 },
-              { Speed: 5, StateSignal: 0 },
-              { Speed: 5, StateSignal: 0 },
-              { Speed: 5, StateSignal: 0 },
-              { Speed: 4, StateSignal: 0 },
-              { Speed: 4, StateSignal: 0 },
-              { Speed: 4, StateSignal: 0 },
-              { Speed: 4, StateSignal: 0 },
-              { Speed: 4, StateSignal: 0 },
-              { Speed: 5, StateSignal: 0 },
-              { Speed: 5, StateSignal: 0 },
-              { Speed: 5, StateSignal: 0 }
-            ],
-            LicenseNo: "440000000000000000",
-            LocationItems: [
-              { Altitude: 0, Latitude: 70.023753, Longitude: 23.716258 }
-            ],
-            EndTime: "2018/8/21 17:43:32"
-          }
-        ];
-        // this.collectData.AccidentRecords;
-        this.$set(this.$data, "tableData", AccidentRecords);
-        var Speed = 0;
-        var State = 0;
-        this.tableData.map((item, index) => {
-          item.SpeedAndStateSignals.map(itca => {
-            Speed = Speed + itca.Speed;
-            State = State + itca.StateSignal;
+        if (this.collectData.CommandWord == 16) {
+          var AccidentRecords = this.collectData.AccidentRecords;
+          this.$set(this.$data, "tableData", AccidentRecords);
+          var Speed = 0;
+          var State = 0;
+          this.tableData.map((item, index) => {
+            item.SpeedAndStateSignals.map(itca => {
+              Speed = Speed + itca.Speed;
+              State = State + itca.StateSignal;
+            });
+            Speed = (Speed / 100).toFixed(2);
+            State = State / 100;
+            item.speed = Speed;
+            item.signal = State;
+            item.Altitude = item.LocationItems[index].Altitude;
+            item.Latitude = item.LocationItems[index].Latitude;
+            item.Longitude = item.LocationItems[index].Longitude;
           });
-          Speed = (Speed / 100).toFixed(2);
-          State = State / 100;
-          item.speed = Speed;
-          item.signal = State;
-          item.Altitude = AccidentRecords.LocationItems[index].Altitude;
-          item.Latitude = AccidentRecords.LocationItems[index].Latitude;
-          item.Longitude = AccidentRecords.LocationItems[index].Longitude;
-        });
-        // }
+        }
       },
       deep: true
     }

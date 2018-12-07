@@ -64,7 +64,7 @@
         </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="License" label="车牌号" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column
           prop="start_time"
           label="开始时间"
