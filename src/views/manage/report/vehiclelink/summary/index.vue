@@ -241,7 +241,7 @@ export default {
       ];
       this.tableData.data.map(data => {
         wsCol.push({
-          A: data.license,
+          A: data.License,
           B: this.$utils.formatDate14(data.start_time),
           C: this.$utils.formatDate14(data.stop_time),
           D: data.GoOnlineTimes,

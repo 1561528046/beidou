@@ -1,5 +1,12 @@
 <template>
-  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+  <el-form
+    status-icon
+    :rules="rules"
+    :model="formData"
+    size="small"
+    ref="baseForm"
+    class="msg-form"
+  >
     <!-- 设备信息 -->
     <el-row :gutter="30">
       <el-col :span="12">
@@ -261,6 +268,16 @@ export default {
         res => {
           if (res.data.code == 0) {
             var mixinData = Object.assign({}, this.formData, res.data.data[0]);
+            if (mixinData.enable == 1) {
+              mixinData.enable_type = true;
+            } else {
+              mixinData.enable_type = false;
+            }
+            if (mixinData.is_encryption == 1) {
+              mixinData.is_encryption_type = true;
+            } else {
+              mixinData.is_encryption_type = false;
+            }
             this.$set(this.$data, "formData", mixinData);
           } else {
             this.$message.error(res.data.msg);

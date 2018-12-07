@@ -51,11 +51,7 @@
         </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column
-          prop="license"
-          label="车牌号"
-          :formatter="(row)=>{return this.$utils.get_license_color(row.license_color)}"
-        ></el-table-column>
+        <el-table-column prop="License" label="车牌号" :formatter="$utils.baseFormatter "></el-table-column>
         <el-table-column
           prop="GoOnlineTime"
           label="上线时间"
@@ -186,7 +182,7 @@ export default {
       ];
       this.tableData.data.map(data => {
         wsCol.push({
-          A: data.license,
+          A: data.License,
           B: this.$utils.formatDate14(JSON.stringify(data.GoOnlineTime)),
           C: this.$utils.formatDate14(JSON.stringify(data.OffTime))
         });
