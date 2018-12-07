@@ -133,9 +133,7 @@ import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
   components: { chooseVcheckbox, chooseUcheckbox },
-  created() {
-    this.keyupSubmit();
-  },
+  created() {},
   computed: {
     list: function() {
       return this.tableData.data.slice(
@@ -405,16 +403,7 @@ export default {
       });
       this.tableLoading = false;
     },
-    //回车事件
-    keyupSubmit() {
-      document.onkeydown = e => {
-        console.log(e);
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
-    },
+
     // 分页
     handleSizeChange(val) {
       this.tableQuery.page = 1;

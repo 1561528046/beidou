@@ -102,9 +102,7 @@ import chooseVehicle from "@/components/choose-vehicle.vue";
 import { location2address, gps2amap } from "@/utils/map-tools.js";
 export default {
   components: { chooseVehicle },
-  created() {
-    this.keyupSubmit();
-  },
+  created() {},
   computed: {
     list: function() {
       return this.tableData.data.slice(
@@ -331,16 +329,6 @@ export default {
         }
       });
       this.tableLoading = false;
-    },
-    //回车事件
-    keyupSubmit() {
-      document.onkeydown = e => {
-        console.log(e);
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
     },
     // 分页
     handleSizeChange(val) {

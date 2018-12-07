@@ -1,18 +1,38 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form
+        :model="tableQuery"
+        ref="baseForm"
+        :rules="rules"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        size="small"
+      >
         <el-row :gutter="30">
           <el-col :span="7">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyyMMddHHmmss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
-              </el-date-picker>
+              <el-date-picker
+                v-model="tableQuery.time"
+                value-format="yyyyMMddHHmmss"
+                format="yyyy-MM-dd HH:mm"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="7">
             <el-form-item prop="sim_id" label="选择车辆">
               <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
-                <el-input type="text" v-model="tableQuery.sim_id" style="position: absolute;left: 0px; top: 0px;"></el-input>
+                <el-input
+                  type="text"
+                  v-model="tableQuery.sim_id"
+                  style="position: absolute;left: 0px; top: 0px;"
+                ></el-input>
               </el-button>
             </el-form-item>
           </el-col>
@@ -31,18 +51,47 @@
         </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="(row)=>{return this.$utils.get_license_color(row.license_color)}"> </el-table-column>
-        <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"> </el-table-column>
-        <el-table-column prop="" label="指令" :formatter="$utils.baseFormatter "> </el-table-column>
-        <el-table-column prop="" label="具体设置内容" :formatter="$utils.baseFormatter "> </el-table-column>
+        <el-table-column
+          prop="license"
+          label="车牌号"
+          :formatter="(row)=>{return this.$utils.get_license_color(row.license_color)}"
+        ></el-table-column>
+        <el-table-column
+          prop="time"
+          label="时间"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"
+        ></el-table-column>
+        <el-table-column prop label="指令" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop label="具体设置内容" :formatter="$utils.baseFormatter "></el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange "
+          @current-change="handleCurrentChange "
+          :current-page="tableQuery.page "
+          :page-sizes="[10, 20, 50, 100] "
+          :page-size="tableQuery.size "
+          :total="tableData.total "
+          layout="total, sizes, prev, pager, next, jumper "
+          background
+        ></el-pagination>
       </div>
     </el-card>
-    <el-dialog width="30%" title="选择信息" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-car @button="xz" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></choose-car>
+    <el-dialog
+      width="30%"
+      title="选择信息"
+      :visible.sync="addDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <choose-car
+        @button="xz"
+        @success=" () => {this.getTable();this.addDialog = false;}"
+        :key="addKey"
+      ></choose-car>
     </el-dialog>
   </div>
 </template>
@@ -53,9 +102,7 @@ import { getReport } from "@/api/index.js";
 import chooseCar from "@/components/choose-vehicle.vue";
 export default {
   components: { chooseCar },
-  created() {
-    this.keyupSubmit();
-  },
+  created() {},
   computed: {
     list: function() {
       return this.tableData.data.slice(
@@ -188,16 +235,6 @@ export default {
         }
       });
       this.tableLoading = false;
-    },
-    //回车事件
-    keyupSubmit() {
-      document.onkeydown = e => {
-        console.log(e);
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
     },
     // 分页
     handleSizeChange(val) {

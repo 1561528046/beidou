@@ -1,22 +1,51 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form
+        :model="tableQuery"
+        ref="baseForm"
+        :rules="rules"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        size="small"
+      >
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item prop="time" label="时间">
-              <el-date-picker style="width:347px;" v-model="tableQuery.time" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
-              </el-date-picker>
+              <el-date-picker
+                style="width:347px;"
+                v-model="tableQuery.time"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                format="yyyy-MM-dd HH:mm"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="license" label="车辆">
-              <el-input :disabled="vehicleAlert" @focus="selectvehicle" type="text" v-model="tableQuery.license" style="position: absolute;left: 0px; top: 0px;"></el-input>
+              <el-input
+                :disabled="vehicleAlert"
+                @focus="selectvehicle"
+                type="text"
+                v-model="tableQuery.license"
+                style="position: absolute;left: 0px; top: 0px;"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="real_name" label="用户">
-              <el-input :disabled="userAlert" @focus="selectuser" type="text" v-model="tableQuery.real_name" style="position: absolute;left: 0px; top: 0px;"></el-input>
+              <el-input
+                :disabled="userAlert"
+                @focus="selectuser"
+                type="text"
+                v-model="tableQuery.real_name"
+                style="position: absolute;left: 0px; top: 0px;"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4" style="text-align: right;">
@@ -34,43 +63,99 @@
         </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column fixed prop="license" width="150px" label="车牌号" :formatter="$utils.baseFormatter">
+        <el-table-column
+          fixed
+          prop="license"
+          width="150px"
+          label="车牌号"
+          :formatter="$utils.baseFormatter"
+        >
           <template slot-scope="scope">
-            <span class="license-card" :style="$dict.get_license_color(scope.row.license_color).style" @click="showDetails(scope)">{{scope.row.license}}</span>
+            <span
+              class="license-card"
+              :style="$dict.get_license_color(scope.row.license_color).style"
+              @click="showDetails(scope)"
+            >{{scope.row.license}}</span>
           </template>
         </el-table-column>
-        <el-table-column width="150px" fixed prop="start_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"> </el-table-column>
-        <el-table-column width="150px" fixed prop="stop_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"> </el-table-column>
-        <el-table-column prop="jinji" label="紧急报警"> </el-table-column>
-        <el-table-column prop="chaosu" label="超速报警"> </el-table-column>
-        <el-table-column prop="pilao" label="疲劳驾驶"> </el-table-column>
-        <el-table-column prop="weixian" label="危险预警"> </el-table-column>
-        <el-table-column prop="chaosu_yujing" label="超速预警"> </el-table-column>
-        <el-table-column width="110px" prop="pilao_yujing" label="疲劳驾驶预警"> </el-table-column>
-        <el-table-column width="140px" prop="leijijiashichaoshi" label="当天累计驾驶超时"> </el-table-column>
-        <el-table-column prop="chaoshitingche" label="超时停车"> </el-table-column>
-        <el-table-column prop="cheliangbeidao" label="车辆被盗"> </el-table-column>
-        <el-table-column width="110px" prop="feifadianhuo" label="车辆非法点火"> </el-table-column>
-        <el-table-column width="110px" prop="feifaweiyi" label="车辆非法位移"> </el-table-column>
-        <el-table-column prop="pengzhuang_yujing" label="碰撞预警"> </el-table-column>
-        <el-table-column prop="cefan_yujing" label="侧翻预警"> </el-table-column>
-        <el-table-column width="110px" prop="feifakaimen" label="非法开门报警"> </el-table-column>
-        <el-table-column prop="jinchuluxian" label="进出路线"> </el-table-column>
-        <el-table-column prop="jinchuquyu" label="进出区域"> </el-table-column>
-        <el-table-column width="200px" prop="luduanshijian" label="路段行驶时间不足/过长报警"> </el-table-column>
-        <el-table-column width="110px" prop="luxianpianli" label="路线偏离报警"> </el-table-column>
-        <el-table-column width="110px" prop="youliangyichang" label="车辆油量异常"> </el-table-column>
+        <el-table-column
+          width="150px"
+          fixed
+          prop="start_time"
+          label="开始时间"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"
+        ></el-table-column>
+        <el-table-column
+          width="150px"
+          fixed
+          prop="stop_time"
+          label="结束时间"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"
+        ></el-table-column>
+        <el-table-column prop="jinji" label="紧急报警"></el-table-column>
+        <el-table-column prop="chaosu" label="超速报警"></el-table-column>
+        <el-table-column prop="pilao" label="疲劳驾驶"></el-table-column>
+        <el-table-column prop="weixian" label="危险预警"></el-table-column>
+        <el-table-column prop="chaosu_yujing" label="超速预警"></el-table-column>
+        <el-table-column width="110px" prop="pilao_yujing" label="疲劳驾驶预警"></el-table-column>
+        <el-table-column width="140px" prop="leijijiashichaoshi" label="当天累计驾驶超时"></el-table-column>
+        <el-table-column prop="chaoshitingche" label="超时停车"></el-table-column>
+        <el-table-column prop="cheliangbeidao" label="车辆被盗"></el-table-column>
+        <el-table-column width="110px" prop="feifadianhuo" label="车辆非法点火"></el-table-column>
+        <el-table-column width="110px" prop="feifaweiyi" label="车辆非法位移"></el-table-column>
+        <el-table-column prop="pengzhuang_yujing" label="碰撞预警"></el-table-column>
+        <el-table-column prop="cefan_yujing" label="侧翻预警"></el-table-column>
+        <el-table-column width="110px" prop="feifakaimen" label="非法开门报警"></el-table-column>
+        <el-table-column prop="jinchuluxian" label="进出路线"></el-table-column>
+        <el-table-column prop="jinchuquyu" label="进出区域"></el-table-column>
+        <el-table-column width="200px" prop="luduanshijian" label="路段行驶时间不足/过长报警"></el-table-column>
+        <el-table-column width="110px" prop="luxianpianli" label="路线偏离报警"></el-table-column>
+        <el-table-column width="110px" prop="youliangyichang" label="车辆油量异常"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange "
+          @current-change="handleCurrentChange "
+          :current-page="tableQuery.page "
+          :page-sizes="[10, 20, 50, 100] "
+          :page-size="tableQuery.size "
+          :total="tableData.total "
+          layout="total, sizes, prev, pager, next, jumper "
+          background
+        ></el-pagination>
       </div>
     </el-card>
-    <el-dialog width="50%" title="选择信息" :visible.sync="vehicleDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-vcheckbox @button="xz" @success=" () => {this.getTable();this.vehicleDialog = false;}" :key="addKey"></choose-vcheckbox>
+    <el-dialog
+      width="50%"
+      title="选择信息"
+      :visible.sync="vehicleDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <choose-vcheckbox
+        @button="xz"
+        @success=" () => {this.getTable();this.vehicleDialog = false;}"
+        :key="addKey"
+      ></choose-vcheckbox>
     </el-dialog>
-    <el-dialog width="30%" title="选择信息" :visible.sync="userDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <choose-ucheckbox @button="user" @success=" () => {this.getTable();this.userDialog = false;}" :key="addKey"></choose-ucheckbox>
+    <el-dialog
+      width="30%"
+      title="选择信息"
+      :visible.sync="userDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <choose-ucheckbox
+        @button="user"
+        @success=" () => {this.getTable();this.userDialog = false;}"
+        :key="addKey"
+      ></choose-ucheckbox>
     </el-dialog>
   </div>
 </template>
@@ -82,9 +167,7 @@ import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
   components: { chooseVcheckbox, chooseUcheckbox },
-  created() {
-    this.keyupSubmit();
-  },
+  created() {},
   computed: {
     list: function() {
       return this.tableData.data.slice(
@@ -391,16 +474,6 @@ export default {
         }
       });
       this.tableLoading = false;
-    },
-    //回车事件
-    keyupSubmit() {
-      document.onkeydown = e => {
-        console.log(e);
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
     },
     // 分页
     handleSizeChange(val) {
