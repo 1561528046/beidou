@@ -51,7 +51,7 @@ export default {
         this.$set(this.$data, "collectData", this.$props.message);
         if (this.collectData.CommandWord == 8) {
           this.getTable();
-          this.page = false;
+          this.paging = false;
         }
       },
       deep: true
