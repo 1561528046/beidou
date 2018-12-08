@@ -2,10 +2,15 @@
 <template>
   <!-- 驾驶人身份记录 -->
   <div>
-    <el-table :data="list" style="width: 100%">
+    <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="EventHappenTime" label="事件发生时间"></el-table-column>
       <el-table-column prop="LicenseNo" label="机动车驾驶证号码"></el-table-column>
-      <el-table-column prop="EventType" label="事件类型"></el-table-column>
+      <el-table-column prop="EventType" label="事件类型">
+        <template slot-scope="scope">
+          <label v-if="scope.row.EventType=='1'">登录</label>
+          <label v-if="scope.row.EventType=='2'">退出</label>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="admin-table-pager">
       <el-pagination
@@ -50,7 +55,10 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 18) {
+        if (
+          this.collectData.CommandWord == 18 &&
+          this.collectData.DriverIDRecords != undefined
+        ) {
           this.getTable();
           this.paging = false;
         }

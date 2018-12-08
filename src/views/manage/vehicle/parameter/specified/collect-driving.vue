@@ -49,7 +49,10 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 8) {
+        if (
+          this.collectData.CommandWord == 8 &&
+          this.collectData.UnitMinutesSpeeds != undefined
+        ) {
           this.getTable();
           this.paging = false;
         }

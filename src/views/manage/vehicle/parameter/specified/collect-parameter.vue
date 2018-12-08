@@ -40,7 +40,10 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 20) {
+        if (
+          this.collectData.CommandWord == 20 &&
+          this.collectData.ParameterUpdateRecords != undefined
+        ) {
           this.getTable();
           this.paging = false;
         }

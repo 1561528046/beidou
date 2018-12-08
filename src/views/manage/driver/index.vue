@@ -133,7 +133,6 @@ export default {
   components: { addComponents, updateComponents, chooseVehicle },
   created() {
     this.getTable();
-    this.keyupSubmit();
   },
   data() {
     return {
@@ -230,16 +229,6 @@ export default {
       this.addKey++;
       this.updateDialog = true;
       this.updateId = scope.row.driver_card_id;
-    },
-    //回车时间
-    keyupSubmit() {
-      document.onkeydown = e => {
-        console.log(e);
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
     },
     getTable() {
       //获取列表

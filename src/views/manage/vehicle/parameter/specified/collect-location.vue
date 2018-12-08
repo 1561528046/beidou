@@ -51,7 +51,10 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 9) {
+        if (
+          this.collectData.CommandWord == 9 &&
+          this.collectData.UnitHoursSpeeds != undefined
+        ) {
           this.getTable();
           this.paging = false;
         }
@@ -74,9 +77,9 @@ export default {
           Longitude = Longitude + itca.Longitude;
         });
         item.speed = (speed / 60).toFixed(2);
-        item.Altitude = (Altitude / 60).toFixed(2);
-        item.Latitude = (Latitude / 60).toFixed(2);
-        item.Longitude = (Longitude / 60).toFixed(2);
+        item.Altitude = (Altitude / 60).toFixed(0);
+        item.Latitude = (Latitude / 60).toFixed(6);
+        item.Longitude = (Longitude / 60).toFixed(6);
       });
       this.$set(this.$data, "tableData", UnitHoursSpeeds);
       this.$set(this.$data, "total", UnitHoursSpeeds.length);

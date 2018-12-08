@@ -1,7 +1,7 @@
 <template>
   <!-- 外部供电记录 -->
   <div>
-    <el-table :data="list" style="width: 100%">
+    <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="EventHappenTime" label="事件发生时间"></el-table-column>
       <el-table-column prop="EventType" label="事件类型">
         <template slot-scope="scope">
@@ -53,7 +53,10 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 19) {
+        if (
+          this.collectData.CommandWord == 19 &&
+          this.collectData.ExternalPowerRecords != undefined
+        ) {
           this.getTable();
           this.paging = false;
         }

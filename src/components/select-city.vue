@@ -1,5 +1,11 @@
 <template>
-  <el-cascader :options="areaList" @active-item-change="handleItemChange" v-model="area" :props="props" :clearable="clearable"></el-cascader>
+  <el-cascader
+    :options="areaList"
+    @active-item-change="handleItemChange"
+    v-model="area"
+    :props="props"
+    :clearable="clearable"
+  ></el-cascader>
 </template>
 
 <script>

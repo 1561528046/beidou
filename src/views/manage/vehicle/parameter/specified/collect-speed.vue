@@ -1,7 +1,7 @@
 <template>
   <!-- 速度状态日志 -->
   <div>
-    <el-table :data="list" style="width: 100%">
+    <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="SpeedState" label="记录仪速度状态"></el-table-column>
       <el-table-column prop="StartTime" label="速度状态判定的开始时间"></el-table-column>
       <el-table-column prop="EndTime" label="速度状态判定的结束时间"></el-table-column>
@@ -51,7 +51,10 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 21) {
+        if (
+          this.collectData.CommandWord == 21 &&
+          this.collectData.SpeedStateLogs != undefined
+        ) {
           this.getTable();
           this.paging = false;
         }

@@ -1,7 +1,7 @@
 <template>
   <!-- 事故疑点记录 -->
   <div>
-    <el-table :data="list" style="width: 100%">
+    <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="EndTime" label="行驶结束时间"></el-table-column>
       <el-table-column prop="LicenseNo" label="机动车驾驶证号码"></el-table-column>
       <el-table-column prop="speed" label="速度"></el-table-column>
@@ -53,7 +53,10 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 16) {
+        if (
+          this.collectData.CommandWord == 16 &&
+          this.collectData.AccidentRecords != undefined
+        ) {
           this.getTable();
           this.paging = false;
         }
@@ -71,10 +74,8 @@ export default {
           Speed = Speed + itca.Speed;
           State = State + itca.StateSignal;
         });
-        Speed = (Speed / 100).toFixed(2);
-        State = State / 100;
-        item.speed = Speed;
-        item.signal = State;
+        item.speed = (Speed / 100).toFixed(2);
+        item.signal = (State / 100).toFixed(0);
         item.Altitude = item.LocationItems[0].Altitude;
         item.Latitude = item.LocationItems[0].Latitude;
         item.Longitude = item.LocationItems[0].Longitude;
