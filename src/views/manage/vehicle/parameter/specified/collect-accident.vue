@@ -67,9 +67,9 @@ export default {
   methods: {
     getTable() {
       var AccidentRecords = this.collectData.AccidentRecords;
-      var Speed = 0;
-      var State = 0;
       AccidentRecords.map(item => {
+        var Speed = 0;
+        var State = 0;
         item.SpeedAndStateSignals.map(itca => {
           Speed = Speed + itca.Speed;
           State = State + itca.StateSignal;

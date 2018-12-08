@@ -65,9 +65,9 @@ export default {
   methods: {
     getTable() {
       var SpeedStateLogs = this.collectData.SpeedStateLogs;
-      var speed = 0;
-      var state = 0;
       SpeedStateLogs.map(item => {
+        var speed = 0;
+        var state = 0;
         item.RecordReferenceSpeeds.map(itca => {
           speed = speed + itca.RecordSpeed;
           state = state + itca.ReferenceSpeed;

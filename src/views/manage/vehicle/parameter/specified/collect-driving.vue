@@ -3,7 +3,7 @@
   <div>
     <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="StartTime" label="开始时间"></el-table-column>
-      <el-table-column prop="average" label="平局速度"></el-table-column>
+      <el-table-column prop="average" label="平均速度"></el-table-column>
       <el-table-column prop="signal" label="状态信号"></el-table-column>
     </el-table>
     <div class="admin-table-pager">
@@ -63,9 +63,10 @@ export default {
   methods: {
     getTable() {
       var UnitMinutesSpeeds = this.collectData.UnitMinutesSpeeds;
-      var speed = 0;
-      var state = 0;
+
       UnitMinutesSpeeds.map(item => {
+        var speed = 0;
+        var state = 0;
         item.SpeedAndStateSignals.map(itca => {
           speed = speed + itca.AverageSpeed;
           state = state + itca.StateSignal;

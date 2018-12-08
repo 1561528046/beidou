@@ -3,7 +3,7 @@
   <div>
     <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="StartTime" label="开始时间"></el-table-column>
-      <el-table-column prop="speed" label="平局速度"></el-table-column>
+      <el-table-column prop="speed" label="平均速度"></el-table-column>
       <el-table-column prop="Longitude" label="经度"></el-table-column>
       <el-table-column prop="Latitude" label="纬度"></el-table-column>
       <el-table-column prop="Altitude" label="海拔高度"></el-table-column>
