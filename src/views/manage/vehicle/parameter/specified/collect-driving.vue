@@ -4,12 +4,16 @@
     <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="StartTime" label="开始时间"></el-table-column>
       <el-table-column prop="average" label="平均速度"></el-table-column>
-      <el-table-column prop="signal" label="状态信号"></el-table-column>
       <el-table-column label="速度">
         <template slot-scope="scope">
-          <el-popover placement="right" style="height:400px" width="400" trigger="click">
+          <el-popover placement="right" style="height:400px" width="500" trigger="click">
             <el-table height="300px" :data="Speed">
               <el-table-column property="Speed" label="速度"></el-table-column>
+              <el-table-column label="制动信号" :formatter="(row)=>{return getState(row,7)}"></el-table-column>
+              <el-table-column label="左转向" :formatter="(row)=>{return getState(row,6)}"></el-table-column>
+              <el-table-column label="右转向" :formatter="(row)=>{return getState(row,5)}"></el-table-column>
+              <el-table-column label="远光" :formatter="(row)=>{ return getState(row,4)}"></el-table-column>
+              <el-table-column label="近光" :formatter="(row)=>{return getState(row,3)}"></el-table-column>
             </el-table>
             <el-button
               size="small"
@@ -86,21 +90,34 @@ export default {
       var Data = [];
       UnitMinutesSpeeds.map((item, index) => {
         var speed = 0;
-        var state = 0;
         var data = [];
         item.SpeedAndStateSignals.map(itca => {
-          data.push({ Speed: itca.AverageSpeed });
+          data.push({
+            Speed: itca.AverageSpeed,
+            StateSignal: itca.StateSignal
+          });
           speed = speed + itca.AverageSpeed;
-          state = state + itca.StateSignal;
         });
         item.index = index;
         item.average = (speed / 60).toFixed(2);
-        item.signal = (state / 60).toFixed(0);
         Data.push(data);
       });
       this.$set(this.$data, "tableData", UnitMinutesSpeeds);
       this.$set(this.$data, "total", UnitMinutesSpeeds.length);
       this.$set(this.$data, "SpeedData", Data);
+    },
+    getState(row, index) {
+      var signal = row.StateSignal.toString("2");
+      signal = "0".repeat(8 - signal.length) + signal; //128 - > 10000000    1-> 00000001
+      signal = signal
+        .split("")
+        .reverse()
+        .join("");
+      if (signal[index] == 1) {
+        return "开";
+      } else {
+        return "关";
+      }
     },
     // 分页
     handleSizeChange(val) {

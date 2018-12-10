@@ -5,7 +5,6 @@
       <el-table-column prop="EndTime" label="行驶结束时间"></el-table-column>
       <el-table-column prop="LicenseNo" label="机动车驾驶证号码"></el-table-column>
       <el-table-column prop="speed" label="平均速度"></el-table-column>
-      <el-table-column prop="signal" label="状态信号"></el-table-column>
       <el-table-column prop="Longitude" label="经度"></el-table-column>
       <el-table-column prop="Latitude" label="纬度"></el-table-column>
       <el-table-column prop="Altitude" label="海拔高度"></el-table-column>
@@ -14,6 +13,11 @@
           <el-popover placement="right" style="height:400px" width="400" trigger="click">
             <el-table height="300px" :data="Speed">
               <el-table-column property="Speed" label="速度"></el-table-column>
+              <el-table-column label="制动信号" :formatter="(row)=>{return getState(row,7)}"></el-table-column>
+              <el-table-column label="左转向" :formatter="(row)=>{return getState(row,6)}"></el-table-column>
+              <el-table-column label="右转向" :formatter="(row)=>{return getState(row,5)}"></el-table-column>
+              <el-table-column label="远光" :formatter="(row)=>{ return getState(row,4)}"></el-table-column>
+              <el-table-column label="近光" :formatter="(row)=>{return getState(row,3)}"></el-table-column>
             </el-table>
             <el-button
               size="small"
@@ -82,6 +86,19 @@ export default {
     }
   },
   methods: {
+    getState(row, index) {
+      var signal = row.StateSignal.toString("2");
+      signal = "0".repeat(8 - signal.length) + signal; //128 - > 10000000    1-> 00000001
+      signal = signal
+        .split("")
+        .reverse()
+        .join("");
+      if (signal[index] == 1) {
+        return "开";
+      } else {
+        return "关";
+      }
+    },
     setLocation(data) {
       this.$set(this.$data, "Speed", this.SpeedData[data.index]);
     },
@@ -90,16 +107,13 @@ export default {
       var Data = [];
       AccidentRecords.map((item, index) => {
         var Speed = 0;
-        var State = 0;
         var data = [];
         item.SpeedAndStateSignals.map(itca => {
-          data.push({ Speed: itca.Speed });
+          data.push({ Speed: itca.Speed, StateSignal: itca.StateSignal });
           Speed = Speed + itca.Speed;
-          State = State + itca.StateSignal;
         });
         item.index = index;
         item.speed = (Speed / 100).toFixed(2);
-        item.signal = (State / 100).toFixed(0);
         item.Altitude = item.LocationItems[0].Altitude;
         item.Latitude = item.LocationItems[0].Latitude;
         item.Longitude = item.LocationItems[0].Longitude;

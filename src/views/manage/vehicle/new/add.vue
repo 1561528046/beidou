@@ -100,13 +100,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8" v-if="$props.is_enter!=1">
-            <el-form-item label="行业类别" prop="type">
-              <!-- <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type> -->
-              <el-select clearable v-model="formData.type" size="small">
-                <el-option value="010" label="道路旅客运输"></el-option>
-                <el-option value="020" label="道路货物运输"></el-option>
-                <el-option value="030" label="道路危险货物运输"></el-option>
-              </el-select>
+            <el-form-item label="接入车辆类型" prop="type">
+              <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -136,6 +131,11 @@
           <el-col :span="8">
             <el-form-item label="联系人手机" prop="tel">
               <el-input v-model="formData.tel" maxlength="11"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="行业类别">
+              <el-cascader style="width:100%" :options="options" v-model="formData.type_son"></el-cascader>
             </el-form-item>
           </el-col>
         </el-row>
@@ -181,6 +181,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item label="车辆类型">
+              <el-cascader style="width:100%" :options="loptions" v-model="formData.vtype_son"></el-cascader>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="发动机号" prop="engine_no">
               <el-input v-model="formData.engine_no" maxlength="30"></el-input>
             </el-form-item>
@@ -200,8 +205,8 @@
               <el-input v-model="formData.load_ton" maxlength="8"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="准牵引总质量(kg)" prop="draw_ton" v-if="formData.license_color==2">
+          <el-col :span="8" v-if="formData.license_color==2">
+            <el-form-item label="准牵引总质量(kg)" prop="draw_ton">
               <el-input v-model="formData.draw_ton" maxlength="8"></el-input>
             </el-form-item>
             <el-form-item style="height:32px;" v-if="formData.license_color!=2"></el-form-item>
@@ -243,15 +248,6 @@
               <el-input-number v-model.number="formData.axis" :step="1" :min="2" :max="20"></el-input-number>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="24">
-            <el-form-item label="车辆类型" prop="axis">
-              <el-select size="small">
-                <el-option value="10" label="客车">客车</el-option>
-                <el-option value="20" label="普通货车">普通货车</el-option>
-                <el-option value="40" label="危险品运输车">危险品运输车</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>-->
           <el-col
             :span="24"
             style="height:30px; border-bottom:1px dashed #ddd; margin-bottom:30px;"
@@ -530,6 +526,116 @@ export default {
   },
   data() {
     return {
+      options: [
+        {
+          value: "010",
+          label: "道路旅客运输",
+          children: [
+            {
+              value: "011",
+              label: "班车客运"
+            },
+            {
+              value: "012",
+              label: "包车客运"
+            },
+            {
+              value: "013",
+              label: "定线旅游"
+            },
+            {
+              value: "014",
+              label: "非定线旅游"
+            }
+          ]
+        },
+        {
+          value: "020",
+          label: "道路货物运输",
+          children: [
+            {
+              value: "021",
+              label: "道路普通货物运输"
+            },
+            {
+              value: "022",
+              label: "货物专用运输"
+            },
+            {
+              value: "023",
+              label: "大型物件运输"
+            }
+          ]
+        },
+        {
+          value: "030",
+          label: "道路危险货物运输",
+          children: [
+            {
+              value: "031",
+              label: "营运性危险货物运输"
+            },
+            {
+              value: "032",
+              label: "非经营性危险货物运输"
+            }
+          ]
+        }
+      ],
+      loptions: [
+        {
+          value: "10",
+          label: "客车",
+          children: [
+            {
+              value: "11",
+              label: "大型客车"
+            },
+            {
+              value: "12",
+              label: "中型客车"
+            },
+            {
+              value: "13",
+              label: "小型客车"
+            },
+            {
+              value: "14",
+              label: "轿车"
+            },
+            {
+              value: "15",
+              label: "大型卧铺客车"
+            },
+            {
+              value: "16",
+              label: "中型卧铺客车"
+            }
+          ]
+        },
+        {
+          value: "20",
+          label: "普通货车",
+          children: [
+            {
+              value: "21",
+              label: "大型普通货车"
+            },
+            {
+              value: "22",
+              label: "中型普通货车"
+            },
+            {
+              value: "23",
+              label: "小型普通货车"
+            }
+          ]
+        },
+        {
+          value: "40",
+          label: "危险品运输车"
+        }
+      ],
       uploadHeaders: {
         Authorization: this.$store.state.user.token
       },
@@ -561,6 +667,12 @@ export default {
         modify_img4: 1
       },
       formData: {
+        type_son: [],
+        vtype_son: [],
+        trans_type: "",
+        trans_type_son: "",
+        vehicle_type: "",
+        vehicle_type_son: "",
         //除普货外，车辆具体型号大块中 只有车架号VIN是必填
         //只有普货用和全国平台有关联的内容，包括验证规则，车辆具体型号内容等
         // "130000", "130100", "130102"
@@ -586,7 +698,7 @@ export default {
         ip: "", //车辆接入ip
         port: "", //车辆接入端口
         issue_date: "", //行驶证签发日期
-        type: "010", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
+        type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
         fuel_type: "", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
         license_color: "", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
         owner: "", //车主/业户
@@ -749,6 +861,14 @@ export default {
           this.loader = false;
           if (res.data.code == 0 && res.data.data.length) {
             Object.assign(this.formData, res.data.data[0]);
+            this.formData.type_son.push(
+              this.formData.trans_type,
+              this.formData.trans_type_son
+            ),
+              this.formData.vtype_son.push(
+                this.formData.vehicle_type,
+                this.formData.vehicle_type_son
+              );
             this.formData.area = [
               this.formData.province_id,
               this.formData.city_id,
@@ -865,6 +985,14 @@ export default {
       return isJPG && isLt2M;
     },
     formSubmit() {
+      if (this.formData.type_son.length > 0) {
+        this.formData.trans_type = this.formData.type_son[0];
+        this.formData.trans_type_son = this.formData.type_son[1];
+      }
+      if (this.formData.vtype_son.length > 0) {
+        this.formData.vehicle_type = this.formData.vtype_son[0];
+        this.formData.vehicle_type_son = this.formData.vtype_son[1];
+      }
       var loader = this.$loading({ text: "正在提交" });
       var postMethod = this.is_edit ? updateVehicle : addVehicle; //判断调用哪个方法
       this.$refs.baseForm.validate((isVaildate, errorItem) => {

@@ -169,7 +169,7 @@ export default {
       handler: function() {
         this.$set(this.communication, "data", this.$props.message);
         this.communication.data.map(item => {
-          if (item.Ox0040 == undefined) {
+          if (item.O64 == undefined) {
             this.$set(item, "O64", ""),
               this.$set(item, "O65", ""),
               this.$set(item, "O66", ""),

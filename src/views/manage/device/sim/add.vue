@@ -1,6 +1,13 @@
 <template>
   <div class="post-form" style="width: 500px;">
-    <el-form label-position="top" status-icon :rules="rules" :model="formData" size="small" ref="baseForm">
+    <el-form
+      label-position="top"
+      status-icon
+      :rules="rules"
+      :model="formData"
+      size="small"
+      ref="baseForm"
+    >
       <el-row :gutter="30">
         <el-col :span="12">
           <el-form-item prop="sim_no" label="SIM卡号">
@@ -15,7 +22,12 @@
         <el-col :span="12">
           <el-form-item prop="belong" label="所属运营商">
             <el-select v-model="belong" style="width: 100%;">
-              <el-option v-for="belongItem in belongSelect" :key="belongItem" :label="belongItem" :value="belongItem"></el-option>
+              <el-option
+                v-for="belongItem in belongSelect"
+                :key="belongItem"
+                :label="belongItem"
+                :value="belongItem"
+              ></el-option>
             </el-select>
             <el-input v-model="formData.belong" v-if="belong == '其他'" placeholder="填写运营商"></el-input>
           </el-form-item>
@@ -62,8 +74,7 @@ export default {
             required: true,
             min: 11,
             max: 14,
-            message: "长度在 11 到 14 个字符",
-            trigger: "change"
+            message: "长度在 11 到 14 个字符"
           },
           {
             pattern: /^[0-9a-zA-Z]+$/,
