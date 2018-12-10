@@ -76,7 +76,7 @@ export default {
         item.reference = (state / 60).toFixed(0);
       });
       this.$set(this.$data, "tableData", SpeedStateLogs);
-      this.$set(this.$data, "total", SpeedStateLogs.length);
+      this.$set(this.$data, "total", this.tableData.length);
     },
     // 分页
     handleSizeChange(val) {
