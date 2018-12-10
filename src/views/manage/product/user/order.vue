@@ -1,13 +1,27 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-
-      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form
+        :model="tableQuery"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        size="small"
+      >
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="订单日期">
-              <el-date-picker value-format="yyyyMMdd" v-model="tableQuery.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
-              </el-date-picker>
+              <el-date-picker
+                value-format="yyyyMMdd"
+                v-model="tableQuery.time"
+                type="daterange"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions2"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -37,12 +51,21 @@
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="终端厂商">
-              <select-company v-model="tableQuery.company_id" :company_name.sync="tableQuery.company_name" style="width:100%;" :clearable="true"></select-company>
+              <select-company
+                v-model="tableQuery.company_id"
+                :company_name.sync="tableQuery.company_name"
+                style="width:100%;"
+                :clearable="true"
+              ></select-company>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="终端类型">
-              <select-devicetype v-model="tableQuery.device_type" style="width: 100%;" :clearable="true"></select-devicetype>
+              <select-devicetype
+                v-model="tableQuery.device_type"
+                style="width: 100%;"
+                :clearable="true"
+              ></select-devicetype>
             </el-form-item>
           </el-col>
           <el-col :span="6" v-if="isCollapse">
@@ -78,23 +101,71 @@
           <i class="el-icon-download"></i> 导出
         </el-button>
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="cdate" label="订单日期" :formatter="(row)=>{return this.$utils.formatDate(row.cdate)}"> </el-table-column>
-        <el-table-column prop="order_no" label="订单号" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="fees_detail_type" label="订单类型" :formatter="(row)=>{return this.$dict.get_order_detailtype(row.fees_detail_type)}"> </el-table-column>
-        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="car_type" label="车辆类型" :formatter="(row)=>{return this.$dict.get_vehicle_type(row.car_type)}"> </el-table-column>
-        <el-table-column prop="fees_detail_company_name" label="终端厂商" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="fees_detail_device_type" label="终端类型" :formatter="(row)=>{return this.$dict.get_device_type(row.fees_detail_device_type)}"> </el-table-column>
-        <el-table-column prop="order_amount" label="订单金额" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="pay_type" label="支付方式" :formatter="(row)=>{return this.$dict.get_order_paytype(row.pay_type)}"> </el-table-column>
-        <el-table-column prop="fees_detail_name" label="收费单项" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="reason" label="审核原因" :formatter="$utils.baseFormatter"> </el-table-column>
-        <el-table-column prop="state" label="订单状态" :formatter="(row)=>{return this.$dict.get_order_state(row.state)}"> </el-table-column>
+      <el-table
+        :data="tableData.data"
+        v-loading="tableLoading"
+        style="width: 100%"
+        class="admin-table-list"
+      >
+        <el-table-column
+          prop="cdate"
+          label="订单日期"
+          :formatter="(row)=>{return this.$utils.formatDate(row.cdate)}"
+        ></el-table-column>
+        <el-table-column prop="order_no" label="订单号" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="fees_detail_type"
+          label="订单类型"
+          :formatter="(row)=>{return this.$dict.get_order_detailtype(row.fees_detail_type)}"
+        ></el-table-column>
+        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="car_type"
+          label="车辆类型"
+          :formatter="(row)=>{return this.$dict.get_vehicle_type(row.car_type)}"
+        ></el-table-column>
+        <el-table-column
+          prop="fees_detail_company_name"
+          label="终端厂商"
+          :formatter="$utils.baseFormatter"
+        ></el-table-column>
+        <el-table-column
+          prop="fees_detail_device_type"
+          label="终端类型"
+          :formatter="(row)=>{return this.$dict.get_device_type(row.fees_detail_device_type)}"
+        ></el-table-column>
+        <el-table-column prop="order_amount" label="订单金额" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="pay_type"
+          label="支付方式"
+          :formatter="(row)=>{return this.$dict.get_order_paytype(row.pay_type)}"
+        ></el-table-column>
+        <el-table-column prop="fees_detail_name" label="收费单项" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="reason" label="审核原因" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="state"
+          label="订单状态"
+          :formatter="(row)=>{return this.$dict.get_order_state(row.state)}"
+        ></el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
-            <el-button size="small " icon="el-icon-error" @click="cancel(scope)" v-if="scope.row.has_cancel=='2'" v-rights="3-2-1">取消订单</el-button>
-            <el-dialog width="20%" title="确认取消订单?" :visible.sync="cancelDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+            <el-button
+              size="small "
+              icon="el-icon-error"
+              @click="cancel(scope)"
+              v-if="scope.row.has_cancel=='2'"
+              v-rights="3-2-1"
+            >取消订单</el-button>
+            <el-dialog
+              width="20%"
+              title="确认取消订单?"
+              :visible.sync="cancelDialog"
+              :append-to-body="true"
+              :close-on-click-modal="false"
+              :close-on-press-escape="false"
+              :center="true"
+              class="admin-dialog"
+            >
               <div style="width:154px;margin:0 auto;">
                 <el-button type="primary" @click="submit">确定</el-button>
                 <el-button @click="cancelDialog = false">取 消</el-button>
@@ -104,8 +175,16 @@
         </el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange " @current-change="handleCurrentChange " :current-page="tableQuery.page " :page-sizes="[10, 20, 50, 100] " :page-size="tableQuery.size " :total="tableData.total " layout="total, sizes, prev, pager, next, jumper " background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange "
+          @current-change="handleCurrentChange "
+          :current-page="tableQuery.page "
+          :page-sizes="[10, 20, 50, 100] "
+          :page-size="tableQuery.size "
+          :total="tableData.total "
+          layout="total, sizes, prev, pager, next, jumper "
+          background
+        ></el-pagination>
       </div>
     </el-card>
   </div>
@@ -141,7 +220,6 @@ export default {
   created() {
     this.tableQuery.user_id = this.$route.params.id;
     this.getTable();
-    this.keyupSubmit();
   },
   data() {
     return {
@@ -297,15 +375,6 @@ export default {
           this.tableLoading = false;
         })
         .catch(() => {});
-    },
-    //回车事件
-    keyupSubmit() {
-      document.onkeydown = e => {
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
     },
     // 分页
     handleSizeChange(val) {

@@ -1,12 +1,22 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-
-      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form
+        :model="tableQuery"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        size="small"
+      >
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="产品名称">
-              <select-product v-model="tableQuery.package_id" style="width:100%;" :clearable="true" :pro="pro"></select-product>
+              <select-product
+                v-model="tableQuery.package_id"
+                style="width:100%;"
+                :clearable="true"
+                :pro="pro"
+              ></select-product>
             </el-form-item>
           </el-col>
           <el-col :offset="isCollapse?0:6" :span="isCollapse?24:10" style="text-align: right;">
@@ -36,29 +46,51 @@
           <el-button type="primary" size="small">
             <i class="el-icon-upload el-icon--right"></i> 添加
           </el-button>
-        </router-link> -->
+        </router-link>-->
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="title" label="产品名称" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table
+        :data="tableData.data"
+        v-loading="tableLoading"
+        style="width: 100%"
+        class="admin-table-list"
+      >
+        <el-table-column prop="title" label="产品名称" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column width="300" label="操作">
           <template slot-scope="scope">
-            <router-link :to="{name:'product-update',params:{id:scope.row.package_id}}" v-rights="3-1-1">
+            <router-link
+              :to="{name:'product-update',params:{id:scope.row.package_id}}"
+              v-rights="3-1-1"
+            >
               <el-button type="primary" size="small">
                 <i class="el-icon-upload el-icon--right"></i> 授权详情
               </el-button>
             </router-link>
-            <el-button style="margin-left:15px;" size="small" icon="el-icon-delete" @click="delFrom(scope)" v-rights="3-1-2">删除</el-button>
+            <el-button
+              style="margin-left:15px;"
+              size="small"
+              icon="el-icon-delete"
+              @click="delFrom(scope)"
+              v-rights="3-1-2"
+            >删除</el-button>
           </template>
           <!-- <template slot-scope="scope">
                         <el-button type="primary" size="small" @click="$router.push({name: 'company-update',params:{company_id:scope.row.company_id}})">
                             编辑
                         </el-button>
-                    </template> -->
+          </template>-->
         </el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="tableQuery.page"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="tableQuery.size"
+          :total="tableData.total"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+        ></el-pagination>
       </div>
     </el-card>
   </div>
@@ -78,7 +110,6 @@ import updateComponents from "./update.vue";
 export default {
   created() {
     this.getTable();
-    this.keyupSubmit();
   },
   data() {
     return {
@@ -209,15 +240,6 @@ export default {
           this.tableLoading = false;
         })
         .catch(() => {});
-    },
-    //回车事件
-    keyupSubmit() {
-      document.onkeydown = e => {
-        let _key = window.event.keyCode;
-        if (_key === 13) {
-          this.getTable();
-        }
-      };
     },
     handleClick() {
       alert("button click");

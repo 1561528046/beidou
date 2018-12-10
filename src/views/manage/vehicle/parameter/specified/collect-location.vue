@@ -3,7 +3,7 @@
   <div>
     <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="StartTime" label="开始时间"></el-table-column>
-      <el-table-column prop="speed" label="平局速度"></el-table-column>
+      <el-table-column prop="speed" label="平均速度"></el-table-column>
       <el-table-column prop="Longitude" label="经度"></el-table-column>
       <el-table-column prop="Latitude" label="纬度"></el-table-column>
       <el-table-column prop="Altitude" label="海拔高度"></el-table-column>
@@ -51,7 +51,10 @@ export default {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 9) {
+        if (
+          this.collectData.CommandWord == 9 &&
+          this.collectData.UnitHoursSpeeds != undefined
+        ) {
           this.getTable();
           this.paging = false;
         }
@@ -74,9 +77,9 @@ export default {
           Longitude = Longitude + itca.Longitude;
         });
         item.speed = (speed / 60).toFixed(2);
-        item.Altitude = (Altitude / 60).toFixed(2);
-        item.Latitude = (Latitude / 60).toFixed(2);
-        item.Longitude = (Longitude / 60).toFixed(2);
+        item.Altitude = (Altitude / 60).toFixed(0);
+        item.Latitude = (Latitude / 60).toFixed(6);
+        item.Longitude = (Longitude / 60).toFixed(6);
       });
       this.$set(this.$data, "tableData", UnitHoursSpeeds);
       this.$set(this.$data, "total", UnitHoursSpeeds.length);

@@ -1,7 +1,7 @@
 <template>
   <!-- 超时驾驶记录 -->
   <div>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="LicenseNo" label="机动车驾驶证号码"></el-table-column>
       <el-table-column prop="StartTime" label="连续驾驶开始时间"></el-table-column>
       <el-table-column prop="EndTime" label="连续驾驶结束时间"></el-table-column>
@@ -43,11 +43,22 @@ export default {
     };
   },
   props: ["message"],
+  computed: {
+    list: function() {
+      return this.tableData.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
+  },
   watch: {
     message: {
       handler: function() {
         this.$set(this.$data, "collectData", this.$props.message);
-        if (this.collectData.CommandWord == 17) {
+        if (
+          this.collectData.CommandWord == 17 &&
+          this.collectData.OverTimeRecords != undefined
+        ) {
           this.getTable();
           this.paging = false;
         }
