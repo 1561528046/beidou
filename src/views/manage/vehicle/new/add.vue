@@ -100,8 +100,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="8" v-if="$props.is_enter!=1">
-            <el-form-item label="接入车辆类型" prop="type">
-              <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type>
+            <el-form-item label="行业类别" prop="type">
+              <!-- <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type> -->
+              <el-select clearable v-model="formData.type" size="small">
+                <el-option value="010" label="道路旅客运输"></el-option>
+                <el-option value="020" label="道路货物运输"></el-option>
+                <el-option value="030" label="道路危险货物运输"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -238,6 +243,15 @@
               <el-input-number v-model.number="formData.axis" :step="1" :min="2" :max="20"></el-input-number>
             </el-form-item>
           </el-col>
+          <!-- <el-col :span="24">
+            <el-form-item label="车辆类型" prop="axis">
+              <el-select size="small">
+                <el-option value="10" label="客车">客车</el-option>
+                <el-option value="20" label="普通货车">普通货车</el-option>
+                <el-option value="40" label="危险品运输车">危险品运输车</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>-->
           <el-col
             :span="24"
             style="height:30px; border-bottom:1px dashed #ddd; margin-bottom:30px;"
@@ -572,7 +586,7 @@ export default {
         ip: "", //车辆接入ip
         port: "", //车辆接入端口
         issue_date: "", //行驶证签发日期
-        type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
+        type: "010", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
         fuel_type: "", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
         license_color: "", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
         owner: "", //车主/业户

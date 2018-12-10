@@ -383,6 +383,9 @@ var dict = {
   get_vehicle_type: function(key) {
     return this.vehicle_type[key] || "--";
   },
+  // category:{
+
+  // },
   vtype: {
     t105: "半挂车",
     t115: "爆破器材运输车",

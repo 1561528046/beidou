@@ -3,7 +3,16 @@
   <div>
     <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="EventHappenTime" label="事件发生时间"></el-table-column>
-      <el-table-column prop="EventType" label="事件类型"></el-table-column>
+      <el-table-column prop="EventType" label="事件类型">
+        <template slot-scope="scope">
+          <label v-if="scope.row.EventType==130">设置车辆类型</label>
+          <label v-if="scope.row.EventType==131">设置记录仪初次安装日期</label>
+          <label v-if="scope.row.EventType==132">设置状态量配置信息</label>
+          <label v-if="scope.row.EventType==194">设置记录仪时间</label>
+          <label v-if="scope.row.EventType==195">设置记录仪脉冲系数</label>
+          <label v-if="scope.row.EventType==196">设置初始里程</label>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="admin-table-pager">
       <el-pagination

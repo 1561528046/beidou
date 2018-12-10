@@ -5,6 +5,21 @@
       <el-table-column prop="StartTime" label="开始时间"></el-table-column>
       <el-table-column prop="average" label="平均速度"></el-table-column>
       <el-table-column prop="signal" label="状态信号"></el-table-column>
+      <el-table-column label="速度">
+        <template slot-scope="scope">
+          <el-popover placement="right" style="height:400px" width="400" trigger="click">
+            <el-table height="300px" :data="Speed">
+              <el-table-column property="Speed" label="速度"></el-table-column>
+            </el-table>
+            <el-button
+              size="small"
+              type="primary"
+              slot="reference"
+              @click="setLocation(scope.row)"
+            >查看更多</el-button>
+          </el-popover>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="admin-table-pager">
       <el-pagination
@@ -31,6 +46,8 @@ export default {
         size: 10
       },
       paging: true,
+      SpeedData: [],
+      Speed: [],
       tableData: [],
       total: 0,
       collectData: {}
@@ -61,21 +78,29 @@ export default {
     }
   },
   methods: {
+    setLocation(data) {
+      this.$set(this.$data, "Speed", this.SpeedData[data.index]);
+    },
     getTable() {
       var UnitMinutesSpeeds = this.collectData.UnitMinutesSpeeds;
-
-      UnitMinutesSpeeds.map(item => {
+      var Data = [];
+      UnitMinutesSpeeds.map((item, index) => {
         var speed = 0;
         var state = 0;
+        var data = [];
         item.SpeedAndStateSignals.map(itca => {
+          data.push({ Speed: itca.AverageSpeed });
           speed = speed + itca.AverageSpeed;
           state = state + itca.StateSignal;
         });
+        item.index = index;
         item.average = (speed / 60).toFixed(2);
         item.signal = (state / 60).toFixed(0);
+        Data.push(data);
       });
       this.$set(this.$data, "tableData", UnitMinutesSpeeds);
       this.$set(this.$data, "total", UnitMinutesSpeeds.length);
+      this.$set(this.$data, "SpeedData", Data);
     },
     // 分页
     handleSizeChange(val) {
