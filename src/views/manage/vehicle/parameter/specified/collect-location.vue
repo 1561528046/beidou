@@ -4,9 +4,24 @@
     <el-table height="500" :data="list" style="width: 100%">
       <el-table-column prop="StartTime" label="开始时间"></el-table-column>
       <el-table-column prop="speed" label="平均速度"></el-table-column>
-      <el-table-column prop="Longitude" label="经度"></el-table-column>
-      <el-table-column prop="Latitude" label="纬度"></el-table-column>
-      <el-table-column prop="Altitude" label="海拔高度"></el-table-column>
+      <el-table-column label="位置信息">
+        <template slot-scope="scope">
+          <el-popover placement="right" style="height:400px" width="400" trigger="click">
+            <el-table height="300px" :data="location">
+              <el-table-column property="Speed" label="速度"></el-table-column>
+              <el-table-column property="Longitude" label="经度"></el-table-column>
+              <el-table-column property="Latitude" label="纬度"></el-table-column>
+              <el-table-column property="Altitude" label="海拔高度"></el-table-column>
+            </el-table>
+            <el-button
+              size="small"
+              type="primary"
+              slot="reference"
+              @click="setLocation(scope.row)"
+            >查看更多</el-button>
+          </el-popover>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="admin-table-pager">
       <el-pagination
@@ -32,6 +47,8 @@ export default {
         page: 1,
         size: 10
       },
+      locationData: [],
+      location: [],
       paging: true,
       total: 0,
       tableData: [],
@@ -63,26 +80,31 @@ export default {
     }
   },
   methods: {
+    setLocation(data) {
+      this.$set(this.$data, "location", this.locationData[data.index]);
+    },
     getTable() {
       var UnitHoursSpeeds = this.collectData.UnitHoursSpeeds;
-      UnitHoursSpeeds.map(item => {
+      var location = [];
+      UnitHoursSpeeds.map((item, index) => {
         var speed = 0;
-        var Altitude = 0;
-        var Latitude = 0;
-        var Longitude = 0;
+        var loca = [];
         item.LocationItems.map((itca, index) => {
           speed = speed + item.AverageSpeed[index];
-          Altitude = Altitude + itca.Altitude;
-          Latitude = Latitude + itca.Latitude;
-          Longitude = Longitude + itca.Longitude;
+          loca.push({
+            Altitude: itca.Altitude,
+            Latitude: itca.Latitude,
+            Longitude: itca.Longitude,
+            Speed: item.AverageSpeed[index]
+          });
         });
+        item.index = index;
         item.speed = (speed / 60).toFixed(2);
-        item.Altitude = (Altitude / 60).toFixed(0);
-        item.Latitude = (Latitude / 60).toFixed(6);
-        item.Longitude = (Longitude / 60).toFixed(6);
+        location.push(loca);
       });
       this.$set(this.$data, "tableData", UnitHoursSpeeds);
       this.$set(this.$data, "total", UnitHoursSpeeds.length);
+      this.$set(this.$data, "locationData", location);
     },
     // 分页
     handleSizeChange(val) {

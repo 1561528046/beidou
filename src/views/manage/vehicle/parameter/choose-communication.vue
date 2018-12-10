@@ -28,17 +28,18 @@
       <el-table-column width="180" prop="O24" label="服务器TCP端口" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column width="180" prop="O25" label="服务器UDP端口" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column width="180" prop="O32" label="位置汇报策略">
-        <template>
+        <template slot-scope="scope">
           <label v-if="scope.row.O32==0">定时汇报</label>
           <label v-if="scope.row.O32==1">定距汇报</label>
           <label v-if="scope.row.O32==2">定时和定距汇报</label>
         </template>
       </el-table-column>
-      <el-table-column width="180" prop="O33" label="位置汇报方案"></el-table-column>
-      <template>
-        <label v-if="scope.row.O33==0">根据ACC状态</label>
-        <label v-if="scope.row.O33==1">根据登录状态和ACC状态</label>
-      </template>
+      <el-table-column width="180" prop="O33" label="位置汇报方案">
+        <template slot-scope="scope">
+          <label v-if="scope.row.O33==0">根据ACC状态</label>
+          <label v-if="scope.row.O33==1">根据登录状态和ACC状态</label>
+        </template>
+      </el-table-column>
     </el-table>
     <el-form label-width="170px" label-position="left" class="table-search" size="small">
       <el-row :gutter="30">

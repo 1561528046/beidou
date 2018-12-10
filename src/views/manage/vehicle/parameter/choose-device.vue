@@ -9,7 +9,7 @@
       <el-table-column prop="O67" label="监控平台SMS电话号码" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column prop="O68" label="接受终端SMS文本报警号码" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column prop="O69" label="终端电话接听策略">
-        <template>
+        <template slot-scope="scope">
           <label v-if="scope.row.O69==0">自动接听</label>
           <label v-if="scope.row.O69==1">ACC(ON 时自动接听,OFF时手动接听)</label>
         </template>
@@ -169,7 +169,7 @@ export default {
       handler: function() {
         this.$set(this.communication, "data", this.$props.message);
         this.communication.data.map(item => {
-          if (item.Ox0040 == undefined) {
+          if (item.O64 == undefined) {
             this.$set(item, "O64", ""),
               this.$set(item, "O65", ""),
               this.$set(item, "O66", ""),
