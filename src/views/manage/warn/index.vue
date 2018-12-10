@@ -190,11 +190,13 @@ export default {
         if (res.data.code == 0) {
           this.$message.success(res.data.msg);
           this.getTable();
-          this.postData.MSG_GNSSCENTERID = this.currentRow.Gnss_Centerid;
-          this.postData.VEHICLE_NO = this.currentRow.Vehicle_No;
-          this.postData.VEHICLE_COLOR = this.currentRow.Vehicle_Color;
-          this.postData.INFO_ID = this.currentRow.Id_Info;
-          this.$instruction.send(JSON.stringify(this.postData));
+          this.currentRow.Gnss_Centerid.split(",").map(item => {
+            this.postData.MSG_GNSSCENTERID = item;
+            this.postData.VEHICLE_NO = this.currentRow.Vehicle_No;
+            this.postData.VEHICLE_COLOR = this.currentRow.Vehicle_Color;
+            this.postData.INFO_ID = this.currentRow.Id_Info;
+            this.$instruction.send(JSON.stringify(this.postData));
+          });
         } else {
           this.$message.warning(res.data.msg);
         }
