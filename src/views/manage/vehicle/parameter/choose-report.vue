@@ -1,16 +1,16 @@
 <template>
   <div>
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
-      <el-table-column fixed prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column fixed prop="license" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column fixed prop="operating" label="操作状态"></el-table-column>
-      <el-table-column width="190" prop="O34" label="休眠时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column width="190" prop="O39" label="休眠时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column width="190" prop="O40" label="紧急报警时汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column width="190" prop="O41" label="紧急报警时汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column width="190" prop="O44" label="缺省时间汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column width="190" prop="O45" label="缺省距离汇报间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column width="190" prop="O46" label="驾驶员未登录汇报时间间隔" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column width="190" prop="O47" label="驾驶员未登录汇报距离间隔" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column width="190" prop="O39" label="休眠时汇报时间间隔"></el-table-column>
+      <el-table-column width="190" prop="O46" label="休眠时汇报距离间隔"></el-table-column>
+      <el-table-column width="190" prop="O40" label="紧急报警时汇报时间间隔"></el-table-column>
+      <el-table-column width="190" prop="O47" label="紧急报警时汇报距离间隔"></el-table-column>
+      <el-table-column width="190" prop="O41" label="缺省时间汇报间隔"></el-table-column>
+      <el-table-column width="190" prop="O44" label="缺省距离汇报间隔"></el-table-column>
+      <el-table-column width="190" prop="O34" label="驾驶员未登录汇报时间间隔"></el-table-column>
+      <el-table-column width="190" prop="O45" label="驾驶员未登录汇报距离间隔"></el-table-column>
     </el-table>
     <el-form label-width="205px" label-position="left" class="table-search" size="small">
       <el-row :gutter="30">

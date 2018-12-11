@@ -103,10 +103,10 @@ export default {
           }
         ],
         sim_id: [
-          { trigger: "blur", validator: this.validateDeviceSimId },
           {
-            pattern: /^\d{11,}$/,
-            message: "SimID最少为11位！"
+            trigger: "blur",
+            validator: this.validateDeviceSimId,
+            required: true
           },
           {
             pattern: /^[0-9a-zA-Z]+$/,
@@ -144,7 +144,7 @@ export default {
     // SIMID验证
     validateDeviceSimId(rule, value, callback) {
       if (value == "") {
-        callback();
+        callback(new Error("请输入SimID"));
         return false;
       }
       existDeviceSimId({ sim_id: value })

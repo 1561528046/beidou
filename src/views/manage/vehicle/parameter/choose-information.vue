@@ -1,34 +1,45 @@
 <template >
   <div>
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
-      <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="license" label="车牌号"></el-table-column>
       <el-table-column prop="operating" label="操作状态"></el-table-column>
-      <el-table-column prop="O129" label="车辆所在的省域ID" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="O130" label="车辆所在的市域ID" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="O132" label="车牌颜色" :formatter="(row)=>{return this.$dict.get_color(JSON.stringify(row.O132))}"> </el-table-column>
-      <el-table-column prop="O131" label="机动车号牌" :formatter="$utils.baseFormatter"> </el-table-column>
-      <el-table-column prop="VIN" label="车辆识别码" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column prop="Plate" label="机动车号牌分类" :formatter="(row)=>{return this.$dict.get_license_species(row.Plate)}"></el-table-column>
+      <el-table-column prop="O129" label="车辆所在的省域ID"></el-table-column>
+      <el-table-column prop="O130" label="车辆所在的市域ID"></el-table-column>
+      <el-table-column
+        prop="O132"
+        label="车牌颜色"
+        :formatter="(row)=>{return this.$dict.get_color(JSON.stringify(row.O132))}"
+      ></el-table-column>
+      <el-table-column prop="O131" label="机动车号牌"></el-table-column>
+      <el-table-column prop="VIN" label="车辆识别码"></el-table-column>
+      <el-table-column
+        prop="Plate"
+        label="机动车号牌分类"
+        :formatter="(row)=>{return this.$dict.get_license_species(row.Plate)}"
+      ></el-table-column>
     </el-table>
     <el-form label-width="130px" label-position="left" class="table-search" size="small">
       <el-row :gutter="30">
         <el-col :span="7">
           <el-form-item label="机动车号牌">
-            <el-input style="width:82%" v-model="communication.Ox0083">
-            </el-input>
+            <el-input style="width:82%" v-model="communication.Ox0083"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="7">
           <el-form-item label="机动车号牌分类">
             <el-select style="width:82%" v-model="communication.Plate">
-              <el-option v-for="(item,index) in this.$dict.license_species" :key="index" :value="index" :label="item">{{item}}</el-option>
+              <el-option
+                v-for="(item,index) in this.$dict.license_species"
+                :key="index"
+                :value="index"
+                :label="item"
+              >{{item}}</el-option>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="7">
           <el-form-item label="车辆识别码(VIN)">
-            <el-input style="width:82%" v-model="communication.VIN">
-            </el-input>
+            <el-input style="width:82%" v-model="communication.VIN"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="3">
@@ -71,7 +82,6 @@
       </el-row>
     </el-form>
   </div>
-
 </template>
 <script>
 import chooseParameter from "@/components/choose-parameter.vue";

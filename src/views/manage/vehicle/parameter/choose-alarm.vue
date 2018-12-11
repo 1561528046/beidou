@@ -1,180 +1,179 @@
 <template>
-    <div>
-        <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
-            <el-table-column fixed prop="license" width="100" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column fixed prop="operating" width="150" label="操作状态"></el-table-column>
-            <!-- <el-table-column width="180" prop="" label="报警设置" :formatter="$utils.baseFormatter"> </el-table-column> -->
-            <el-table-column width="180" prop="O80" label="报警屏蔽字" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O81" label="报警发送文本SMS开关" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O82" label="报警拍摄开关" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O83" label="报警拍摄存储标志" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O84" label="关键标志" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O85" label="最高速度(km/h)" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O86" label="超速持续时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O87" label="连续驾驶时间门限" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O88" label="当天累计驾驶时间门限" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O89" label="最小休息时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O90" label="最长停车时间" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O91" label="超速报警预警差值" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O92" label="疲劳驾驶预警差值" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O93" label="碰撞报警参数设置" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column width="180" prop="O94" label="侧翻报警参数设置" :formatter="$utils.baseFormatter"> </el-table-column>
-        </el-table>
-        <el-form label-width="180px" label-position="left" class="table-search" size="small">
-            <el-row :gutter="30">
-                <el-col :span="8">
-                    <el-form-item label="最高速度(km/h)">
-                        <el-input style="width:60%" v-model="communication.Ox0055">
-                            <template slot="append">
-                                <el-button @click="setup('0x0055')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0055')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="超速持续时间(s)">
-                        <el-input style="width:60%" v-model="communication.Ox0056">
-                            <template slot="append">
-                                <el-button @click="setup('0x0056')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0056')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="连续驾驶时间门限(s)">
-                        <el-input style="width:60%" v-model="communication.Ox0057">
-                            <template slot="append">
-                                <el-button @click="setup('0x0057')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0057')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="当天累计驾驶时间门限(s)">
-                        <el-input style="width:60%" v-model="communication.Ox0058">
-                            <template slot="append">
-                                <el-button @click="setup('0x0058')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0058')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="最小休息时间(s)">
-                        <el-input style="width:60%" v-model="communication.Ox0059">
-                            <template slot="append">
-                                <el-button @click="setup('0x0059')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0059')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="最长停车时间(s)">
-                        <el-input style="width:60%" v-model="communication.Ox005A">
-                            <template slot="append">
-                                <el-button @click="setup('0x005A')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x005A')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="超速报警预警差值">
-                        <el-input style="width:60%;" v-model="communication.Ox005B">
-                            <template slot="append">
-                                <el-button @click="setup('0x005B')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x005B')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="疲劳驾驶预警差值(s)">
-                        <el-input style="width:60%" v-model="communication.Ox005C">
-                            <template slot="append">
-                                <el-button @click="setup('0x005C')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x005C')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="碰撞报警参数设置">
-                        <el-input style="width:60%" v-model="communication.Ox005D">
-                            <template slot="append">
-                                <el-button @click="setup('0x005D')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x005D')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="侧翻报警参数设置">
-                        <el-input style="width:60%" v-model="communication.Ox005E">
-                            <template slot="append">
-                                <el-button @click="setup('0x005E')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x005E')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="报警屏蔽字">
-                        <el-input style="width:60%" v-model="communication.Ox0050">
-                            <template slot="append">
-                                <el-button @click="setup('0x0050')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0050')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="报警发送文本SMS开关">
-                        <el-input style="width:60%" v-model="communication.Ox0051">
-                            <template slot="append">
-                                <el-button @click="setup('0x0051')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0051')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="报警拍摄开关">
-                        <el-input style="width:60%" v-model="communication.Ox0052">
-                            <template slot="append">
-                                <el-button @click="setup('0x0052')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0052')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="报警拍摄存储标志">
-                        <el-input style="width:60%" v-model="communication.Ox0053">
-                            <template slot="append">
-                                <el-button @click="setup('0x0053')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0053')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="关键标志">
-                        <el-input style="width:60%" v-model="communication.Ox0054">
-                            <template slot="append">
-                                <el-button @click="setup('0x0054')">设置</el-button>
-                            </template>
-                        </el-input>
-                        <el-button @click="collect('0x0054')" style="margin-left:31px">采集</el-button>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </el-form>
-    </div>
+  <div>
+    <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
+      <el-table-column fixed prop="license" width="100" label="车牌号"></el-table-column>
+      <el-table-column fixed prop="operating" width="150" label="操作状态"></el-table-column>
+      <el-table-column width="180" prop="O80" label="报警屏蔽字"></el-table-column>
+      <el-table-column width="180" prop="O81" label="报警发送文本SMS开关"></el-table-column>
+      <el-table-column width="180" prop="O82" label="报警拍摄开关"></el-table-column>
+      <el-table-column width="180" prop="O83" label="报警拍摄存储标志"></el-table-column>
+      <el-table-column width="180" prop="O84" label="关键标志"></el-table-column>
+      <el-table-column width="180" prop="O85" label="最高速度(km/h)"></el-table-column>
+      <el-table-column width="180" prop="O86" label="超速持续时间"></el-table-column>
+      <el-table-column width="180" prop="O87" label="连续驾驶时间门限"></el-table-column>
+      <el-table-column width="180" prop="O88" label="当天累计驾驶时间门限"></el-table-column>
+      <el-table-column width="180" prop="O89" label="最小休息时间"></el-table-column>
+      <el-table-column width="180" prop="O90" label="最长停车时间"></el-table-column>
+      <el-table-column width="180" prop="O91" label="超速报警预警差值"></el-table-column>
+      <el-table-column width="180" prop="O92" label="疲劳驾驶预警差值"></el-table-column>
+      <el-table-column width="180" prop="O93" label="碰撞报警参数设置"></el-table-column>
+      <el-table-column width="180" prop="O94" label="侧翻报警参数设置"></el-table-column>
+    </el-table>
+    <el-form label-width="180px" label-position="left" class="table-search" size="small">
+      <el-row :gutter="30">
+        <el-col :span="8">
+          <el-form-item label="最高速度(km/h)">
+            <el-input style="width:60%" v-model="communication.Ox0055">
+              <template slot="append">
+                <el-button @click="setup('0x0055')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0055')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="超速持续时间(s)">
+            <el-input style="width:60%" v-model="communication.Ox0056">
+              <template slot="append">
+                <el-button @click="setup('0x0056')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0056')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="连续驾驶时间门限(s)">
+            <el-input style="width:60%" v-model="communication.Ox0057">
+              <template slot="append">
+                <el-button @click="setup('0x0057')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0057')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="当天累计驾驶时间门限(s)">
+            <el-input style="width:60%" v-model="communication.Ox0058">
+              <template slot="append">
+                <el-button @click="setup('0x0058')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0058')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="最小休息时间(s)">
+            <el-input style="width:60%" v-model="communication.Ox0059">
+              <template slot="append">
+                <el-button @click="setup('0x0059')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0059')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="最长停车时间(s)">
+            <el-input style="width:60%" v-model="communication.Ox005A">
+              <template slot="append">
+                <el-button @click="setup('0x005A')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x005A')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="超速报警预警差值">
+            <el-input style="width:60%;" v-model="communication.Ox005B">
+              <template slot="append">
+                <el-button @click="setup('0x005B')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x005B')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="疲劳驾驶预警差值(s)">
+            <el-input style="width:60%" v-model="communication.Ox005C">
+              <template slot="append">
+                <el-button @click="setup('0x005C')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x005C')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="碰撞报警参数设置">
+            <el-input style="width:60%" v-model="communication.Ox005D">
+              <template slot="append">
+                <el-button @click="setup('0x005D')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x005D')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="侧翻报警参数设置">
+            <el-input style="width:60%" v-model="communication.Ox005E">
+              <template slot="append">
+                <el-button @click="setup('0x005E')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x005E')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="报警屏蔽字">
+            <el-input style="width:60%" v-model="communication.Ox0050">
+              <template slot="append">
+                <el-button @click="setup('0x0050')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0050')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="报警发送文本SMS开关">
+            <el-input style="width:60%" v-model="communication.Ox0051">
+              <template slot="append">
+                <el-button @click="setup('0x0051')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0051')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="报警拍摄开关">
+            <el-input style="width:60%" v-model="communication.Ox0052">
+              <template slot="append">
+                <el-button @click="setup('0x0052')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0052')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="报警拍摄存储标志">
+            <el-input style="width:60%" v-model="communication.Ox0053">
+              <template slot="append">
+                <el-button @click="setup('0x0053')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0053')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="关键标志">
+            <el-input style="width:60%" v-model="communication.Ox0054">
+              <template slot="append">
+                <el-button @click="setup('0x0054')">设置</el-button>
+              </template>
+            </el-input>
+            <el-button @click="collect('0x0054')" style="margin-left:31px">采集</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+  </div>
 </template>
 <script>
 import chooseParameter from "@/components/choose-parameter.vue";

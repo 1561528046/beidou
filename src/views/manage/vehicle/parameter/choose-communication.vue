@@ -1,43 +1,32 @@
 <template>
   <div>
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
-      <el-table-column
-        fixed
-        prop="license"
-        label="车牌号"
-        width="100"
-        :formatter="$utils.baseFormatter"
-      ></el-table-column>
+      <el-table-column fixed prop="license" label="车牌号" width="100"></el-table-column>
       <el-table-column fixed prop="operating" label="操作状态" width="150"></el-table-column>
-      <el-table-column width="180" prop="O1" label="终端心跳发送间隔" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O2" label="TCP消息应答超时时间" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O3" label="TCP消息重传次数" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O4" label="UDP消息应答超时时间" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O5" label="UDP消息重传次数" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O6" label="SMS消息应答超时时间" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O7" label="SMS消息重传次数" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O16" label="主服务器APN" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O19" label="备份服务器APN" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O20" label="主服务器地址IP或域名" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column
-        width="180"
-        prop="O23"
-        label="备份服务器地址IP或域名"
-        :formatter="$utils.baseFormatter"
-      ></el-table-column>
-      <el-table-column width="180" prop="O24" label="服务器TCP端口" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column width="180" prop="O25" label="服务器UDP端口" :formatter="$utils.baseFormatter"></el-table-column>
+      <el-table-column width="180" prop="O1" label="终端心跳发送间隔"></el-table-column>
+      <el-table-column width="180" prop="O2" label="TCP消息应答超时时间"></el-table-column>
+      <el-table-column width="180" prop="O3" label="TCP消息重传次数"></el-table-column>
+      <el-table-column width="180" prop="O4" label="UDP消息应答超时时间"></el-table-column>
+      <el-table-column width="180" prop="O5" label="UDP消息重传次数"></el-table-column>
+      <el-table-column width="180" prop="O6" label="SMS消息应答超时时间"></el-table-column>
+      <el-table-column width="180" prop="O7" label="SMS消息重传次数"></el-table-column>
+      <el-table-column width="180" prop="O16" label="主服务器APN"></el-table-column>
+      <el-table-column width="180" prop="O20" label="备份服务器APN"></el-table-column>
+      <el-table-column width="180" prop="O19" label="主服务器地址IP或域名"></el-table-column>
+      <el-table-column width="180" prop="O23" label="备份服务器地址IP或域名"></el-table-column>
+      <el-table-column width="180" prop="O24" label="服务器TCP端口"></el-table-column>
+      <el-table-column width="180" prop="O25" label="服务器UDP端口"></el-table-column>
       <el-table-column width="180" prop="O32" label="位置汇报策略">
         <template slot-scope="scope">
-          <label v-if="scope.row.O32==0">定时汇报</label>
-          <label v-if="scope.row.O32==1">定距汇报</label>
-          <label v-if="scope.row.O32==2">定时和定距汇报</label>
+          <label v-if="scope.row.O32===0">定时汇报</label>
+          <label v-if="scope.row.O32===1">定距汇报</label>
+          <label v-if="scope.row.O32===2">定时和定距汇报</label>
         </template>
       </el-table-column>
       <el-table-column width="180" prop="O33" label="位置汇报方案">
         <template slot-scope="scope">
-          <label v-if="scope.row.O33==0">根据ACC状态</label>
-          <label v-if="scope.row.O33==1">根据登录状态和ACC状态</label>
+          <label v-if="scope.row.O33===0">根据ACC状态</label>
+          <label v-if="scope.row.O33===1">根据登录状态和ACC状态</label>
         </template>
       </el-table-column>
     </el-table>

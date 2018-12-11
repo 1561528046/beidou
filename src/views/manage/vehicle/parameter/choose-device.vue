@@ -3,21 +3,21 @@
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
       <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column prop="operating" label="操作状态"></el-table-column>
-      <el-table-column prop="O64" label="监控平台电话号码" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column prop="O65" label="复位电话号码" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column prop="O66" label="恢复出厂设置电话号码" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column prop="O67" label="监控平台SMS电话号码" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column prop="O68" label="接受终端SMS文本报警号码" :formatter="$utils.baseFormatter"></el-table-column>
+      <el-table-column prop="O64" label="监控平台电话号码"></el-table-column>
+      <el-table-column prop="O65" label="复位电话号码"></el-table-column>
+      <el-table-column prop="O66" label="恢复出厂设置电话号码"></el-table-column>
+      <el-table-column prop="O67" label="监控平台SMS电话号码"></el-table-column>
+      <el-table-column prop="O68" label="接受终端SMS文本报警号码"></el-table-column>
       <el-table-column prop="O69" label="终端电话接听策略">
         <template slot-scope="scope">
-          <label v-if="scope.row.O69==0">自动接听</label>
-          <label v-if="scope.row.O69==1">ACC(ON 时自动接听,OFF时手动接听)</label>
+          <label v-if="scope.row.O69===0">自动接听</label>
+          <label v-if="scope.row.O69===1">ACC(ON 时自动接听,OFF时手动接听)</label>
         </template>
       </el-table-column>
-      <el-table-column prop="O70" label="每次最长通话时间" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column prop="O71" label="当月最长通话时间" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column prop="O72" label="监听电话号码" :formatter="$utils.baseFormatter"></el-table-column>
-      <el-table-column prop="O73" label="监管平台特权短信号码" :formatter="$utils.baseFormatter"></el-table-column>
+      <el-table-column prop="O70" label="每次最长通话时间"></el-table-column>
+      <el-table-column prop="O71" label="当月最长通话时间"></el-table-column>
+      <el-table-column prop="O72" label="监听电话号码"></el-table-column>
+      <el-table-column prop="O73" label="监管平台特权短信号码"></el-table-column>
     </el-table>
     <el-form label-width="180px" label-position="left" class="table-search" size="small">
       <el-row :gutter="30">
