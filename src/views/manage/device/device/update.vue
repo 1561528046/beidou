@@ -115,8 +115,8 @@ export default {
         sim_id: [
           { trigger: "blur", validator: this.validateDeviceSimId },
           {
-            pattern: /^\d{11,}$/,
-            message: "SimID最少为11位！"
+            pattern: /^.{11}$/,
+            message: "SimID只能为11位！"
           },
           {
             pattern: /^[0-9a-zA-Z]+$/,

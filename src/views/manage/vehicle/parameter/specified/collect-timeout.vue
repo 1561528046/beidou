@@ -5,12 +5,30 @@
       <el-table-column prop="LicenseNo" label="机动车驾驶证号码"></el-table-column>
       <el-table-column prop="StartTime" label="连续驾驶开始时间"></el-table-column>
       <el-table-column prop="EndTime" label="连续驾驶结束时间"></el-table-column>
-      <el-table-column prop="StartLocationItems.Longitude" label="连续驾驶开始时间所在的最近一次有效经度"></el-table-column>
-      <el-table-column prop="StartLocationItems.Latitude" label="连续驾驶开始时间所在的最近一次有效纬度"></el-table-column>
-      <el-table-column prop="StartLocationItems.Altitude" label="连续驾驶开始时间所在的最近一次有效海拔高度"></el-table-column>
-      <el-table-column prop="EndLocationItems.Longitude" label="连续驾驶结束时间所在的最近一次有效经度"></el-table-column>
-      <el-table-column prop="EndLocationItems.Latitude" label="连续驾驶结束时间所在的最近一次有效纬度"></el-table-column>
-      <el-table-column prop="EndLocationItems.Altitude" label="连续驾驶开始时间所在的最近一次有效海拔高度"></el-table-column>
+      <el-table-column label="连续驾驶开始时间所在的位置信息">
+        <template slot-scope="scope">
+          <el-popover placement="right" style="height:400px" width="400" trigger="click">
+            <el-table height="300px" :data="scope.row.StartLocationItems">
+              <el-table-column prop="Longitude" label="经度"></el-table-column>
+              <el-table-column prop="Latitude" label="纬度"></el-table-column>
+              <el-table-column prop="Altitude" label="海拔高度"></el-table-column>
+            </el-table>
+            <el-button size="small" type="primary" slot="reference">查看更多</el-button>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column label="连续驾驶结束时间所在的位置信息">
+        <template slot-scope="scope">
+          <el-popover placement="right" style="height:400px" width="400" trigger="click">
+            <el-table height="300px" :data="scope.row.EndLocationItems">
+              <el-table-column prop="Longitude" label="经度"></el-table-column>
+              <el-table-column prop="Latitude" label="纬度"></el-table-column>
+              <el-table-column prop="Altitude" label="海拔高度"></el-table-column>
+            </el-table>
+            <el-button size="small" type="primary" slot="reference">查看更多</el-button>
+          </el-popover>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="admin-table-pager">
       <el-pagination

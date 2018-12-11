@@ -1,8 +1,18 @@
 <template slot-scope="scope">
-  <el-select v-model="company_id" placeholder="请选择" filterable no-match-text=" " :clearable="clearable">
+  <el-select
+    v-model="company_id"
+    placeholder="请选择"
+    filterable
+    no-match-text=" "
+    :clearable="clearable"
+  >
     <template slot-scope="scope">
-      <el-option v-for="item in list" :key="item.company_id" :label="item.company_name" :value="item.company_id">
-      </el-option>
+      <el-option
+        v-for="item in list"
+        :key="item.company_id"
+        :label="item.company_name"
+        :value="item.company_id"
+      ></el-option>
     </template>
   </el-select>
 </template>

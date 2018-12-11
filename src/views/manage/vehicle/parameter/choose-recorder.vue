@@ -1,7 +1,7 @@
 <template>
   <div style="width:100%;">
     <el-table height="300" :data="communication.data" style="width:100%" class="admin-table-list">
-      <el-table-column fixed prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column fixed prop="license" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column fixed prop="operating" label="操作状态"></el-table-column>
     </el-table>
     <div style="width:50%;float:left">
@@ -13,7 +13,6 @@
           <el-option value="02H" label="记录仪实时时间">记录仪实时时间</el-option>
           <el-option value="03H" label="累计行驶里程">累计行驶里程</el-option>
           <el-option value="04H" label="记录仪脉冲系数">记录仪脉冲系数</el-option>
-          <!-- <el-option value="06H" label="状态信号配置信息">状态信号配置信息</el-option> -->
           <el-option value="07H" label="唯一性编号">唯一性编号</el-option>
         </el-select>
         <el-button size="small" @click="collect" type="primary" style="margin-left:20px;">采集</el-button>
@@ -25,7 +24,6 @@
         <label style="display:inline-block;width:82px;">设置类型：</label>
         <el-select style="width:59%;" v-model="set_type" size="small">
           <el-option value="83H" label="记录仪初次安装日期">记录仪初次安装日期</el-option>
-          <!-- <el-option value="84H" label="状态量配置信息">状态量配置信息</el-option> -->
           <el-option value="C2H" label="记录仪时间">记录仪时间</el-option>
           <el-option value="C3H" label="记录仪脉冲系数">记录仪脉冲系数</el-option>
           <el-option value="C4H" label="初始里程">初始里程</el-option>

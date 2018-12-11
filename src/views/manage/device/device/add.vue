@@ -111,6 +111,10 @@ export default {
           {
             pattern: /^[0-9a-zA-Z]+$/,
             message: "只能输入字母和数字！"
+          },
+          {
+            pattern: /^.{11}$/,
+            message: "SimID只能为11位"
           }
         ]
       }
