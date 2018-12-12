@@ -433,7 +433,7 @@ export default {
         //创建809上级平台字典
         GetServerByPage({
           title: "",
-          flag: 808,
+          flag: 809,
           size: 100,
           page: 1
         }).then(res => {

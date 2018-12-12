@@ -1,5 +1,12 @@
 <template>
-  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+  <el-form
+    status-icon
+    :rules="rules"
+    :model="formData"
+    size="small"
+    ref="baseForm"
+    class="msg-form"
+  >
     <!-- 设备信息 -->
     <el-row :gutter="30">
       <el-col :span="12">
