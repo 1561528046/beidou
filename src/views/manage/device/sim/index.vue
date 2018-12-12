@@ -105,12 +105,12 @@
             </el-dropdown-item>
             <el-dropdown-item style="padding:2px 15px;">
               <a
-                href="/static/SIM卡导入模板.xlsx"
+                href="/static/SIM卡导入模版.xlsx"
                 download
                 target="_blank"
                 type="primary "
                 class="el-button el-button--small el-button--primary"
-                style=" display: block;"
+                style=" display:block;"
               >
                 <i class="el-icon-download"></i> 模版下载
               </a>
