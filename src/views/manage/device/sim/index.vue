@@ -1,12 +1,28 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small" @submit.native.prevent>
+      <el-form
+        :model="tableQuery"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        size="small"
+        @submit.native.prevent
+      >
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="添加时间" label-width="82px">
-              <el-date-picker value-format="yyyyMMdd" v-model="dateRange" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
-              </el-date-picker>
+              <el-date-picker
+                value-format="yyyyMMdd"
+                v-model="dateRange"
+                type="daterange"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions2"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -26,15 +42,27 @@
           </el-col>
           <el-col :span="6" v-if="isCollapse">
             <el-form-item label="分配用户">
-              <el-autocomplete style="width: 100%;" class="inline-input" v-model="tableQuery.real_name" :fetch-suggestions="realNameQuerySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="realNameHandleSelect">
-              </el-autocomplete>
+              <el-autocomplete
+                style="width: 100%;"
+                class="inline-input"
+                v-model="tableQuery.real_name"
+                :fetch-suggestions="realNameQuerySearch"
+                placeholder="请输入内容"
+                :trigger-on-focus="false"
+                @select="realNameHandleSelect"
+              ></el-autocomplete>
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?18:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-              <el-button type="primary" @click="getTable" native-type="submit" :loading="tableLoading">查询</el-button>
+              <el-button
+                type="primary"
+                @click="getTable"
+                native-type="submit"
+                :loading="tableLoading"
+              >查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -60,45 +88,109 @@
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item style="padding:2px 15px;">
-              <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
-                                    application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " class="o-el-upload--text">
-                <el-button size="small" icon="el-icon-upload2" type="primary" style="display: block;width:100%;">点击上传</el-button>
+              <el-upload
+                action="medium "
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                :show-file-list="false "
+                :http-request="uploadFunc "
+                class="o-el-upload--text"
+              >
+                <el-button
+                  size="small"
+                  icon="el-icon-upload2"
+                  type="primary"
+                  style="display: block;width:100%;"
+                >点击上传</el-button>
               </el-upload>
             </el-dropdown-item>
             <el-dropdown-item style="padding:2px 15px;">
-              <a href="/static/SIM卡导入模板.xls" download target="_blank" type="primary " class="el-button el-button--small el-button--primary" style=" display: block;">
+              <a
+                href="/static/SIM卡导入模板.xlsx"
+                download
+                target="_blank"
+                type="primary "
+                class="el-button el-button--small el-button--primary"
+                style=" display: block;"
+              >
                 <i class="el-icon-download"></i> 模版下载
               </a>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <el-table :data="tableData.data " v-loading="tableLoading " style="width: 100% " class="admin-table-list">
-        <el-table-column prop="time " label="添加时间 " :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
-        <el-table-column prop="icc_id" label="ICCID" :formatter="$utils.baseFormatter">
-        </el-table-column>
-        <el-table-column prop="sim_no" label="Sim卡号" :formatter="$utils.baseFormatter">
-        </el-table-column>
-        <el-table-column prop="belong" label="所属运营商" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table
+        :data="tableData.data "
+        v-loading="tableLoading "
+        style="width: 100% "
+        class="admin-table-list"
+      >
+        <el-table-column
+          prop="time "
+          label="添加时间 "
+          :formatter="(row)=>{return this.$utils.formatDate(row.time)}"
+        ></el-table-column>
+        <el-table-column prop="icc_id" label="ICCID" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="sim_no" label="Sim卡号" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="belong" label="所属运营商" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="real_name" label="分配用户" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="state" label="当前状态" :formatter="(row)=>{return this.$dict.get_sim_state(row.state)}"></el-table-column>
+        <el-table-column
+          prop="state"
+          label="当前状态"
+          :formatter="(row)=>{return this.$dict.get_sim_state(row.state)}"
+        ></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit" v-rights="2-3-3">编辑</el-button>
+            <el-button
+              size="small"
+              @click="updateForm(scope)"
+              type="primary"
+              icon="el-icon-edit"
+              v-rights="2-3-3"
+            >编辑</el-button>
             <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="2-3-2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="tableQuery.page"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="tableQuery.size"
+          :total="tableData.total"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+        ></el-pagination>
       </div>
     </el-card>
-    <el-dialog width="29%" title="添加" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
+    <el-dialog
+      width="29%"
+      title="添加"
+      :visible.sync="addDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
       <add-sim @success=" ()=> {this.getTable();this.addDialog = false;}" :key="addKey"></add-sim>
     </el-dialog>
-    <el-dialog width="29%" title="编辑" :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <update-sim :sim_no="updateId" @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId=''}" :key="addKey"></update-sim>
+    <el-dialog
+      width="29%"
+      title="编辑"
+      :visible.sync="updateDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
+      <update-sim
+        :sim_no="updateId"
+        @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId=''}"
+        :key="addKey"
+      ></update-sim>
     </el-dialog>
   </div>
 </template>

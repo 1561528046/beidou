@@ -119,9 +119,33 @@
         <el-button style="margin-left:10px" type="primary" @click="exportExcel" size="small">
           <i class="el-icon-download"></i> 导出
         </el-button>
-        <el-button style="margin-left:10px" type="primary" @click="openUpload" size="small">
-          <i class="el-icon-download"></i> 导入
-        </el-button>&nbsp;
+
+        <el-dropdown v-rights="2-1-5">
+          <el-button size="small" style="margin-left: 15px;" type="primary">
+            批量上传
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item style="padding:2px 15px;">
+              <el-button style="margin-left:10px" type="primary" @click="openUpload" size="small">
+                <i class="el-icon-download"></i> 点击上传
+              </el-button>
+            </el-dropdown-item>
+            <el-dropdown-item style="padding:2px 20px;">
+              <a
+                href="/static/车辆导入模板.xlsx"
+                download
+                target="_blank"
+                type="primary "
+                class="el-button el-button--small el-button--primary"
+                style=" display:block;margin-left:4px;"
+              >
+                <i class="el-icon-download"></i> 模版下载
+              </a>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+
         <!-- <el-button type="primary" size="small" v-if="$props.state==2">
           <i class="el-icon-tickets"></i> 单车导入
         </el-button>

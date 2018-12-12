@@ -1,12 +1,28 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" size="small" @submit.native.prevent>
+      <el-form
+        :model="tableQuery"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        size="small"
+        @submit.native.prevent
+      >
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="添加时间">
-              <el-date-picker value-format="yyyyMMdd" v-model="dateRange" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2">
-              </el-date-picker>
+              <el-date-picker
+                value-format="yyyyMMdd"
+                v-model="dateRange"
+                type="daterange"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions2"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -38,7 +54,12 @@
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-              <el-button type="primary" native-type="submit" @click="getTable" :loading="tableLoading">查询</el-button>
+              <el-button
+                type="primary"
+                native-type="submit"
+                @click="getTable"
+                :loading="tableLoading"
+              >查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -64,71 +85,204 @@
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item style="padding:2px 15px;">
-              <el-button size="small" icon="el-icon-upload2" type="primary" style="display: block;width:100%;" @click="openUpload">点击上传</el-button>
+              <el-button
+                size="small"
+                icon="el-icon-upload2"
+                type="primary"
+                style="display: block;width:100%;"
+                @click="openUpload"
+              >点击上传</el-button>
               <!-- <el-upload action="medium " accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
                             application/vnd.ms-excel " :show-file-list="false " :http-request="uploadFunc " class="o-el-upload--text">
                 <el-button size="small" icon="el-icon-upload2" type="primary" style="display: block;width:100%;">点击上传</el-button>
-              </el-upload> -->
+              </el-upload>-->
             </el-dropdown-item>
             <el-dropdown-item style="padding:2px 15px;">
-              <a href="/static/设备导入模板.xls" download target="_blank" type="primary " class="el-button el-button--small el-button--primary" style=" display: block;">
+              <a
+                href="/static/设备导入模板.xlsx"
+                download
+                target="_blank"
+                type="primary "
+                class="el-button el-button--small el-button--primary"
+                style=" display: block;"
+              >
                 <i class="el-icon-download"></i> 模版下载
               </a>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="time" label="添加时间" :formatter="(row)=>{return this.$utils.formatDate(row.time)}"></el-table-column>
-        <el-table-column prop="device_type" label="终端类型" :formatter="(row)=>{return this.$dict.get_device_type(row.device_type)}">
-        </el-table-column>
-        <el-table-column prop="company_name" label="终端厂商" :formatter="$utils.baseFormatter" show-overflow-tooltip></el-table-column>
+      <el-table
+        :data="tableData.data"
+        v-loading="tableLoading"
+        style="width: 100%"
+        class="admin-table-list"
+      >
+        <el-table-column
+          prop="time"
+          label="添加时间"
+          :formatter="(row)=>{return this.$utils.formatDate(row.time)}"
+        ></el-table-column>
+        <el-table-column
+          prop="device_type"
+          label="终端类型"
+          :formatter="(row)=>{return this.$dict.get_device_type(row.device_type)}"
+        ></el-table-column>
+        <el-table-column
+          prop="company_name"
+          label="终端厂商"
+          :formatter="$utils.baseFormatter"
+          show-overflow-tooltip
+        ></el-table-column>
         <el-table-column prop="device_no" label="终端ID"></el-table-column>
         <el-table-column prop="sim_id" label="SIM ID" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="protocol_type" label="协议类型" :formatter="(row)=>{return this.$dict.get_protocol_type(row.protocol_type)}">
-        </el-table-column>
-        <el-table-column prop="real_name" label="分配用户" :formatter="$utils.baseFormatter">
-        </el-table-column>
-        <el-table-column prop="state" label="状态" :formatter="(row)=>{return this.$dict.get_device_state(row.state)}"></el-table-column>
+        <el-table-column
+          prop="protocol_type"
+          label="协议类型"
+          :formatter="(row)=>{return this.$dict.get_protocol_type(row.protocol_type)}"
+        ></el-table-column>
+        <el-table-column prop="real_name" label="分配用户" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="state"
+          label="状态"
+          :formatter="(row)=>{return this.$dict.get_device_state(row.state)}"
+        ></el-table-column>
         <el-table-column label="操作" width="400">
           <template slot-scope="scope">
-            <el-button size="small" type="primary" :disabled="scope.row.editDisabled" @click="updateForm(scope)" icon="el-icon-edit" v-rights="2-1-3">编辑</el-button>
+            <el-button
+              size="small"
+              type="primary"
+              :disabled="scope.row.editDisabled"
+              @click="updateForm(scope)"
+              icon="el-icon-edit"
+              v-rights="2-1-3"
+            >编辑</el-button>
             <el-dropdown>
-              <el-button :disabled="scope.row.deviceDisabled" size="small" style="margin-left: 15px;margin-right:15px;" type="primary" v-rights="2-2-1">
+              <el-button
+                :disabled="scope.row.deviceDisabled"
+                size="small"
+                style="margin-left: 15px;margin-right:15px;"
+                type="primary"
+                v-rights="2-2-1"
+              >
                 设备管理
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item style="padding:2px 15px;">
-                  <el-button size="small" type="danger" :disabled="scope.row.repairDisabled" style="display: block;width:100%;" @click="repair_addFrom(scope)">设备维修</el-button>
+                  <el-button
+                    size="small"
+                    type="danger"
+                    :disabled="scope.row.repairDisabled"
+                    style="display: block;width:100%;"
+                    @click="repair_addFrom(scope)"
+                  >设备维修</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item style="padding:2px 15px;">
-                  <el-button size="small" type="info" :disabled="scope.row.scrapDisabled" style="display: block;width:100%;" @click="scrap_addFrom(scope)">设备报废</el-button>
+                  <el-button
+                    size="small"
+                    type="info"
+                    :disabled="scope.row.scrapDisabled"
+                    style="display: block;width:100%;"
+                    @click="scrap_addFrom(scope)"
+                  >设备报废</el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <el-button size="small" @click="delRow(scope)" icon="el-icon-delete" :disabled="scope.row.delDisabled" v-rights="2-1-2">删除</el-button>
+            <el-button
+              size="small"
+              @click="delRow(scope)"
+              icon="el-icon-delete"
+              :disabled="scope.row.delDisabled"
+              v-rights="2-1-2"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="tableQuery.page"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="tableQuery.size"
+          :total="tableData.total"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+        ></el-pagination>
       </div>
     </el-card>
-    <el-dialog title="添加" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
-      <add-device :parent_id="parent_id" @success=" () => {this.getTable();this.addDialog = false;}" :key="addKey"></add-device>
+    <el-dialog
+      title="添加"
+      :visible.sync="addDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <add-device
+        :parent_id="parent_id"
+        @success=" () => {this.getTable();this.addDialog = false;}"
+        :key="addKey"
+      ></add-device>
     </el-dialog>
-    <el-dialog title="编辑 " :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <update-device :device_id="updateId " @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId = '';}" :key="addKey"></update-device>
+    <el-dialog
+      title="编辑 "
+      :visible.sync="updateDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
+      <update-device
+        :device_id="updateId "
+        @success=" ()=> {this.getTable();this.updateDialog = false;this.updateId = '';}"
+        :key="addKey"
+      ></update-device>
     </el-dialog>
-    <el-dialog title="添加维修设备信息" :visible.sync="repairDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <repair-add :device_id="repairId " @success=" ()=> {this.getTable();this.repairDialog = false;this.repairId = '';}" :key="addKey"></repair-add>
+    <el-dialog
+      title="添加维修设备信息"
+      :visible.sync="repairDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
+      <repair-add
+        :device_id="repairId "
+        @success=" ()=> {this.getTable();this.repairDialog = false;this.repairId = '';}"
+        :key="addKey"
+      ></repair-add>
     </el-dialog>
-    <el-dialog width="30%" title="添加报废设备信息" :visible.sync="scrapDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <scrap-add :device_id="scrapId " @success=" ()=> {this.getTable();this.scrapDialog = false;this.scrapId = '';}" :key="addKey"></scrap-add>
+    <el-dialog
+      width="30%"
+      title="添加报废设备信息"
+      :visible.sync="scrapDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
+      <scrap-add
+        :device_id="scrapId "
+        @success=" ()=> {this.getTable();this.scrapDialog = false;this.scrapId = '';}"
+        :key="addKey"
+      ></scrap-add>
     </el-dialog>
-    <el-dialog width="21%" title="上传" :visible.sync="uploadDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
+    <el-dialog
+      width="21%"
+      title="上传"
+      :visible.sync="uploadDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
       <device-upload @success=" ()=> {this.getTable();this.uploadDialog = false;}" :key="addKey"></device-upload>
     </el-dialog>
   </div>
