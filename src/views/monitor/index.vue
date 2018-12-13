@@ -509,7 +509,7 @@ export default {
         vm.$instruction.on("x1004", evt => {
           //主链路关闭
           var data = JSON.parse(evt.data);
-          var name = this.dict.gnssCenter.get(data.MSG_GNSSCENTERID) || "";
+          var name = this.dict.gnssCenter.get(JSON.stringify(data.MSG_GNSSCENTERID)) || "";
           vm.$notify({
             title: "链路通知",
             message: name + "主链路关闭",
@@ -519,7 +519,7 @@ export default {
         vm.$instruction.on("x9007", evt => {
           //主链路关闭
           var data = JSON.parse(evt.data);
-          var name = this.dict.gnssCenter.get(data.MSG_GNSSCENTERID) || "";
+          var name = this.dict.gnssCenter.get(JSON.stringify(data.MSG_GNSSCENTERID)) || "";
           vm.$notify({
             title: "链路通知",
             message: name + "从链路关闭",
@@ -529,7 +529,7 @@ export default {
         vm.$instruction.on("x9008", evt => {
           //主链路关闭
           var data = JSON.parse(evt.data);
-          var name = this.dict.gnssCenter.get(data.MSG_GNSSCENTERID) || "";
+          var name = this.dict.gnssCenter.get(JSON.stringify(data.MSG_GNSSCENTERID)) || "";
           vm.$notify({
             title: "链路通知",
             message: name + "主从连路即将关闭",
