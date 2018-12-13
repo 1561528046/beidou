@@ -70,12 +70,12 @@
           </el-form-item>
         </el-col>
         <el-col v-if="areaType" :span="24">
-          <el-form-item label="最高速度(km/h)">
+          <el-form-item v-if="limit_type" label="最高速度(km/h)">
             <el-input v-model="tableQuery.MaxSpeed" style="width:20%;" size="small"></el-input>
           </el-form-item>
         </el-col>
         <el-col v-if="areaType" :span="24">
-          <el-form-item label="超速持续时间(秒)">
+          <el-form-item v-if="limit_type" label="超速持续时间(秒)">
             <el-input v-model="tableQuery.OverSpeedLastTime" style="width:20%;" size="small"></el-input>
           </el-form-item>
         </el-col>
@@ -200,6 +200,7 @@ export default {
   computed: {},
   data() {
     return {
+      limit_type: false,
       area_attribute: {
         according_time: false, //根据时间
         speed_limit: false, //限速
@@ -263,6 +264,16 @@ export default {
       },
       deep: true
     },
+    area_attribute: {
+      handler: function() {
+        if (this.area_attribute.speed_limit) {
+          this.limit_type = true;
+        } else {
+          this.limit_type = false;
+        }
+      },
+      deep: true
+    },
     areaName: function() {
       this.formData.RegionName = this.areaName;
       GetRegionByPage(this.formData).then(res => {
@@ -286,6 +297,7 @@ export default {
   },
   methods: {
     setting() {
+      area_attribute.speed_limit;
       var num = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       if (this.area_attribute.according_time) {
         num[15] = 1;

@@ -127,6 +127,13 @@ export default {
     },
     // 添加分段限速信息
     sendInstruction() {
+      if (this.limit_road.length == 0) {
+        return this.$notify({
+          message: "请选择限速路段",
+          title: "提示",
+          type: "error"
+        });
+      }
       var turnPoints = [];
       var location = null;
       this.limit_road.map(item => {
