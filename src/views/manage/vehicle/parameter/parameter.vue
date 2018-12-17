@@ -2,30 +2,68 @@
   <div class="admin-table-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
     <el-card shadow="always" style="height:100%;" class="full-box">
       <div class="bind-box" style="height:100%;">
-        <el-tabs style=" width: 100%;position: relative; background-color:#fff;" type="border-card" @tab-click="handleClick">
+        <el-tabs
+          style=" width: 100%;position: relative; background-color:#fff;"
+          type="border-card"
+          @tab-click="handleClick"
+        >
           <el-tab-pane label="通讯设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-communication :respond="respond" :message="communication" @instruction="instruction" @setting="setting"></choose-communication>
+            <choose-communication
+              :respond="respond"
+              :message="communication"
+              @instruction="instruction"
+              @setting="setting"
+            ></choose-communication>
           </el-tab-pane>
           <el-tab-pane label="车辆信息设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-information :respond="respond" :message="information" @instruction="instruction" @setting="setting"></choose-information>
+            <choose-information
+              :respond="respond"
+              :message="information"
+              @instruction="instruction"
+              @setting="setting"
+            ></choose-information>
           </el-tab-pane>
           <el-tab-pane label="行车报警设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-alarm :respond="respond" :message="alarm" @instruction="instruction" @setting="setting"></choose-alarm>
+            <choose-alarm
+              :respond="respond"
+              :message="alarm"
+              @instruction="instruction"
+              @setting="setting"
+            ></choose-alarm>
           </el-tab-pane>
           <el-tab-pane label="终端上报时间间隔设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-report :respond="respond" :message="report" @instruction="instruction" @setting="setting"></choose-report>
+            <choose-report
+              :respond="respond"
+              :message="report"
+              @instruction="instruction"
+              @setting="setting"
+            ></choose-report>
           </el-tab-pane>
           <el-tab-pane label="终端通话设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-device :respond="respond" :message="device" @instruction="instruction" @setting="setting"></choose-device>
+            <choose-device
+              :respond="respond"
+              :message="device"
+              @instruction="instruction"
+              @setting="setting"
+            ></choose-device>
           </el-tab-pane>
           <el-tab-pane label="拍照设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-picture :respond="respond" :message="picture" @instruction="instruction" @setting="setting"></choose-picture>
+            <choose-picture
+              :respond="respond"
+              :message="picture"
+              @instruction="instruction"
+              @setting="setting"
+            ></choose-picture>
+          </el-tab-pane>
+          <el-tab-pane label="终端参数设置">
+            <select-vehicle @choose="selectVehicle"></select-vehicle>
+            <choose-fill :respond="respond" :message="fill"></choose-fill>
           </el-tab-pane>
           <el-tab-pane label="事件设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
@@ -69,6 +107,7 @@ import chooseEvent from "./choose-event.vue";
 import chooseDemand from "./choose-demand.vue";
 import chooseCollect from "./choose-collect.vue";
 import chooseRecorder from "./choose-recorder.vue";
+import chooseFill from "./choose-fill.vue";
 export default {
   components: {
     selectVehicle,
@@ -83,7 +122,8 @@ export default {
     chooseEvent,
     chooseDemand,
     chooseCollect,
-    chooseRecorder
+    chooseRecorder,
+    chooseFill
   },
   created() {
     this.$instruction.on("x8106", eve => {
@@ -128,6 +168,7 @@ export default {
       other: [],
       specified: [],
       recorder: [],
+      fill: [],
       tableLoading: true
     };
   },
@@ -198,6 +239,8 @@ export default {
         this.specified = scope;
       } else if (this.parameter_type == 11) {
         this.recorder = scope;
+      } else if (this.parameter_type == 12) {
+        this.fill = scope;
       }
     },
     vehicleClick() {
@@ -234,6 +277,8 @@ export default {
         this.parameter_type = 10;
       } else if (tab.label == "行车记录仪") {
         this.parameter_type = 11;
+      } else if (tab.label == "终端参数设置") {
+        this.parameter_type = 12;
       }
     },
     getTable() {
