@@ -251,6 +251,9 @@ function x0200(buffer) {
             time: (buffer[i + 6] << 8) + buffer[i + 7],
             type: buffer[i + 8]
           };
+          if (!result.runTimeAlarm.routeID) {
+            result.runTimeAlarm = {};
+          }
           break;
         case 0x25:
           result.vehicleSignal =

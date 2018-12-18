@@ -297,7 +297,6 @@ export default {
   },
   methods: {
     setting() {
-      area_attribute.speed_limit;
       var num = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       if (this.area_attribute.according_time) {
         num[15] = 1;

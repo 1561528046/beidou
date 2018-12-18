@@ -1,9 +1,9 @@
 <template>
   <el-form ref="form" :model="form" label-width="140px" @submit.native.prevent>
     <el-form-item label="时间间隔">
-      <el-input-number :min="1" v-model="form.TimeInterval"></el-input-number>
+      <el-input-number :min="0" v-model="form.TimeInterval"></el-input-number>
     </el-form-item>
-    <el-form-item label="位置跟踪有效期">
+    <el-form-item v-if="form.TimeInterval!=0" label="位置跟踪有效期">
       <el-input-number :min="1" v-model="form.TrackExpire"></el-input-number>
     </el-form-item>
 

@@ -58,6 +58,17 @@
           >时速：{{Number(mapData.vehicle.speed1|| mapData.vehicle.speed).toFixed(2) ||"--"}} km/h</el-col>
           <el-col :span="12">里程：{{(mapData.vehicle.mileage/10).toFixed(2)||"--"}} km</el-col>
           <el-col :span="24">地理位置：{{mapData.vehicleAddress||"--"}}</el-col>
+          <el-col>超速报警附加信息</el-col>
+          <el-col :span="12">位置类型：{{mapData.vehicle.overSpeedPositionType||"--"}}</el-col>
+          <el-col :span="12">区域或路段ID：{{mapData.vehicle.overSpeedAreaId||"--"}}</el-col>
+          <el-col>进出区域/路线报警附加信息</el-col>
+          <el-col :span="12">位置类型：{{mapData.vehicle.inoutAlarm.type||"--"}}</el-col>
+          <el-col :span="12">区域或线路ID：{{mapData.vehicle.inoutAlarm.areaId||"--"}}</el-col>
+          <el-col :span="12">方向：{{mapData.vehicle.inoutAlarm.direction||"--"}}</el-col>
+          <el-col>路段行驶时间不足/过长报警附加信息</el-col>
+          <el-col :span="12">路段ID：{{mapData.vehicle.runTimeAlarm.routeID||"--"}}</el-col>
+          <el-col :span="12">路段行驶时间：{{mapData.vehicle.runTimeAlarm.time||"--"}}</el-col>
+          <el-col :span="12">结果：{{mapData.vehicle.runTimeAlarm.type||"--"}}</el-col>
         </el-row>
       </div>
       <div class="_other" v-if="$props.single">
@@ -523,8 +534,6 @@ export default {
         });
         AMap.plugin(["AMap.OverView"], function() {
           var OverView = new AMap.OverView({ isOpen: true });
-
-          console.log(OverView);
           thas.mapData.map.addControl(OverView);
         });
         this.mapData.marker = createMarker(this.mapData.vehicle, AMap);
@@ -745,7 +754,7 @@ export default {
     }
   }
   ._body {
-    height: 120px;
+    height: 280px;
     box-sizing: border-box;
     padding: 15px;
     line-height: 1.8;

@@ -7,7 +7,7 @@
     <el-form label-width="220px" label-position="left">
       <el-row :gutter="20">
         <el-col :span="6">
-          <el-form-item label="拐点补传角度">
+          <el-form-item label="拐点补传角度(<180)">
             <el-input size="small" v-model="communication.Ox0030">
               <template slot="append">
                 <el-button @click="setUp('0x0030')">设置</el-button>
@@ -185,8 +185,22 @@ export default {
   },
   methods: {
     setUp(type) {
-      var data = {};
       var code = "O" + type.slice(1);
+      if (this.communication.data.length == 0) {
+        return this.$notify({
+          message: "请选择车辆",
+          title: "提示",
+          type: "error"
+        });
+      }
+      if (this.communication[code] == "") {
+        return this.$notify({
+          message: "设置项不能为空",
+          title: "提示",
+          type: "error"
+        });
+      }
+      var data = {};
       var sim_id = "";
       this.communication.data.map(item => {
         sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;

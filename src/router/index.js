@@ -8,9 +8,7 @@ import report from "@/router/report.js";
 import agreement from "@/router/agreement.js";
 import store from "@/store";
 import NProgress from "nprogress"; // progress bar
-import {
-  Message
-} from "element-ui";
+import { Message } from "element-ui";
 import "nprogress/nprogress.css";
 NProgress.configure({
   showSpinner: false
@@ -27,7 +25,7 @@ var routers = [
   {
     path: "/",
     name: "home",
-    redirect: "/manage",
+    redirect: "/monitor",
     component: () => import("@/views/home.vue"),
     meta: {
       name: "首页",
@@ -59,14 +57,16 @@ var routers = [
     meta: {
       name: "地图监控"
     },
-    children: [{
-      path: "map",
-      name: "map",
-      meta: {
-        name: "地图"
+    children: [
+      {
+        path: "map",
+        name: "map",
+        meta: {
+          name: "地图"
+        }
+        //component:()=>import('@/views/Map.vue')
       }
-      //component:()=>import('@/views/Map.vue')
-    }]
+    ]
   },
   {
     path: "/manage",
