@@ -291,7 +291,7 @@ export default {
           this.$instruction.send(data);
         });
       } else if (this.parameter == "3") {
-        type = parseInt(this.reply.message_type, 16);
+        type = this.reply.message_type;
         content = this.reply.content;
         this.communication.data.map(item => {
           sim_id = item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
