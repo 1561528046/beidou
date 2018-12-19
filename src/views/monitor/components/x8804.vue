@@ -35,7 +35,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="formSubmit('begin')" :loading="loading">开始</el-button>
+          <el-button type="primary" @click="formSubmit('begin',1)" :loading="loading">开始</el-button>
           <el-button type="primary" @click="formSubmit('stop')">停止</el-button>
         </el-form-item>
       </el-tab-pane>
@@ -113,25 +113,18 @@ export default {
         }&media_id=${row.MultimediaDataID}`;
       return url;
     },
-    changeType(tab) {
-      console.log(tab);
+    changeType() {
       var newForm = {
         SimID: this.$utils.formatSim(this.vehicle.sim_id),
-        MessageID: "x",
+        MessageID: "x8804",
         RecordingCommand: 1, //指令
-        RecordingTime: "", //录音时长
+        RecordingTime: this.form.RecordingTime, //录音时长
         SaveFlag: "0", //保存标志
         RecordSampingRate: "3" //采样率
       };
-      if (tab.name == "0") {
-        newForm.RecordingTime = this.form.RecordingTime;
-      } else {
-        newForm.RecordingTime = 0;
-      }
-      console.log(newForm);
       this.$set(this.$data, "form", newForm);
     },
-    formSubmit(command) {
+    formSubmit(command, num) {
       clearTimeout(this.timeout);
       if (command == "auto") {
         this.form.RecordingCommand = 1;
@@ -141,6 +134,9 @@ export default {
       }
       if (command == "stop") {
         this.form.RecordingCommand = 0;
+      }
+      if (num == 1 && num != undefined) {
+        this.form.RecordingTime = 0;
       }
       this.$instruction.send(JSON.stringify(this.form));
       this.loading = true;

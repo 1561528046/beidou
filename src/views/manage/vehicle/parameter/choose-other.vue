@@ -1,12 +1,17 @@
 <template >
   <div>
     <el-table height="300" :data="communication.data" style="width: 100%" class="admin-table-list">
-      <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
       <el-table-column prop="operate" label="操作状态"></el-table-column>
     </el-table>
     <el-form label-width="150px" label-position="left" class="table-search" size="small">
       <label>设置类型：</label>
-      <el-select @change="chooseSetting" size="small" v-model="parameter" style="margin-bottom:10px;">
+      <el-select
+        @change="chooseSetting"
+        size="small"
+        v-model="parameter"
+        style="margin-bottom:10px;"
+      >
         <el-option value="1" label="文本信息下发">文本信息下发</el-option>
         <el-option value="2" label="信息服务">信息服务</el-option>
         <el-option value="3" label="数据下行透传">数据下行透传</el-option>
@@ -15,12 +20,32 @@
       <div v-if="text_Information" style="width:30%;margin:0 auto; text-align:center;">
         <el-form-item label="标志">
           <div style="width:360px;">
-            <el-checkbox v-model="text.emergency" style="width:120px; margin-left:0;text-align:left;">紧急</el-checkbox>
-            <el-checkbox v-model="text.device_TTS" style="width:120px; margin-left:0;text-align:left;">终端TTS播读</el-checkbox>
-            <el-checkbox v-model="text.device_displayer" style="width:120px; margin-left:0;text-align:left;">终端显示器显示</el-checkbox>
-            <el-checkbox v-model="text.advertising" style="width:120px; margin-left:0;text-align:left;">广告屏显示</el-checkbox>
-            <el-radio v-model="text.information" label="0" style="width:120px; margin-left:0;text-align:left;">中心导航信息</el-radio>
-            <el-radio v-model="text.information" label="1" style="width:120px; margin-left:0;text-align:left;">CAN故障码信息</el-radio>
+            <el-checkbox
+              v-model="text.emergency"
+              style="width:120px; margin-left:0;text-align:left;"
+            >紧急</el-checkbox>
+            <el-checkbox
+              v-model="text.device_TTS"
+              style="width:120px; margin-left:0;text-align:left;"
+            >终端TTS播读</el-checkbox>
+            <el-checkbox
+              v-model="text.device_displayer"
+              style="width:120px; margin-left:0;text-align:left;"
+            >终端显示器显示</el-checkbox>
+            <el-checkbox
+              v-model="text.advertising"
+              style="width:120px; margin-left:0;text-align:left;"
+            >广告屏显示</el-checkbox>
+            <el-radio
+              v-model="text.information"
+              label="0"
+              style="width:120px; margin-left:0;text-align:left;"
+            >中心导航信息</el-radio>
+            <el-radio
+              v-model="text.information"
+              label="1"
+              style="width:120px; margin-left:0;text-align:left;"
+            >CAN故障码信息</el-radio>
           </div>
         </el-form-item>
         <el-form-item label="文本信息">
@@ -43,14 +68,15 @@
       </div>
       <!-- 数据下行透传 -->
       <div v-if="passthrough" style="width:30%;margin:0 auto; text-align:center;">
-        <el-form-item label="透传消息类型">
-          <el-select v-model="reply.message_type" style="width:100%;">
+        <el-form-item label="透传消息类型(0-255)">
+          <el-input size="small" v-model="reply.message_type"></el-input>
+          <!-- <el-select v-model="reply.message_type" style="width:100%;">
             <el-option value="0x00" label="GNSS模块详细定位数据">GNSS模块详细定位数据</el-option>
             <el-option value="0x0B" label="道路运输证IC卡信息">道路运输证IC卡信息</el-option>
             <el-option value="0x41" label="串口1透传">串口1透传</el-option>
             <el-option value="0x42" label="串口2透传">串口2透传</el-option>
-            <!-- <el-option>用户自定义透传</el-option> -->
-          </el-select>
+            <el-option>用户自定义透传</el-option>
+          </el-select>-->
         </el-form-item>
         <el-form-item label="透传消息内容">
           <el-input v-model="reply.content"></el-input>
