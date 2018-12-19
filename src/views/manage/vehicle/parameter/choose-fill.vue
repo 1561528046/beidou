@@ -168,7 +168,7 @@ export default {
       handler: function() {
         var sim_id = "";
         var data = JSON.parse(this.$props.respond);
-        var limit = [17, 18, 21, 22, 26, 27, 28, 29, 48, 49, 12, 131];
+        var limit = [17, 18, 21, 22, 26, 27, 28, 29, 48, 49, 128, 131];
         if (limit.includes(data.ParameterId)) {
           if (data.code == "0") {
             this.communication.data.map(item => {

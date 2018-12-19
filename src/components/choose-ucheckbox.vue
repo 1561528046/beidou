@@ -1,15 +1,26 @@
 <template>
-  <el-form v-loading="loading" status-icon :model="formData" size="small" ref="baseForm" class="msg-form">
+  <el-form status-icon :model="formData" size="small" ref="baseForm" class="msg-form">
     <template>
-      <el-table height="400" ref="userTable" @select-all="selectAll" @select="selectHandler" :data="tableData.data" border style="width: 100%">
-        <el-table-column type="selection" label="状态" width="50">
-        </el-table-column>
-        <el-table-column prop="real_name" :formatter="$utils.baseFormatter" label="用户">
-        </el-table-column>
+      <el-table
+        height="400"
+        ref="userTable"
+        @select-all="selectAll"
+        @select="selectHandler"
+        :data="tableData.data"
+        border
+        style="width: 100%"
+      >
+        <el-table-column type="selection" label="状态" width="50"></el-table-column>
+        <el-table-column prop="real_name" :formatter="$utils.baseFormatter" label="用户"></el-table-column>
       </el-table>
     </template>
     <el-form-item style="text-align:center; margin-top:20px;margin-bottom:-10px;">
-      <el-button type="primary" size="small" @click="formSubmit">提交</el-button>
+      <el-button
+        v-loading.fullscreen.lock="tableLoading"
+        type="primary"
+        size="small"
+        @click="formSubmit"
+      >提交</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -20,7 +31,7 @@ export default {
     return {
       selection: [],
       vehicle: [],
-      loading: true,
+      tableLoading: true,
       formData: {
         user: [],
         user_ids: ""
@@ -91,6 +102,7 @@ export default {
       }
     },
     formSubmit() {
+      this.tableLoading = true;
       this.formData.user_ids = this.selection.toString();
       this.formData.user = [];
       if (this.formData.user_ids == "") {
@@ -102,8 +114,10 @@ export default {
       }
       getVehicleByPage({ user_ids: this.formData.user_ids }).then(res => {
         if (res.data.code == 0) {
+          this.tableLoading = false;
           this.$set(this.tableQuery, "data", res.data.data);
           if (this.tableQuery.data.length == 0) {
+            this.tableLoading = false;
             return this.$notify({
               message: "当前所选择的用户没有车辆信息",
               title: "提示",
@@ -128,7 +142,7 @@ export default {
             res.data.data[i].checked = false;
           }
           this.$set(this.tableData, "data", res.data.data);
-          this.loading = false;
+          this.tableLoading = false;
         }
       });
     }

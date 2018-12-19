@@ -103,7 +103,18 @@
                 <label v-if="scope.row.EventCode=='7'">定距拍照</label>
               </template>
             </el-table-column>
-
+            <el-table-column label="位置信息">
+              <template slot-scope="scope">
+                <el-popover placement="right" style="height:400px" width="400" trigger="click">
+                  经度：{{scope.row.Position.Longitude}}
+                  纬度：{{scope.row.Position.Latitude}}
+                  海拔高度：{{scope.row.Position.Altitude}}
+                  速度：{{scope.row.Position.Speed}}
+                  方向：{{scope.row.Position.Direction}}
+                  <el-button size="small" type="primary" slot="reference">查看更多</el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
             <el-table-column label="操作" v-if="viewmodel=='server'">
               <template slot-scope="scope">
                 <el-button @click="getMediaUrl(scope.row)">查看</el-button>

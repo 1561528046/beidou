@@ -327,9 +327,7 @@
         </li>
         <li>
           <strong>车牌颜色:</strong>
-          <label
-            :formatter="()=>{return this.$dict.get_color(JSON.stringify(this.deviceParam['O132']))}"
-          ></label>
+          {{this.$dict.get_color(JSON.stringify(deviceParam["O132"]))}}
         </li>
         <li>
           <strong>GNSS 定位模式:</strong>

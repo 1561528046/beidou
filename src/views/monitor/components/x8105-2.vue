@@ -133,7 +133,7 @@ export default {
         sim_id = this.vehicleData.sim_id;
       }
       if (str[0] == "1") {
-        str = "1";
+        str = "1;";
       }
       data = {
         SimID: sim_id,

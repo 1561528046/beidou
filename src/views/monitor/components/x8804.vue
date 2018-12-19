@@ -38,7 +38,6 @@
           <el-button type="primary" @click="formSubmit('begin')" :loading="loading">开始</el-button>
           <el-button type="primary" @click="formSubmit('stop')">停止</el-button>
         </el-form-item>
-
       </el-tab-pane>
     </el-tabs>
     <el-table :data="audioList" size="mini">
@@ -115,19 +114,21 @@ export default {
       return url;
     },
     changeType(tab) {
+      console.log(tab);
       var newForm = {
         SimID: this.$utils.formatSim(this.vehicle.sim_id),
-        MessageID: "x8804",
+        MessageID: "x",
         RecordingCommand: 1, //指令
         RecordingTime: "", //录音时长
         SaveFlag: "0", //保存标志
         RecordSampingRate: "3" //采样率
       };
-      if (tab.name == 0) {
-        newForm.RecordingTime = 0;
+      if (tab.name == "0") {
+        newForm.RecordingTime = this.form.RecordingTime;
       } else {
-        newForm.RecordingTime = 1;
+        newForm.RecordingTime = 0;
       }
+      console.log(newForm);
       this.$set(this.$data, "form", newForm);
     },
     formSubmit(command) {

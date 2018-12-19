@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="baseForm" :model="form" label-width="150px" @submit.native.prevent size="small">
+  <el-form ref="baseForm" :model="form" label-width="180px" @submit.native.prevent size="small">
     <el-tabs v-model="type" @tab-click="changeType">
       <el-tab-pane label="自动拍摄模式" name="0">
         <el-form-item label="通道 ID">
@@ -10,8 +10,7 @@
           <el-radio v-model="form.PhotoCommand" :label="0xffff">录像</el-radio>
           <el-radio v-model="form.PhotoCommand" :label="1">拍照</el-radio>
         </el-form-item>
-
-        <el-form-item label="拍摄时长(单位 秒)">
+        <el-form-item label="拍照间隔/录像时间(秒)">
           <el-input-number :min="1" :max="20" v-model="form.PhotoTimeInterval"></el-input-number>
         </el-form-item>
         <el-form-item label="保存方式">
@@ -31,29 +30,30 @@
           </el-select>
         </el-form-item>
         <el-form-item label="图像/视频压缩程度">
-          <el-slider v-model="form.Quality" :min="1" :max="10" :step="1" show-stops style="width:80%;">
-          </el-slider>
-          压缩程度越大，文件质量越小
+          <el-slider
+            v-model="form.Quality"
+            :min="1"
+            :max="10"
+            :step="1"
+            show-stops
+            style="width:80%;"
+          ></el-slider>压缩程度越大，文件质量越小
         </el-form-item>
 
         <el-form-item label="亮度">
-          <el-slider v-model="form.Brightness" :min="0" :max="255" :step="1" style="width:80%;">
-          </el-slider>
+          <el-slider v-model="form.Brightness" :min="0" :max="255" :step="1" style="width:80%;"></el-slider>
         </el-form-item>
 
         <el-form-item label="对比度">
-          <el-slider v-model="form.Contrast" :min="0" :max="127" :step="1" style="width:80%;">
-          </el-slider>
+          <el-slider v-model="form.Contrast" :min="0" :max="127" :step="1" style="width:80%;"></el-slider>
         </el-form-item>
 
         <el-form-item label="饱和度">
-          <el-slider v-model="form.Saturation" :min="0" :max="127" :step="1" style="width:80%;">
-          </el-slider>
+          <el-slider v-model="form.Saturation" :min="0" :max="127" :step="1" style="width:80%;"></el-slider>
         </el-form-item>
 
         <el-form-item label="色度">
-          <el-slider v-model="form.Chroma" :min="0" :max="255" :step="1" style="width:80%;">
-          </el-slider>
+          <el-slider v-model="form.Chroma" :min="0" :max="255" :step="1" style="width:80%;"></el-slider>
         </el-form-item>
 
         <el-form-item>
@@ -61,14 +61,13 @@
         </el-form-item>
       </el-tab-pane>
       <el-tab-pane label="手动拍摄模式" name="1">
-
         <el-form-item label="通道 ID">
           <el-radio v-model="form.ChannelId" label="1">通道1</el-radio>
           <el-radio v-model="form.ChannelId" label="2">通道2</el-radio>
         </el-form-item>
         <el-form-item label="拍摄方式">
           <el-radio v-model="form.PhotoCommand" :label="0xffff">录像</el-radio>
-          <el-radio v-model="form.PhotoCommand" :label="1" disabled="">拍照</el-radio>
+          <el-radio v-model="form.PhotoCommand" :label="1" disabled>拍照</el-radio>
         </el-form-item>
         <el-form-item label="保存方式">
           <el-radio v-model="form.StoreFlag" label="0">实时上传</el-radio>
@@ -87,29 +86,30 @@
           </el-select>
         </el-form-item>
         <el-form-item label="图像/视频压缩程度">
-          <el-slider v-model="form.Quality" :min="1" :max="10" :step="1" show-stops style="width:80%;">
-          </el-slider>
-          压缩程度越大，文件质量越小
+          <el-slider
+            v-model="form.Quality"
+            :min="1"
+            :max="10"
+            :step="1"
+            show-stops
+            style="width:80%;"
+          ></el-slider>压缩程度越大，文件质量越小
         </el-form-item>
 
         <el-form-item label="亮度">
-          <el-slider v-model="form.Brightness" :min="0" :max="255" :step="1" style="width:80%;">
-          </el-slider>
+          <el-slider v-model="form.Brightness" :min="0" :max="255" :step="1" style="width:80%;"></el-slider>
         </el-form-item>
 
         <el-form-item label="对比度">
-          <el-slider v-model="form.Contrast" :min="0" :max="127" :step="1" style="width:80%;">
-          </el-slider>
+          <el-slider v-model="form.Contrast" :min="0" :max="127" :step="1" style="width:80%;"></el-slider>
         </el-form-item>
 
         <el-form-item label="饱和度">
-          <el-slider v-model="form.Saturation" :min="0" :max="127" :step="1" style="width:80%;">
-          </el-slider>
+          <el-slider v-model="form.Saturation" :min="0" :max="127" :step="1" style="width:80%;"></el-slider>
         </el-form-item>
 
         <el-form-item label="色度">
-          <el-slider v-model="form.Chroma" :min="0" :max="255" :step="1" style="width:80%;">
-          </el-slider>
+          <el-slider v-model="form.Chroma" :min="0" :max="255" :step="1" style="width:80%;"></el-slider>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="formSubmit('begin')" :loading="loading">开始</el-button>
@@ -122,10 +122,17 @@
       <el-table-column prop="ChannelId" label="通道"></el-table-column>
       <el-table-column label="媒体">
         <template slot-scope="scope">
-          <div v-if="!scope.row.media_url"><i class="el-icon-loading"></i>正在上传媒体文件</div>
+          <div v-if="!scope.row.media_url">
+            <i class="el-icon-loading"></i>正在上传媒体文件
+          </div>
           <div v-if="scope.row.media_url">
-            <img :src="scope.row.media_url" v-if="scope.row.MultimediaType==0" style="width:100%;" />
-            <video :src="scope.row.media_url" controls v-if="scope.row.MultimediaType==2" style="width:100%;"></video>
+            <img :src="scope.row.media_url" v-if="scope.row.MultimediaType==0" style="width:100%;">
+            <video
+              :src="scope.row.media_url"
+              controls
+              v-if="scope.row.MultimediaType==2"
+              style="width:100%;"
+            ></video>
           </div>
         </template>
       </el-table-column>
@@ -157,7 +164,7 @@ export default {
         SimID: this.$utils.formatSim(this.$props.vehicle.sim_id),
         ChannelId: "1", //通道 ID 1-255
         PhotoCommand: 1, //0 表示停止拍摄；0xFFFF 表示录像；其它表示拍照张数
-        PhotoTimeInterval: 1, //秒，0 表示按最小间隔拍照或一直录像
+        PhotoTimeInterval: 0, //秒，0 表示按最小间隔拍照或一直录像
         StoreFlag: "0", //1：保存；0：实时上传
         Resolution: "1", //分辨率 0x01:320*240；0x02:640*480；0x03:800*600；0x04:1024*768;0x05:176*144;[Qcif];0x06:352*288;[Cif];0x07:704*288;[HALF D1];0x08:704*576;[D1];
         Quality: 5, //1-10，1 代表质量损失最小，10 表示压缩比最大

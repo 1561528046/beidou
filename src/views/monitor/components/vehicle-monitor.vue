@@ -61,14 +61,16 @@
           <el-col>超速报警附加信息</el-col>
           <el-col :span="12">位置类型：{{mapData.vehicle.overSpeedPositionType||"--"}}</el-col>
           <el-col :span="12">区域或路段ID：{{mapData.vehicle.overSpeedAreaId||"--"}}</el-col>
-          <el-col>进出区域/路线报警附加信息</el-col>
-          <el-col :span="12">位置类型：{{mapData.vehicle.inoutAlarm.type||"--"}}</el-col>
-          <el-col :span="12">区域或线路ID：{{mapData.vehicle.inoutAlarm.areaId||"--"}}</el-col>
-          <el-col :span="12">方向：{{mapData.vehicle.inoutAlarm.direction||"--"}}</el-col>
-          <el-col>路段行驶时间不足/过长报警附加信息</el-col>
-          <el-col :span="12">路段ID：{{mapData.vehicle.runTimeAlarm.routeID||"--"}}</el-col>
-          <el-col :span="12">路段行驶时间：{{mapData.vehicle.runTimeAlarm.time||"--"}}</el-col>
-          <el-col :span="12">结果：{{mapData.vehicle.runTimeAlarm.type||"--"}}</el-col>
+          <template v-if="mapData.vehicle.runTimeAlarm && mapData.vehicle.inoutAlarm[0] ">
+            <el-col>进出区域/路线报警附加信息</el-col>
+            <el-col :span="12">位置类型：{{mapData.vehicle.inoutAlarm[0].type||"--"}}</el-col>
+            <el-col :span="12">区域或线路ID：{{mapData.vehicle.inoutAlarm[0].areaId||"--"}}</el-col>
+            <el-col :span="12">方向：{{mapData.vehicle.inoutAlarm[0].direction||"--"}}</el-col>
+            <el-col>路段行驶时间不足/过长报警附加信息</el-col>
+            <el-col :span="12">路段ID：{{mapData.vehicle.runTimeAlarm.routeID||"--"}}</el-col>
+            <el-col :span="12">路段行驶时间：{{mapData.vehicle.runTimeAlarm.time||"--"}}</el-col>
+            <el-col :span="12">结果：{{mapData.vehicle.runTimeAlarm.type||"--"}}</el-col>
+          </template>
         </el-row>
       </div>
       <div class="_other" v-if="$props.single">
@@ -754,7 +756,7 @@ export default {
     }
   }
   ._body {
-    height: 280px;
+    height: auto;
     box-sizing: border-box;
     padding: 15px;
     line-height: 1.8;
