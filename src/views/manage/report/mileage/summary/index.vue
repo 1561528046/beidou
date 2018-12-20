@@ -166,6 +166,7 @@ export default {
         stop_time: "",
         time: "",
         sim_ids: "",
+        user_ids: "",
         license: "",
         real_name: "",
         size: 10,
@@ -306,21 +307,24 @@ export default {
     // 回来的数据
     xz(scope) {
       this.vehicleDialog = false;
-      if (!scope.length == 0) {
+      if (scope.length > 0) {
         this.userAlert = true;
       }
       this.vehicles = [];
-      for (var i = 0; i < scope.length; i++) {
-        this.tableQuery.license =
-          this.tableQuery.license + scope[i].license + ",";
-        this.tableQuery.sim_ids =
-          this.tableQuery.sim_ids + ("0" + scope[i].sim_id) + ",";
+      for (var j = 0; j < scope.length; j++) {
         this.vehicles.push({
-          license: scope[i].license,
-          license_color: scope[i].license_color,
-          sim_id: scope[i].sim_id
+          license: scope[j].license,
+          license_color: scope[j].license_color,
+          sim_id: scope[j].sim_id
         });
+        this.tableQuery.sim_ids =
+          this.tableQuery.sim_ids + ("0" + scope[j].sim_id) + ",";
       }
+      for (var s = 0; s < scope.length; s++) {
+        this.tableQuery.license =
+          this.tableQuery.license + scope[s].license + ",";
+      }
+      this.user_ids = "";
       this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
         0,
         this.tableQuery.sim_ids.lastIndexOf(",")
@@ -332,26 +336,18 @@ export default {
     },
     user(scope) {
       this.userDialog = false;
-      if (!scope.vehicle.length == 0) {
+      if (scope.length > 0) {
         this.vehicleAlert = true;
       }
-      this.vehicles = [];
-      for (var j = 0; j < scope.vehicle.length; j++) {
-        this.vehicles.push({
-          license: scope.vehicle[j].license,
-          license_color: scope.vehicle[j].license_color,
-          sim_id: scope.vehicle[j].sim_id
-        });
-        this.tableQuery.sim_ids =
-          this.tableQuery.sim_ids + ("0" + scope.vehicle[j].sim_id) + ",";
-      }
-      for (var s = 0; s < scope.real.length; s++) {
+      for (var i = 0; i < scope.length; i++) {
+        this.tableQuery.user_ids =
+          this.tableQuery.user_ids + scope[i].user_id + ",";
         this.tableQuery.real_name =
-          this.tableQuery.real_name + scope.real[s].real_name + ",";
+          this.tableQuery.real_name + scope[i].real_name + ",";
       }
-      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
+      this.tableQuery.user_ids = this.tableQuery.user_ids.substring(
         0,
-        this.tableQuery.sim_ids.lastIndexOf(",")
+        this.tableQuery.user_ids.lastIndexOf(",")
       );
       this.tableQuery.real_name = this.tableQuery.real_name.substring(
         0,

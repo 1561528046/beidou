@@ -299,6 +299,7 @@ export default {
           sim_id: scope[i].sim_id
         });
       }
+      this.tableQuery.user_ids = "";
       this.tableQuery.vehicle_ids = this.tableQuery.vehicle_ids.substring(
         0,
         this.tableQuery.vehicle_ids.lastIndexOf(",")
@@ -311,14 +312,14 @@ export default {
     },
     user(scope) {
       this.userDialog = false;
-      if (!scope.vehicle.length == 0) {
+      if (scope.length > 0) {
         this.vehicleAlert = true;
       }
-      for (var s = 0; s < scope.user.length; s++) {
-        this.tableQuery.real_name =
-          this.tableQuery.real_name + scope.user[s].real_name + ",";
+      for (var i = 0; i < scope.length; i++) {
         this.tableQuery.user_ids =
-          this.tableQuery.user_ids + scope.user[s].user_id + ",";
+          this.tableQuery.user_ids + scope[i].user_id + ",";
+        this.tableQuery.real_name =
+          this.tableQuery.real_name + scope[i].real_name + ",";
       }
       this.tableQuery.user_ids = this.tableQuery.user_ids.substring(
         0,

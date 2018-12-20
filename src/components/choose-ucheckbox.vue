@@ -15,17 +15,12 @@
       </el-table>
     </template>
     <el-form-item style="text-align:center; margin-top:20px;margin-bottom:-10px;">
-      <el-button
-        v-loading.fullscreen.lock="tableLoading"
-        type="primary"
-        size="small"
-        @click="formSubmit"
-      >提交</el-button>
+      <el-button type="primary" size="small" @click="formSubmit">提交</el-button>
     </el-form-item>
   </el-form>
 </template>
 <script>
-import { getUserChildrenList, getVehicleByPage } from "@/api/index.js";
+import { getUserChildrenList } from "@/api/index.js";
 export default {
   data() {
     return {
@@ -102,39 +97,40 @@ export default {
       }
     },
     formSubmit() {
-      this.tableLoading = true;
       this.formData.user_ids = this.selection.toString();
       this.formData.user = [];
       if (this.formData.user_ids == "") {
         return this.$notify({
-          message: "请选择信息",
+          message: "请选择用户",
           title: "提示",
           type: "error"
         });
       }
-      getVehicleByPage({ user_ids: this.formData.user_ids }).then(res => {
-        if (res.data.code == 0) {
-          this.tableLoading = false;
-          this.$set(this.tableQuery, "data", res.data.data);
-          if (this.tableQuery.data.length == 0) {
-            this.tableLoading = false;
-            return this.$notify({
-              message: "当前所选择的用户没有车辆信息",
-              title: "提示",
-              type: "error"
-            });
-          }
-          var chooseuser = {
-            user: this.selection,
-            vehicle: this.tableQuery.data,
-            real: this.vehicle
-          };
-          this.$emit("button", chooseuser);
-        } else {
-          this.$message.error(res.data.msg);
-        }
-      });
+      this.$emit("button", this.vehicle);
+      // getVehicleByPage({ user_ids: this.formData.user_ids }).then(res => {
+      //   if (res.data.code == 0) {
+      //     this.tableLoading = false;
+      //     this.$set(this.tableQuery, "data", res.data.data);
+      //     if (this.tableQuery.data.length == 0) {
+      //       this.tableLoading = false;
+      //       return this.$notify({
+      //         message: "当前所选择的用户没有车辆信息",
+      //         title: "提示",
+      //         type: "error"
+      //       });
+      //     }
+      //     var chooseuser = {
+      //       user: this.selection,
+      //       vehicle: this.tableQuery.data,
+      //       real: this.vehicle
+      //     };
+      //     this.$emit("button", chooseuser);
+      //   } else {
+      //     this.$message.error(res.data.msg);
+      //   }
+      // });
     },
+    // 获取用户列表
     getTable() {
       getUserChildrenList().then(res => {
         if (res.data.code == 0) {
