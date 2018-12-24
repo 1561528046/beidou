@@ -26,7 +26,7 @@
                   <select-user v-model="formData.parent_id"></select-user>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <!-- <el-col :span="12">
                 <el-form-item label="所属分组" prop="group_id" v-if="formData.parent_id">
                   <select-group
                     v-model="formData.group_id"
@@ -34,7 +34,7 @@
                     :useing="['add','edit','remove']"
                   ></select-group>
                 </el-form-item>
-              </el-col>
+              </el-col>-->
               <el-col :span="12">
                 <el-form-item label="所属角色" prop="role_id">
                   <select-role v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;"></select-role>
@@ -228,7 +228,7 @@ export default {
         device_total: "",
         role_id: "",
         expiry_time: "",
-        group_id: "",
+        // group_id: "",
         parent_id: "",
         corporation: "",
         business_no: ""
@@ -277,13 +277,13 @@ export default {
           },
           { required: true, message: "两次密码不一样", trigger: "blur" }
         ],
-        group_id: [
-          {
-            required: true,
-            message: "必须选择用户分组",
-            trigger: "blur"
-          }
-        ],
+        // group_id: [
+        //   {
+        //     required: true,
+        //     message: "必须选择用户分组",
+        //     trigger: "blur"
+        //   }
+        // ],
         pass_word: [
           {
             required: true,

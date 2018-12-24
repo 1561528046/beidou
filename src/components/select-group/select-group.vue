@@ -1,51 +1,97 @@
 <template>
   <div>
-    <el-popover placement="bottom" width="400" trigger="click" v-model="visible" v-if="!$props.static">
+    <el-popover
+      placement="bottom"
+      width="400"
+      trigger="click"
+      v-model="visible"
+      v-if="!$props.static"
+    >
       <div slot="reference" @click="visible = !visible">
         <!-- <el-input placeholder="点击选择" style="width:100%;vertical-align:top;" disabled :value="currentNodeData.group_name">
           
-        </el-input> -->
+        </el-input>-->
         <div class="admin-input-style">
           {{currentNodeData.group_name}}
           <el-button icon="el-icon-more" class="group-select-btn"></el-button>
         </div>
       </div>
       <div class="select-group-cotainer">
-
         <div class="_body" @click.stop>
           <div class="_filter">
-            <input placeholder="输入关键字进行过滤" v-model="filterText" class="el-input__inner" style="height:30px; line-height:30px;" />
+            <input
+              placeholder="输入关键字进行过滤"
+              v-model="filterText"
+              class="el-input__inner"
+              style="height:30px; line-height:30px;"
+            >
           </div>
           <div class="_tree" v-if="list.length">
-            <div v-if="filterEmpty" style="padding:10px; text-align:center; color:#999;">
-              没有相关数据！
-            </div>
-            <el-tree default-expand-all :expand-on-click-node="false" @node-click="nodeClick" :data="list" node-key="group_id" :props="defaultProps" :filter-node-method="filterNode" ref="tree2">
+            <div v-if="filterEmpty" style="padding:10px; text-align:center; color:#999;">没有相关数据！</div>
+            <el-tree
+              default-expand-all
+              :expand-on-click-node="false"
+              @node-click="nodeClick"
+              :data="list"
+              node-key="group_id"
+              :props="defaultProps"
+              :filter-node-method="filterNode"
+              ref="tree2"
+            >
               <span class="custom-tree-node" slot-scope="{ node, data }">
-                <tree-item :props="defaultProps" v-model="data" :treeNode="node" @append="append" @remove="remove" @edit="edit" @add="add" placeholder="请输入分组名称" :useing="$props.useing"></tree-item>
+                <tree-item
+                  :props="defaultProps"
+                  v-model="data"
+                  :treeNode="node"
+                  @append="append"
+                  @remove="remove"
+                  @edit="edit"
+                  @add="add"
+                  placeholder="请输入分组名称"
+                  :useing="$props.useing"
+                ></tree-item>
               </span>
             </el-tree>
-
           </div>
         </div>
       </div>
     </el-popover>
     <div class="select-group-cotainer" v-if="$props.static">
-
       <div class="_body" @click.stop>
         <div class="_filter">
-          <input placeholder="输入关键字进行过滤" v-model="filterText" class="el-input__inner" style="height:30px; line-height:30px;" />
+          <input
+            placeholder="输入关键字进行过滤"
+            v-model="filterText"
+            class="el-input__inner"
+            style="height:30px; line-height:30px;"
+          >
         </div>
         <div class="_tree" v-if="list.length">
-          <div v-if="filterEmpty" style="padding:10px; text-align:center; color:#999;">
-            没有相关数据！
-          </div>
-          <el-tree default-expand-all :expand-on-click-node="false" @node-click="nodeClick" :data="list" node-key="group_id" :props="defaultProps" :filter-node-method="filterNode" ref="tree2">
+          <div v-if="filterEmpty" style="padding:10px; text-align:center; color:#999;">没有相关数据！</div>
+          <el-tree
+            default-expand-all
+            :expand-on-click-node="false"
+            @node-click="nodeClick"
+            :data="list"
+            node-key="group_id"
+            :props="defaultProps"
+            :filter-node-method="filterNode"
+            ref="tree2"
+          >
             <span class="custom-tree-node" slot-scope="{ node, data }">
-              <tree-item :props="defaultProps" v-model="data" :treeNode="node" @append="append" @remove="remove" @edit="edit" @add="add" placeholder="请输入分组名称" :useing="$props.useing"></tree-item>
+              <tree-item
+                :props="defaultProps"
+                v-model="data"
+                :treeNode="node"
+                @append="append"
+                @remove="remove"
+                @edit="edit"
+                @add="add"
+                placeholder="请输入分组名称"
+                :useing="$props.useing"
+              ></tree-item>
             </span>
           </el-tree>
-
         </div>
       </div>
     </div>
@@ -254,8 +300,8 @@ export default {
     add({ node, nodeData, newNodeData }, next) {
       addGroup({
         parent_id: node.parent.data.group_id,
-        group_name: newNodeData.group_name,
-        parent_level: node.parent.data.level
+        group_name: newNodeData.group_name
+        // parent_level: node.parent.data.level
       }).then(res => {
         if (res.data.code == 0) {
           nodeData.group_name = newNodeData.group_name;
@@ -284,8 +330,8 @@ export default {
         return false;
       }
       delGroup({
-        group_id: nodeData.group_id,
-        level: node.data.level || 0
+        group_id: nodeData.group_id
+        // level: node.data.level || 0
       }).then(res => {
         if (this.currentNodeData == nodeData) {
           this.currentNodeData = null;

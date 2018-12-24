@@ -25,7 +25,7 @@ var routers = [
   {
     path: "/",
     name: "home",
-    redirect: "/monitor",
+    redirect: "/manage",
     component: () => import("@/views/home.vue"),
     meta: {
       name: "首页",
