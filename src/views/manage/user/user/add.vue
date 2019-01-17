@@ -21,11 +21,11 @@
                   <el-input v-model="formData.user_name"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <!-- <el-col :span="12">
                 <el-form-item label="所属用户" prop="parent_id">
                   <select-user v-model="formData.parent_id"></select-user>
                 </el-form-item>
-              </el-col>
+              </el-col>-->
               <!-- <el-col :span="12">
                 <el-form-item label="所属分组" prop="group_id" v-if="formData.parent_id">
                   <select-group
@@ -229,7 +229,7 @@ export default {
         role_id: "",
         expiry_time: "",
         // group_id: "",
-        parent_id: "",
+        // parent_id: "",
         corporation: "",
         business_no: ""
       },
@@ -256,9 +256,9 @@ export default {
             trigger: "change"
           }
         ],
-        parent_id: [
-          { required: true, message: "必须所属用户", trigger: "change" }
-        ],
+        // parent_id: [
+        //   { required: true, message: "必须所属用户", trigger: "change" }
+        // ],
         user_name: [
           { trigger: "blur", validator: this.validateUserName },
           { required: true, message: "请输入用户名", trigger: "change" },

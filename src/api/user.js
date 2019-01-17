@@ -10,7 +10,12 @@ export const getUserAll = query => {
     params: query
   });
 };
-
+// 获取当前用户的权限
+export const getRightsByUserId = query => {
+  return ajax.get("/role/GetRightsByUserId", {
+    params: query
+  });
+};
 export const getUserList = query => {
   query = Object.assign(
     {
@@ -145,6 +150,32 @@ export const getGroupChildrens = query => {
 export const getGroupByUser = query => {
   //只获取指定组的所有子孙级别组
   return ajax.get("/group/GetGroupChildrenListByUserId", {
+    params: query
+  });
+};
+// 用户绑定车辆列表
+export const getUserVehicleBindByPage = query => {
+  return ajax.get("/vehicle/GetUserVehicleBindByPage", {
+    params: query
+  });
+};
+// 用户未绑定车辆列表
+export const getUserVehicleUnBindByPage = query => {
+  return ajax.get("/vehicle/GetUserVehicleUnBindByPage", {
+    params: query
+  });
+};
+// 用户绑定车辆
+export const bindUserVehicle = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/BindUserVehicle", queryQS, {
+    params: query
+  });
+};
+// 用户解绑车辆
+export const unBindUserVehicle = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/UnBindUserVehicle", queryQS, {
     params: query
   });
 };

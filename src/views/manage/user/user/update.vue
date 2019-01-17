@@ -19,16 +19,16 @@
               <el-col :span="6">
                 <el-form-item label="登陆帐号" prop="user_name">{{formData.user_name||"--"}}</el-form-item>
               </el-col>
-              <el-col :span="6">
+              <!-- <el-col :span="6">
                 <el-form-item label="所属用户" prop="parent_id">{{formData.parent_real_name||"--"}}</el-form-item>
-              </el-col>
-              <el-col :span="6">
+              </el-col>-->
+              <!-- <el-col :span="6">
                 <el-form-item
                   label="所属分组"
                   prop="group_id"
                   v-if="formData.parent_id"
                 >{{formData.group_name||"--"}}</el-form-item>
-              </el-col>
+              </el-col>-->
               <el-col :span="6">
                 <el-form-item label="所属角色" prop="role_id">{{formData.role_name||"--"}}</el-form-item>
               </el-col>

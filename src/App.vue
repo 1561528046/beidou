@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <link rel="stylesheet" href="//at.alicdn.com/t/font_770472_he7l0vrsqb.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_770472_0axycfrbn9n9.css">
     <el-container>
       <el-header style="padding:0;" v-if="!$route.meta.fullscreen">
         <base-nav></base-nav>
@@ -14,7 +14,6 @@
         </el-main>
       </el-container>
     </el-container>
-
   </div>
 </template>
 

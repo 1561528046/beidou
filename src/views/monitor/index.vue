@@ -1099,6 +1099,18 @@ export default {
         //设置车辆定位信息
         if (this.data.has(vehicleData.sim_id)) {
           var vehicle = this.data.get(vehicleData.sim_id);
+          if (!vehicleData.inoutAlarm) {
+            vehicle.inoutAlarm = {};
+          }
+          if (!vehicleData.overSpeedPositionType) {
+            vehicle.overSpeedPositionType = "";
+          }
+          if (!vehicleData.overSpeedAreaId) {
+            vehicle.overSpeedAreaId = "";
+          }
+          if (!vehicleData.runTimeAlarm) {
+            vehicle.runTimeAlarm = {};
+          }
           var fence_alarm = this.checkFence(vehicleData);
           if (
             vehicleData.alarm != "0" ||

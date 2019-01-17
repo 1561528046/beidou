@@ -1,11 +1,12 @@
 <template>
-  <div class="admin-table-container group-bind-container" style="position: absolute;left:0;right:0;bottom:0;top:107px;">
+  <div
+    class="admin-table-container group-bind-container"
+    style="position: absolute;left:0;right:0;bottom:0;top:107px;"
+  >
     <el-card shadow="always" class="full-box">
       <div class="bind-box">
-        <div class="user-box">
-          <div class="user-header">
-            用户列表
-          </div>
+        <!-- <div class="user-box">
+          <div class="user-header">用户列表</div>
           <div class="user-filter" :class="{active:userFilterOpen}">
             <el-form :model="userTableQuery" size="small">
               <el-form-item>
@@ -14,26 +15,49 @@
                 </el-input>
               </el-form-item>
             </el-form>
-
-            <!-- <div class="user-load-more" @click="userFilterOpen=!userFilterOpen">
+            <div class="user-load-more" @click="userFilterOpen=!userFilterOpen">
               <i class="el-icon-caret-bottom" v-if="!userFilterOpen"></i>
               <i class="el-icon-caret-top" v-if="userFilterOpen"></i>
-
-            </div> -->
+            </div>
           </div>
           <ul class="user-list">
-            <li v-for="user in userList" :key="user.user_id" @click="changeUser(user)" :class="{active:user.user_id==currentUser.user_id}"> {{user.real_name}}</li>
+            <li
+              v-for="user in userList"
+              :key="user.user_id"
+              @click="changeUser(user)"
+              :class="{active:user.user_id==currentUser.user_id}"
+            >{{user.group_name}}</li>
           </ul>
           <div class="user-pager">
             <el-input placeholder="页码" size="small" v-model="userTableQuery.page">
-              <el-button slot="prepend" icon="el-icon-caret-left" @click="userPagerPrev()" :disabled="userPagerPrevState"></el-button>
-              <el-button slot="append" icon="el-icon-caret-right" @click="userPagerNext()" :disabled="userPagerNextState"></el-button>
+              <el-button
+                slot="prepend"
+                icon="el-icon-caret-left"
+                @click="userPagerPrev()"
+                :disabled="userPagerPrevState"
+              ></el-button>
+              <el-button
+                slot="append"
+                icon="el-icon-caret-right"
+                @click="userPagerNext()"
+                :disabled="userPagerNextState"
+              ></el-button>
             </el-input>
           </div>
-        </div>
+        </div>-->
         <transition name="fade">
-          <div class="group-container" v-if="currentUser.user_id">
-            <select-group :static="true" :useing="['add','edit','remove']" :user_id="currentUser.user_id" :level.sync="groupData.level" :group_id.sync="groupData.group_id" :parentid.sync="groupData.parent_id" style="width:300px;height:100%;"></select-group>
+          <!-- v-if="currentUser.user_id" -->
+          <!--                -->
+          <div class="group-container">
+            <select-group
+              :static="true"
+              :useing="['add','edit','remove']"
+              :user_id="currentUser.user_id"
+              :level.sync="groupData.level"
+              :group_id.sync="groupData.group_id"
+              :parentid.sync="groupData.parent_id"
+              style="width:200px;height:100%;"
+            ></select-group>
           </div>
         </transition>
         <div class="transfer-container">
@@ -75,22 +99,45 @@
             </div>
           </div>
           <div class="transfer-list">
-            <admin-transfer @onLeft="onleft" :lists="list" :titles="titles" @onRight="onright" :leftCol="leftCol" :rightCol="rightCol" style="width:100%;height:100%;"></admin-transfer>
+            <admin-transfer
+              @onLeft="onleft"
+              :lists="list"
+              :titles="titles"
+              @onRight="onright"
+              :leftCol="leftCol"
+              :rightCol="rightCol"
+              style="width:100%;height:100%;"
+            ></admin-transfer>
           </div>
           <div class="transfer-pager">
             <div class="transfer-pager-item">
-              <el-pagination @size-change="bindSizeChange" @current-change="bindcurrentChange" :current-page="bindTableQuery.page" :page-sizes="[20, 50, 100,300,600,1000]" :page-size="bindTableQuery.size" :total="bindTableQuery.total" layout="total, sizes, prev,  next, jumper" background>
-              </el-pagination>
+              <el-pagination
+                @size-change="bindSizeChange"
+                @current-change="bindcurrentChange"
+                :current-page="bindTableQuery.page"
+                :page-sizes="[20, 50, 100,300,600,1000]"
+                :page-size="bindTableQuery.size"
+                :total="bindTableQuery.total"
+                layout="total, sizes, prev,  next, jumper"
+                background
+              ></el-pagination>
             </div>
             <div style="width:100px;"></div>
             <div class="transfer-pager-item">
-              <el-pagination @size-change="unbindSizeChange" @current-change="unbindcurrentChange" :current-page="unbindTableQuery.page" :page-sizes="[20, 50, 100,300,600,1000]" :page-size="unbindTableQuery.size" :total="unbindTableQuery.total" layout="total, sizes, prev,  next, jumper" background>
-              </el-pagination>
+              <el-pagination
+                @size-change="unbindSizeChange"
+                @current-change="unbindcurrentChange"
+                :current-page="unbindTableQuery.page"
+                :page-sizes="[20, 50, 100,300,600,1000]"
+                :page-size="unbindTableQuery.size"
+                :total="unbindTableQuery.total"
+                layout="total, sizes, prev,  next, jumper"
+                background
+              ></el-pagination>
             </div>
           </div>
         </div>
       </div>
-
     </el-card>
   </div>
 </template>
@@ -98,6 +145,7 @@
 <script>
 /* eslint-disable */
 import {
+  getUserGroup,
   getUserList,
   getVehicleBinding,
   getVehicleUnBinding,
@@ -150,6 +198,7 @@ export default {
       unbindTableQuery: {
         license: "",
         owner: "",
+        group_id: "",
         size: 20,
         page: 1,
         total: 0
@@ -225,6 +274,7 @@ export default {
       }
     },
     renderUnbind() {
+      this.unbindTableQuery.group_id = this.groupData.group_id;
       this.$set(this.$data, "rightList", []);
       if (this.groupData.group_id) {
         getVehicleUnBinding(this.unbindTableQuery).then(res => {
@@ -241,7 +291,7 @@ export default {
     },
     renderUser() {
       this.$set(this.$data, "userList", []);
-      getUserList(this.userTableQuery).then(res => {
+      getUserGroup().then(res => {
         if (res.data.code == 0) {
           this.$set(this.$data, "userList", res.data.data);
           this.userTableQuery.total = res.data.total;
@@ -268,11 +318,11 @@ export default {
     },
     onleft(items, next) {
       //右到左
-      if (!this.currentUser.user_id) {
-        this.$message.warning("请选择一个用户！");
-        next(false);
-        return false;
-      }
+      // if (!this.currentUser.user_id) {
+      //   this.$message.warning("请选择一个用户！");
+      //   next(false);
+      //   return false;
+      // }
       var postData = {
         group_id: this.groupData.group_id,
         level: this.groupData.level,

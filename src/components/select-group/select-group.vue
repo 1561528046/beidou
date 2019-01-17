@@ -16,45 +16,6 @@
           <el-button icon="el-icon-more" class="group-select-btn"></el-button>
         </div>
       </div>
-      <div class="select-group-cotainer">
-        <div class="_body" @click.stop>
-          <div class="_filter">
-            <input
-              placeholder="输入关键字进行过滤"
-              v-model="filterText"
-              class="el-input__inner"
-              style="height:30px; line-height:30px;"
-            >
-          </div>
-          <div class="_tree" v-if="list.length">
-            <div v-if="filterEmpty" style="padding:10px; text-align:center; color:#999;">没有相关数据！</div>
-            <el-tree
-              default-expand-all
-              :expand-on-click-node="false"
-              @node-click="nodeClick"
-              :data="list"
-              node-key="group_id"
-              :props="defaultProps"
-              :filter-node-method="filterNode"
-              ref="tree2"
-            >
-              <span class="custom-tree-node" slot-scope="{ node, data }">
-                <tree-item
-                  :props="defaultProps"
-                  v-model="data"
-                  :treeNode="node"
-                  @append="append"
-                  @remove="remove"
-                  @edit="edit"
-                  @add="add"
-                  placeholder="请输入分组名称"
-                  :useing="$props.useing"
-                ></tree-item>
-              </span>
-            </el-tree>
-          </div>
-        </div>
-      </div>
     </el-popover>
     <div class="select-group-cotainer" v-if="$props.static">
       <div class="_body" @click.stop>
@@ -95,6 +56,45 @@
         </div>
       </div>
     </div>
+    <!-- <div class="select-group-cotainer">
+      <div class="_body" @click.stop>
+        <div class="_filter">
+          <input
+            placeholder="输入关键字进行过滤"
+            v-model="filterText"
+            class="el-input__inner"
+            style="height:30px; line-height:30px;"
+          >
+        </div>
+        <div class="_tree" v-if="list.length">
+          <div v-if="filterEmpty" style="padding:10px; text-align:center; color:#999;">没有相关数据！</div>
+          <el-tree
+            default-expand-all
+            :expand-on-click-node="false"
+            @node-click="nodeClick"
+            :data="list"
+            node-key="group_id"
+            :props="defaultProps"
+            :filter-node-method="filterNode"
+            ref="tree2"
+          >
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <tree-item
+                :props="defaultProps"
+                v-model="data"
+                :treeNode="node"
+                @append="append"
+                @remove="remove"
+                @edit="edit"
+                @add="add"
+                placeholder="请输入分组名称"
+                :useing="$props.useing"
+              ></tree-item>
+            </span>
+          </el-tree>
+        </div>
+      </div>
+    </div>-->
   </div>
 </template>
 <style lang="less">

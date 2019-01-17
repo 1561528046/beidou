@@ -11,7 +11,13 @@ export default {
       component: () => import("@/views/manage/user/user/index.vue")
     },
     {
-      path: "user_add",
+      path: "user_distribution",
+      name: "user_distribution",
+      meta: { name: "用户分车", hidden: true },
+      component: () => import("@/views/manage/user/user/binding.vue")
+    },
+    {
+      path: "user_add/:id",
       name: "user_add",
       meta: { name: "添加用户", hidden: true },
       component: () => import("@/views/manage/user/user/add.vue")

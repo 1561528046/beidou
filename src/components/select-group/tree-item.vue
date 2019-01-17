@@ -2,19 +2,41 @@
   <div class="tree-node-item">
     <div class="_label">
       <template v-if="nodeData.status!=0">
-        <i class="iconfont icon-folder-fill"></i> {{nodeData[props.label]}}</template>
+        <i class="iconfont icon-folder-fill"></i>
+        {{nodeData[props.label]}}
+      </template>
       <div v-if="nodeData.status==0" @click.stop>
-        <el-input v-model="nodeData[props.label]" :placeholder="$props.placeholder" size="mini" style="width:120px;margin-right:10px;" ref="labelInput"></el-input>
+        <el-input
+          v-model="nodeData[props.label]"
+          :placeholder="$props.placeholder"
+          size="mini"
+          style="width:120px;margin-right:10px;"
+          ref="labelInput"
+        ></el-input>
         <el-button icon="el-icon-check" type="primary" size="mini" @click="edit">确认</el-button>
         <el-button icon="el-icon-close" size="mini" @click="cancelEdit">取消</el-button>
       </div>
     </div>
     <div class="_tool" v-if="nodeData.status!=0" @click.stop>
-      <i class="el-icon-circle-plus-outline" @click="append" v-if="useing.indexOf('add')!=-1" v-rights="5-1-1"></i>
-      <i class="el-icon-edit" @click="openEdit" v-if="useing.indexOf('edit')!=-1" v-rights="5-1-3"></i>
-      <i class="el-icon-delete" @click="remove" v-if="useing.indexOf('remove')!=-1" v-rights="5-1-2"></i>
+      <i
+        class="el-icon-circle-plus-outline"
+        @click="append"
+        v-if="useing.indexOf('add')!=-1"
+        v-rights="5-1-1"
+      ></i>
+      <i
+        class="el-icon-edit"
+        @click="openEdit"
+        v-if="useing.indexOf('edit')!=-1&& nodeData[props.label]!='根目录'"
+        v-rights="5-1-3"
+      ></i>
+      <i
+        class="el-icon-delete"
+        @click="remove"
+        v-if="useing.indexOf('remove')!=-1&& nodeData[props.label]!='根目录'"
+        v-rights="5-1-2"
+      ></i>
     </div>
-
   </div>
 </template>
 <style lang="less">

@@ -187,6 +187,9 @@ function x0200(buffer) {
     1000000.0; //buffer.slice(25, 29); //经度
   result.altitude = (buffer[16] << 8) + buffer[17]; //buffer.slice(29, 31); //高程
   result.speed = ((buffer[18] << 8) + buffer[19]) / 10; //buffer.slice(31, 33); //速度
+  if (result.speed) {
+    result.speed.toFixed(2);
+  }
   result.angle = (buffer[20] << 8) + buffer[21]; // buffer.slice(33, 35); //方向
   result.time = formatTime(buffer.slice(22, 28)); //时间
   if (buffer.length > 28) {
@@ -209,12 +212,18 @@ function x0200(buffer) {
               (buffer[i + 4] << 8) +
               buffer[i + 5]) /
             10;
+          if (result.mileage) {
+            result.mileage = result.mileage.toFixed(2);
+          }
           break;
         case 0x02:
           result.oil = (buffer[i + 2] << 8) + buffer[i + 3];
           break;
         case 0x03:
           result.speed1 = ((buffer[i + 2] << 8) + buffer[i + 3]) / 10;
+          if (result.speed1) {
+            result.speed1 = result.speed1.toFixed(2);
+          }
           break;
         case 0x04:
           result.alarmId = (buffer[i + 2] << 8) + buffer[i + 3];
@@ -230,8 +239,8 @@ function x0200(buffer) {
           }
           break;
         case 0x12:
-          result.inoutAlarm = result.inoutAlarm || [];
-          result.inoutAlarm.push({
+          result.inoutAlarm = result.inoutAlarm || {};
+          result.inoutAlarm = {
             type: buffer[i + 2],
             areaId:
               SHL(buffer[i + 3], 24) +
@@ -239,7 +248,7 @@ function x0200(buffer) {
               (buffer[i + 5] << 8) +
               buffer[i + 6],
             direction: buffer[i + 7]
-          });
+          };
           break;
         case 0x13:
           result.runTimeAlarm = {

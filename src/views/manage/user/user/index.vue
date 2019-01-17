@@ -75,14 +75,27 @@
         <el-table-column prop="user_issue_office" label="核发机关" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
+            <router-link
+              v-if="scope.row.user_id!='1'"
+              :to="{name:'user_distribution',params:{id:scope.row.user_id}}"
+              style="margin-right:10px"
+            >
+              <el-button size="small" type="primary" icon="el-icon-upload">分车</el-button>
+            </router-link>
             <el-button
               type="primary"
-              size="mini"
+              size="small"
               @click="updateForm(scope)"
               icon="el-icon-edit"
               v-rights="4-1-3"
             >编辑</el-button>
-            <el-button size="mini" icon="el-icon-delete" @click="delRow(scope)" v-rights="4-1-2">删除</el-button>
+            <el-button
+              v-if="scope.row.user_id!='1'"
+              size="small"
+              icon="el-icon-delete"
+              @click="delRow(scope)"
+              v-rights="4-1-2"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>

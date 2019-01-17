@@ -53,29 +53,52 @@
             <div style="height:1.5em;overflow:hidden;">联系人：{{mapData.vehicle.info.linkman||"--"}}</div>
           </el-col>
           <el-col :span="12">联系方式： {{mapData.vehicle.info.tel||"--"}}</el-col>
-          <el-col
-            :span="12"
-          >时速：{{Number(mapData.vehicle.speed1|| mapData.vehicle.speed).toFixed(2) ||"--"}} km/h</el-col>
-          <el-col :span="12">里程：{{(mapData.vehicle.mileage/10).toFixed(2)||"--"}} km</el-col>
+          <el-col :span="12">时速：{{mapData.vehicle.speed1|| mapData.vehicle.speed ||"--"}} km/h</el-col>
+          <el-col :span="12">里程：{{mapData.vehicle.mileage||"--"}} km</el-col>
           <el-col :span="24">地理位置：{{mapData.vehicleAddress||"--"}}</el-col>
           <el-col>超速报警附加信息</el-col>
-          <el-col :span="12">位置类型：{{mapData.vehicle.overSpeedPositionType||"--"}}</el-col>
-          <el-col :span="12">区域或路段ID：{{mapData.vehicle.overSpeedAreaId||"--"}}</el-col>
-          <template v-if="mapData.vehicle.runTimeAlarm && mapData.vehicle.inoutAlarm[0] ">
+          <el-col :span="12">
+            位置类型：
+            <label v-if="mapData.vehicle.overSpeedPositionType===0">无特定位置</label>
+            <label v-if="mapData.vehicle.overSpeedPositionType===1">圆形区域</label>
+            <label v-if="mapData.vehicle.overSpeedPositionType===2">矩形区域</label>
+            <label v-if="mapData.vehicle.overSpeedPositionType===3">多边形区域</label>
+            <label v-if="mapData.vehicle.overSpeedPositionType===4">路段</label>
+          </el-col>
+          <el-col
+            v-if="mapData.vehicle.overSpeedPositionType!==0"
+            :span="12"
+          >区域或路段ID：{{mapData.vehicle.overSpeedAreaId||"--"}}</el-col>
+          <template v-if="mapData.vehicle.runTimeAlarm && mapData.vehicle.inoutAlarm ">
             <el-col>进出区域/路线报警附加信息</el-col>
-            <el-col :span="12">位置类型：{{mapData.vehicle.inoutAlarm[0].type||"--"}}</el-col>
-            <el-col :span="12">区域或线路ID：{{mapData.vehicle.inoutAlarm[0].areaId||"--"}}</el-col>
-            <el-col :span="12">方向：{{mapData.vehicle.inoutAlarm[0].direction||"--"}}</el-col>
+            <el-col :span="12">
+              位置类型：
+              <label v-if="mapData.vehicle.inoutAlarm.type===1">圆形区域</label>
+              <label v-if="mapData.vehicle.inoutAlarm.type===2">矩形区域</label>
+              <label v-if="mapData.vehicle.inoutAlarm.type===3">多边形区域</label>
+              <label v-if="mapData.vehicle.inoutAlarm.type===4">路线</label>
+            </el-col>
+            <el-col :span="12">区域或线路ID：{{mapData.vehicle.inoutAlarm.areaId||"--"}}</el-col>
+            <el-col :span="12">
+              方向：
+              <label v-if="mapData.vehicle.inoutAlarm.direction===0">进</label>
+              <label v-if="mapData.vehicle.inoutAlarm.direction===1">出</label>
+            </el-col>
             <el-col>路段行驶时间不足/过长报警附加信息</el-col>
             <el-col :span="12">路段ID：{{mapData.vehicle.runTimeAlarm.routeID||"--"}}</el-col>
-            <el-col :span="12">路段行驶时间：{{mapData.vehicle.runTimeAlarm.time||"--"}}</el-col>
-            <el-col :span="12">结果：{{mapData.vehicle.runTimeAlarm.type||"--"}}</el-col>
+            <el-col :span="12">路段行驶时间(秒)：{{mapData.vehicle.runTimeAlarm.time||"--"}}</el-col>
+            <el-col :span="12">
+              结果：
+              <label v-if=" mapData.vehicle.runTimeAlarm.type===0">不足</label>
+              <label v-if=" mapData.vehicle.runTimeAlarm.type===1">过长</label>
+            </el-col>
           </template>
         </el-row>
       </div>
       <div class="_other" v-if="$props.single">
         <el-row>
           <el-col :span="24">当前报警信息 {{$dict.getAlarm(mapData.vehicle.alarm)||"--"}}</el-col>
+          {{mapData.vehicle.fence_alarm}}
           <el-col
             :span="24"
             v-if="mapData.vehicle.fence_alarm&&mapData.vehicle.fence_alarm.alarmList&&mapData.vehicle.fence_alarm.alarmList.length"

@@ -99,14 +99,16 @@ export default {
           return false;
         }
         arrRes.map((item, index) => {
-          item.data.data = item.data.data.map(x => {
-            if (x.area_level == 3) {
-              return x;
-            } else {
-              x.children = [];
-              return x;
-            }
-          });
+          if (item.data.data != undefined) {
+            item.data.data = item.data.data.map(x => {
+              if (x.area_level == 3) {
+                return x;
+              } else {
+                x.children = [];
+                return x;
+              }
+            });
+          }
           currentArea.children = item.data.data;
           if (cloneValue[index + 1] && currentArea) {
             var currentIndex = _.findIndex(currentArea.children, {
@@ -134,7 +136,6 @@ export default {
         currentObj = currentObj.length ? currentObj : currentObj.children;
         currentObj = currentObj[_.findIndex(currentObj, { area_id: item })];
       });
-
       getArea({ parent_id: currentObj.area_id }).then(res => {
         let data = res.data.data;
         data = data.map(item => {

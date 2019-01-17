@@ -28,6 +28,7 @@
               :name="key_1"
               v-for="(level_1,key_1) in rightsDict"
               :key="level_1.name"
+              v-if="countDict[key_1]"
             >
               <template slot="title">
                 <div class="_level_1-header">
@@ -44,7 +45,12 @@
                 </div>
               </template>
               <div class="_level_1-body">
-                <div v-for="(level_2) in level_1.children" :key="level_2.name" class="_level_2">
+                <div
+                  v-for="(level_2) in level_1.children"
+                  :key="level_2.name"
+                  class="_level_2"
+                  v-if="level_2.children"
+                >
                   <div class="_level_2-title">
                     <el-checkbox
                       :indeterminate="level_2.indeterminate"
@@ -114,7 +120,7 @@
 }
 </style>
 <script>
-import { addRole, getRightsAll } from "@/api/index.js";
+import { addRole, getRightsByUserId } from "@/api/index.js";
 import { rightsDict, rightsRelation } from "@/utils/rights.js";
 export default {
   data() {
@@ -167,28 +173,47 @@ export default {
     this.$nextTick(() => {
       this.activeNames.push("1");
     });
-    getRightsAll().then(res => {
+    // 获取当前用户的权限
+    getRightsByUserId().then(res => {
       if (res.data.code == 0) {
-        var formatData = res.data.data[0];
-        formatData = Object.keys(formatData).map(key => {
-          //转换格式
-          // {"1-1-1": "新增车辆-添加","1-1-2": "新增车辆-删除",}
-          // 转换为 [{rights_id:"1-1-1",name:"新增车辆-添加"},{rights_id:"1-1-2",name:"新增车辆-删除"}]
-          //relation 引用次数，用于解决一个权限 用于 多个依赖，引用次数为0的时候，即可清空选项
+        var format = res.data.data[0].rights.split(",");
+        format = format.map(item => {
           return {
-            rights_id: key,
+            rights_id: item,
             name:
-              formatData[key].split("-").length > 1
-                ? formatData[key].split("-")[1]
-                : formatData[key],
+              this.$dict.get_permissions(item).split("-").length > 1
+                ? this.$dict.get_permissions(item).split("-")[1]
+                : this.$dict.get_permissions(item),
             checked: false,
             relation: 0
           };
         });
-        this.$set(this.$data, "rightsAll", formatData);
+        this.$set(this.$data, "rightsAll", format);
         this.initDict();
       }
     });
+    // getRightsAll().then(res => {
+    //   if (res.data.code == 0) {
+    //     var formatData = res.data.data[0];
+    //     formatData = Object.keys(formatData).map(key => {
+    //       // console.log(formatData[key])
+    //       //转换格式
+    //       // {"1-1-1": "新增车辆-添加","1-1-2": "新增车辆-删除",}
+    //       // 转换为 [{rights_id:"1-1-1",name:"新增车辆-添加"},{rights_id:"1-1-2",name:"新增车辆-删除"}]
+    //       //relation 引用次数，用于解决一个权限 用于 多个依赖，引用次数为0的时候，即可清空选项
+    //       return {
+    //         rights_id: key,
+    //         name:
+    //           formatData[key].split("-").length > 1
+    //             ? formatData[key].split("-")[1]
+    //             : formatData[key],
+    //         checked: false,
+    //         relation: 0
+    //       };
+    //     });
+    //     // console.log(formatData);
+    //   }
+    // });
   },
   methods: {
     initDict() {
