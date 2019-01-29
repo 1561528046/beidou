@@ -1445,7 +1445,7 @@ export default {
         })
         .catch(err => {
           this.initLoader.close();
-          this.$alert("初始车辆化失败！");
+          this.$alert("初始化车辆失败！");
           console.error(err);
         });
     },

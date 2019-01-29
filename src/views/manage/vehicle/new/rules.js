@@ -1,4 +1,4 @@
-export const Rules = function(vm, type, is_enter) {
+export const Rules = function(vm, is_enter) {
   //传入vm 用于多条件判断
   const baseRule = {
     str: { pattern: /^[a-zA-Z]+$/, message: "只能输入字母" },
@@ -14,13 +14,38 @@ export const Rules = function(vm, type, is_enter) {
       message: "只能输入汉字、空格、（）符号"
     } //汉字、不可输入除 - （）空格以外的特殊字符
   };
-
-  if (is_enter == 1) {
+  if (is_enter == "010") {
     return {
-      source: [{ required: true, message: "必须选择接入状态" }],
-      img: [{ required: true, message: "车身照片" }],
-      register_no1: [{ required: true, message: "车辆登记证1" }],
-      driver_no: [{ required: true, message: "车辆合格证/行驶证" }],
+      contract_date: [{ required: true, message: "必须选择服务到期日期" }],
+      owner: [
+        { required: true, message: "必须输入车主/业户" },
+        { min: 2, max: 20, message: "不能小于2个字符，不能大于20个字符" },
+        baseRule.specialChineseChars1
+      ],
+      linkman: [
+        { required: true, message: "必须输入联系人" },
+        { min: 2, max: 20, message: "不能小于2个字符，不能大于20个字符" },
+        baseRule.specialChineseChars
+      ],
+      tel: [
+        {
+          required: true,
+          trigger: "change",
+          validator: function(rule, value, callback) {
+            if (value == "") {
+              callback(new Error("必须输入联系人手机"));
+              return false;
+            }
+            var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
+            if (reg.test(value)) {
+              callback();
+            } else {
+              callback(new Error("手机号错误"));
+            }
+          }
+        }
+      ],
+      fuel_type: [{ required: true, message: "必须选择燃油种类" }],
       license: [
         {
           required: true,
@@ -62,56 +87,6 @@ export const Rules = function(vm, type, is_enter) {
           }
         }
       ],
-      license_color: [{ required: true, message: "必须选择车牌颜色" }],
-      transport_no: [baseRule.num],
-      fuel_type: [{ required: true, message: "必须选择燃油种类" }],
-      sim_id: [
-        { required: true, message: "必须选择SIM卡号" },
-        {
-          trigger: "change",
-          validator: function(rule, value, callback) {
-            value = value.slice(0, 11);
-            var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
-            if (reg.test(value)) {
-              callback();
-            } else {
-              callback(new Error("sim卡号错误"));
-            }
-          }
-        }
-      ],
-      type: [{ required: true, message: "必须选择车辆类型" }],
-      sim_no: [{ required: true, message: "必须选择安装SIM卡号" }],
-      device_no: [{ required: true, message: "必须选择设备" }],
-      contract_date: [{ required: true, message: "必须选择服务到期日期" }],
-      owner: [
-        { required: true, message: "必须输入车主/业户" },
-        { min: 2, max: 20, message: "不能小于2个字符，不能大于20个字符" },
-        baseRule.specialChineseChars1
-      ],
-      linkman: [
-        { required: true, message: "必须输入联系人" },
-        { min: 2, max: 20, message: "不能小于2个字符，不能大于20个字符" },
-        baseRule.specialChineseChars
-      ],
-      tel: [
-        {
-          required: true,
-          trigger: "change",
-          validator: function(rule, value, callback) {
-            if (value == "") {
-              callback(new Error("必须输入联系人手机"));
-              return false;
-            }
-            var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
-            if (reg.test(value)) {
-              callback();
-            } else {
-              callback(new Error("手机号错误"));
-            }
-          }
-        }
-      ],
       area: [{ required: true, message: "必须选择地区" }],
       vin: [
         { required: true, message: "必须输入车辆识别代码/车架号" },
@@ -129,23 +104,10 @@ export const Rules = function(vm, type, is_enter) {
           }
         }
       ],
+      source: [{ required: true, message: "必须选择接入状态" }],
       vbrandCode: [{ required: true, message: "必须输入车辆品牌" }],
-      model: [{ required: true, message: "必须输入车辆车辆型号" }],
-      vtype: [{ required: true, message: "必须输入车辆车辆类型" }],
-      engine_no: [
-        { required: true, message: "必须输入发动机号" },
-        { min: 3, message: "长度不能小于3" },
-        { max: 25, message: "长度不能大于25" },
-        {
-          validator: function(rule, value, callback) {
-            if (!/^[a-zA-Z0-9]+$/.test(value)) {
-              callback(new Error("只能输入数字或字母"));
-              return false;
-            }
-            callback();
-          }
-        }
-      ],
+      model: [{ required: true, message: "必须输入车辆型号" }],
+      vtype: [{ required: true, message: "必须选择车辆类型" }],
       engine_type: [
         { required: true, message: "必须输入发动机型号" },
         { min: 3, message: "长度不能小于3" },
@@ -193,74 +155,6 @@ export const Rules = function(vm, type, is_enter) {
               return false;
             }
             callback();
-          }
-        }
-      ],
-      load_ton: [
-        //核定载质量
-        {
-          required: true,
-          validator: function(rule, value, callback) {
-            var min = 1000; //蓝色牌照不能小于100 其他不能小于1000
-            var reg = /^[1-9][\d]{3,9}(\.[\d]{1,2})?$/;
-
-            if (value == "" && vm.formData.draw_ton == "") {
-              callback(
-                new Error("【核定载质量】与【准牵引总质量】二者至少填一项")
-              );
-              return false;
-            }
-            if (vm.formData.draw_ton != "" && value == "") {
-              callback();
-              return false;
-            }
-            if (vm.formData.license_color == "1") {
-              min = 100;
-              reg = /^[1-9][\d]{2,9}(\.[\d]{1,2})?$/;
-            }
-            if (value == "--" || value == "0" || value == "－－") {
-              callback();
-              return false;
-            }
-
-            if (
-              !isNaN(vm.formData.total_ton) &&
-              parseFloat(vm.formData.total_ton) < parseFloat(value)
-            ) {
-              callback(new Error("【核定载质量】必须小于【总质量】"));
-              return false;
-            }
-            if (!reg.test(value) || parseFloat(value) < min) {
-              callback(
-                new Error(
-                  "请输入--、－－、/或大于" + min + "且最多两位小数的数字"
-                )
-              );
-              return false;
-            }
-            if (parseFloat(value) >= vm.formData.total_ton) {
-              callback(new Error("核定载质量需小于总质量"));
-              return false;
-            }
-            callback();
-            vm.$refs.baseForm.clearValidate("draw_ton");
-          }
-        }
-      ],
-      draw_ton: [
-        {
-          required: true,
-          // message: "必须输入准牵引总质量",
-          trigger: "blur",
-          validator: function(rule, value, callback) {
-            if (value == "" && vm.formData.load_ton == "") {
-              callback(
-                new Error("【核定载质量】与【准牵引总质量】二者至少填一项")
-              );
-            } else {
-              callback();
-              vm.$refs.baseForm.clearValidate("load_ton");
-            }
           }
         }
       ],
@@ -417,6 +311,110 @@ export const Rules = function(vm, type, is_enter) {
         },
         { pattern: /^[1-9][\d]{0,1}$/, message: "必须输入整数" }
       ],
+      sim_no: [{ required: true, message: "必须选择安装SIM卡号" }],
+      device_no: [{ required: true, message: "必须选择设备" }],
+      img: [{ required: true, message: "车身照片" }],
+      register_no1: [{ required: true, message: "车辆登记证1" }],
+      driver_no: [{ required: true, message: "车辆合格证/行驶证" }],
+      license_color: [{ required: true, message: "必须选择车牌颜色" }],
+      transport_no: [baseRule.num],
+      sim_id: [
+        { required: true, message: "必须选择SIM卡号" },
+        {
+          trigger: "change",
+          validator: function(rule, value, callback) {
+            value = value.slice(0, 11);
+            var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
+            if (reg.test(value)) {
+              callback();
+            } else {
+              callback(new Error("sim卡号错误"));
+            }
+          }
+        }
+      ],
+      engine_no: [
+        { required: true, message: "必须输入发动机号" },
+        { min: 3, message: "长度不能小于3" },
+        { max: 25, message: "长度不能大于25" },
+        {
+          validator: function(rule, value, callback) {
+            if (!/^[a-zA-Z0-9]+$/.test(value)) {
+              callback(new Error("只能输入数字或字母"));
+              return false;
+            }
+            callback();
+          }
+        }
+      ],
+      load_ton: [
+        //核定载质量
+        {
+          required: true,
+          validator: function(rule, value, callback) {
+            var min = 1000; //蓝色牌照不能小于100 其他不能小于1000
+            var reg = /^[1-9][\d]{3,9}(\.[\d]{1,2})?$/;
+
+            if (value == "" && vm.formData.draw_ton == "") {
+              callback(
+                new Error("【核定载质量】与【准牵引总质量】二者至少填一项")
+              );
+              return false;
+            }
+            if (vm.formData.draw_ton != "" && value == "") {
+              callback();
+              return false;
+            }
+            if (vm.formData.license_color == "1") {
+              min = 100;
+              reg = /^[1-9][\d]{2,9}(\.[\d]{1,2})?$/;
+            }
+            if (value == "--" || value == "0" || value == "－－") {
+              callback();
+              return false;
+            }
+
+            if (
+              !isNaN(vm.formData.total_ton) &&
+              parseFloat(vm.formData.total_ton) < parseFloat(value)
+            ) {
+              callback(new Error("【核定载质量】必须小于【总质量】"));
+              return false;
+            }
+            if (!reg.test(value) || parseFloat(value) < min) {
+              callback(
+                new Error(
+                  "请输入--、－－、/或大于" + min + "且最多两位小数的数字"
+                )
+              );
+              return false;
+            }
+            if (parseFloat(value) >= vm.formData.total_ton) {
+              callback(new Error("核定载质量需小于总质量"));
+              return false;
+            }
+            callback();
+            vm.$refs.baseForm.clearValidate("draw_ton");
+          }
+        }
+      ],
+      draw_ton: [
+        {
+          required: true,
+          // message: "必须输入准牵引总质量",
+          trigger: "blur",
+          validator: function(rule, value, callback) {
+            if (value == "" && vm.formData.load_ton == "") {
+              callback(
+                new Error("【核定载质量】与【准牵引总质量】二者至少填一项")
+              );
+            } else {
+              callback();
+              vm.$refs.baseForm.clearValidate("load_ton");
+            }
+          }
+        }
+      ],
       tyre: [
         {
           validator: function(rule, value, callback) {
@@ -438,6 +436,7 @@ export const Rules = function(vm, type, is_enter) {
     };
   } else {
     return {
+      types: [{ required: true, message: "必须选择行业类别" }],
       license: [
         {
           required: true,
@@ -446,41 +445,9 @@ export const Rules = function(vm, type, is_enter) {
         }
       ],
       license_color: [{ required: true, message: "必须选择车牌颜色" }],
-      sim_id: [{ required: true, message: "必须选择SIM卡号" }],
-      type: [{ required: true, message: "必须选择车辆类型" }],
-      sim_no: [{ required: true, message: "必须选择安装SIM卡号" }],
-      device_no: [{ required: true, message: "必须选择设备" }],
-      contract_date: [{ required: true, message: "必须选择服务到期日期" }],
-      owner: [
-        { required: true, message: "必须输入车主/业户" },
-        { min: 2, max: 20, message: "不能小于2个字符，不能大于20个字符" },
-        baseRule.specialChineseChars1
-      ],
-      linkman: [
-        { required: true, message: "必须输入联系人" },
-        { min: 2, max: 20, message: "不能小于2个字符，不能大于20个字符" }
-      ],
-      tel: [
-        {
-          required: true,
-          trigger: "change",
-          validator: function(rule, value, callback) {
-            if (value == "") {
-              callback(new Error("必须输入联系人手机"));
-              return false;
-            }
-            var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
-            if (reg.test(value)) {
-              callback();
-            } else {
-              callback(new Error("手机号错误"));
-            }
-          }
-        }
-      ],
       area: [{ required: true, message: "必须选择地区" }],
-      vin: [{ required: true, message: "必须输入车辆识别代码/车架号" }],
-      issue_date: [{ required: true, message: "必须输入行驶证发证日期" }]
+      sim_no: [{ required: true, message: "必须选择安装SIM卡号" }],
+      device_no: [{ required: true, message: "必须选择设备" }]
     };
   }
   function boxEmpty() {
@@ -492,13 +459,11 @@ export const Rules = function(vm, type, is_enter) {
   }
 };
 //【车辆识别代码/车架号】与【车牌号、车牌颜色】二者至少填一项；【核定载质量】与【准牵引总质量】二者至少填一项
-
 //货厢内部尺寸需判断：同一辆车，货厢内部尺寸要小于该车的外部尺寸
 //货厢内部尺寸的宽、高要小于长
 //内部外部尺寸都必须大于1000，【货厢内部尺寸高】可以小于1000
 //车牌号为蓝色时，准牵引总质量不填、不验证  add 2017.8.21
 //总质量为0或者数字时 核定载质量必须小于总质量 总质量为--时 不做限制
-
 //车架号唯一性检查
 //SIM卡卡号唯一性检查
 //车牌号唯一性检查

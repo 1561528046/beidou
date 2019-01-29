@@ -1,5 +1,5 @@
-var BASE_URL = "http://192.168.88.100:725/";
-var API_URL = "http://192.168.88.100:725/api";
+var BASE_URL = "http://192.168.88.100:10029/";
+var API_URL = "http://192.168.88.100:10029/api";
 var MONITOR_URL = "ws://192.168.88.125:5002";
 var INSTRUCTION_URL = "ws://192.168.88.125:5000";
 // || true
@@ -625,6 +625,14 @@ var dict = {
   },
   get_demand: function(key) {
     return this.demand[key] || "--";
+  },
+  access_vehicletype: {
+    "1": "道路旅客运输",
+    "2": "道路货物运输",
+    "3": "道路危险货物运输"
+  },
+  get_access_vehicletype: function(key) {
+    return this.access_vehicletype[key] || "--";
   }
 };
 if (process.env.NODE_ENV == "production") {

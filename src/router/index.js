@@ -166,6 +166,16 @@ var routers = [
     component: () => import("@/views/login.vue")
   },
   {
+    path: "/national",
+    name: "national",
+    meta: {
+      name: "全国平台",
+      hidden: true,
+      fullscreen: true
+    },
+    component: () => import("@/views/validation.vue")
+  },
+  {
     path: "/404",
     meta: {
       hidden: true

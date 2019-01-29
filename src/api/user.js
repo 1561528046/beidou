@@ -179,3 +179,22 @@ export const unBindUserVehicle = query => {
     params: query
   });
 };
+
+// 获取需要登录的账号数量
+export const GetLoginCount = query => {
+  return ajax.get("/gghypt/GetLoginCount", {
+    params: query
+  });
+};
+// 获取验证码图片
+export const GetVerifyCodeImg = query => {
+  return ajax.get("/gghypt/GetVerifyCodeImg", {
+    params: query
+  });
+};
+// 提交验证码
+export const SubmitCode = query => {
+  return ajax.get("/gghypt/SubmitCode", {
+    params: query
+  });
+};

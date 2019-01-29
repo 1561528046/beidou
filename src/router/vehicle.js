@@ -68,14 +68,14 @@ export default {
           path: "new",
           name: "other_vehicle_list_new",
           meta: { name: "新增车辆管理", icon: "iconfont icon-zongheguanli" },
-          props: { is_enter: 2, state: 1, type: 1 },
+          props: { state: 1 },
           component: () => import("@/views/manage/vehicle/new/index.vue")
         },
         {
           path: "position",
           name: "other_vehicle_list_position",
           meta: { name: "定位车辆管理", icon: "iconfont icon-location-fill" },
-          props: { is_enter: 2, state: 2, type: 1 },
+          props: { state: 2 },
           component: () => import("@/views/manage/vehicle/new/index.vue")
         },
         {
@@ -85,35 +85,35 @@ export default {
             name: "到期车辆管理",
             icon: "iconfont icon-time-circle-fill"
           },
-          props: { is_enter: 2, state: 3, type: 1 },
+          props: { state: 3 },
           component: () => import("@/views/manage/vehicle/new/index.vue")
         },
         {
           path: "new/add",
           name: "other_vehicle_add",
           meta: { name: "新增车辆管理-添加", hidden: true },
-          props: { is_enter: 2, type: 1 },
+          props: {},
           component: () => import("@/views/manage/vehicle/new/add.vue")
         },
         {
           path: "new/edit/",
           name: "other_vehicle_edit",
           meta: { name: "新增车辆管理-编辑", hidden: true },
-          props: { is_enter: 2, type: 1, is_edit: true },
+          props: { is_edit: true },
           component: () => import("@/views/manage/vehicle/new/add.vue")
         },
         {
           path: "position/edit/",
           name: "other_vehicle_position_edit",
           meta: { name: "定位车辆管理-编辑", hidden: true },
-          props: { is_enter: 2, type: 1, is_edit: true },
+          props: { is_edit: true },
           component: () => import("@/views/manage/vehicle/new/add.vue")
         },
         {
           path: "timeout/edit/",
           name: "other_vehicle_timeout_edit",
           meta: { name: "到期车辆管理-编辑", hidden: true },
-          props: { is_enter: 2, type: 1, is_edit: true },
+          props: { is_edit: true },
           component: () => import("@/views/manage/vehicle/new/add.vue")
         }
       ]

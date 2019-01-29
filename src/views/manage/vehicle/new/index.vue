@@ -213,7 +213,7 @@
                   v-rights="1-1-7"
                 >车辆位置</el-dropdown-item>
                 <el-dropdown-item
-                  v-if="$props.state==1 && $props.is_enter==1"
+                  v-if="$props.state==1 "
                   :command="{command:'update-position',data:scope}"
                   v-rights="1-1-3"
                 >更新定位</el-dropdown-item>
@@ -291,7 +291,6 @@
     >
       <view-vehicle
         :type="$props.type"
-        :is_enter="$props.is_enter"
         @error="clearShowDetails"
         :vehicle_id="showDetailsVehicle.vehicle_id"
         v-if="detailsVisible"
@@ -453,9 +452,7 @@ export default {
     this.checkOrderRights();
   },
   props: {
-    type: Number, //type 接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
-    state: Number, //state 车辆状态 1、新增车辆 2、定位车辆 3、到期车辆
-    is_enter: Number //is_enter是否录入全国平台：1是，2否
+    state: Number //state 车辆状态 1、新增车辆 2、定位车辆 3、到期车辆
   },
   data() {
     return {
@@ -494,11 +491,10 @@ export default {
       area: [],
       tableQuery: {
         device_no: "",
-        is_enter: this.$props.is_enter,
         province_id: "",
         city_id: "",
         county_id: "",
-        type: this.$props.type,
+        type: "",
         flag: this.$props.state,
         leave_day: "",
         first_startdate: "",

@@ -1,7 +1,6 @@
 <template>
-  <el-select :clearable="clearable" v-model="vtype" placeholder="请选择燃油种类">
-    <el-option v-for="(item,key) in vtypes" :key="key.slice(1)" :label="item" :value="key.slice(1)">
-    </el-option>
+  <el-select :clearable="clearable" v-model="vtype" placeholder="请选择">
+    <el-option v-for="(item,key) in vtypes" :key="key.slice(1)" :label="item" :value="key.slice(1)"></el-option>
   </el-select>
 </template>
 <script>

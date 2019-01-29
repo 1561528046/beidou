@@ -1,15 +1,30 @@
 <template>
   <div class="login-form">
-    <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" @submit.native.prevent>
+    <router-link :to="{name:'national'}">
+      <el-button size="small" style="position: absolute;top: 10px;right: 10px;">全国平台</el-button>
+    </router-link>
+    <el-form
+      status-icon
+      :rules="rules"
+      :model="formData"
+      size="small"
+      ref="baseForm"
+      @submit.native.prevent
+    >
       <el-form-item label="登陆帐号" prop="user_name">
         <el-input v-model="formData.user_name"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="pass_word">
         <el-input v-model="formData.pass_word" type="password"></el-input>
       </el-form-item>
-
       <el-form-item style="text-align:center; padding-top:20px;">
-        <el-button type="primary" :loading="loading" native-type="submit" @click="formSubmit" size="large">登陆</el-button>
+        <el-button
+          type="primary"
+          :loading="loading"
+          native-type="submit"
+          @click="formSubmit"
+          size="large"
+        >登陆</el-button>
       </el-form-item>
     </el-form>
   </div>
