@@ -117,6 +117,7 @@
               <el-form-item label-width="100px" label="故障提交时间">
                 <el-date-picker
                   value-format="yyyyMMdd"
+                  style="width:100%"
                   v-model="tableRepair.time"
                   type="daterange"
                   align="right"
@@ -312,6 +313,7 @@
             <el-col :span="6">
               <el-form-item label-width="100px" label="故障提交时间">
                 <el-date-picker
+                  style="width:100%"
                   value-format="yyyyMMdd"
                   v-model="tableRepair.time"
                   type="daterange"
@@ -503,6 +505,7 @@
             <el-col :span="6">
               <el-form-item label-width="100px" label="故障提交时间">
                 <el-date-picker
+                  style="width:100%"
                   value-format="yyyyMMdd"
                   v-model="tableRepair.time"
                   type="daterange"
@@ -721,7 +724,7 @@ export default {
       tableRepair: {
         page: 1,
         size: 10,
-        type: 1,
+        type: "010",
         time: [],
         start_time: "",
         end_time: "",
@@ -729,7 +732,6 @@ export default {
         owner: "",
         fault_type: "",
         repair_state: "",
-        is_enter: 2,
         desc: ""
       },
       tableData: {
@@ -823,20 +825,15 @@ export default {
       this.tableRepair.owner = "";
       this.tableRepair.fault_type = "";
       this.tableRepair.repair_state = "";
-      this.tableRepair.is_enter = "";
       this.tableRepair.desc = "";
       if (tab.label == "全国联动车辆") {
-        this.tableRepair.is_enter = 1;
         this.tableRepair.type = 1;
       } else if (tab.label == "道路货物运输") {
-        this.tableRepair.is_enter = 2;
-        this.tableRepair.type = 1;
+        this.tableRepair.type = "010";
       } else if (tab.label == "道路危险货物运输") {
-        this.tableRepair.is_enter = 2;
-        this.tableRepair.type = 2;
+        this.tableRepair.type = "020";
       } else if (tab.label == "道路旅客运输") {
-        this.tableRepair.is_enter = 2;
-        this.tableRepair.type = 3;
+        this.tableRepair.type = "030";
       }
       this.getTable();
     },

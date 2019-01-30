@@ -116,10 +116,11 @@
             <i class="el-icon-plus"></i> 添加
           </el-button>
         </router-link>
+        <el-button v-if="$props.state==2" type="primary" @click="singleImport" size="small">单车导入</el-button>
+        <el-button v-if="$props.state==2" type="primary" @click="moreImport" size="small">批量导入</el-button>
         <el-button style="margin-left:10px" type="primary" @click="exportExcel" size="small">
           <i class="el-icon-download"></i> 导出
         </el-button>
-
         <el-dropdown v-rights="2-1-5">
           <el-button size="small" style="margin-left: 15px;" type="primary">
             批量上传
@@ -145,13 +146,6 @@
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-
-        <!-- <el-button type="primary" size="small" v-if="$props.state==2">
-          <i class="el-icon-tickets"></i> 单车导入
-        </el-button>
-        <el-button type="primary" size="small" v-if="$props.state==2">
-          <i class="el-icon-upload2"></i> 批量导入
-        </el-button>-->
         <!-- <el-button type="primary" size="small" v-rights="1-1-5">
           <i class="el-icon-download"></i> 导出
         </el-button>-->
@@ -387,50 +381,10 @@
     >
       <device-upload @success=" ()=> {this.getTable();this.uploadDialog = false;}" :key="addKey"></device-upload>
     </el-dialog>
+    <el-dialog width="20%" title="单车导入" :visible.sync="singleDialog " :append-to-body="true "></el-dialog>
+    <el-dialog width="20%" title="批量导入" :visible.sync="moreDialog" :append-to-body="true "></el-dialog>
   </div>
 </template>
-<style lang="less">
-.vehicle-list-more {
-  li {
-    line-height: 36px !important;
-    padding: 0 20px !important;
-    font-size: 14px !important;
-  }
-}
-.license-card {
-  padding: 0 5px;
-  border-radius: 4px;
-  width: 9em;
-  overflow: hidden;
-  display: inline-block;
-  text-align: center;
-  box-sizing: border-box;
-  position: relative;
-  font-weight: bold;
-  &:before {
-    content: "";
-    width: 4px;
-    height: 4px;
-    border-radius: 4px;
-    background: #fff;
-    position: absolute;
-    left: 5px;
-    top: 50%;
-    margin-top: -2px;
-  }
-  &:after {
-    content: "";
-    width: 4px;
-    height: 4px;
-    border-radius: 4px;
-    background: #fff;
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    margin-top: -2px;
-  }
-}
-</style>
 <script>
 /* eslint-disable */
 import moment from "moment";
@@ -456,6 +410,8 @@ export default {
   },
   data() {
     return {
+      singleDialog: false, //单车导入
+      moreDialog: false, //批量导入
       renew_platform: false,
       renew_company: false,
       active_company: false,
@@ -579,6 +535,14 @@ export default {
     }
   },
   methods: {
+    // 单车导入
+    singleImport() {
+      this.singleDialog = true;
+    },
+    // 批量导入
+    moreImport() {
+      this.moreDialog = true;
+    },
     // 上传
     openUpload() {
       this.addKey++;
@@ -850,3 +814,45 @@ export default {
   }
 };
 </script>
+<style lang="less">
+.vehicle-list-more {
+  li {
+    line-height: 36px !important;
+    padding: 0 20px !important;
+    font-size: 14px !important;
+  }
+}
+.license-card {
+  padding: 0 5px;
+  border-radius: 4px;
+  width: 9em;
+  overflow: hidden;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
+  position: relative;
+  font-weight: bold;
+  &:before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
+  &:after {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    margin-top: -2px;
+  }
+}
+</style>

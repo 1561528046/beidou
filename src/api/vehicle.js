@@ -48,7 +48,6 @@ export const updateVehicle = query => {
   return ajax.post("/vehicle/UpdateVehicle", queryQS);
 };
 export const syncVehicle = query => {
-  console.log(query);
   //同步车辆数据
   var queryQS = qs.stringify(query);
   return ajax.post("/vehicle/SynVehicle", queryQS);
