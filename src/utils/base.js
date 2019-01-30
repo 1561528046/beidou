@@ -1,5 +1,5 @@
-var BASE_URL = "http://192.168.88.88:10462/";
-var API_URL = "http://192.168.88.88:10462/api";
+var BASE_URL = "http://192.168.88.100:10029/";
+var API_URL = "http://192.168.88.100:10029/api";
 var MONITOR_URL = "ws://192.168.88.125:5002";
 var INSTRUCTION_URL = "ws://192.168.88.125:5000";
 // || true
@@ -350,6 +350,20 @@ var dict = {
   },
   get_industry: function(key) {
     return this.industry[key] || "--";
+  },
+  industry_son: {
+    "011": "班车客运",
+    "012": "包车客运",
+    "013": "定线旅游",
+    "014": "非定线旅游",
+    "021": "道路普通货物运输",
+    "022": "货物专用运输",
+    "023": "大型物件运输",
+    "031": "营运性危险货物运输",
+    "032": "非经营性危险货物运输"
+  },
+  get_industry_son: function(key) {
+    return this.industry_son[key] || "--";
   },
   sim_state: {
     "1": "已使用",

@@ -81,8 +81,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8" v-if="$props.is_enter!=1">
-            <el-form-item label="接入车辆类型" prop="type">
-              {{formData.type}}
+            <el-form-item label="行业类别" prop="type">
+              {{$dict.get_industry(formData.type)}}->{{$dict.get_industry_son(formData.type_son)}}
               <!-- <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type> -->
             </el-form-item>
           </el-col>
