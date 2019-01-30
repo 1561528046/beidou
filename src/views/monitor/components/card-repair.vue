@@ -1,33 +1,30 @@
 <template slot-scope="scope">
-    <div>
-        <el-form :model="tableQuery" size="small" v-if="hasSimNo">
-            <el-row :gutter="30">
-                <el-col :span="5">
-                    <el-form-item label="故障类型：">
-                        <label v-if="tableQuery.fault_type=='1'">设备故障</label>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="故障原因：">
-                        <el-input v-model="tableQuery.reason" style="width:70%"></el-input>
-                    </el-form-item>
-                </el-col>
-                <!-- <el-col :span="7">
+  <div>
+    <el-form :model="tableQuery" size="small" v-if="hasSimNo">
+      <el-row :gutter="30">
+        <el-col :span="5">
+          <el-form-item label="故障类型：">
+            <label v-if="tableQuery.fault_type=='1'">设备故障</label>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="故障原因：">
+            <el-input v-model="tableQuery.reason" style="width:70%"></el-input>
+          </el-form-item>
+        </el-col>
+        <!-- <el-col :span="7">
                     <el-form-item label="是否录入全国平台：">
                         <el-radio v-model="tableQuery.is_enter" label="1">是</el-radio>
                         <el-radio v-model="tableQuery.is_enter" label="2">否</el-radio>
                     </el-form-item>
-                </el-col> -->
-                <el-col :span="3">
-                    <el-button @click="declare" style="float:right" type="primary" size="small">申报</el-button>
-                </el-col>
-            </el-row>
-
-        </el-form>
-        <div v-if="!hasSimNo">
-            车辆没有绑定sim卡!
-        </div>
-    </div>
+        </el-col>-->
+        <el-col :span="3">
+          <el-button @click="declare" style="float:right" type="primary" size="small">申报</el-button>
+        </el-col>
+      </el-row>
+    </el-form>
+    <div v-if="!hasSimNo">车辆没有绑定sim卡!</div>
+  </div>
 </template>
 <script>
 import { getSim, getUpdateVehicleState, getVehicle } from "@/api/index.js";
@@ -37,7 +34,6 @@ export default {
   },
   data() {
     return {
-      vehicle_type: this.$dict.industry,
       hasSimNo: true,
       vehicleData: {},
       data: {},

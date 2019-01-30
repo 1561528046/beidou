@@ -105,14 +105,6 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="接入车辆状态" prop="source" v-if="formData.type[0]=='010'">
-              <el-select v-model="formData.source" placeholder="接入车辆状态" style="width:100%;">
-                <el-option label="新增" value="1"></el-option>
-                <el-option label="转网" value="2"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
             <el-form-item label="燃料种类" prop="fuel_type">
               <select-fuel-type v-model="formData.fuel_type" style="width:100%;"></select-fuel-type>
             </el-form-item>
@@ -692,7 +684,6 @@ export default {
         vbrandName: "",
         end_time: "", //离线时间
         vid: "", //全国平台车辆ID
-        source: "", //接入车辆状态：1新增，2转网
         transport_license: "", //道路运输经营许可证
         transport_no: "", //道路运输证号
         vtype: "", //车辆类型
@@ -761,13 +752,13 @@ export default {
       this.$set(this.$data, "rules", new Rules(this, this.formData.types[0]));
       this.$refs.baseForm.clearValidate();
     },
-    "formData.type": function(value) {
-      if (value != "3") {
-        this.formData.box_length = "";
-        this.formData.box_height = "";
-        this.formData.box_width = "";
-      }
-    },
+    // "formData.type": function(value) {
+    //   if (value != "3") {
+    //     this.formData.box_length = "";
+    //     this.formData.box_height = "";
+    //     this.formData.box_width = "";
+    //   }
+    // },
     "formData.model": function() {
       if (this.$props.is_edit && this.isInit == false) {
         //编辑模式第一次不进行赋值
@@ -836,6 +827,7 @@ export default {
               res.data.data[0].type,
               res.data.data[0].type_son
             ];
+            res.data.data[0].axis = Number(res.data.data[0].axis);
             Object.assign(this.formData, res.data.data[0]);
             this.formData.area = [
               this.formData.province_id,
@@ -904,7 +896,6 @@ export default {
       //   vbrandName: "解放牌",
       //   end_time: "", //离线时间
       //   vid: "", //全国平台车辆ID
-      //   source: "1", //接入车辆状态：1新增，2转网
       //   transport_license: "", //道路运输经营许可证
       //   transport_no: "1111", //道路运输证号
       //   vtype: "22", //车辆类型

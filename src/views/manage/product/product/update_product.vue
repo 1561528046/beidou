@@ -2,7 +2,7 @@
   <div>
     <el-form status-icon :rules="rules" :model="formData " ref="baseForm">
       <!-- <el-row :gutter="30">
-            </el-row> -->
+      </el-row>-->
       <!-- 车辆 -->
       <el-form-item v-show="formData.detail_type==1">
         <template slot-scope="scope">
@@ -14,17 +14,29 @@
           <el-select v-model="formData.detail_name" style="width:100%;">
             <el-option value="新增">新增</el-option>
             <el-option value="续费">续费</el-option>
-            <el-option value="转网">转网</el-option>
           </el-select>
           <label style="float:left;">单价</label>
-          <el-input v-model="formData.original_price" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+          <el-input
+            v-model="formData.original_price"
+            type="number"
+            onkeyup="this.value=this.value.replace(/\D/g,'')"
+            onafterpaste="this.value=this.value.replace(/\D/g,'')"
+            placeholder="0"
+            size="medium"
+            style="border-color: #f56c6c;"
+          ></el-input>
         </template>
       </el-form-item>
       <!-- 厂商 -->
       <el-form-item v-show="formData.detail_type==2">
         <template slot-scope="scope">
           <label style="float:left;">终端厂商</label>
-          <select-company v-model="formData.company_id" :company_name.sync="formData.company_name" style="width:100%;" :clearable="true"></select-company>
+          <select-company
+            v-model="formData.company_id"
+            :company_name.sync="formData.company_name"
+            style="width:100%;"
+            :clearable="true"
+          ></select-company>
           <label style="float:left;">收费单项</label>
           <el-select style="width:100%;" v-model="formData.detail_name">
             <el-option value="开通">开通</el-option>
@@ -36,21 +48,45 @@
             <el-option label="充值" value="2">充值</el-option>
           </el-select>
           <label style="float:left;">单价</label>
-          <el-input v-model="formData.original_price" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+          <el-input
+            v-model="formData.original_price"
+            type="number"
+            onkeyup="this.value=this.value.replace(/\D/g,'')"
+            onafterpaste="this.value=this.value.replace(/\D/g,'')"
+            placeholder="0"
+            size="medium"
+            style="border-color: #f56c6c;"
+          ></el-input>
         </template>
       </el-form-item>
       <!-- 短信 -->
       <el-form-item v-show="formData.detail_type==3">
         <template slot-scope="scope">
           <label style="float:left;">数量</label>
-          <el-input v-model="formData.count" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+          <el-input
+            v-model="formData.count"
+            type="number"
+            onkeyup="this.value=this.value.replace(/\D/g,'')"
+            onafterpaste="this.value=this.value.replace(/\D/g,'')"
+            placeholder="0"
+            size="medium"
+            style="border-color: #f56c6c;"
+          ></el-input>
           <label style="float:left;">计费方式</label>
           <el-select v-model="formData.pay_type" style="width:100%;">
             <el-option label="计费" value="1">计费</el-option>
             <el-option label="充值" value="2">充值</el-option>
           </el-select>
           <label style="float:left;">单价</label>
-          <el-input v-model="formData.original_price" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+          <el-input
+            v-model="formData.original_price"
+            type="number"
+            onkeyup="this.value=this.value.replace(/\D/g,'')"
+            onafterpaste="this.value=this.value.replace(/\D/g,'')"
+            placeholder="0"
+            size="medium"
+            style="border-color: #f56c6c;"
+          ></el-input>
         </template>
       </el-form-item>
       <!-- sim卡 -->
@@ -66,7 +102,15 @@
             <el-option label="充值" value="2">充值</el-option>
           </el-select>
           <label style="float:left;">单价</label>
-          <el-input v-model="formData.original_price" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" placeholder="0" size="medium" style="border-color: #f56c6c;"></el-input>
+          <el-input
+            v-model="formData.original_price"
+            type="number"
+            onkeyup="this.value=this.value.replace(/\D/g,'')"
+            onafterpaste="this.value=this.value.replace(/\D/g,'')"
+            placeholder="0"
+            size="medium"
+            style="border-color: #f56c6c;"
+          ></el-input>
         </template>
       </el-form-item>
       <el-form-item style="text-align:center;">
@@ -103,7 +147,6 @@ export default {
     return {
       flow: [],
       belongSelect: ["中国移动", "中国联通", "中国电信"],
-      industrys: this.$dict.industry,
       button_type: true,
       formData: {
         package_id: this.$props.parent_id,

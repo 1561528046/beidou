@@ -103,14 +103,28 @@
             <el-button @click="delDialog = false">取 消</el-button>
           </span>
         </el-dialog>
-      </el-tab-pane> -->
-      <el-tab-pane label="普通货车">
-        <el-form :model="tableRepair" label-width="80px" label-position="left" class="table-search" size="small">
+      </el-tab-pane>-->
+      <el-tab-pane label="道路货物运输">
+        <el-form
+          :model="tableRepair"
+          label-width="80px"
+          label-position="left"
+          class="table-search"
+          size="small"
+        >
           <el-row :gutter="30">
             <el-col :span="6">
               <el-form-item label-width="100px" label="故障提交时间">
-                <el-date-picker value-format="yyyyMMdd" v-model="tableRepair.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-                </el-date-picker>
+                <el-date-picker
+                  value-format="yyyyMMdd"
+                  v-model="tableRepair.time"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -153,41 +167,98 @@
               <i class="el-icon-download"></i> 导出
             </el-button>
           </div>
-          <el-table :data="tableData.data" style="width: 100%" class="admin-table-list" v-loading="tableLoading">
-            <el-table-column prop="fault_time" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"> </el-table-column>
-            <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="tel" label="联系方式" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="owner" label="所属公司/用户" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="fault_type" label="故障类型" :formatter="(row)=>{return this.$dict.get_vehiclefault_type(row.fault_type)}"></el-table-column>
-            <el-table-column prop="reason" label="故障原因" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="repair_state" label="状态" :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"> </el-table-column>
+          <el-table
+            :data="tableData.data"
+            style="width: 100%"
+            class="admin-table-list"
+            v-loading="tableLoading"
+          >
+            <el-table-column
+              prop="fault_time"
+              label="故障时间"
+              :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"
+            ></el-table-column>
+            <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="tel" label="联系方式" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="owner" label="所属公司/用户" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column
+              prop="fault_type"
+              label="故障类型"
+              :formatter="(row)=>{return this.$dict.get_vehiclefault_type(row.fault_type)}"
+            ></el-table-column>
+            <el-table-column prop="reason" label="故障原因" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column
+              prop="repair_state"
+              label="状态"
+              :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"
+            ></el-table-column>
             <el-table-column label="操作" width="400">
               <template slot-scope="scope">
-                <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
+                <el-button
+                  @click="submit_repairend(scope)"
+                  size="small"
+                  :type="faultType(scope)"
+                  :disabled="faultDisabled(scope)"
+                >故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
-                    <el-table-column width="150" label="故障原因" prop="Reason" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="维修状态" prop="RepairState" :formatter="$utils.baseFormatter">
+                    <el-table-column
+                      width="150"
+                      label="维修时间"
+                      prop="RepairTime"
+                      :formatter="repairtime"
+                    ></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="故障原因"
+                      prop="Reason"
+                      :formatter="$utils.baseFormatter"
+                    ></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="维修状态"
+                      prop="RepairState"
+                      :formatter="$utils.baseFormatter"
+                    >
                       <template slot-scope="scope">
-                        <label v-if="scope.row.RepairState==''">
-                          --
-                        </label>
-                        <el-tag type="danger" v-if="scope.row.RepairState==1">
-                          未处理
-                        </el-tag>
-                        <el-tag type="success" v-if="scope.row.RepairState==2">
-                          已修复
-                        </el-tag>
+                        <label v-if="scope.row.RepairState==''">--</label>
+                        <el-tag type="danger" v-if="scope.row.RepairState==1">未处理</el-tag>
+                        <el-tag type="success" v-if="scope.row.RepairState==2">已修复</el-tag>
                       </template>
                     </el-table-column>
-                    <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="操作人" prop="RealName" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="备注"
+                      prop="Desc"
+                      :formatter="$utils.baseFormatter"
+                    ></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="操作人"
+                      prop="RealName"
+                      :formatter="$utils.baseFormatter"
+                    ></el-table-column>
                   </el-table>
-                  <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
+                  <el-button
+                    style="margin-left:10px;"
+                    size="small"
+                    type="success"
+                    plain
+                    slot="reference"
+                    @click="OperateLogList(scope)"
+                  >查看维修明细</el-button>
                 </el-popover>
-                <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+                <el-dialog
+                  width="30%"
+                  title
+                  :visible.sync="addDialog"
+                  :append-to-body="true"
+                  :close-on-click-modal="false"
+                  :close-on-press-escape="false"
+                  :center="true"
+                  class="admin-dialog"
+                >
                   <label>备注：</label>
                   <el-input v-model="tableRepair.desc"></el-input>
                   <span slot="footer" class="dialog-footer">
@@ -199,11 +270,28 @@
             </el-table-column>
           </el-table>
           <div class="admin-table-pager">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-            </el-pagination>
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="tableQuery.page"
+              :page-sizes="[10, 20, 50, 100]"
+              :page-size="tableQuery.size"
+              :total="tableData.total"
+              layout="total, sizes, prev, pager, next, jumper"
+              background
+            ></el-pagination>
           </div>
         </el-card>
-        <el-dialog width="30%" title="" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+        <el-dialog
+          width="30%"
+          title
+          :visible.sync="delDialog"
+          :append-to-body="true"
+          :close-on-click-modal="false"
+          :close-on-press-escape="false"
+          :center="true"
+          class="admin-dialog"
+        >
           <label>备注：</label>
           <el-input></el-input>
           <span slot="footer" class="dialog-footer">
@@ -212,13 +300,27 @@
           </span>
         </el-dialog>
       </el-tab-pane>
-      <el-tab-pane label="危险品车辆">
-        <el-form :model="tableRepair" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-tab-pane label="道路危险货物运输">
+        <el-form
+          :model="tableRepair"
+          label-width="80px"
+          label-position="left"
+          class="table-search"
+          size="small"
+        >
           <el-row :gutter="30">
             <el-col :span="6">
               <el-form-item label-width="100px" label="故障提交时间">
-                <el-date-picker value-format="yyyyMMdd" v-model="tableRepair.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-                </el-date-picker>
+                <el-date-picker
+                  value-format="yyyyMMdd"
+                  v-model="tableRepair.time"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -262,40 +364,92 @@
             </el-button>
           </div>
           <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
-            <el-table-column prop="fault_time" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"> </el-table-column>
-            <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="tel" label="联系方式" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="owner" label="所属公司/用户" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="fault_type" label="故障类型" :formatter="(row)=>{return this.$dict.get_vehiclefault_type(row.fault_type)}"></el-table-column>
-            <el-table-column prop="reason" label="故障原因" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="repair_state" label="状态" :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"> </el-table-column>
+            <el-table-column
+              prop="fault_time"
+              label="故障时间"
+              :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"
+            ></el-table-column>
+            <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="tel" label="联系方式" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="owner" label="所属公司/用户" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column
+              prop="fault_type"
+              label="故障类型"
+              :formatter="(row)=>{return this.$dict.get_vehiclefault_type(row.fault_type)}"
+            ></el-table-column>
+            <el-table-column prop="reason" label="故障原因" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column
+              prop="repair_state"
+              label="状态"
+              :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"
+            ></el-table-column>
             <el-table-column label="操作" width="400">
               <template slot-scope="scope">
-                <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
+                <el-button
+                  @click="submit_repairend(scope)"
+                  size="small"
+                  :type="faultType(scope)"
+                  :disabled="faultDisabled(scope)"
+                >故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
-                    <el-table-column width="150" label="故障原因" prop="Reason" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="维修状态" prop="RepairState" :formatter="$utils.baseFormatter">
+                    <el-table-column
+                      width="150"
+                      label="维修时间"
+                      prop="RepairTime"
+                      :formatter="repairtime"
+                    ></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="故障原因"
+                      prop="Reason"
+                      :formatter="$utils.baseFormatter"
+                    ></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="维修状态"
+                      prop="RepairState"
+                      :formatter="$utils.baseFormatter"
+                    >
                       <template slot-scope="scope">
-                        <label v-if="scope.row.RepairState==''">
-                          --
-                        </label>
-                        <el-tag type="danger" v-if="scope.row.RepairState==1">
-                          未处理
-                        </el-tag>
-                        <el-tag type="success" v-if="scope.row.RepairState==2">
-                          已修复
-                        </el-tag>
+                        <label v-if="scope.row.RepairState==''">--</label>
+                        <el-tag type="danger" v-if="scope.row.RepairState==1">未处理</el-tag>
+                        <el-tag type="success" v-if="scope.row.RepairState==2">已修复</el-tag>
                       </template>
                     </el-table-column>
-                    <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="操作人" prop="RealName" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="备注"
+                      prop="Desc"
+                      :formatter="$utils.baseFormatter"
+                    ></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="操作人"
+                      prop="RealName"
+                      :formatter="$utils.baseFormatter"
+                    ></el-table-column>
                   </el-table>
-                  <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
+                  <el-button
+                    style="margin-left:10px;"
+                    size="small"
+                    type="success"
+                    plain
+                    slot="reference"
+                    @click="OperateLogList(scope)"
+                  >查看维修明细</el-button>
                 </el-popover>
-                <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+                <el-dialog
+                  width="30%"
+                  title
+                  :visible.sync="addDialog"
+                  :append-to-body="true"
+                  :close-on-click-modal="false"
+                  :close-on-press-escape="false"
+                  :center="true"
+                  class="admin-dialog"
+                >
                   <label>备注：</label>
                   <el-input v-model="tableRepair.desc"></el-input>
                   <span slot="footer" class="dialog-footer">
@@ -307,11 +461,28 @@
             </el-table-column>
           </el-table>
           <div class="admin-table-pager">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-            </el-pagination>
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="tableQuery.page"
+              :page-sizes="[10, 20, 50, 100]"
+              :page-size="tableQuery.size"
+              :total="tableData.total"
+              layout="total, sizes, prev, pager, next, jumper"
+              background
+            ></el-pagination>
           </div>
         </el-card>
-        <el-dialog width="30%" title="" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+        <el-dialog
+          width="30%"
+          title
+          :visible.sync="delDialog"
+          :append-to-body="true"
+          :close-on-click-modal="false"
+          :close-on-press-escape="false"
+          :center="true"
+          class="admin-dialog"
+        >
           <label>备注：</label>
           <el-input></el-input>
           <span slot="footer" class="dialog-footer">
@@ -320,13 +491,27 @@
           </span>
         </el-dialog>
       </el-tab-pane>
-      <el-tab-pane label="客运车辆">
-        <el-form :model="tableRepair" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-tab-pane label="道路旅客运输">
+        <el-form
+          :model="tableRepair"
+          label-width="80px"
+          label-position="left"
+          class="table-search"
+          size="small"
+        >
           <el-row :gutter="30">
             <el-col :span="6">
               <el-form-item label-width="100px" label="故障提交时间">
-                <el-date-picker value-format="yyyyMMdd" v-model="tableRepair.time" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-                </el-date-picker>
+                <el-date-picker
+                  value-format="yyyyMMdd"
+                  v-model="tableRepair.time"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -370,40 +555,92 @@
             </el-button>
           </div>
           <el-table :data="tableData.data" style="width: 100%" class="admin-table-list">
-            <el-table-column prop="fault_time" label="故障时间" :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"> </el-table-column>
-            <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="tel" label="联系方式" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="owner" label="所属公司/用户" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="fault_type" label="故障类型" :formatter="(row)=>{return this.$dict.get_vehiclefault_type(row.fault_type)}"></el-table-column>
-            <el-table-column prop="reason" label="故障原因" :formatter="$utils.baseFormatter"> </el-table-column>
-            <el-table-column prop="repair_state" label="状态" :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"> </el-table-column>
+            <el-table-column
+              prop="fault_time"
+              label="故障时间"
+              :formatter="(row)=>{return this.$utils.formatDate(row.fault_time)}"
+            ></el-table-column>
+            <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="linkman" label="联系人" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="tel" label="联系方式" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column prop="owner" label="所属公司/用户" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column
+              prop="fault_type"
+              label="故障类型"
+              :formatter="(row)=>{return this.$dict.get_vehiclefault_type(row.fault_type)}"
+            ></el-table-column>
+            <el-table-column prop="reason" label="故障原因" :formatter="$utils.baseFormatter"></el-table-column>
+            <el-table-column
+              prop="repair_state"
+              label="状态"
+              :formatter="(row)=>{return this.$dict.get_vehiclerepair_state(row.repair_state)}"
+            ></el-table-column>
             <el-table-column label="操作" width="400">
               <template slot-scope="scope">
-                <el-button @click="submit_repairend(scope)" size="small" :type="faultType(scope)" :disabled="faultDisabled(scope)">故障排除</el-button>
+                <el-button
+                  @click="submit_repairend(scope)"
+                  size="small"
+                  :type="faultType(scope)"
+                  :disabled="faultDisabled(scope)"
+                >故障排除</el-button>
                 <el-popover placement="left-end" width="800" trigger="click">
                   <el-table :data="gridData.data">
-                    <el-table-column width="150" label="维修时间" prop="RepairTime" :formatter="repairtime"></el-table-column>
-                    <el-table-column width="150" label="故障原因" prop="Reason" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="维修状态" prop="RepairState" :formatter="$utils.baseFormatter">
+                    <el-table-column
+                      width="150"
+                      label="维修时间"
+                      prop="RepairTime"
+                      :formatter="repairtime"
+                    ></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="故障原因"
+                      prop="Reason"
+                      :formatter="$utils.baseFormatter"
+                    ></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="维修状态"
+                      prop="RepairState"
+                      :formatter="$utils.baseFormatter"
+                    >
                       <template slot-scope="scope">
-                        <label v-if="scope.row.RepairState==''">
-                          --
-                        </label>
-                        <el-tag type="danger" v-if="scope.row.RepairState==1">
-                          未处理
-                        </el-tag>
-                        <el-tag type="success" v-if="scope.row.RepairState==2">
-                          已修复
-                        </el-tag>
+                        <label v-if="scope.row.RepairState==''">--</label>
+                        <el-tag type="danger" v-if="scope.row.RepairState==1">未处理</el-tag>
+                        <el-tag type="success" v-if="scope.row.RepairState==2">已修复</el-tag>
                       </template>
                     </el-table-column>
-                    <el-table-column width="150" label="备注" prop="Desc" :formatter="$utils.baseFormatter"></el-table-column>
-                    <el-table-column width="150" label="操作人" prop="RealName" :formatter="$utils.baseFormatter"></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="备注"
+                      prop="Desc"
+                      :formatter="$utils.baseFormatter"
+                    ></el-table-column>
+                    <el-table-column
+                      width="150"
+                      label="操作人"
+                      prop="RealName"
+                      :formatter="$utils.baseFormatter"
+                    ></el-table-column>
                   </el-table>
-                  <el-button style="margin-left:10px;" size="small" type="success" plain slot="reference" @click="OperateLogList(scope)">查看维修明细</el-button>
+                  <el-button
+                    style="margin-left:10px;"
+                    size="small"
+                    type="success"
+                    plain
+                    slot="reference"
+                    @click="OperateLogList(scope)"
+                  >查看维修明细</el-button>
                 </el-popover>
-                <el-dialog width="30%" title="" :visible.sync="addDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+                <el-dialog
+                  width="30%"
+                  title
+                  :visible.sync="addDialog"
+                  :append-to-body="true"
+                  :close-on-click-modal="false"
+                  :close-on-press-escape="false"
+                  :center="true"
+                  class="admin-dialog"
+                >
                   <label>备注：</label>
                   <el-input v-model="tableRepair.desc"></el-input>
                   <span slot="footer" class="dialog-footer">
@@ -415,11 +652,28 @@
             </el-table-column>
           </el-table>
           <div class="admin-table-pager">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-            </el-pagination>
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="tableQuery.page"
+              :page-sizes="[10, 20, 50, 100]"
+              :page-size="tableQuery.size"
+              :total="tableData.total"
+              layout="total, sizes, prev, pager, next, jumper"
+              background
+            ></el-pagination>
           </div>
         </el-card>
-        <el-dialog width="30%" title="" :visible.sync="delDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+        <el-dialog
+          width="30%"
+          title
+          :visible.sync="delDialog"
+          :append-to-body="true"
+          :close-on-click-modal="false"
+          :close-on-press-escape="false"
+          :center="true"
+          class="admin-dialog"
+        >
           <label>备注：</label>
           <el-input></el-input>
           <span slot="footer" class="dialog-footer">
@@ -574,13 +828,13 @@ export default {
       if (tab.label == "全国联动车辆") {
         this.tableRepair.is_enter = 1;
         this.tableRepair.type = 1;
-      } else if (tab.label == "普通货车") {
+      } else if (tab.label == "道路货物运输") {
         this.tableRepair.is_enter = 2;
         this.tableRepair.type = 1;
-      } else if (tab.label == "危险品车辆") {
+      } else if (tab.label == "道路危险货物运输") {
         this.tableRepair.is_enter = 2;
         this.tableRepair.type = 2;
-      } else if (tab.label == "客运车辆") {
+      } else if (tab.label == "道路旅客运输") {
         this.tableRepair.is_enter = 2;
         this.tableRepair.type = 3;
       }

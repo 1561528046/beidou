@@ -14,7 +14,7 @@ export const Rules = function(vm, is_enter) {
       message: "只能输入汉字、空格、（）符号"
     } //汉字、不可输入除 - （）空格以外的特殊字符
   };
-  if (is_enter == "010") {
+  if (is_enter == "020") {
     return {
       contract_date: [{ required: true, message: "必须选择服务到期日期" }],
       owner: [
@@ -104,7 +104,6 @@ export const Rules = function(vm, is_enter) {
           }
         }
       ],
-      source: [{ required: true, message: "必须选择接入状态" }],
       vbrandCode: [{ required: true, message: "必须输入车辆品牌" }],
       model: [{ required: true, message: "必须输入车辆型号" }],
       vtype: [{ required: true, message: "必须选择车辆类型" }],
@@ -318,21 +317,22 @@ export const Rules = function(vm, is_enter) {
       driver_no: [{ required: true, message: "车辆合格证/行驶证" }],
       license_color: [{ required: true, message: "必须选择车牌颜色" }],
       transport_no: [baseRule.num],
-      sim_id: [
-        { required: true, message: "必须选择SIM卡号" },
-        {
-          trigger: "change",
-          validator: function(rule, value, callback) {
-            value = value.slice(0, 11);
-            var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
-            if (reg.test(value)) {
-              callback();
-            } else {
-              callback(new Error("sim卡号错误"));
-            }
-          }
-        }
-      ],
+      // sim_id: [
+      //   { required: true, message: "必须选择SIM卡号" },
+      //   {
+      //     trigger: "change",
+      //     validator: function(rule, value, callback) {
+      //       value = value.slice(0, 11);
+      //       console.log(value);
+      //       var reg = /^0?(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9]|64[0-9]|4[0-9]{2})[0-9]{8}$/;
+      //       if (reg.test(value)) {
+      //         callback();
+      //       } else {
+      //         callback(new Error("sim卡号错误"));
+      //       }
+      //     }
+      //   }
+      // ],
       engine_no: [
         { required: true, message: "必须输入发动机号" },
         { min: 3, message: "长度不能小于3" },

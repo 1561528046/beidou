@@ -1,28 +1,29 @@
 <template>
   <div class="vehicle-form-view" v-loading="loader">
-    <el-alert title="自动已同步完成（如果处于列队中，给操作按钮，是否同步）" type="success" show-icon v-if="syncMessageVisible"></el-alert>
+    <el-alert
+      title="自动已同步完成（如果处于列队中，给操作按钮，是否同步）"
+      type="success"
+      show-icon
+      v-if="syncMessageVisible"
+    ></el-alert>
     <el-form label-width="200px" :model="formData" size="small" ref="baseForm">
-
       <!-- 服务商信息 -->
       <el-card shadow="hover">
         <div slot="header" class="clearfix">
-          <span>服务商信息 </span>
+          <span>服务商信息</span>
         </div>
         <el-row :gutter="30">
           <el-col :span="8">
-            <el-form-item label="服务到期日期" prop="contract_date">
-              {{$utils.formatDate(formData.contract_date)}}
-            </el-form-item>
+            <el-form-item
+              label="服务到期日期"
+              prop="contract_date"
+            >{{$utils.formatDate(formData.contract_date)}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="服务商名称">
-              （服务端设置）
-            </el-form-item>
+            <el-form-item label="服务商名称">（服务端设置）</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="服务接入地址">
-              （服务端设置）
-            </el-form-item>
+            <el-form-item label="服务接入地址">（服务端设置）</el-form-item>
           </el-col>
         </el-row>
       </el-card>
@@ -30,18 +31,17 @@
       <!-- 车辆落户信息 -->
       <el-card shadow="hover">
         <div slot="header" class="clearfix">
-          <span>车辆落户信息 </span>
+          <span>车辆落户信息</span>
         </div>
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="道路运输证号" prop="transport_no">
-              {{formData.transport_no||"--"}}
-            </el-form-item>
+            <el-form-item label="道路运输证号" prop="transport_no">{{formData.transport_no||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="行驶证发证日期" prop="issue_date">
-              {{$utils.formatDate(formData.issue_date)||"--"}}
-            </el-form-item>
+            <el-form-item
+              label="行驶证发证日期"
+              prop="issue_date"
+            >{{$utils.formatDate(formData.issue_date)||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="所属地区" prop="area">
@@ -53,16 +53,15 @@
             <el-form-item label="车牌号" style="margin-bottom:0;">
               <el-row>
                 <el-col :span="11">
-                  <el-form-item prop="license">
-                    {{formData.license||"--"}}
-                  </el-form-item>
+                  <el-form-item prop="license">{{formData.license||"--"}}</el-form-item>
                 </el-col>
                 <el-col :span="12" :offset="1">
-                  <el-form-item prop="license_color">
-                    车牌颜色:
+                  <el-form-item prop="license_color">车牌颜色:
                     <template v-if="formData.license_color">
-                      <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="$dict.get_license_color(formData.license_color).style">
-                      </span>
+                      <span
+                        style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;"
+                        :style="$dict.get_license_color(formData.license_color).style"
+                      ></span>
                       {{formData.license_color&&$dict.license_color[formData.license_color]?$dict.license_color[formData.license_color].name:"--"}}
                     </template>
 
@@ -75,7 +74,7 @@
                         <span style="display:inline-block;width: 15px; height: 15px;vertical-align: -3px;" :style="plateColor.style"> </span>
                         {{plateColor.name}}
                       </el-option>
-                    </el-select> -->
+                    </el-select>-->
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -88,54 +87,37 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="接入车辆状态" prop="source" v-if="$props.is_enter==1">
-              {{['新增','转网'][formData.source] || "--"}}
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="燃料种类" prop="fuel_type">
-              {{$dict.get_fuel_type(formData.fuel_type)||"--"}}
-            </el-form-item>
+            <el-form-item
+              label="燃料种类"
+              prop="fuel_type"
+            >{{$dict.get_fuel_type(formData.fuel_type)||"--"}}</el-form-item>
           </el-col>
 
           <el-col :span="8">
-            <el-form-item label="业户/车主" prop="owner">
-              {{formData.owner||"--"}}
-            </el-form-item>
+            <el-form-item label="业户/车主" prop="owner">{{formData.owner||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="联系人" prop="linkman">
-              {{formData.linkman||"--"}}
-            </el-form-item>
+            <el-form-item label="联系人" prop="linkman">{{formData.linkman||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="联系人手机" prop="tel">
-              {{formData.tel||"--"}}
-            </el-form-item>
+            <el-form-item label="联系人手机" prop="tel">{{formData.tel||"--"}}</el-form-item>
           </el-col>
-
         </el-row>
       </el-card>
 
       <el-card shadow="hover" v-if="formData.type==1">
         <div slot="header" class="clearfix">
-          <span>普通货运车辆 </span>
+          <span>普通货运车辆</span>
         </div>
         <el-row :gutter="30">
           <el-col :span="8">
-            <el-form-item label="车辆识别代码/车架号" prop="vin">
-              {{formData.vin||""}}
-            </el-form-item>
+            <el-form-item label="车辆识别代码/车架号" prop="vin">{{formData.vin||""}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车辆品牌" prop="vbrandCode">
-              {{formData.vbrandName||"--"}}
-            </el-form-item>
+            <el-form-item label="车辆品牌" prop="vbrandCode">{{formData.vbrandName||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车辆型号" prop="model">
-              {{formData.model||"--"}}
-            </el-form-item>
+            <el-form-item label="车辆型号" prop="model">{{formData.model||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="车辆类型" prop="vtype">
@@ -144,86 +126,81 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="发动机号" prop="engine_no">
-              {{formData.engine_no||"--"}}
-            </el-form-item>
+            <el-form-item label="发动机号" prop="engine_no">{{formData.engine_no||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="发动机型号" prop="engine_type">
-              {{formData.engine_type||"--"}}
-            </el-form-item>
+            <el-form-item label="发动机型号" prop="engine_type">{{formData.engine_type||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="总质量(kg)" prop="total_ton">
-              {{formData.total_ton||"--"}}
-            </el-form-item>
+            <el-form-item label="总质量(kg)" prop="total_ton">{{formData.total_ton||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="核定载质量(kg)" prop="load_ton">
-              {{formData.load_ton||"-"}}
-            </el-form-item>
+            <el-form-item label="核定载质量(kg)" prop="load_ton">{{formData.load_ton||"-"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="准牵引总质量(kg)" prop="draw_ton" v-if="formData.license_color==1">
-              {{formData.draw_ton||"--"}}
-            </el-form-item>
+            <el-form-item
+              label="准牵引总质量(kg)"
+              prop="draw_ton"
+              v-if="formData.license_color==1"
+            >{{formData.draw_ton||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="外廓尺寸(mm)长" prop="length">
-              {{formData.length||"--"}}
-            </el-form-item>
+            <el-form-item label="外廓尺寸(mm)长" prop="length">{{formData.length||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="宽" prop="width">
-              {{formData.width||"--"}}
-            </el-form-item>
+            <el-form-item label="宽" prop="width">{{formData.width||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="高" prop="height">
-              {{formData.height||"--"}}
-            </el-form-item>
+            <el-form-item label="高" prop="height">{{formData.height||"--"}}</el-form-item>
           </el-col>
           <template v-if="$props.type!=2">
             <el-col :span="8">
-              <el-form-item label="货厢内部尺寸(mm)长" prop="box_length">
-                {{formData.box_length||"--"}}
-              </el-form-item>
+              <el-form-item label="货厢内部尺寸(mm)长" prop="box_length">{{formData.box_length||"--"}}</el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="宽" prop="box_width">
-                {{formData.box_width||"--"}}
-              </el-form-item>
+              <el-form-item label="宽" prop="box_width">{{formData.box_width||"--"}}</el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="高" prop="box_height">
-                {{formData.box_height||"--"}}
-              </el-form-item>
+              <el-form-item label="高" prop="box_height">{{formData.box_height||"--"}}</el-form-item>
             </el-col>
           </template>
           <el-col :span="24">
-            <el-form-item label="轴数" prop="axis">
-              {{formData.axis||"--"}}
-            </el-form-item>
+            <el-form-item label="轴数" prop="axis">{{formData.axis||"--"}}</el-form-item>
           </el-col>
-          <el-col :span="24" style="height:30px; border-bottom:1px dashed #ddd; margin-bottom:30px;"></el-col>
+          <el-col
+            :span="24"
+            style="height:30px; border-bottom:1px dashed #ddd; margin-bottom:30px;"
+          ></el-col>
           <el-col :span="6">
             <el-form-item prop="register_no1" class="vehicle-upload-img" label-width="0px">
               <div>车辆登记证1</div>
-              <img v-if="formData.register_no1 " :src="$dict.BASE_URL+formData.register_no1 " class="avatar">
+              <img
+                v-if="formData.register_no1 "
+                :src="$dict.BASE_URL+formData.register_no1 "
+                class="avatar"
+              >
               <img v-if="!formData.register_no1 " src="/static/noimg.jpg" class="avatar">
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="register_no2" class="vehicle-upload-img" label-width="0px">
               <div>车辆登记证2</div>
-              <img v-if="formData.register_no2 " :src="$dict.BASE_URL+formData.register_no2 " class="avatar">
+              <img
+                v-if="formData.register_no2 "
+                :src="$dict.BASE_URL+formData.register_no2 "
+                class="avatar"
+              >
               <img v-if="!formData.register_no2 " src="/static/noimg.jpg" class="avatar">
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="driver_no" class="vehicle-upload-img" label-width="0px">
               <div>车辆合格证/行驶证</div>
-              <img v-if="formData.driver_no " :src="$dict.BASE_URL+formData.driver_no " class="avatar">
+              <img
+                v-if="formData.driver_no "
+                :src="$dict.BASE_URL+formData.driver_no "
+                class="avatar"
+              >
               <img v-if="!formData.driver_no " src="/static/noimg.jpg" class="avatar">
             </el-form-item>
           </el-col>
@@ -240,31 +217,22 @@
       <!-- 终端信息 -->
       <el-card shadow="hover">
         <div slot="header " class="clearfix">
-          <span>终端信息
-          </span>
+          <span>终端信息</span>
         </div>
         <el-row :gutter="30">
           <el-col :span="8">
-            <el-form-item label="设备厂商">
-              {{formData.company_name||"--"}}
-            </el-form-item>
+            <el-form-item label="设备厂商">{{formData.company_name||"--"}}</el-form-item>
           </el-col>
 
           <el-col :span="8">
-            <el-form-item label="终端ID " prop="device_no">
-              {{formData.device_no||"--"}}
-            </el-form-item>
+            <el-form-item label="终端ID " prop="device_no">{{formData.device_no||"--"}}</el-form-item>
           </el-col>
 
           <el-col :span="8">
-            <el-form-item label="SIM ID " prop="sim_id">
-              {{formData.sim_id||"--"}}
-            </el-form-item>
+            <el-form-item label="SIM ID " prop="sim_id">{{formData.sim_id||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="安装SIM卡号 " prop="sim_no">
-              {{formData.sim_no||"--"}}
-            </el-form-item>
+            <el-form-item label="安装SIM卡号 " prop="sim_no">{{formData.sim_no||"--"}}</el-form-item>
           </el-col>
         </el-row>
       </el-card>
@@ -272,68 +240,61 @@
       <!-- 其他信息 -->
       <el-card shadow="hover">
         <div slot="header " class="clearfix">
-          <span>其他信息
-          </span>
+          <span>其他信息</span>
         </div>
         <el-row :gutter="30">
           <el-col :span="8">
-            <el-form-item label="车辆出厂时间 " prop="factory_date">
-              {{$utils.formatDate(formData.factory_date)}}
-            </el-form-item>
+            <el-form-item
+              label="车辆出厂时间 "
+              prop="factory_date"
+            >{{$utils.formatDate(formData.factory_date)}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车身颜色 " prop="body_color">
-              {{formData.body_color||"--"}}
-            </el-form-item>
+            <el-form-item label="车身颜色 " prop="body_color">{{formData.body_color||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="经营范围 " prop="business_scope">
-              {{formData.business_scope||"--"}}
-            </el-form-item>
+            <el-form-item label="经营范围 " prop="business_scope">{{formData.business_scope||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="轮胎数 " prop="tyre">
-              {{formData.tyre||"--"}}
-            </el-form-item>
+            <el-form-item label="轮胎数 " prop="tyre">{{formData.tyre||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="轮胎规格 " prop="tyre_size">
-              {{formData.tyre_size||"--"}}
-            </el-form-item>
+            <el-form-item label="轮胎规格 " prop="tyre_size">{{formData.tyre_size||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="道路运输经营许可证号 " prop="transport_license">
-              {{formData.transport_license||"--"}}
-            </el-form-item>
+            <el-form-item
+              label="道路运输经营许可证号 "
+              prop="transport_license"
+            >{{formData.transport_license||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车辆购置方式 " prop="purchase">
-              {{formData.purchase||"--"}}
-            </el-form-item>
+            <el-form-item label="车辆购置方式 " prop="purchase">{{formData.purchase||"--"}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车辆保险到期时间 " prop="insurance_date">
-              {{$utils.formatDate(formData.insurance_date)}}
-            </el-form-item>
+            <el-form-item
+              label="车辆保险到期时间 "
+              prop="insurance_date"
+            >{{$utils.formatDate(formData.insurance_date)}}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="检验有效期至 " prop="valid_date">
-              {{$utils.formatDate(formData.valid_date)}}
-            </el-form-item>
+            <el-form-item
+              label="检验有效期至 "
+              prop="valid_date"
+            >{{$utils.formatDate(formData.valid_date)}}</el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="车辆保险种类 " prop="insurance_type">
               <span v-if="!formData.insurance_type.length">--</span>
-              <span v-for="(insurance_type,index) in insurance_types" :key="index" v-if="formData.insurance_type.indexOf(index+1) !=-1">
-                {{insurance_type}}
-              </span>
-              <span v-if="formData.insurance_type.split(',').indexOf('7')!=-1">
-                {{formData.insurance_type_other}}
-              </span>
+              <span
+                v-for="(insurance_type,index) in insurance_types"
+                :key="index"
+                v-if="formData.insurance_type.indexOf(index+1) !=-1"
+              >{{insurance_type}}</span>
+              <span
+                v-if="formData.insurance_type.split(',').indexOf('7')!=-1"
+              >{{formData.insurance_type_other}}</span>
             </el-form-item>
-
           </el-col>
-
         </el-row>
       </el-card>
     </el-form>
@@ -406,7 +367,6 @@ export default {
         vbrandName: "",
         end_time: "", //离线时间
         vid: "", //全国平台车辆ID
-        source: "", //接入车辆状态：1新增，2转网
         transport_license: "", //道路运输经营许可证
         transport_no: "", //道路运输证号
         vtype: "", //车辆类型
