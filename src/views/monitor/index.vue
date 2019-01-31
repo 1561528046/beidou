@@ -53,36 +53,34 @@
             ></vehicle-monitor>
           </transition-group>
 
-          <el-collapse accordion class="status-container shadow-box" @change="toggleUserList">
-            <el-collapse-item>
-              <template slot="title">
-                <div class="_header">
-                  <span class="_global-status" @click.stop="showVehicleAll('total')">
-                    平台车辆总数：
-                    <strong>{{vehicleCount.online + vehicleCount.offline}}</strong>
-                  </span>
-                  <span class="_global-status _online" @click.stop="showVehicleAll('online')">
-                    在线车辆：
-                    <strong>{{vehicleCount.online}}</strong>
-                  </span>
-                  <span class="_global-status _alarm" @click.stop="showVehicleAll('alarm')">
-                    报警车辆：
-                    <strong>{{vehicleCount.alarm}}</strong>
-                  </span>
-                  <!-- <span class="_global-status _error" @click.stop="showVehicleAll('error')">异常车辆：
-                    <strong>{{vehicleCount.error}}</strong>
-                  </span>-->
-                  <span class="_global-status _offline" @click.stop="showVehicleAll('offline')">
-                    离线车辆：
-                    <strong>{{vehicleCount.offline}}</strong>
-                  </span>
-                </div>
-                <div>
-                  <!-- <select-sim></select-sim> -->
-                  <!-- <select-device></select-device> -->
-                </div>
-              </template>
-              <div class="_body">
+          <el-card
+            :body-style="{padding:0 }"
+            class="status-container shadow-box"
+            @change="toggleUserList"
+          >
+            <div class="clearfix _header">
+              <span class="_global-status" @click.stop="showVehicleAll('total')">
+                车辆总数：
+                <strong>{{vehicleCount.online + vehicleCount.offline}}</strong>
+              </span>
+              <span class="_global-status _online" @click.stop="showVehicleAll('online')">
+                在线车辆：
+                <strong>{{vehicleCount.online}}</strong>
+              </span>
+              <span class="_global-status _alarm" @click.stop="showVehicleAll('alarm')">
+                报警车辆：
+                <strong>{{vehicleCount.alarm}}</strong>
+              </span>
+              <span class="_global-status _offline" @click.stop="showVehicleAll('offline')">
+                离线车辆：
+                <strong>{{vehicleCount.offline}}</strong>
+              </span>
+              <span class="_according-arrow" @click.stop="showVehicleWithGroup">
+                <i class="el-icon-arrow-down"></i>
+              </span>
+            </div>
+
+            <!-- <div class="_body">
                 <el-form :inline="true" size="mini" class="_search" @submit.native.prevent>
                   <el-form-item label="企业名称">
                     <el-input placeholder="企业名称" v-model="userListQuery.real_name"></el-input>
@@ -105,8 +103,8 @@
                     </el-table-column>
                     <el-table-column prop="online" label="在线车辆 "></el-table-column>
                     <el-table-column prop="alarm" label="报警车辆  "></el-table-column>
-                    <!-- <el-table-column prop="error" label="异常车辆  ">
-                    </el-table-column>-->
+                    <el-table-column prop="error" label="异常车辆  ">
+                    </el-table-column>
                     <el-table-column prop="offline" label="离线车辆 "></el-table-column>
                   </el-table>
                 </div>
@@ -119,9 +117,8 @@
                     :page-size="userListQuery.size"
                   ></el-pagination>
                 </div>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
+            </div>-->
+          </el-card>
           <transition name="fade" enter-active-class="fadeInLeft" leave-active-class="fadeOutLeft">
             <vehicle-details
               @instruction="contextmenuInstruction"
@@ -488,7 +485,7 @@ export default {
         });
         monitor.countInterval = setInterval(() => {
           this.setCount();
-          this.setUserCount();
+          // this.setUserCount();
         }, 20);
         this.initWS();
         this.socketDataWorker.onmessage = evt => {
@@ -1177,6 +1174,12 @@ export default {
   },
 
   methods: {
+    according() {
+      this.showVehicle.type = type;
+      this.showVehicle.isShowAll = true;
+      this.showVehicle.isShow = true;
+      this.showVehicle.group_id = "";
+    },
     bindingVehicle(scope) {
       this.vehicleDialog = false;
       this.$set(this.$data, "vehicle", scope.row);
@@ -1450,19 +1453,13 @@ export default {
         });
     },
 
-    showVehicleWithGroup(row, column, cell, event) {
+    showVehicleWithGroup() {
       //根据分组显示车辆
-      var type = column.property;
-      if (
-        ["total", "online", "offline", "alarm", "error"].indexOf(type) == -1
-      ) {
-        return false;
-      }
-      this.showVehicle.type = type;
+      this.showVehicle.type = "total";
       this.showVehicle.isShowAll = false;
       this.showVehicle.isShow = true;
-      this.showVehicle.group_id = row.group_id;
-      this.showVehicle.sub_title = row.real_name;
+      this.showVehicle.group_id = 2;
+      // this.showVehicle.sub_title = row.real_name;
     },
     showVehicleAll(type) {
       //显示平台总数车辆
@@ -1470,7 +1467,7 @@ export default {
       this.showVehicle.isShowAll = true;
       this.showVehicle.isShow = true;
       this.showVehicle.group_id = "";
-      this.showVehicle.sub_title = "全平台";
+      // this.showVehicle.sub_title = "全平台";
     },
     closeShowVehicle() {
       this.showVehicle.type = "";
@@ -1609,6 +1606,9 @@ export default {
 </script>
 <style lang="less">
 @import "../../style/var.less";
+._according-arrow {
+  float: right;
+}
 .monitor-map-tools {
   position: absolute;
   width: 17%;
@@ -1721,7 +1721,6 @@ export default {
     box-sizing: border-box;
     padding: 0 15px;
     line-height: 50px;
-    border-bottom: 1px solid @b3;
     font-size: 14px;
     ._open {
       position: absolute;

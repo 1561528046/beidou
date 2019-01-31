@@ -80,9 +80,9 @@
               </el-row>
             </el-form-item>
           </el-col>
-          <el-col :span="8" v-if="$props.is_enter!=1">
+          <el-col :span="8">
             <el-form-item label="行业类别" prop="type">
-              {{$dict.get_industry(formData.type)}}->{{$dict.get_industry_son(formData.type_son)}}
+              {{$dict.get_industry(formData.type)}}>{{$dict.get_industry_son(formData.type_son)}}
               <!-- <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type> -->
             </el-form-item>
           </el-col>
@@ -153,7 +153,7 @@
           <el-col :span="8">
             <el-form-item label="高" prop="height">{{formData.height||"--"}}</el-form-item>
           </el-col>
-          <template v-if="$props.type!=2">
+          <template>
             <el-col :span="8">
               <el-form-item label="货厢内部尺寸(mm)长" prop="box_length">{{formData.box_length||"--"}}</el-form-item>
             </el-col>
@@ -297,16 +297,18 @@
           </el-col>
         </el-row>
       </el-card>
+      <el-form-item v-if="$props.state==2" style="text-align:right;margin-right:20px">
+        <el-button @click="synchronous" type="primary">同步</el-button>
+      </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
-import { getVehicle, syncVehicle } from "@/api/index.js";
+import { getVehicle, SynVehicle } from "@/api/index.js";
 export default {
   props: {
     vehicle_id: String,
-    type: Number, //type 接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
-    is_enter: Number //is_enter是否录入全国平台：1是，2否
+    state: Number //state 车辆状态 1、新增车辆 2、定位车辆 3、到期车辆
   },
   data() {
     return {
@@ -326,7 +328,6 @@ export default {
         //除普货外，车辆具体型号大块中 只有车架号VIN是必填
         //只有普货用和全国平台有关联的内容，包括验证规则，车辆具体型号内容等
         area: ["130000", "130100", "130102"],
-        is_enter: this.$props.is_enter,
         //提交的数据
         register_no1: "", //车辆登记证1
         register_no2: "", //车辆登记证2
@@ -388,23 +389,24 @@ export default {
   },
   created() {
     this.loader = true;
-    if (this.$props.is_enter == 1) {
-      syncVehicle({
-        vehicle_id: this.$props.vehicle_id
-      })
-        .then(() => {
-          this.syncMessageVisible = true;
-          this.getVehicle();
-        })
-        .catch(() => {
-          this.syncMessageVisible = true;
-          this.getVehicle();
-        });
-    } else {
-      this.getVehicle();
-    }
+    this.syncMessageVisible = true;
+    this.getVehicle();
   },
   methods: {
+    // 同步
+    synchronous() {
+      SynVehicle(this.formData).then(res => {
+        if (res.data.code == 0) {
+          this.getVehicle();
+        } else {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
+        }
+      });
+    },
     getVehicle() {
       getVehicle({ vehicle_id: this.$props.vehicle_id })
         .then(res => {

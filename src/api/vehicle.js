@@ -47,11 +47,6 @@ export const updateVehicle = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/vehicle/UpdateVehicle", queryQS);
 };
-export const syncVehicle = query => {
-  //同步车辆数据
-  var queryQS = qs.stringify(query);
-  return ajax.post("/vehicle/SynVehicle", queryQS);
-};
 export const delVehicle = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/vehicle/DeleteVehicle", queryQS);
@@ -185,4 +180,16 @@ export const GetVehicleLocation = query => {
   return ajax.get("/report/GetVehicleLocation", {
     params: query
   });
+};
+
+// 从全国平台下载（单车导入）
+export const LoadInGGHYPT = query => {
+  return ajax.get("/vehicle/LoadInGGHYPT", {
+    params: query
+  });
+};
+// 同步车辆数据（全国平台）
+export const SynVehicle = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/SynVehicle", queryQS);
 };

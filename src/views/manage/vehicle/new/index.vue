@@ -284,7 +284,7 @@
       :append-to-body="true"
     >
       <view-vehicle
-        :type="$props.type"
+        :state="$props.state"
         @error="clearShowDetails"
         :vehicle_id="showDetailsVehicle.vehicle_id"
         v-if="detailsVisible"
@@ -381,8 +381,34 @@
     >
       <device-upload @success=" ()=> {this.getTable();this.uploadDialog = false;}" :key="addKey"></device-upload>
     </el-dialog>
-    <el-dialog width="20%" title="单车导入" :visible.sync="singleDialog " :append-to-body="true "></el-dialog>
-    <el-dialog width="20%" title="批量导入" :visible.sync="moreDialog" :append-to-body="true "></el-dialog>
+    <el-dialog width="20%" title="单车导入" :visible.sync="singleDialog " :append-to-body="true ">
+      <el-form size="small" label-width="70px" label-position="left">
+        <el-row :gutter="20">
+          <el-col :span="20">
+            <el-form-item label="SIM卡号">
+              <el-input v-model="single_sim" placeholder="请输入SIM卡号"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label-width="0">
+              <el-button @click="singleSubmit" type="primary">提交</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-dialog>
+    <el-dialog
+      width="21%"
+      title="批量导入"
+      :visible.sync="moreDialog"
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
+      <vehicle-upload @success=" ()=> {this.getTable();this.moreDialog = false;}" :key="addKey"></vehicle-upload>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -394,13 +420,15 @@ import {
   firstTimeVehicle,
   AddFeeVehicle,
   AddOrder,
-  checkUserRenewAndActive
+  checkUserRenewAndActive,
+  LoadInGGHYPT
 } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import viewVehicle from "@/components/view-vehicle.vue";
 import deviceUpload from "./upload.vue";
+import vehicleUpload from "./vehicle-upload";
 export default {
-  components: { selectCityInput, viewVehicle, deviceUpload },
+  components: { selectCityInput, viewVehicle, deviceUpload, vehicleUpload },
   created() {
     this.getTable();
     this.checkOrderRights();
@@ -410,6 +438,7 @@ export default {
   },
   data() {
     return {
+      single_sim: "",
       singleDialog: false, //单车导入
       moreDialog: false, //批量导入
       renew_platform: false,
@@ -537,7 +566,22 @@ export default {
   methods: {
     // 单车导入
     singleImport() {
+      this.addKey++;
       this.singleDialog = true;
+    },
+    singleSubmit() {
+      LoadInGGHYPT({ simid: this.single_sim }).then(res => {
+        if (res.data.code == 0) {
+          this.singleDialog = false;
+          this.getTable();
+        } else {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
+        }
+      });
     },
     // 批量导入
     moreImport() {
