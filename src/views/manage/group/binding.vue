@@ -56,6 +56,7 @@
               :level.sync="groupData.level"
               :group_id.sync="groupData.group_id"
               :parentid.sync="groupData.parent_id"
+              @group="selectGroup"
               style="width:200px;height:100%;"
             ></select-group>
           </div>
@@ -106,6 +107,7 @@
               @onRight="onright"
               :leftCol="leftCol"
               :rightCol="rightCol"
+              :btn="btn_type"
               style="width:100%;height:100%;"
             ></admin-transfer>
           </div>
@@ -191,6 +193,7 @@ export default {
       bindTableQuery: {
         license: "",
         owner: "",
+        group_id: "",
         size: 20,
         page: 1,
         total: 0
@@ -199,10 +202,12 @@ export default {
         license: "",
         owner: "",
         group_id: "",
+        group_name: "",
         size: 20,
         page: 1,
         total: 0
       },
+      btn_type: 0,
       currentUser: {},
       titles: ["已绑定车辆", "未绑定车辆"],
       userList: [],
@@ -222,6 +227,7 @@ export default {
   },
   watch: {
     "groupData.group_id": function() {
+      this.btn_type++;
       this.renderBind();
       this.renderUnbind();
     },
@@ -233,6 +239,9 @@ export default {
     }
   },
   methods: {
+    selectGroup(data) {
+      this.$set(this.unbindTableQuery, "group_name", data.group_name);
+    },
     bindSizeChange(val) {
       this.bindTableQuery.page = 1;
       this.bindTableQuery.size = val;

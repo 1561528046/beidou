@@ -82,7 +82,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="行业类别" prop="type">
-              {{$dict.get_industry(formData.type)}}>{{$dict.get_industry_son(formData.type_son)}}
+              {{$dict.get_industry(formData.type)}}->{{$dict.get_industry_son(formData.type_son)}}
               <!-- <select-vehicle-type v-model="formData.type" style="width:100%;" clearable></select-vehicle-type> -->
             </el-form-item>
           </el-col>
@@ -347,7 +347,8 @@ export default {
         ip: "", //车辆接入ip
         port: "", //车辆接入端口
         issue_date: "", //行驶证签发日期
-        type: "1", //接入车辆类型：1普通货运车辆，2危险品车辆，3长途客运、班线车辆，4城市公共交通车辆，5校车，6出租车，7私家车，8警务车辆，9网约车，10其他车辆
+        type: "", //行业类别
+        type_son: "",
         fuel_type: "", //燃料种类：1柴油，2汽油，3电，4乙醇，5液化天然气，6压缩天然气
         license_color: "", //车牌颜色：1黄色，2蓝色，3白色，4黑色，5其它
         owner: "", //车主/业户
@@ -395,6 +396,7 @@ export default {
   methods: {
     // 同步
     synchronous() {
+      this.loader = true;
       SynVehicle(this.formData).then(res => {
         if (res.data.code == 0) {
           this.getVehicle();

@@ -98,7 +98,6 @@
       <div class="_other" v-if="$props.single">
         <el-row>
           <el-col :span="24">当前报警信息 {{$dict.getAlarm(mapData.vehicle.alarm)||"--"}}</el-col>
-          {{mapData.vehicle.fence_alarm}}
           <el-col
             :span="24"
             v-if="mapData.vehicle.fence_alarm&&mapData.vehicle.fence_alarm.alarmList&&mapData.vehicle.fence_alarm.alarmList.length"

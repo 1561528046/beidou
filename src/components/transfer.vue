@@ -1,49 +1,76 @@
 <template>
   <div class="admin-transfer">
     <div class="left-transfer transfer-box">
-      <div class="_header">
-        {{titles[0]||"列表1"}}
-      </div>
+      <div class="_header">{{titles[0]||"列表1"}}</div>
       <div class="_body">
         <div class="_list">
-          <div v-if="leftList.length==0" style="padding:20px 0; text-align: center; color:#999;">
-
-            数据为空
-          </div>
-          <el-table :data="leftList" style="width: 100%" v-if="leftList.length!=0" size="mini" @selection-change="leftSelectionChange">
+          <div
+            v-if="leftList.length==0"
+            style="padding:20px 0; text-align: center; color:#999;"
+          >数据为空</div>
+          <el-table
+            :data="leftList"
+            style="width: 100%"
+            v-if="leftList.length!=0"
+            size="mini"
+            @selection-change="leftSelectionChange"
+          >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column v-for="(col,index) in leftCol" :prop="col.prop" :label="col.label" :formatter="col.formatter" :key="index">
-            </el-table-column>
+            <el-table-column
+              v-for="(col,index) in leftCol"
+              :prop="col.prop"
+              :label="col.label"
+              :formatter="col.formatter"
+              :key="index"
+            ></el-table-column>
           </el-table>
         </div>
       </div>
     </div>
     <div class="btns-transfer">
       <div class="_position">
-        <el-button type="primary" icon="el-icon-arrow-right" @click="goRight" :disabled="!leftChecked.length"></el-button>
-        <el-button type="primary" icon="el-icon-arrow-left" @click="goLeft" :disabled="!rightChecked.length"></el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-arrow-right"
+          @click="goRight"
+          :disabled="!leftChecked.length"
+        ></el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-arrow-left"
+          @click="goLeft"
+          :disabled="!rightChecked.length"
+        ></el-button>
       </div>
     </div>
     <div class="right-transfer transfer-box">
-      <div class="_header">
-        {{titles[1]||"列表2"}}
-      </div>
+      <div class="_header">{{titles[1]||"列表2"}}</div>
       <div class="_body">
         <div class="_list">
-          <div v-if="rightList.length==0" style="padding:20px 0; text-align: center;color:#999;">
-            数据为空
-          </div>
+          <div
+            v-if="rightList.length==0"
+            style="padding:20px 0; text-align: center;color:#999;"
+          >数据为空</div>
           <!-- <el-checkbox-group v-model="rightChecked">
             <el-checkbox v-for="item in rightList" :key="item.key" :label="item.key">{{item.label}}</el-checkbox>
-          </el-checkbox-group> -->
-          <el-table :data="rightList" style="width: 100%" v-if="rightList.length!=0" size="mini" @selection-change="rightSelectionChange">
+          </el-checkbox-group>-->
+          <el-table
+            :data="rightList"
+            style="width: 100%"
+            v-if="rightList.length!=0"
+            size="mini"
+            @selection-change="rightSelectionChange"
+          >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column v-for="(col,index) in rightCol" :prop="col.prop" :label="col.label" :formatter="col.formatter" :key="index">
-            </el-table-column>
+            <el-table-column
+              v-for="(col,index) in rightCol"
+              :prop="col.prop"
+              :label="col.label"
+              :formatter="col.formatter"
+              :key="index"
+            ></el-table-column>
           </el-table>
-
         </div>
-
       </div>
     </div>
   </div>
@@ -157,6 +184,10 @@ export default {
     }
   },
   watch: {
+    btn: function() {
+      this.leftChecked = [];
+      this.rightChecked = [];
+    },
     lists: function() {
       this.$set(this.$data, "list", this.lists);
     },
@@ -187,7 +218,8 @@ export default {
     lists: Array,
     titles: Array,
     leftCol: Array,
-    rightCol: Array
+    rightCol: Array,
+    btn: Number
   },
   created() {},
   methods: {

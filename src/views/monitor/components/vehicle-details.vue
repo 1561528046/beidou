@@ -84,13 +84,6 @@
         :key="'other'+showVehicle.group_id"
         :name="'other'+showVehicle.group_id"
       >
-        <!-- <el-collapse-item class="group-container">
-          <template slot="title">
-            <div class="group-name">
-              未分配车辆
-            </div>
-          </template>
-        </el-collapse-item>-->
         <el-collapse-item
           class="group-container"
           v-for="group in currentGroupSon"
@@ -101,7 +94,7 @@
             <div class="group-name">{{group.group_name}}</div>
           </template>
           <div class="group-body">
-            <el-select
+            <!-- <el-select
               v-model="currentGroupFilter"
               placeholder="全部分组"
               size="mini"
@@ -115,7 +108,7 @@
                 v-for="childrenGroup in currentGroupSonChildrens"
                 :key="'select'+childrenGroup.group_id"
               ></el-option>
-            </el-select>
+            </el-select>-->
             <el-table
               :data="list"
               size="small"
@@ -167,11 +160,12 @@
   </div>
 </template>
 <script>
-import { getGroupChildrens } from "@/api/index.js";
+import { getGroupChildrens, getGroupByUser } from "@/api/index.js";
 export default {
   data() {
     return {
       searchText: "",
+      group_name: "",
       currentGroup: "",
       currentGroupSon: [], //儿子级别组
       currentGroupSonChildrens: [],
@@ -192,10 +186,10 @@ export default {
       var monitor = window.monitor;
       var showVehicle = this.$props.showVehicle;
       var list = [];
-
       //触发list更新
       // eslint-disable-next-line
       var x = this.dataVersion;
+      // 不显示分组
       if (showVehicle.isShowAll) {
         if (showVehicle.type == "total") {
           list = Array.from(monitor.data.values());
@@ -206,38 +200,30 @@ export default {
           }
         }
       }
-      var groups = monitor.dict.groups.get(
-        this.currentGroupFilter || this.currentGroup
-      );
-      if (groups) {
+      if (!showVehicle.isShowAll) {
         if (showVehicle.type == "total") {
-          for (let sim_id of groups.get("online")) {
-            list.push(monitor.data.get(sim_id));
-          }
-          for (let sim_id of groups.get("offline")) {
-            list.push(monitor.data.get(sim_id));
-          }
-        } else {
-          for (let sim_id of groups.get(showVehicle.type)) {
-            list.push(monitor.data.get(sim_id));
+          if (this.group_name != "") {
+            for (let value of monitor.data) {
+              if (value[1].group_path == this.group_name) {
+                list.push(value[1]);
+              } else if (
+                value[1].group_path == "" &&
+                this.group_name == "other"
+              ) {
+                list.push(value[1]);
+              }
+            }
           }
         }
       }
       // eslint-disable-next-line
       this.pager.total = list.length;
-      var start = (this.pager.current - 1) * this.pager.size;
-      var end = this.pager.current * this.pager.size;
-      if (this.searchText) {
-        list = list.filter(vehicle => {
-          return vehicle.license.indexOf(this.searchText) != -1;
-        });
-      }
-      return list.slice(start, end);
+      return list;
     }
   },
   watch: {
-    "showVehicle.group_id": function(newVal) {
-      if (newVal) {
+    "showVehicle.group_id": function() {
+      if (!this.$props.showVehicle.isShowAll) {
         this.getGroupSon();
       }
     },
@@ -256,6 +242,7 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    // 右键菜单点击事件
     sendInstruction(vm, event) {
       var instruction = event.target.dataset.index;
       // instruction.split("|");
@@ -264,6 +251,7 @@ export default {
         sim_id: this.contextmenuVehicle.sim_id
       });
     },
+    // 右键触发
     showContextmenu(row) {
       if (this.$refs.vehicleList.length) {
         this.$refs.vehicleList.map(item => {
@@ -275,6 +263,7 @@ export default {
 
       this.contextmenuVehicle = row;
     },
+    // 单独行点击事件
     openTab(row) {
       switch (this.showVehicle.type) {
         case "alarm":
@@ -298,31 +287,24 @@ export default {
       this.pager.total = 0;
       this.pager.current = 1;
     },
+    // 初始化分组
     getGroupSon() {
-      var groupChildrens = [];
-      // eslint-disable-next-line
-      for (let [key, value] of window.monitor.dict.groups) {
-        if (
-          value.get("data") &&
-          value.get("data").parent_id == this.showVehicle.group_id
-        ) {
-          groupChildrens.push(value.get("data"));
+      getGroupByUser().then(res => {
+        if (res.data.code == 0) {
+          res.data.data.map(item => {
+            if (item.group_name == "根目录") {
+              res.data.data.splice(item, 1);
+            }
+          });
+          res.data.data.push({
+            group_name: "未分配车辆",
+            group_id: "other"
+          });
+          this.$set(this.$data, "currentGroupSon", res.data.data);
         }
-      }
-      if (groupChildrens.length == 0) {
-        groupChildrens.push(
-          window.monitor.dict.groups.get(this.showVehicle.group_id).get("data")
-        );
-      }
-      groupChildrens.push({
-        group_name: "未分配车辆",
-        group_id: "other" + this.showVehicle.group_id
-      }); //加入未分配车辆分组
-      this.$set(this.$data, "currentGroupSon", groupChildrens);
+      });
     },
     getGroupChildrens() {
-      //this.currentGroupChildrens
-      // eslint-disable-next-line
       this.$set(this.$data, "currentGroupSonChildrens", []);
       if (!this.currentGroup || this.currentGroup.indexOf("other") != -1) {
         return false;
@@ -333,7 +315,8 @@ export default {
         }
       });
     },
-    groupChange() {
+    groupChange(name) {
+      this.$set(this.$data, "group_name", name);
       this.pager.size = 50;
       this.pager.total = 0;
       this.pager.current = 1;
@@ -341,6 +324,7 @@ export default {
     changePager(current) {
       this.pager.current = current;
     },
+    // 判断显示
     getShowVehicleTitle() {
       return {
         total: "全部车辆",
@@ -350,6 +334,7 @@ export default {
         offline: "离线车辆"
       }[this.showVehicle.type];
     },
+    // 关闭弹出层
     closeShowVehicle() {
       this.$emit("close");
     }

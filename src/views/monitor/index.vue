@@ -76,7 +76,7 @@
                 <strong>{{vehicleCount.offline}}</strong>
               </span>
               <span class="_according-arrow" @click.stop="showVehicleWithGroup">
-                <i class="el-icon-arrow-down"></i>
+                <i class="el-icon-arrow-right"></i>
               </span>
             </div>
 
@@ -362,6 +362,7 @@ export default {
         vehicle: null
       },
       showVehicle: {
+        group: [],
         group_id: "",
         isShow: false,
         isShowAll: false,
@@ -1415,9 +1416,9 @@ export default {
               lat: position.lat, //最后一次定位的纬度
               alarm_count: parseInt(item[6] || 0), //当天报警次数
               error_count: parseInt(item[7] || 0), //当天异常次数
-              vehicle_id: item[9],
-              group_path: item[10].split(","), //车辆对应分组路径 [path1,path2,path3....]
-              fence_ids: item[8] ? item[8].split(",") : [], //围栏ID列表
+              vehicle_id: item[8],
+              group_path: item[10], //车辆对应分组路径 [path1,path2,path3....]
+              fence_ids: item[9] ? item[9].split(",") : [], //围栏ID列表
               fence_alarm: {}, //围栏报警信息
               speed: 0,
               speed1: 0,
@@ -1459,7 +1460,6 @@ export default {
       this.showVehicle.isShowAll = false;
       this.showVehicle.isShow = true;
       this.showVehicle.group_id = 2;
-      // this.showVehicle.sub_title = row.real_name;
     },
     showVehicleAll(type) {
       //显示平台总数车辆
