@@ -18,7 +18,13 @@
         <el-table-column prop="role_name" label="角色名 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <!-- <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit" v-rights="4-2-3">编辑</el-button> -->
+            <!-- <el-button
+              size="small"
+              @click="updateForm(scope)"
+              type="primary"
+              icon="el-icon-edit"
+              v-rights="4-2-3"
+            >编辑</el-button>-->
             <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="4-2-2">删除</el-button>
           </template>
         </el-table-column>

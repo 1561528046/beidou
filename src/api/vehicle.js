@@ -193,3 +193,15 @@ export const SynVehicle = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/vehicle/SynVehicle", queryQS);
 };
+
+// 查询车辆在全国平台的设备号和SimId
+export const getDeviceAndSIMIDByVID = query => {
+  return ajax.get("/vehicle/GetDeviceAndSIMIDByVID", {
+    params: query
+  });
+};
+// 根据全国平台车辆信息添加终端及SIM卡信息
+export const AddDeviceSimToVehicle = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/vehicle/AddDeviceSimToVehicle", queryQS);
+};

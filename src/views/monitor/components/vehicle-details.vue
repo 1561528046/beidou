@@ -347,7 +347,7 @@ export default {
   width: 17%;
   position: absolute;
   z-index: 11;
-  right: 20px;
+  right: 265px;
   top: 20px;
   bottom: 70px;
   background: #fff;

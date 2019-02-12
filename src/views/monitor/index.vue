@@ -11,6 +11,14 @@
           <i class="iconfont icon-weilan"></i>
           <span>围栏管理</span>
         </a>
+        <a href="javascript:;" @click="openTab('monitoring')">
+          <i class="iconfont icon-shipinjiankong"></i>
+          <span>视频监控</span>
+        </a>
+        <a href="javascript:;" @click="openTab('playback')">
+          <i class="iconfont icon-luxiang"></i>
+          <span>录像回放</span>
+        </a>
       </div>
     </div>
     <el-tabs
@@ -22,13 +30,13 @@
       <el-tab-pane label="监控" :closable="false" name="index">
         <div class="monitor">
           <!-- <qa-list></qa-list> -->
-          <monitor-info></monitor-info>
-          <div class="shadow-box monitor-map-tools">
+          <!-- <monitor-info></monitor-info> -->
+          <!-- <div class="shadow-box monitor-map-tools">
             <el-radio-group v-model="mapTools" @change="changeTools" size="small">
               <el-radio-button style="margin:5px;" label="current" title="查找当前终端">查找当前终端</el-radio-button>
               <el-radio-button label="history" title="查找历史终端">查找历史终端</el-radio-button>
             </el-radio-group>
-          </div>
+          </div>-->
           <div id="container" style="width:100%;height:100%;"></div>
           <div class="vehicle-search shadow-box">
             <el-autocomplete
@@ -179,6 +187,22 @@
       >
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
+      <el-tab-pane
+        label="视频监控"
+        :closable="true"
+        name="monitoring"
+        v-if="$store.state.monitor.tabs.indexOf('monitoring') !=-1"
+      >
+        <vehicle-monitoring :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-monitoring>
+      </el-tab-pane>
+      <el-tab-pane
+        label="录像回放"
+        :closable="true"
+        name="playback"
+        v-if="$store.state.monitor.tabs.indexOf('playback') !=-1"
+      >
+        <vehicle-playback :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-playback>
+      </el-tab-pane>
     </el-tabs>
     <el-dialog
       :title="instructionCard.title"
@@ -302,6 +326,8 @@ import vehicleSingle from "./components/vehicle-single.vue";
 import vehicleArea from "./components/vehicle-area.vue";
 import vehicleTrack from "./components/vehicle-track.vue";
 import vehicleAlarm from "./components/vehicle-alarm.vue";
+import vehiclePlayback from "./components/vehicle-playback.vue";
+import vehicleMonitoring from "./components/vehicle-monitoring.vue";
 import vehicleMedia from "./components/vehicle-media.vue";
 import x8202 from "./components/x8202.vue"; //临时位置跟踪控制
 import x8302 from "./components/x8302.vue"; //提问下发
@@ -323,6 +349,8 @@ export default {
     vehicleAlarm,
     vehicleTrack,
     vehicleMedia,
+    vehiclePlayback,
+    vehicleMonitoring,
     x8202,
     x8302,
     x8400,
@@ -1709,7 +1737,7 @@ export default {
 }
 
 .status-container {
-  width: 60%;
+  width: 46%;
   position: absolute;
   z-index: 11;
   left: 390px;

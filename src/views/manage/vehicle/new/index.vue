@@ -409,6 +409,13 @@
     >
       <vehicle-upload @success=" ()=> {this.getTable();this.moreDialog = false;}" :key="addKey"></vehicle-upload>
     </el-dialog>
+    <el-dialog :append-to-body="true " title="补充信息" :visible.sync="fillDialog">
+      <vehicle-fill
+        :vehicleid="vehicleID"
+        @success=" ()=> {this.getTable();this.fillDialog = false;}"
+        :key="addKey"
+      ></vehicle-fill>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -427,8 +434,15 @@ import selectCityInput from "@/components/select-city-input.vue";
 import viewVehicle from "@/components/view-vehicle.vue";
 import deviceUpload from "./upload.vue";
 import vehicleUpload from "./vehicle-upload";
+import vehicleFill from "./vehicle-fill";
 export default {
-  components: { selectCityInput, viewVehicle, deviceUpload, vehicleUpload },
+  components: {
+    selectCityInput,
+    viewVehicle,
+    deviceUpload,
+    vehicleUpload,
+    vehicleFill
+  },
   created() {
     this.getTable();
     this.checkOrderRights();
@@ -438,7 +452,9 @@ export default {
   },
   data() {
     return {
+      vehicleID: "",
       single_sim: "",
+      fillDialog: false,
       singleDialog: false, //单车导入
       moreDialog: false, //批量导入
       renew_platform: false,
@@ -791,21 +807,26 @@ export default {
       this.detailsVisible = true;
     },
     goEdit(scope) {
-      if (this.$props.state == 1) {
-        this.$router.push({
-          path: "new/edit",
-          query: { vehicle_id: scope.row.vehicle_id }
-        });
-      } else if (this.$props.state == 2) {
-        this.$router.push({
-          path: "position/edit",
-          query: { vehicle_id: scope.row.vehicle_id }
-        });
+      if (scope.row.state == "4") {
+        this.fillDialog = true;
+        this.$set(this.$data, "vehicleID", scope.row.vehicle_id);
       } else {
-        this.$router.push({
-          path: "timeout/edit",
-          query: { vehicle_id: scope.row.vehicle_id }
-        });
+        if (this.$props.state == 1) {
+          this.$router.push({
+            path: "new/edit",
+            query: { vehicle_id: scope.row.vehicle_id }
+          });
+        } else if (this.$props.state == 2) {
+          this.$router.push({
+            path: "position/edit",
+            query: { vehicle_id: scope.row.vehicle_id }
+          });
+        } else {
+          this.$router.push({
+            path: "timeout/edit",
+            query: { vehicle_id: scope.row.vehicle_id }
+          });
+        }
       }
     },
     delRow(scope) {
