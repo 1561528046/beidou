@@ -146,9 +146,6 @@
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <!-- <el-button type="primary" size="small" v-rights="1-1-5">
-          <i class="el-icon-download"></i> 导出
-        </el-button>-->
       </div>
       <el-table
         :data="tableData.data"

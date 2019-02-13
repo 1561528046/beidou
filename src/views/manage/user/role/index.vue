@@ -25,6 +25,7 @@
               icon="el-icon-edit"
               v-rights="4-2-3"
             >编辑</el-button>-->
+            <el-button size="small" icon="el-icon-view" type="primary" @click="setForm(scope)">查看</el-button>
             <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="4-2-2">删除</el-button>
           </template>
         </el-table-column>
@@ -56,6 +57,21 @@
         :key="addKey"
       ></update-components>
     </el-dialog>
+    <el-dialog
+      title="查看"
+      :visible.sync="setDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <set-components
+        :role_id="setId"
+        @success=" () => {this.getTable();this.setDialog = false;this.setId = '';}"
+        :key="addKey"
+      ></set-components>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -63,8 +79,9 @@
 import { getRoleAll, delRole } from "@/api/index.js";
 import addComponents from "./add.vue";
 import updateComponents from "./update.vue";
+import setComponents from "./set.vue";
 export default {
-  components: { addComponents, updateComponents },
+  components: { addComponents, updateComponents, setComponents },
   created() {
     this.getTable();
   },
@@ -72,6 +89,8 @@ export default {
     return {
       addDialog: false,
       updateDialog: false,
+      setDialog: false,
+      setId: "",
       updateId: "",
       isCollapse: false,
       tableQuery: {},
@@ -126,6 +145,11 @@ export default {
       this.addKey++;
       this.updateDialog = true;
       this.updateId = scope.row.role_id;
+    },
+    setForm(scope) {
+      this.addKey++;
+      this.setDialog = true;
+      this.setId = scope.row.role_id;
     },
     getTable() {
       this.tableLoading = true;

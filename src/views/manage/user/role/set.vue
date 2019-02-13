@@ -28,7 +28,6 @@
               :name="key_1"
               v-for="(level_1,key_1) in rightsDict"
               :key="level_1.name"
-              v-if="countDict[key_1]"
             >
               <template slot="title">
                 <div class="_level_1-header">
@@ -45,18 +44,12 @@
                 </div>
               </template>
               <div class="_level_1-body">
-                <div
-                  v-for="(level_2) in level_1.children"
-                  :key="level_2.name"
-                  class="_level_2"
-                  v-if="level_2.children"
-                >
+                <div v-for="(level_2) in level_1.children" :key="level_2.name" class="_level_2">
                   <div class="_level_2-title">
                     <el-checkbox
                       :indeterminate="level_2.indeterminate"
                       v-model="level_2.checked"
                       @change="(val)=>{ rightsCheckAll(val,'2',level_2)}"
-                      style="font-weight:bold;"
                     >{{level_2.name}}</el-checkbox>
                   </div>
                   <div class="_level_3">
@@ -86,13 +79,10 @@
           </el-collapse>
         </el-col>
       </el-row>
-      <el-form-item style="text-align:center; padding-top:20px;">
-        <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
-      </el-form-item>
     </el-form>
   </div>
 </template>
-<style lang="less">
+<style scoped lang="less">
 .rights-container {
   ._level_1-body {
     padding: 15px 15px 0 15px;
@@ -105,6 +95,8 @@
   ._level_2 {
     border-bottom: 1px dotted #ddd;
     margin-bottom: 15px;
+  }
+  ._level_2-title {
   }
   ._level_3 {
     padding: 3px 25px;
@@ -120,7 +112,7 @@
 }
 </style>
 <script>
-import { addRole, getRightsByUserId } from "@/api/index.js";
+import { updateRole, getRightsAll, getRole } from "@/api/index.js";
 import { rightsDict, rightsRelation } from "@/utils/rights.js";
 export default {
   data() {
@@ -145,7 +137,9 @@ export default {
       }
     };
   },
-  computed: {},
+  props: {
+    role_id: [Number, String]
+  },
   watch: {
     rightsAll: {
       handler: function() {
@@ -173,47 +167,25 @@ export default {
     this.$nextTick(() => {
       this.activeNames.push("1");
     });
-    // 获取当前用户的权限
-    getRightsByUserId().then(res => {
+    getRightsAll().then(res => {
       if (res.data.code == 0) {
-        var format = res.data.data[0].rights.split(",");
-        format = format.map(item => {
+        var formatData = res.data.data[0];
+        formatData = Object.keys(formatData).map(key => {
+          //转换格式
+          // {"1-1-1": "新增车辆-添加","1-1-2": "新增车辆-删除",}
+          // 转换为 [{rights_id:"1-1-1",name:"新增车辆-添加"},{rights_id:"1-1-2",name:"新增车辆-删除"}]
+          //relation 引用次数，用于解决一个权限 用于 多个依赖，引用次数为0的时候，即可清空选项
           return {
-            rights_id: item,
-            name:
-              this.$dict.get_permissions(item).split("-").length > 1
-                ? this.$dict.get_permissions(item).split("-")[1]
-                : this.$dict.get_permissions(item),
+            rights_id: key,
+            name: formatData[key],
             checked: false,
             relation: 0
           };
         });
-        this.$set(this.$data, "rightsAll", format);
+        this.$set(this.$data, "rightsAll", formatData);
         this.initDict();
       }
     });
-    // getRightsAll().then(res => {
-    //   if (res.data.code == 0) {
-    //     var formatData = res.data.data[0];
-    //     formatData = Object.keys(formatData).map(key => {
-    //       // console.log(formatData[key])
-    //       //转换格式
-    //       // {"1-1-1": "新增车辆-添加","1-1-2": "新增车辆-删除",}
-    //       // 转换为 [{rights_id:"1-1-1",name:"新增车辆-添加"},{rights_id:"1-1-2",name:"新增车辆-删除"}]
-    //       //relation 引用次数，用于解决一个权限 用于 多个依赖，引用次数为0的时候，即可清空选项
-    //       return {
-    //         rights_id: key,
-    //         name:
-    //           formatData[key].split("-").length > 1
-    //             ? formatData[key].split("-")[1]
-    //             : formatData[key],
-    //         checked: false,
-    //         relation: 0
-    //       };
-    //     });
-    //     // console.log(formatData);
-    //   }
-    // });
   },
   methods: {
     initDict() {
@@ -236,10 +208,32 @@ export default {
           this.rightChange(true, item, level2);
         }
       });
+      this.$set(this.$data, "rightsDict", this.rightsDict);
+
+      //获取role，并设置对应值
+
+      getRole({ role_id: this.$props.role_id }).then(res => {
+        if (res.data.code == 0) {
+          this.formData.role_name = res.data.data[0].role_name;
+          var defaultChecked = res.data.data[0].rights.split(",");
+          defaultChecked.map(rights_id => {
+            var path = rights_id.split("-");
+            var level1 = this.rightsDict[path[0]];
+            var level2 = level1.children[path[1]];
+            var right = level2.children[path[2]];
+            if (!right.checked) {
+              right.checked = true;
+              this.rightChange(true, right, level2);
+            }
+          });
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
     },
     rightsCheckAll(isChecked, level, levelObj) {
       //全选处理
-      // levelObj.indeterminate = false;
+      //levelObj.indeterminate = false;
       if (level == "2") {
         //levelObj.selected = [];
         Object.keys(levelObj.children).map(key => {
@@ -356,7 +350,8 @@ export default {
             }
           });
           postData.rights = postData.rights.join(",");
-          addRole(postData)
+          postData.role_id = this.$props.role_id;
+          updateRole(postData)
             .then(res => {
               if (res.data.code == 0) {
                 this.$emit("success");

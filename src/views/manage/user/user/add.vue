@@ -36,11 +36,6 @@
                 </el-form-item>
               </el-col>-->
               <el-col :span="12">
-                <el-form-item label="所属角色" prop="role_id">
-                  <select-role v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;"></select-role>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
                 <el-form-item label="密码" prop="pass_word">
                   <el-input v-model="formData.pass_word" type="password"></el-input>
                 </el-form-item>
@@ -48,6 +43,12 @@
               <el-col :span="12">
                 <el-form-item label="确认密码" prop="re_pass_word">
                   <el-input v-model="formData.re_pass_word" type="password"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="所属角色" prop="role_id">
+                  <!-- <select-role v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;"></select-role> -->
+                  <select-roles @role="selectRoles"></select-roles>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -195,12 +196,14 @@ import selectIndustry from "@/components/select-industry.vue";
 import selectGroup from "@/components/select-group/select-group.vue";
 import selectUser from "@/components/select-user.vue";
 import selectRole from "@/components/select-role.vue";
+import selectRoles from "@/components/select-roles.vue";
 export default {
   components: {
     selectCity,
     selectIndustry,
     selectGroup,
     selectRole,
+    selectRoles,
     selectUser
   },
   data() {
@@ -226,7 +229,7 @@ export default {
         address: "",
         device_num: "",
         device_total: "",
-        role_id: "",
+        role_id: [],
         expiry_time: "",
         // group_id: "",
         // parent_id: "",
@@ -308,6 +311,10 @@ export default {
   props: ["parent_id"],
   created() {},
   methods: {
+    // 选择角色
+    selectRoles(data) {
+      this.$set(this.formData, "role_id", data);
+    },
     validateUserName(rule, value, callback) {
       if (value == "") {
         callback(new Error("请输入登陆帐号！"));
@@ -343,6 +350,19 @@ export default {
       }
     },
     formSubmit() {
+      var roleId = "";
+      if (this.formData.role_id.length > 0) {
+        this.formData.role_id.map(item => {
+          roleId = roleId + item.role_id + ",";
+        });
+        this.formData.role_id = roleId.substring(0, roleId.lastIndexOf(","));
+      } else {
+        return this.$notify({
+          message: "请选择所属角色",
+          title: "提示",
+          type: "error"
+        });
+      }
       this.postloading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

@@ -304,3 +304,44 @@ export const getDeviceALlUninstall = query => {
     params: query
   });
 };
+
+// 用户常用分组管理添加
+export const addDeviceGroupUser = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device/AddDeviceGroupUser", queryQS, {
+    params: query
+  });
+};
+// 用户常用分组管理修改
+export const updateDeviceGroupUser = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device/UpdateDeviceGroupUser", queryQS, {
+    params: query
+  });
+};
+// 用户常用分组管理删除
+export const deleteDeviceGroupUser = query => {
+  return ajax.get("/device/DeleteDeviceGroupUser", {
+    params: query
+  });
+};
+// 用户常用分组管理 获取当前用户所有常用分组
+export const getListByUserId = query => {
+  return ajax.get("/device/GetListByUserId", {
+    params: query
+  });
+};
+// 用户常用分组管理 分配设备
+export const addGroupDevice = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device/AddGroupDevice", queryQS, {
+    params: query
+  });
+};
+// 用户常用分组管理 解绑设备
+export const deleteGroupDevice = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device/DeleteGroupDevice", queryQS, {
+    params: query
+  });
+};

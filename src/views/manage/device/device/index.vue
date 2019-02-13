@@ -50,6 +50,11 @@
               <select-user v-model="tableQuery.user_id" style="width:100%;" :clearable="true"></select-user>
             </el-form-item>
           </el-col>
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item label="分组名称">
+              <el-input placeholder="请输入分组名称"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
@@ -111,6 +116,9 @@
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <router-link style="margin-left:10px" :to="{name:'user-group'}">
+          <el-button type="primary" size="small">用户常用分组设置</el-button>
+        </router-link>
       </div>
       <el-table
         :data="tableData.data"
@@ -123,11 +131,13 @@
           label="添加时间"
           :formatter="(row)=>{return this.$utils.formatDate(row.time)}"
         ></el-table-column>
-        <el-table-column
-          prop="device_type"
-          label="终端类型"
-          :formatter="(row)=>{return this.$dict.get_device_type(row.device_type)}"
-        ></el-table-column>
+        <el-table-column prop="device_type" label="终端类型">
+          <template slot-scope="scope">
+            <i v-if="scope.row.device_type=='1'" class="iconfont icon-dingweiweizhi"></i>
+            <i v-if="scope.row.device_type=='2'" class="iconfont icon-shipin"></i>
+            {{ $dict.get_device_type(scope.row.device_type)}}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="company_name"
           label="终端厂商"

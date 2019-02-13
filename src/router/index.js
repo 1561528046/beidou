@@ -181,6 +181,15 @@ var routers = [
             component: () => import("@/views/manage/analyze/behavior/index.vue")
           }
         ]
+      },
+      {
+        path: "resources",
+        name: "resources",
+        meta: {
+          name: "音视频资源目录",
+          icon: "iconfont icon-ziyuanmulu"
+        },
+        component: () => import("@/views/manage/resources/index.vue")
       }
     ]
   },

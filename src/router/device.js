@@ -33,6 +33,18 @@ export default {
       component: () => import("@/views/manage/device/device/binding.vue")
     },
     {
+      path: "user-group",
+      name: "user-group",
+      meta: { name: "用户常用分组设置", hidden: true },
+      component: () => import("@/views/manage/device/device/group/index.vue")
+    },
+    {
+      path: "user-grouping",
+      name: "user-grouping",
+      meta: { name: "设备分组", hidden: true },
+      component: () => import("@/views/manage/device/device/group/binding.vue")
+    },
+    {
       path: "repair",
       name: "device-repair",
       meta: {

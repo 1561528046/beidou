@@ -66,7 +66,6 @@
         <el-table-column prop="real_name" label="企业名称" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="role_name" label="所属角色" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column
           prop="user_transport_license"
           label="道路运输许可证"
