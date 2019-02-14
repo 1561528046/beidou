@@ -14,6 +14,56 @@
             ></el-tree>
           </el-collapse-item>
           <el-collapse-item title="云镜控制" name="2">
+            <div class="direction">
+              <i style="margin-left:0" class="iconfont icon-youshangjiantou"></i>
+              <i class="iconfont icon-arrow-up"></i>
+              <i class="iconfont icon-zuoshangjiantou1"></i>
+              <br>
+              <i style="margin-left:0" class="iconfont icon-iconfontxiangxia1copy19"></i>
+              <i style="broder-radius:22px;    background-color: #68aef5;" class="el-icon-refresh"></i>
+              <i class="iconfont icon-arrow-left"></i>
+              <br>
+              <i style="margin-left:0" class="iconfont icon-youxiajiantou"></i>
+              <i class="iconfont icon-arrow-down"></i>
+              <i class="iconfont icon-zuoshangjiantou"></i>
+            </div>
+            <div class="control">
+              <i class="el-icon-plus"></i>
+              <span>倍数</span>
+              <i class="el-icon-minus"></i>
+              <br>
+              <i class="el-icon-plus"></i>
+              <span>焦距</span>
+              <i class="el-icon-minus"></i>
+              <br>
+              <i class="el-icon-plus"></i>
+              <span>光圈</span>
+              <i class="el-icon-minus"></i>
+            </div>
+            <el-slider style="width: 90%;margin: 0 auto;" v-model="degree"></el-slider>
+          </el-collapse-item>
+          <el-collapse-item title="预置位设置" name="3">
+            <div style="text-align:left">
+              <el-button size="mini" @click="addPreset" type="primary">新增</el-button>
+            </div>
+            <el-table :data="presetData" style="width: 100%">
+              <el-table-column align="center" prop="preset_name" label="预置位名称"></el-table-column>
+              <el-table-column align="center" label="操作" width="150px">
+                <template slot-scope="scope">
+                  <el-button
+                    type="warning"
+                    size="mini"
+                    @click="updatePreset(scope)"
+                    circle
+                    icon="el-icon-edit"
+                  ></el-button>
+                  <el-button type="danger" size="mini" circle icon="el-icon-delete"></el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-collapse-item>
+          <el-collapse-item title="辅助功能" name="4">
+            <i></i>
             <i></i>
             <i></i>
             <i></i>
@@ -24,8 +74,6 @@
             <i></i>
             <i></i>
           </el-collapse-item>
-          <el-collapse-item title="预置位设置" name="3"></el-collapse-item>
-          <el-collapse-item title="辅助功能" name="4"></el-collapse-item>
         </el-collapse>
       </div>
     </div>
@@ -101,6 +149,38 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      @close="presetForm.name=''"
+      width="30%"
+      title="添加预置位"
+      :visible.sync="addDialog"
+      :append-to-body="true"
+    >
+      <el-form :model="presetForm" size="small" label-width="100px">
+        <el-form-item label="预置位名称">
+          <el-input v-model="presetForm.name" placeholder="请输入预置位名称"></el-input>
+        </el-form-item>
+        <el-form-item label-width="0">
+          <el-button style="display:block; margin:0 auto;" @click="addForm" type="primary">提交</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <el-dialog
+      @close="presetForm.name=''"
+      width="30%"
+      title="编辑预置位"
+      :visible.sync="updateDialog"
+      :append-to-body="true"
+    >
+      <el-form :model="presetForm" size="small" label-width="100px">
+        <el-form-item label="预置位名称">
+          <el-input v-model="presetForm.name" placeholder="请输入预置位名称"></el-input>
+        </el-form-item>
+        <el-form-item label-width="0">
+          <el-button style="display:block; margin:0 auto;" @click="updateForm" type="primary">提交</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -174,13 +254,20 @@ export default {
       mapData: {
         map: {}
       },
+      presetForm: {
+        name: ""
+      },
+      presetData: [],
       alarmData: [],
       oneType: true,
       fourType: true,
       nineType: true,
       sixteenType: true,
+      addDialog: false,
+      updateDialog: false,
       videoName: "",
-      progress: 0
+      progress: 0,
+      degree: 0
     };
   },
   mounted() {
@@ -193,6 +280,25 @@ export default {
     });
   },
   methods: {
+    // 添加预置位
+    addPreset() {
+      this.addDialog = true;
+    },
+    addForm() {
+      if (this.presetForm.name == "") {
+        return this.$notify({
+          message: "请输入预置位名称",
+          title: "提示",
+          type: "error"
+        });
+      }
+      this.addDialog = false;
+    },
+    // 编辑预置位
+    updatePreset(scope) {
+      console.log(scope);
+    },
+    updateForm() {},
     // 分屏按钮
     Uniform(code) {
       switch (code) {
@@ -241,6 +347,44 @@ export default {
 };
 </script>
 <style>
+.control {
+  display: inline-block;
+  text-align: right;
+  width: 40%;
+}
+.control span {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.control i {
+  font-weight: 700;
+  text-align: center;
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  font-size: 22px;
+  border-radius: 4px;
+  border: solid 1px #4d4848;
+  margin-bottom: 21px;
+}
+.direction {
+  display: inline-block;
+  text-align: left;
+  width: 52%;
+}
+.direction i {
+  text-align: center;
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  font-size: 22px;
+  border-radius: 4px;
+  border: solid 1px #4d4848;
+  margin-bottom: 21px;
+  margin-left: 17px;
+}
 .list_tool {
   text-align: center;
 }
