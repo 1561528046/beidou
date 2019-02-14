@@ -1,89 +1,55 @@
 <template>
-  <div>
-    <el-form>
-      <el-row>
-        <el-col :span="6">
-          <el-form-item label="1">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="2">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="3">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="4">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="5">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="6">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="7">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="8">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="9">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="10">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="11">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="12">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="13">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="14">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="15">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="16">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
+  <div style="height:100%">
+    <el-row style="height:100%">
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+      <el-col class="sixteen_height" :span="6">
+        <div class="goup_block"></div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
@@ -93,3 +59,13 @@ export default {
   }
 };
 </script>
+<style>
+.sixteen_height {
+  height: 25%;
+  border: 1px solid #fff;
+}
+.goup_block {
+  height: 100%;
+  background-color: #404040;
+}
+</style>

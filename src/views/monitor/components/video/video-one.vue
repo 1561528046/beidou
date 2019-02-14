@@ -1,14 +1,6 @@
 <template>
-  <div>
-    <el-form>
-      <el-row>
-        <el-col :span="24">
-          <el-form-item label="1">
-            <div class="goup_block"></div>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
+  <div style="height:100%">
+    <div class="goup_block"></div>
   </div>
 </template>
 <script>
@@ -18,3 +10,9 @@ export default {
   }
 };
 </script>
+<style>
+.goup_block {
+  height: 100%;
+  background-color: #404040;
+}
+</style>

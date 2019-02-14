@@ -7,23 +7,19 @@
           <div class="user-filter" :class="{active:userFilterOpen}">
             <el-form :model="userTableQuery" size="small">
               <el-form-item>
-                <el-input placeholder="分组名称" size="small" v-model="userTableQuery.real_name">
+                <el-input placeholder="分组名称" size="small" v-model="userTableQuery.name">
                   <i slot="prefix" class="el-input__icon el-icon-search"></i>
                 </el-input>
               </el-form-item>
             </el-form>
-            <!-- <div class="user-load-more" @click="userFilterOpen=!userFilterOpen">
-              <i class="el-icon-caret-bottom" v-if="!userFilterOpen"></i>
-              <i class="el-icon-caret-top" v-if="userFilterOpen"></i>
-            </div>-->
           </div>
           <ul class="user-list">
             <li
-              v-for="user in userList"
-              :class="{active:user.user_id==currentUser.user_id}"
-              :key="user.user_id"
-              @click="changeUser(user)"
-            >{{user.real_name}}</li>
+              v-for="group in groupList"
+              :key="group.rowid"
+              :class="{active:group.rowid==currentUser.rowid}"
+              @click="changeUser(group)"
+            >{{group.name}}</li>
           </ul>
           <div class="user-pager">
             <el-input placeholder="页码" size="small" v-model="userTableQuery.page">
@@ -117,11 +113,11 @@
 <script>
 /* eslint-disable */
 import {
-  getDeviceUserList,
-  getUserDevice,
-  getDeviceAllUnbind,
-  addUserDevice,
-  delUserDevice
+  getListByUserId,
+  addGroupDevice,
+  deleteGroupDevice,
+  getListByGroupId,
+  getListByNotGroupId
 } from "@/api/index.js";
 import adminTransfer from "@/components/transfer.vue";
 import selectCompany from "@/components/select-company.vue";
@@ -149,26 +145,25 @@ export default {
     return {
       userFilterOpen: false, //用户筛选展开关闭
       userTableQuery: {
-        // user_id: this.$store.state.user.user_id,
         real_name: "",
         size: 20,
         page: 1
       },
       bindTableQuery: {
-        device_id: "",
+        group_id: "",
         size: 20,
         page: 1,
         total: 0
       },
       unbindTableQuery: {
-        device_id: "",
+        group_id: "",
         size: 20,
         page: 1,
         total: 0
       },
       currentUser: {},
       titles: ["请在左侧选择分组", "未绑定设备"],
-      userList: [],
+      groupList: [],
       leftList: [],
       rightList: [],
       leftCol: [
@@ -225,11 +220,10 @@ export default {
     // 左侧搜索框
     renderBind() {
       this.$set(this.$data, "leftList", []);
-      // this.bindTableQuery.total = 0;
       if (this.currentUser.user_id) {
         var postData = Object.assign({}, this.bindTableQuery);
-        postData.user_id = this.currentUser.user_id;
-        getUserDevice(postData).then(res => {
+        postData.group_id = this.currentUser.rowid;
+        getListByGroupId(postData).then(res => {
           this.rightValues = [];
           if (res.data.code == 0) {
             var arr = res.data.data.map(item => {
@@ -245,24 +239,27 @@ export default {
     // 右侧搜索框
     renderUnbind() {
       this.$set(this.$data, "rightList", []);
-      getDeviceAllUnbind(this.unbindTableQuery).then(res => {
-        if (res.data.code == 0) {
-          var arr = res.data.data.map(item => {
-            item.parent = "right";
-            return item;
-          });
-          this.$set(this.$data, "rightList", arr);
-
-          this.unbindTableQuery.total = res.data.total;
-        }
-      });
+      if (this.currentUser.user_id) {
+        var postData = Object.assign({}, this.unbindTableQuery);
+        postData.group_id = this.currentUser.rowid;
+        getListByNotGroupId(postData).then(res => {
+          if (res.data.code == 0) {
+            var arr = res.data.data.map(item => {
+              item.parent = "right";
+              return item;
+            });
+            this.$set(this.$data, "rightList", arr);
+            this.unbindTableQuery.total = res.data.total;
+          }
+        });
+      }
     },
     // 分组信息
     renderUser() {
-      this.$set(this.$data, "userList", []);
-      getDeviceUserList(this.userTableQuery).then(res => {
+      this.$set(this.$data, "groupList", []);
+      getListByUserId(this.userTableQuery).then(res => {
         if (res.data.code == 0) {
-          this.$set(this.$data, "userList", res.data.data);
+          this.$set(this.$data, "groupList", res.data.data);
           this.userTableQuery.total = res.data.total;
         }
       });
@@ -287,20 +284,15 @@ export default {
     },
     //右到左
     onleft(items, next) {
-      if (!this.currentUser.user_id) {
-        this.$message.warning("请选择一个用户！");
-        next(false);
-        return false;
-      }
       var postData = {
-        user_id: this.currentUser.user_id,
+        group_id: this.currentUser.rowid,
         device_ids: []
       };
       items.map(item => {
         postData.device_ids.push(item.device_id);
       });
       postData.device_ids = postData.device_ids.join(",");
-      addUserDevice(postData)
+      addGroupDevice(postData)
         .then(res => {
           if (res.data.code == 0) {
             next(true);
@@ -320,14 +312,14 @@ export default {
     //左到右
     onright(items, next) {
       var postData = {
-        user_id: this.currentUser.user_id,
+        group_id: this.currentUser.rowid,
         device_ids: []
       };
       items.map(item => {
         postData.device_ids.push(item.device_id);
       });
       postData.device_ids = postData.device_ids.join(",");
-      delUserDevice(postData)
+      deleteGroupDevice(postData)
         .then(res => {
           if (res.data.code == 0) {
             next(true);
@@ -342,9 +334,9 @@ export default {
           next(false);
         });
     },
-    changeUser(user) {
-      this.titles[0] = user.real_name;
-      this.currentUser = user;
+    changeUser(group) {
+      this.titles[0] = group.name;
+      this.currentUser = group;
       this.renderBind();
       this.renderUnbind();
     }

@@ -345,3 +345,16 @@ export const deleteGroupDevice = query => {
     params: query
   });
 };
+// 用户常用分组管理-获取分组下的设备
+export const getListByGroupId = query => {
+  console.log(query);
+  return ajax.get("/device/GetListByGroupId", {
+    params: query
+  });
+};
+// 用户常用分组管理-获取非当前分组下的设备
+export const getListByNotGroupId = query => {
+  return ajax.get("/device/GetListByNotGroupId", {
+    params: query
+  });
+};

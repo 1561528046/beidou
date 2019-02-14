@@ -3,10 +3,10 @@
     <div class="structure"></div>
     <div style="width:80%;float:right">
       <el-card shadow="always" class="admin-table-search">
-        <el-form :model="tableQuery" size="small" label-width="90px">
+        <el-form :model="tableQuery" label-position="left" size="small" label-width="90px">
           <el-row :gutter="20">
             <el-col :span="6">
-              <el-form-item label="时间">
+              <el-form-item label-width="50px" label="时间">
                 <el-date-picker
                   style="width:100%"
                   v-model="tableQuery.time"
