@@ -1,5 +1,6 @@
 <template>
   <el-cascader
+    size="small"
     :options="areaList"
     @active-item-change="handleItemChange"
     v-model="area"

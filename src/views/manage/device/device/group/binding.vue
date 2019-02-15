@@ -43,7 +43,7 @@
             <div class="transfer-filter-item">
               <el-form :inline="true" :model="bindTableQuery" size="mini">
                 <el-form-item>
-                  <el-input placeholder="终端ID" v-model="bindTableQuery.device_id">
+                  <el-input placeholder="终端ID" v-model="bindTableQuery.device_no">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
@@ -56,7 +56,7 @@
             <div class="transfer-filter-item">
               <el-form :inline="true" :model="userTableQuery" size="mini">
                 <el-form-item>
-                  <el-input placeholder="终端ID" v-model="unbindTableQuery.device_id">
+                  <el-input placeholder="终端ID" v-model="unbindTableQuery.device_no">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                   </el-input>
                 </el-form-item>
@@ -151,12 +151,14 @@ export default {
       },
       bindTableQuery: {
         group_id: "",
+        device_no: "",
         size: 20,
         page: 1,
         total: 0
       },
       unbindTableQuery: {
         group_id: "",
+        device_no: "",
         size: 20,
         page: 1,
         total: 0

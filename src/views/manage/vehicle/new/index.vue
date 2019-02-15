@@ -118,6 +118,16 @@
         </router-link>
         <el-button v-if="$props.state==2" type="primary" @click="singleImport" size="small">单车导入</el-button>
         <el-button v-if="$props.state==2" type="primary" @click="moreImport" size="small">批量导入</el-button>
+        <a
+          href="/static/全国平台批量导入模板.xlsx"
+          download
+          target="_blank"
+          type="primary "
+          class="el-button el-button--small el-button--primary"
+          style="width:199px; display:inline-block;margin-left:10px;"
+        >
+          <i class="el-icon-download"></i> 全国平台批量导入模板下载
+        </a>
         <el-button style="margin-left:10px" type="primary" @click="exportExcel" size="small">
           <i class="el-icon-download"></i> 导出
         </el-button>

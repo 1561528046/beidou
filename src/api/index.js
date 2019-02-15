@@ -9,3 +9,4 @@ export * from "./agreement.js";
 export * from "./monitor.js";
 export * from "./fence.js";
 export * from "./server.js";
+export * from "./video.js";

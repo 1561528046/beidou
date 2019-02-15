@@ -68,8 +68,13 @@ export default {
         });
       }
       SubmitCode({ code: this.code }).then(res => {
-        if (res.data.code == 0) {
+        if (res.data.result) {
           this.getLoginCount();
+          return this.$notify({
+            message: "提交成功",
+            title: "提示",
+            type: "success"
+          });
         } else {
           return this.$notify({
             message: res.data.msg,

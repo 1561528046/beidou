@@ -5,13 +5,15 @@
       <div>
         <el-collapse>
           <el-collapse-item title="组织架构" name="1">
-            <el-tree
-              :data="groupData"
-              show-checkbox
-              node-key="id"
-              :default-expand-all="true"
-              :props="defaultProps"
-            ></el-tree>
+            <div style="height:200px; overflow-y:auto">
+              <el-tree
+                :data="groupData"
+                show-checkbox
+                node-key="id"
+                :default-expand-all="true"
+                :props="defaultProps"
+              ></el-tree>
+            </div>
           </el-collapse-item>
           <el-collapse-item title="云镜控制" name="2">
             <div class="direction">
@@ -63,16 +65,25 @@
             </el-table>
           </el-collapse-item>
           <el-collapse-item title="辅助功能" name="4">
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
+            <div class="auxiliary">
+              <i style="margin-left:0" class="iconfont icon-dengguang"></i>
+              <i class="iconfont icon-yushua"></i>
+              <i class="iconfont icon-zidongxunhang"></i>
+              <i class="iconfont icon-jujiao1"></i>
+              <i class="iconfont icon-jujiao"></i>
+              <br>
+              <hr
+                style="height:1px;border:none;border-top:1px dashed #0066CC;margin-top:5px;margin-bottom:5px"
+              >
+            </div>
+            <div class="auxiliary_vice">
+              <i style="margin-left:0" class="iconfont icon-liangdu"></i>
+              <i class="iconfont icon-tiaoseban"></i>
+              <i class="iconfont icon-baohedu"></i>
+              <i class="iconfont icon-tubiao-"></i>
+              <i class="iconfont icon-chicun"></i>
+              <el-slider style="width: 90%;margin: 0 auto;" v-model="degree"></el-slider>
+            </div>
           </el-collapse-item>
         </el-collapse>
       </div>
@@ -138,14 +149,42 @@
           </li>
         </ul>
       </div>
-      <div style="margin-top:3px;height:88%">
+      <div style="margin-top:3px;height:70%">
         <div :is="videoName"></div>
         <div class="list_tool">
-          <el-row style="padding:10px">
-            <el-col :span="8">报警</el-col>
-            <el-col :span="8">音视频流量统计</el-col>
-            <el-col :span="8">视频抓拍</el-col>
-          </el-row>
+          <el-tabs type="border-card">
+            <el-tab-pane label="报警">
+              <el-table height="154px" :data="alarmData" style="width: 100%">
+                <el-table-column prop label="序号" width="55"></el-table-column>
+                <el-table-column prop label="车牌号"></el-table-column>
+                <el-table-column prop label="终端ID"></el-table-column>
+                <el-table-column prop label="报警状态"></el-table-column>
+                <el-table-column prop label="报警信息"></el-table-column>
+                <el-table-column prop label="监控通道"></el-table-column>
+                <el-table-column prop label="报警次数"></el-table-column>
+                <el-table-column prop label="报警时间"></el-table-column>
+                <el-table-column prop label="报警位置"></el-table-column>
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="音视频流量统计">
+              <el-table height="154px" :data="trafficData" style="width: 100%">
+                <el-table-column prop label="序号" width="55"></el-table-column>
+                <el-table-column prop label="流量"></el-table-column>
+                <el-table-column prop label="车牌号"></el-table-column>
+                <el-table-column prop label="终端ID"></el-table-column>
+                <el-table-column prop label="时间"></el-table-column>
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="视频抓拍">
+              <el-table height="154px" :data="snapData" style="width: 100%">
+                <el-table-column prop label="序号" width="55"></el-table-column>
+                <el-table-column prop label="抓拍名称"></el-table-column>
+                <el-table-column prop label="车牌号"></el-table-column>
+                <el-table-column prop label="终端ID"></el-table-column>
+                <el-table-column prop label="时间"></el-table-column>
+              </el-table>
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </div>
     </div>
@@ -194,10 +233,6 @@ export default {
   components: { videoOne, videoFour, videoNine, videoSixteen },
   created() {
     this.videoName = videoOne;
-    var alarm = this.$dict.alarm;
-    for (var key in alarm) {
-      this.alarmData.push({ alarmId: key, alarmType: alarm[key] });
-    }
   },
   data() {
     return {
@@ -236,7 +271,21 @@ export default {
                 },
                 {
                   id: 10,
-                  label: "老4G"
+                  label: "老4G",
+                  children: [
+                    {
+                      id: 12,
+                      label: "GH1"
+                    },
+                    {
+                      id: 13,
+                      label: "GH2"
+                    },
+                    {
+                      id: 14,
+                      label: "GH3"
+                    }
+                  ]
                 }
               ]
             }
@@ -257,8 +306,10 @@ export default {
       presetForm: {
         name: ""
       },
+      snapData: [],
       presetData: [],
       alarmData: [],
+      trafficData: [],
       oneType: true,
       fourType: true,
       nineType: true,
@@ -266,8 +317,8 @@ export default {
       addDialog: false,
       updateDialog: false,
       videoName: "",
-      progress: 0,
-      degree: 0
+      degree: 0,
+      auxiliary: 0
     };
   },
   mounted() {
@@ -347,6 +398,32 @@ export default {
 };
 </script>
 <style>
+.monitoring_list {
+}
+
+.auxiliary_vice i {
+  text-align: center;
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  font-size: 22px;
+  margin-left: 25px;
+}
+.auxiliary {
+  padding: 15px;
+}
+.auxiliary i {
+  text-align: center;
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  font-size: 22px;
+  border-radius: 4px;
+  border: solid 1px #4d4848;
+  margin-left: 25px;
+}
 .control {
   display: inline-block;
   text-align: right;
@@ -386,6 +463,9 @@ export default {
   margin-left: 17px;
 }
 .list_tool {
+  width: 100%;
+  height: 10%;
+  background-color: #fff;
   text-align: center;
 }
 .list_tool ul {
@@ -398,6 +478,7 @@ export default {
   float: left;
 }
 .structure_tree {
+  overflow-y: auto;
   padding: 18px;
   text-align: center;
   background-color: #fff;
@@ -407,12 +488,13 @@ export default {
   top: 0;
   bottom: 0;
   z-index: 100;
+  padding-top: 0;
 }
 .video_area {
   background-color: #fff;
   position: absolute;
   width: 60%;
-  left: 420px;
+  left: 417px;
   top: 0;
   bottom: 0;
   z-index: 100;
