@@ -1,7 +1,10 @@
-var BASE_URL = "http://192.168.88.100:10029/";
-var API_URL = "http://192.168.88.100:10029/api";
+// var BASE_URL = "http://192.168.88.100:10029/";
+// var API_URL = "http://192.168.88.100:10029/api";
 var MONITOR_URL = "ws://192.168.88.125:5002";
 var INSTRUCTION_URL = "ws://192.168.88.125:5000";
+
+var BASE_URL = "http://192.168.88.88:10462/";
+var API_URL = "http://192.168.88.88:10462/api";
 // || true
 if (process.env.NODE_ENV == "production") {
   // public/index.html中 最下方的script中会配置全局config

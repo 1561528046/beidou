@@ -178,7 +178,30 @@ var routers = [
               name: "驾驶行为分析",
               icon: "iconfont icon-xingweifenxi"
             },
-            component: () => import("@/views/manage/analyze/behavior/index.vue")
+            component: () =>
+              import("@/views/manage/analyze/behavior/index.vue"),
+            children: [
+              {
+                path: "behavior_statistical",
+                name: "behavior_statistical",
+                meta: {
+                  name: "统计",
+                  icon: "iconfont icon-tongji1"
+                },
+                component: () =>
+                  import("@/views/manage/analyze/behavior/statistical/index.vue")
+              },
+              {
+                path: "behavior_query",
+                name: "behavior_query",
+                meta: {
+                  name: "查询",
+                  icon: "el-icon-search"
+                },
+                component: () =>
+                  import("@/views/manage/analyze/behavior/query/index.vue")
+              }
+            ]
           }
         ]
       },
