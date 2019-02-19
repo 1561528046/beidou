@@ -162,9 +162,13 @@
       <div style="margin-top:3px;height:70%">
         <div :is="videoName"></div>
         <div class="list_tool">
-          <el-tabs type="border-card">
+          <el-tabs type="card">
             <el-tab-pane label="报警">
-              <el-table height="154px" :data="alarmData" style="width: 100%">
+              <div style="text-align:left;margin-top:6px;margin-left:5px">
+                <el-button size="mini" @click="lookAlarm" type="primary">查看</el-button>
+                <el-button size="mini" type="primary">报警联动设置</el-button>
+              </div>
+              <el-table height="120px" :data="alarmData" style="width: 100%">
                 <el-table-column prop label="序号" width="55"></el-table-column>
                 <el-table-column prop label="车牌号"></el-table-column>
                 <el-table-column prop label="终端ID"></el-table-column>
@@ -177,7 +181,10 @@
               </el-table>
             </el-tab-pane>
             <el-tab-pane label="音视频流量统计">
-              <el-table height="154px" :data="trafficData" style="width: 100%">
+              <div style="text-align:left;margin-top:6px;margin-left:5px">
+                <el-button @click="lookTraffic" size="mini" type="primary">查看</el-button>
+              </div>
+              <el-table height="120px" :data="trafficData" style="width: 100%">
                 <el-table-column prop label="序号" width="55"></el-table-column>
                 <el-table-column prop label="流量"></el-table-column>
                 <el-table-column prop label="车牌号"></el-table-column>
@@ -186,7 +193,10 @@
               </el-table>
             </el-tab-pane>
             <el-tab-pane label="视频抓拍">
-              <el-table height="154px" :data="snapData" style="width: 100%">
+              <div style="text-align:left;margin-top:6px;margin-left:5px">
+                <el-button size="mini" @click="lookSnap" type="primary">查看</el-button>
+              </div>
+              <el-table height="120px" :data="snapData" style="width: 100%">
                 <el-table-column prop label="序号" width="55"></el-table-column>
                 <el-table-column prop label="抓拍名称"></el-table-column>
                 <el-table-column prop label="车牌号"></el-table-column>
@@ -231,79 +241,16 @@
       </el-form>
     </el-dialog>
     <el-dialog :visible.sync="settingDialog" :append-to-body="true" width="40%" title="设置">
-      <el-form :model="settingForm" size="small" label-width="100px" label-position="left">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="码率">
-              <el-select v-model="settingForm.bit_rate" style="width:100%">
-                <el-option value="1" label="CBR">CBR</el-option>
-                <el-option value="2" label="VBR">VBR</el-option>
-                <el-option value="3" label="ABR">ABR</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="分辨率">
-              <el-select v-model="settingForm.resolution" style="width:100%">
-                <el-option value="1" label="176*144[Qcif]"></el-option>
-                <el-option value="2" label="352*288[Cif]"></el-option>
-                <el-option value="3" label="480*288[Wcif]"></el-option>
-                <el-option value="4" label="704*576[D1]"></el-option>
-                <el-option value="5" label="960*576[Wd1]"></el-option>
-                <el-option value="6" label="1280*720[720P]"></el-option>
-                <el-option value="7" label="1920*1080[1080P]"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="帧率">
-              <el-select v-model="settingForm.frame_rate" style="width:100%">
-                <el-option value="1" label="24"></el-option>
-                <el-option value="2" label="29.97"></el-option>
-                <el-option value="3" label="30"></el-option>
-                <el-option value="4" label="59.9"></el-option>
-                <el-option value="5" label="60"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="尺寸">
-              <el-select v-model="settingForm.size" style="width:100%">
-                <el-option value="1" label="4:3"></el-option>
-                <el-option value="2" label="5:4"></el-option>
-                <el-option value="3" label="16:9"></el-option>
-                <el-option value="4" label="16:10"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="关键帧间隔">
-              <el-input v-model="settingForm.interval" placeholder="请输入关键帧间隔(0-1000)"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="字幕选择">
-              <el-select v-model="settingForm.subtitles" style="width:100%">
-                <el-option value="1" label="平台字幕"></el-option>
-                <el-option value="2" label="车机字幕"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="字幕叠加"></el-form-item>
-          </el-col>
-          <el-col :span="12" style="text-align:right">
-            <el-form-item label-width="0">
-              <el-button type="primary">自动配置</el-button>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label-width="0">
-              <el-button type="primary">提交</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+      <video-setting></video-setting>
+    </el-dialog>
+    <el-dialog :visible.sync="alarmDialog" :append-to-body="true" width="65%" title="报警">
+      <video-alarm></video-alarm>
+    </el-dialog>
+    <el-dialog :visible.sync="trafficDialog" :append-to-body="true" width="65%" title="音视频流量统计">
+      <video-traffic></video-traffic>
+    </el-dialog>
+    <el-dialog :visible.sync="snapDialog" :append-to-body="true" width="65%" title="视频抓拍">
+      <video-snap></video-snap>
     </el-dialog>
   </div>
 </template>
@@ -314,8 +261,21 @@ import videoOne from "./video/video-one.vue";
 import videoFour from "./video/video-four.vue";
 import videoNine from "./video/video-nine.vue";
 import videoSixteen from "./video/video-sixteen.vue";
+import videoSetting from "./video/video-setting.vue";
+import videoAlarm from "./video/video-alarm.vue";
+import videoTraffic from "./video/video-traffic.vue";
+import videoSnap from "./video/video-snap.vue";
 export default {
-  components: { videoOne, videoFour, videoNine, videoSixteen },
+  components: {
+    videoOne,
+    videoFour,
+    videoNine,
+    videoSixteen,
+    videoSetting,
+    videoAlarm,
+    videoTraffic,
+    videoSnap
+  },
   created() {
     this.videoName = videoOne;
   },
@@ -391,15 +351,6 @@ export default {
       presetForm: {
         name: ""
       },
-      settingForm: {
-        bit_rate: "", //码率
-        resolution: "", //分辨率
-        frame_rate: "", //帧率
-        size: "", //尺寸
-        interval: "", //关键帧间隔
-        subtitles: "", //字幕选择
-        superposition: "" //字幕叠加
-      },
       snapData: [],
       presetData: [],
       alarmData: [],
@@ -411,6 +362,9 @@ export default {
       addDialog: false,
       updateDialog: false,
       settingDialog: false,
+      alarmDialog: false,
+      trafficDialog: false,
+      snapDialog: false,
       videoName: "",
       degree: 0,
       auxiliary: 0
@@ -483,21 +437,28 @@ export default {
           break;
       }
     },
-    // 播放部分
-    // 后退
-    retreatVideo() {},
-    // 播放
-    playVideo() {},
-    // 暂停
-    pauseVideo() {},
-    // 快进
-    forwardVideo() {},
-    // 停止
-    stopVideo() {}
+    // 查看报警信息
+    lookAlarm() {
+      this.addKey++;
+      this.alarmDialog = true;
+    },
+    // 查看音视频流量统计信息
+    lookTraffic() {
+      this.addKey++;
+      this.trafficDialog = true;
+    },
+    // 查看视频抓拍信息
+    lookSnap() {
+      this.addKey++;
+      this.snapDialog = true;
+    }
   }
 };
 </script>
 <style>
+.monitor-tabs .el-tabs__header {
+  padding-left: 0 !important;
+}
 .monitoring_list {
 }
 
