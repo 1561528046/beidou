@@ -166,7 +166,7 @@
             <el-tab-pane label="报警">
               <div style="text-align:left;margin-top:6px;margin-left:5px">
                 <el-button size="mini" @click="lookAlarm" type="primary">查看</el-button>
-                <el-button size="mini" type="primary">报警联动设置</el-button>
+                <el-button size="mini" @click="linkageDialog = true" type="primary">报警联动设置</el-button>
               </div>
               <el-table height="120px" :data="alarmData" style="width: 100%">
                 <el-table-column prop label="序号" width="55"></el-table-column>
@@ -252,6 +252,9 @@
     <el-dialog :visible.sync="snapDialog" :append-to-body="true" width="65%" title="视频抓拍">
       <video-snap></video-snap>
     </el-dialog>
+    <el-dialog :visible.sync="linkageDialog" :append-to-body="true" width="65%" title="报警联动设置">
+      <video-linkage></video-linkage>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -265,6 +268,7 @@ import videoSetting from "./video/video-setting.vue";
 import videoAlarm from "./video/video-alarm.vue";
 import videoTraffic from "./video/video-traffic.vue";
 import videoSnap from "./video/video-snap.vue";
+import videoLinkage from "./video/video-linkage";
 export default {
   components: {
     videoOne,
@@ -274,7 +278,8 @@ export default {
     videoSetting,
     videoAlarm,
     videoTraffic,
-    videoSnap
+    videoSnap,
+    videoLinkage
   },
   created() {
     this.videoName = videoOne;
@@ -365,6 +370,7 @@ export default {
       alarmDialog: false,
       trafficDialog: false,
       snapDialog: false,
+      linkageDialog: false,
       videoName: "",
       degree: 0,
       auxiliary: 0
@@ -380,6 +386,8 @@ export default {
     });
   },
   methods: {
+    // 报警联动设置
+    setLinkage() {},
     // 设置
     setting() {
       this.addKey++;

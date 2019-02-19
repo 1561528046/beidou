@@ -51,6 +51,8 @@ export default {
           this.type = true;
         } else if (res.data.code == 1) {
           this.type = false;
+          this.$set(this.$data, "url", "");
+          this.$set(this.$data, "code", "");
           this.getVerifyCodeImg();
         }
       });

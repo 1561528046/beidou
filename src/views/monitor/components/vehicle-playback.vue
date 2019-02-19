@@ -132,26 +132,63 @@
           <div class="play_tool">
             <ul>
               <li>
-                <i @click="retreatVideo" style="font-size:35px" class="iconfont icon-houtui"></i>
+                <i
+                  title="后退"
+                  @click="retreatVideo"
+                  style="font-size:35px"
+                  class="iconfont icon-houtui"
+                ></i>
               </li>
               <li>
-                <i @click="playVideo" style="font-size:35px" class="iconfont icon-bofang"></i>
+                <i
+                  title="播放"
+                  @click="playVideo"
+                  style="font-size:32px"
+                  class="iconfont icon-bofang"
+                ></i>
               </li>
               <li>
-                <!-- <i @click="pauseVideo"  style="font-size:35px" class="iconfont icon-zanting"></i> -->
+                <!-- <i title="暂停" @click="pauseVideo"  style="font-size:35px" class="iconfont icon-zanting"></i> -->
               </li>
               <li>
-                <i @click="forwardVideo" style="font-size:35px" class="iconfont icon-kuaijin"></i>
+                <i
+                  title="快进"
+                  @click="forwardVideo"
+                  style="font-size:35px"
+                  class="iconfont icon-kuaijin"
+                ></i>
               </li>
               <li>
-                <i @click="stopVideo" style="font-size:35px" class="iconfont icon-media-stop-03"></i>
+                <i
+                  title="停止"
+                  @click="stopVideo"
+                  style="font-size:34px"
+                  class="iconfont icon-media-stop-03"
+                ></i>
+              </li>
+              <li>
+                <i
+                  title="关键帧播放"
+                  style="font-size:30px"
+                  class="iconfont icon-luxianghuifang_guanjianzhenbofang"
+                ></i>
+              </li>
+              <li>
+                <i
+                  @click="lookFile"
+                  title="查看文件信息"
+                  style="font-size:34px"
+                  class="iconfont icon-view"
+                ></i>
               </li>
             </ul>
           </div>
         </div>
-        <!-- <div style="height:50px;background-color:#fff;"></div> -->
       </div>
     </div>
+    <el-dialog :visible.sync="fileDialog" :append-to-body="true" width="65%" title="文件">
+      <video-file></video-file>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -161,8 +198,9 @@ import videoOne from "./video/video-one.vue";
 import videoFour from "./video/video-four.vue";
 import videoNine from "./video/video-nine.vue";
 import videoSixteen from "./video/video-sixteen.vue";
+import videoFile from "./video/video-file.vue";
 export default {
-  components: { videoOne, videoFour, videoNine, videoSixteen },
+  components: { videoOne, videoFour, videoNine, videoSixteen, videoFile },
   created() {
     this.videoName = videoOne;
     var alarm = this.$dict.alarm;
@@ -172,6 +210,8 @@ export default {
   },
   data() {
     return {
+      addKey: 0,
+      fileDialog: false,
       groupData: [
         {
           id: 1,
@@ -276,6 +316,11 @@ export default {
           this.videoName = videoSixteen;
           break;
       }
+    },
+    // 查看文件列表信息
+    lookFile() {
+      this.addKey++;
+      this.fileDialog = true;
     },
     // 播放部分
     // 后退
