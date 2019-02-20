@@ -148,18 +148,24 @@
             ></i>
           </li>
           <li>
-            <i style="font-size:22px" class="iconfont icon-guanbi"></i>
+            <i style="font-size:22px;margin-left:5px;cursor:pointer" class="iconfont icon-guanbi"></i>
           </li>
           <li>
             <i
+              v-if="settingType"
               @click="setting"
-              style="font-size:27px;position: absolute;top: -2px;"
-              class="iconfont icon-shezhi"
+              style="font-size:30px;cursor:pointer"
+              class="iconfont icon-shezhi2"
             ></i>
+            <!-- <i
+              v-if="!settingType"
+              style="color:#3f81c1; font-size:32px;"
+              class="iconfont icon-shezhi1"
+            ></i>-->
           </li>
         </ul>
       </div>
-      <div style="margin-top:3px;height:70%">
+      <div style="margin-top:4px;height:70%">
         <div :is="videoName"></div>
         <div class="list_tool">
           <el-tabs type="card">
@@ -364,6 +370,7 @@ export default {
       fourType: true,
       nineType: true,
       sixteenType: true,
+      settingType: true,
       addDialog: false,
       updateDialog: false,
       settingDialog: false,
@@ -385,12 +392,18 @@ export default {
       vm.$set(vm.mapData, "map", map);
     });
   },
+  watch: {
+    settingType: function() {
+      this.settingType = true;
+    }
+  },
   methods: {
     // 报警联动设置
     setLinkage() {},
     // 设置
     setting() {
       this.addKey++;
+      // this.settingType = false;
       this.settingDialog = true;
     },
     // 添加预置位

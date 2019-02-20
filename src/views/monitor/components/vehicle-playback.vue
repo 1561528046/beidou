@@ -125,63 +125,31 @@
           </li>
         </ul>
       </div>
-      <div style="margin-top:3px;height:80%">
+      <div style="margin-top:4px;height:70%">
         <div :is="videoName"></div>
         <div>
-          <el-slider v-model="progress"></el-slider>
           <div class="play_tool">
-            <ul>
-              <li>
-                <i
-                  title="后退"
-                  @click="retreatVideo"
-                  style="font-size:35px"
-                  class="iconfont icon-houtui"
-                ></i>
-              </li>
-              <li>
-                <i
-                  title="播放"
-                  @click="playVideo"
-                  style="font-size:32px"
-                  class="iconfont icon-bofang"
-                ></i>
-              </li>
-              <li>
-                <!-- <i title="暂停" @click="pauseVideo"  style="font-size:35px" class="iconfont icon-zanting"></i> -->
-              </li>
-              <li>
-                <i
-                  title="快进"
-                  @click="forwardVideo"
-                  style="font-size:35px"
-                  class="iconfont icon-kuaijin"
-                ></i>
-              </li>
-              <li>
-                <i
-                  title="停止"
-                  @click="stopVideo"
-                  style="font-size:34px"
-                  class="iconfont icon-media-stop-03"
-                ></i>
-              </li>
-              <li>
-                <i
-                  title="关键帧播放"
-                  style="font-size:30px"
-                  class="iconfont icon-luxianghuifang_guanjianzhenbofang"
-                ></i>
-              </li>
-              <li>
-                <i
-                  @click="lookFile"
-                  title="查看文件信息"
-                  style="font-size:34px"
-                  class="iconfont icon-view"
-                ></i>
-              </li>
-            </ul>
+            <el-tabs type="card">
+              <el-tab-pane label="文件">
+                <el-table :data="fileData" height="154px" style="width: 100%">
+                  <el-table-column prop label="序号" width="55"></el-table-column>
+                  <el-table-column prop="license" label="车牌号"></el-table-column>
+                  <el-table-column prop label="终端ID"></el-table-column>
+                  <el-table-column prop label="报警状态"></el-table-column>
+                  <el-table-column prop label="报警信息"></el-table-column>
+                  <el-table-column prop label="监控通道"></el-table-column>
+                  <el-table-column prop label="报警次数"></el-table-column>
+                  <el-table-column prop label="报警时间"></el-table-column>
+                  <el-table-column prop label="报警位置"></el-table-column>
+                  <el-table-column prop label="操作">
+                    <template slot-scope="scope">
+                      <i style="font-size:20px" class="iconfont icon-fileplay1"></i>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-tab-pane>
+              <el-tab-pane label="关键帧播放"></el-tab-pane>
+            </el-tabs>
           </div>
         </div>
       </div>
@@ -265,6 +233,7 @@ export default {
       mapData: {
         map: {}
       },
+      fileData: [],
       alarmData: [],
       oneType: true,
       fourType: true,
