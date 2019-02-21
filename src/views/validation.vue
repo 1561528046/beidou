@@ -4,7 +4,9 @@
       <el-row :gutter="20">
         <el-col :span="2">
           <el-form-item>
-            <img :src="url" style="width:100%;height:100%;margin-left:10px" alt>
+            <div style="display:inline-block;width:100%;height:100%" @click="replaceCode">
+              <img :src="url" style="width:100%;height:100%;margin-left:10px" alt>
+            </div>
           </el-form-item>
         </el-col>
         <el-col :span="2">
@@ -45,6 +47,9 @@ export default {
     };
   },
   methods: {
+    replaceCode() {
+      this.getVerifyCodeImg();
+    },
     getLoginCount() {
       GetLoginCount().then(res => {
         if (res.data.code == 0) {
@@ -58,7 +63,10 @@ export default {
       });
     },
     getVerifyCodeImg() {
-      var url = this.$dict.BASE_URL + `api/gghypt/GetVerifyCodeImg`;
+      var num = Math.random()
+        .toString(36)
+        .substr(2, 15);
+      var url = this.$dict.BASE_URL + `api/gghypt/GetVerifyCodeImg` + "?" + num;
       this.$set(this.$data, "url", url);
     },
     formSubmit() {

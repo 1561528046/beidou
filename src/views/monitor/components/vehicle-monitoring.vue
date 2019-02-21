@@ -3,7 +3,7 @@
     <div style=" width:100%; position:absolute;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
     <div class="structure_tree">
       <div>
-        <el-collapse>
+        <el-collapse v-model="activeNames">
           <el-collapse-item title="组织架构" name="1">
             <div style="height:200px; overflow-y:auto">
               <el-tree
@@ -77,11 +77,11 @@
               >
             </div>
             <div class="auxiliary_vice">
-              <i style="margin-left:0" class="iconfont icon-liangdu"></i>
-              <i class="iconfont icon-tiaoseban"></i>
-              <i class="iconfont icon-baohedu"></i>
-              <i class="iconfont icon-tubiao-"></i>
-              <i class="iconfont icon-chicun"></i>
+              <i title="亮度" style="margin-left:0" class="iconfont icon-liangdu"></i>
+              <i title="色度" class="iconfont icon-tiaoseban"></i>
+              <i title="饱和度" class="iconfont icon-baohedu"></i>
+              <i title="对比度" class="iconfont icon-tubiao-"></i>
+              <i title="尺寸" class="iconfont icon-chicun"></i>
               <el-slider style="width: 90%;margin: 0 auto;" v-model="degree"></el-slider>
             </div>
           </el-collapse-item>
@@ -292,6 +292,7 @@ export default {
   },
   data() {
     return {
+      activeNames: ["1", "2", "3", "4"],
       groupData: [
         {
           id: 1,
