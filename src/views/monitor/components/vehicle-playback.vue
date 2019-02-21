@@ -131,7 +131,7 @@
           <div class="play_tool">
             <el-tabs type="card">
               <el-tab-pane label="文件">
-                <el-table :data="fileData" height="154px" style="width: 100%">
+                <el-table :data="fileData" height="153px" style="width: 100%">
                   <el-table-column prop label="序号" width="55"></el-table-column>
                   <el-table-column prop="license" label="车牌号"></el-table-column>
                   <el-table-column prop label="终端ID"></el-table-column>

@@ -174,7 +174,7 @@
                 <el-button size="mini" @click="lookAlarm" type="primary">查看</el-button>
                 <el-button size="mini" @click="linkageDialog = true" type="primary">报警联动设置</el-button>
               </div>
-              <el-table height="120px" :data="alarmData" style="width: 100%">
+              <el-table height="119px" :data="alarmData" style="width: 100%">
                 <el-table-column prop label="序号" width="55"></el-table-column>
                 <el-table-column prop label="车牌号"></el-table-column>
                 <el-table-column prop label="终端ID"></el-table-column>
@@ -190,7 +190,7 @@
               <div style="text-align:left;margin-top:6px;margin-left:5px">
                 <el-button @click="lookTraffic" size="mini" type="primary">查看</el-button>
               </div>
-              <el-table height="120px" :data="trafficData" style="width: 100%">
+              <el-table height="119px" :data="trafficData" style="width: 100%">
                 <el-table-column prop label="序号" width="55"></el-table-column>
                 <el-table-column prop label="流量"></el-table-column>
                 <el-table-column prop label="车牌号"></el-table-column>
@@ -202,7 +202,7 @@
               <div style="text-align:left;margin-top:6px;margin-left:5px">
                 <el-button size="mini" @click="lookSnap" type="primary">查看</el-button>
               </div>
-              <el-table height="120px" :data="snapData" style="width: 100%">
+              <el-table height="119px" :data="snapData" style="width: 100%">
                 <el-table-column prop label="序号" width="55"></el-table-column>
                 <el-table-column prop label="抓拍名称"></el-table-column>
                 <el-table-column prop label="车牌号"></el-table-column>
