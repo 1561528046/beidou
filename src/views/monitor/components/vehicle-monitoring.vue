@@ -151,17 +151,14 @@
             <i style="font-size:22px;margin-left:5px;cursor:pointer" class="iconfont icon-guanbi"></i>
           </li>
           <li>
-            <i
-              v-if="settingType"
-              @click="setting"
-              style="font-size:30px;cursor:pointer"
-              class="iconfont icon-shezhi2"
-            ></i>
+            <i @click="setting" style="font-size:30px;cursor:pointer" class="iconfont icon-shezhi2"></i>
             <!-- <i
-              v-if="!settingType"
               style="color:#3f81c1; font-size:32px;"
               class="iconfont icon-shezhi1"
             ></i>-->
+          </li>
+          <li>
+            <i @click="arouse" style="font-size:28px;cursor:pointer" class="iconfont icon-huanxing"></i>
           </li>
         </ul>
       </div>
@@ -261,6 +258,9 @@
     <el-dialog :visible.sync="linkageDialog" :append-to-body="true" width="65%" title="报警联动设置">
       <video-linkage></video-linkage>
     </el-dialog>
+    <el-dialog :visible.sync="dormancyDialog" append-to-body="true" width="40%" title="终端休眠唤醒模式设置">
+      <device-dormancy></device-dormancy>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -275,6 +275,7 @@ import videoAlarm from "./video/video-alarm.vue";
 import videoTraffic from "./video/video-traffic.vue";
 import videoSnap from "./video/video-snap.vue";
 import videoLinkage from "./video/video-linkage";
+import deviceDormancy from "./video/device-dormancy.vue";
 export default {
   components: {
     videoOne,
@@ -285,7 +286,8 @@ export default {
     videoAlarm,
     videoTraffic,
     videoSnap,
-    videoLinkage
+    videoLinkage,
+    deviceDormancy
   },
   created() {
     this.videoName = videoOne;
@@ -371,7 +373,6 @@ export default {
       fourType: true,
       nineType: true,
       sixteenType: true,
-      settingType: true,
       addDialog: false,
       updateDialog: false,
       settingDialog: false,
@@ -379,6 +380,7 @@ export default {
       trafficDialog: false,
       snapDialog: false,
       linkageDialog: false,
+      dormancyDialog: false,
       videoName: "",
       degree: 0,
       auxiliary: 0
@@ -393,18 +395,18 @@ export default {
       vm.$set(vm.mapData, "map", map);
     });
   },
-  watch: {
-    settingType: function() {
-      this.settingType = true;
-    }
-  },
+  watch: {},
   methods: {
+    // 终端休眠唤醒模式设置
+    arouse() {
+      this.addKey++;
+      this.dormancyDialog = true;
+    },
     // 报警联动设置
     setLinkage() {},
     // 设置
     setting() {
       this.addKey++;
-      // this.settingType = false;
       this.settingDialog = true;
     },
     // 添加预置位

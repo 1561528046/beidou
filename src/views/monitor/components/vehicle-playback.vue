@@ -123,6 +123,9 @@
               class="iconfont icon-icon-test"
             ></i>
           </li>
+          <li>
+            <i @click="setting" style="font-size:30px;cursor:pointer" class="iconfont icon-shezhi2"></i>
+          </li>
         </ul>
       </div>
       <div style="margin-top:4px;height:70%">
@@ -157,6 +160,9 @@
     <el-dialog :visible.sync="fileDialog" :append-to-body="true" width="65%" title="文件">
       <video-file></video-file>
     </el-dialog>
+    <el-dialog :visible.sync="settingDialog" :append-to-body="true" width="40%" title="设置">
+      <video-setting :type="settingType"></video-setting>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -167,8 +173,16 @@ import videoFour from "./video/video-four.vue";
 import videoNine from "./video/video-nine.vue";
 import videoSixteen from "./video/video-sixteen.vue";
 import videoFile from "./video/video-file.vue";
+import videoSetting from "./video/video-setting.vue";
 export default {
-  components: { videoOne, videoFour, videoNine, videoSixteen, videoFile },
+  components: {
+    videoOne,
+    videoFour,
+    videoNine,
+    videoSixteen,
+    videoFile,
+    videoSetting
+  },
   created() {
     this.videoName = videoOne;
     var alarm = this.$dict.alarm;
@@ -239,6 +253,8 @@ export default {
       fourType: true,
       nineType: true,
       sixteenType: true,
+      settingType: 0,
+      settingDialog: false,
       videoName: "",
       progress: 0
     };
@@ -253,6 +269,12 @@ export default {
     });
   },
   methods: {
+    // 设置
+    setting() {
+      this.addKey++;
+      this.settingType = 1;
+      this.settingDialog = true;
+    },
     // 分屏按钮
     Uniform(code) {
       switch (code) {
