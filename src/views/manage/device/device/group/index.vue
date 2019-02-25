@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-table-container" style="padding-top:0">
+  <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
       <el-form :model="tableQuery" size="small" label-width="80px">
         <el-row :gutter="20">
