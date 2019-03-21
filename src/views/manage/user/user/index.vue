@@ -36,6 +36,14 @@
               <select-industry v-model="tableQuery.industry" style="width:100%;"></select-industry>
             </el-form-item>
           </el-col>
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item label="用户类型">
+              <el-select clearable v-model="tableQuery.user_type" style="width:100%;">
+                <el-option value="1" label="企业用户">企业用户</el-option>
+                <el-option value="2" label="终端用户">终端用户</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
@@ -64,6 +72,12 @@
         <el-table-column prop="user_name" label="登陆帐号 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="province_name" label="所属地区 " :formatter="$utils.areaFormatter"></el-table-column>
         <el-table-column prop="real_name" label="企业名称" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="user_type" label="用户类型 " :formatter="$utils.baseFormatter">
+          <template slot-scope="scope">
+            <label v-if="scope.row.user_type=='1'">企业用户</label>
+            <label v-if="scope.row.user_type=='2'">终端用户</label>
+          </template>
+        </el-table-column>
         <el-table-column prop="tel" label="联系电话 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="device_total" label="授权终端数量" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column
@@ -72,7 +86,7 @@
           :formatter="$utils.baseFormatter"
         ></el-table-column>
         <el-table-column prop="user_issue_office" label="核发机关" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column label="操作" width="300">
+        <el-table-column label="操作" width="400">
           <template slot-scope="scope">
             <router-link
               v-if="scope.row.user_id!='1'"
@@ -88,6 +102,32 @@
               icon="el-icon-edit"
               v-rights="4-1-3"
             >编辑</el-button>
+            <el-dropdown>
+              <el-button size="small" style="margin-left: 15px;margin-right:15px;" type="primary">
+                产品管理
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item style="padding:2px 15px;">
+                  <el-button
+                    @click="addProduct(scope.row)"
+                    v-if="scope.row.product==0"
+                    size="small"
+                    type="success"
+                    style="display: block;width:100%;"
+                  >产品添加</el-button>
+                </el-dropdown-item>
+                <el-dropdown-item style="padding:2px 15px;">
+                  <el-button
+                    @click="updateProduct(scope.row)"
+                    v-if="scope.row.product==1"
+                    size="small"
+                    type="warning"
+                    style="display: block;width:100%;"
+                  >产品编辑</el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
             <el-button
               v-if="scope.row.user_id!='1'"
               size="small"
@@ -143,6 +183,13 @@
         :key="addKey"
       ></update-components>
     </el-dialog>
+    <el-dialog title="添加产品" width="30%" :visible.sync="addProductDialog" :append-to-body="true">
+      <add-product
+        :user="userData"
+        @success=" () => {this.getTable();this.addProductDialog = false;}"
+        :key="addKey"
+      ></add-product>
+    </el-dialog>
   </div>
 </template>
 <style lang="less">
@@ -154,30 +201,35 @@
 }
 </style>
 <script>
-import { getUserList, delUser } from "@/api/index.js";
+import { getUserList, delUser, getUserPackage } from "@/api/index.js";
 import selectCityInput from "@/components/select-city-input.vue";
 import addComponents from "./add.vue";
 import updateComponents from "./update.vue";
 import selectIndustry from "@/components/select-industry.vue";
+import addProduct from "./product/add-product.vue";
 export default {
   components: {
     selectCityInput,
     selectIndustry,
     addComponents,
-    updateComponents
+    updateComponents,
+    addProduct
   },
   created() {
     this.getTable();
   },
   data() {
     return {
+      userData: {},
+      addProductDialog: false,
       addDialog: false,
-      parent_id: "",
       updateDialog: false,
+      parent_id: "",
       updateId: "",
       isCollapse: false,
       tableQuery: {
         area: {},
+        user_type: "",
         user_name: "",
         linkman: "",
         real_name: "",
@@ -201,6 +253,29 @@ export default {
   },
   computed: {},
   methods: {
+    // 添加产品
+    addProduct(row) {
+      this.addKey++;
+      this.addProductDialog = true;
+      this.$set(this.$data, "userData", row);
+    },
+    // 编辑产品
+    updateProduct(row) {
+      getUserPackage({ userid: row.user_id }).then(res => {
+        if (res.data.code == 0) {
+          this.$router.push({
+            name: "product_update",
+            params: { id: res.data.data[0].package_id }
+          });
+        } else {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
+        }
+      });
+    },
     //导出excel
     exportExcel() {
       var wsCol = [
@@ -279,11 +354,22 @@ export default {
       getUserList(query)
         .then(res => {
           if (res.data.code == 0) {
-            for (var i = 0; i < res.data.data.length; i++) {
-              if (res.data.data[i].device_total == 0) {
-                res.data.data[i].device_total = "";
+            res.data.data.map(item => {
+              item.product = "";
+              getUserPackage({ userid: item.user_id }).then(res => {
+                if (res.data.code == 0) {
+                  if (res.data.data.length == 0) {
+                    item.product = 0;
+                  } else {
+                    item.product = 1;
+                  }
+                }
+              });
+              if (item.device_total == 0) {
+                item.device_total = "";
               }
-            }
+            });
+
             this.$set(this.$data, "tableData", res.data);
           } else {
             this.$set(this.$data, "tableData", []);

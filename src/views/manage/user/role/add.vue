@@ -11,9 +11,17 @@
       class="msg-form"
     >
       <el-row :gutter="30">
-        <el-col :span="24">
+        <el-col :span="12">
           <el-form-item label="角色名称" prop="role_name">
             <el-input v-model="formData.role_name"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="角色类型">
+            <el-select v-model="formData.role_type" style="width:100%">
+              <el-option value="1" label="企业角色">企业角色</el-option>
+              <el-option value="2" label="终端角色">终端角色</el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -135,6 +143,7 @@ export default {
       countDict: {}, //计数，一共选中多少
       rightsRelation: {},
       formData: {
+        role_type: "",
         role_name: "",
         rights: []
       },

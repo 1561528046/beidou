@@ -9,11 +9,16 @@
       size="small"
       ref="baseForm"
       class="msg-form"
+      label-width="100px"
     >
       <el-row :gutter="30">
-        <el-col :span="24">
-          <el-form-item label="角色名称" prop="role_name">
-            <el-input v-model="formData.role_name"></el-input>
+        <el-col :span="12">
+          <el-form-item label="角色名称" prop="role_name">{{formData.role_name}}</el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="角色类型" prop="role_type">
+            <label style="display:inline-block" v-if="formData.role_type=='1'">企业角色</label>
+            <label style="display:inline-block" v-if="formData.role_type=='2'">终端角色</label>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -112,7 +117,7 @@
 }
 </style>
 <script>
-import { updateRole, getRightsAll, getRole } from "@/api/index.js";
+import { getRightsAll, getRole } from "@/api/index.js";
 import { rightsDict, rightsRelation } from "@/utils/rights.js";
 export default {
   data() {
@@ -127,6 +132,7 @@ export default {
       countDict: {}, //计数，一共选中多少
       rightsRelation: {},
       formData: {
+        role_type: "",
         role_name: "",
         rights: []
       },
@@ -214,6 +220,7 @@ export default {
 
       getRole({ role_id: this.$props.role_id }).then(res => {
         if (res.data.code == 0) {
+          this.formData.role_type = res.data.data[0].role_type;
           this.formData.role_name = res.data.data[0].role_name;
           var defaultChecked = res.data.data[0].rights.split(",");
           defaultChecked.map(rights_id => {
@@ -338,54 +345,6 @@ export default {
         return null;
       }
       return level2;
-    },
-    formSubmit() {
-      this.$refs.baseForm.validate((isVaildate, errorItem) => {
-        if (isVaildate) {
-          var postData = Object.assign({}, this.formData);
-          postData.rights = [];
-          this.rightsAll.map(item => {
-            if (item.checked) {
-              postData.rights.push(item.rights_id);
-            }
-          });
-          postData.rights = postData.rights.join(",");
-          postData.role_id = this.$props.role_id;
-          updateRole(postData)
-            .then(res => {
-              if (res.data.code == 0) {
-                this.$emit("success");
-                this.$notify.success({
-                  title: "成功",
-                  message: res.data.msg
-                });
-              } else {
-                this.$emit("error");
-                this.$notify.error({
-                  title: "失败",
-                  message: res.data.msg
-                });
-              }
-            })
-            .catch(() => {
-              this.$notify.error({
-                title: "失败",
-                message: "接口错误"
-              });
-              this.$emit("error");
-            });
-        } else {
-          var errormsg = "";
-          for (var key in errorItem) {
-            errormsg += errorItem[key][0].message + "<br>";
-          }
-          this.$notify.error({
-            title: "错误",
-            dangerouslyUseHTMLString: true,
-            message: errormsg
-          });
-        }
-      });
     }
   }
 };

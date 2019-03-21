@@ -198,3 +198,9 @@ export const SubmitCode = query => {
     params: query
   });
 };
+// 获取用户下的产品
+export const getUserPackage = query => {
+  return ajax.get("/ordermanage/GetUserPackage", {
+    params: query
+  });
+};

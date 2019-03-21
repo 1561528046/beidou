@@ -16,6 +16,12 @@
         class="admin-table-list"
       >
         <el-table-column prop="role_name" label="角色名 " :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="role_type" label="角色类型 " :formatter="$utils.baseFormatter">
+          <template slot-scope="scope">
+            <label v-if="scope.row.role_type=='1'">企业角色</label>
+            <label v-if="scope.row.role_type=='2'">终端角色</label>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <!-- <el-button
@@ -93,7 +99,9 @@ export default {
       setId: "",
       updateId: "",
       isCollapse: false,
-      tableQuery: {},
+      tableQuery: {
+        role_type: ""
+      },
       tableData: {
         data: []
       },

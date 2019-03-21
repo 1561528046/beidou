@@ -32,6 +32,12 @@
               <el-col :span="6">
                 <el-form-item label="所属角色" prop="role_id">{{formData.role_name||"--"}}</el-form-item>
               </el-col>
+              <el-col :span="6">
+                <el-form-item label="用户类型" prop="user_type">
+                  <label v-if="formData.user_type=='1'">企业用户</label>
+                  <label v-if="formData.user_type=='2'">终端用户</label>
+                </el-form-item>
+              </el-col>
             </el-row>
             <el-row :gutter="30">
               <el-col :span="12">

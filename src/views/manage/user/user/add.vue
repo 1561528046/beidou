@@ -45,10 +45,26 @@
                   <el-input v-model="formData.re_pass_word" type="password"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="24">
+              <el-col :span="12">
+                <el-form-item label="用户类型" prop="user_type">
+                  <el-select v-model="formData.user_type" clearable style="width:100%">
+                    <el-option value="1" label="企业用户">企业用户</el-option>
+                    <el-option value="2" label="终端用户">终端用户</el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" v-if="roleData.length">
                 <el-form-item label="所属角色" prop="role_id">
                   <!-- <select-role v-model="formData.role_id" placeholder="选择所属角色" style="width:100%;"></select-role> -->
-                  <select-roles @role="selectRoles"></select-roles>
+                  <!-- <select-roles @role="selectRoles"></select-roles> -->
+                  <el-checkbox-group v-model="roleList">
+                    <el-checkbox
+                      v-for="role in roleData"
+                      :value="role.role_id"
+                      :key="role.role_id"
+                      :label="role.role_id"
+                    >{{role.role_name}}</el-checkbox>
+                  </el-checkbox-group>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -191,7 +207,7 @@
 
 <script>
 import selectCity from "@/components/select-city.vue";
-import { addUser, existUserName } from "@/api/index.js";
+import { addUser, existUserName, getRoleAll } from "@/api/index.js";
 import selectIndustry from "@/components/select-industry.vue";
 import selectGroup from "@/components/select-group/select-group.vue";
 import selectUser from "@/components/select-user.vue";
@@ -208,6 +224,8 @@ export default {
   },
   data() {
     return {
+      roleList: [],
+      roleData: [],
       postloading: false,
       opened: ["1", "2", "3"],
       device_total_turn: false,
@@ -217,6 +235,7 @@ export default {
         user_transport_license: "",
         user_issue_office: "",
         user_name: "",
+        user_type: "",
         pass_word: "",
         re_pass_word: "",
         province_id: "",
@@ -229,7 +248,7 @@ export default {
         address: "",
         device_num: "",
         device_total: "",
-        role_id: [],
+        role_id: "",
         expiry_time: "",
         // group_id: "",
         // parent_id: "",
@@ -237,6 +256,9 @@ export default {
         business_no: ""
       },
       rules: {
+        user_type: [
+          { required: true, message: "必须选择用户类型", trigger: "change" }
+        ],
         area: [
           {
             required: true,
@@ -301,6 +323,16 @@ export default {
     };
   },
   watch: {
+    "formData.user_type": function() {
+      getRoleAll({ role_type: this.formData.user_type }).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.$data, "roleData", res.data.data);
+        }
+      });
+    },
+    roleList: function() {
+      this.formData.role_id = this.roleList.join();
+    },
     device_total_turn: function() {
       this.formData.device_total = "";
     },
@@ -350,19 +382,6 @@ export default {
       }
     },
     formSubmit() {
-      var roleId = "";
-      if (this.formData.role_id.length > 0) {
-        this.formData.role_id.map(item => {
-          roleId = roleId + item.role_id + ",";
-        });
-        this.formData.role_id = roleId.substring(0, roleId.lastIndexOf(","));
-      } else {
-        return this.$notify({
-          message: "请选择所属角色",
-          title: "提示",
-          type: "error"
-        });
-      }
       this.postloading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

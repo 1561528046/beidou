@@ -8,12 +8,12 @@ export default {
   },
   component: () => import("@/views/manage/product/index.vue"),
   children: [
-    {
-      path: "product",
-      name: "product-product",
-      meta: { name: "产品管理", icon: "iconfont icon-chanpin", p: "3-1-4" },
-      component: () => import("@/views/manage/product/product/index.vue")
-    },
+    // {
+    //   path: "product",
+    //   name: "product-product",
+    //   meta: { name: "产品管理", icon: "iconfont icon-chanpin", p: "3-1-4" },
+    //   component: () => import("@/views/manage/product/product/index.vue")
+    // },
     {
       path: "product-add",
       name: "product-add",

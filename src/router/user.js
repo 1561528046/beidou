@@ -7,8 +7,15 @@ export default {
     {
       path: "user_list",
       name: "user_list",
-      meta: { name: "企业管理", icon: "iconfont icon-team", p: "4-1-4" },
+      meta: { name: "用户管理", icon: "iconfont icon-team", p: "4-1-4" },
       component: () => import("@/views/manage/user/user/index.vue")
+    },
+    {
+      path: "product_update/:id",
+      name: "product_update",
+      meta: { name: "产品编辑", hidden: true },
+      component: () =>
+        import("@/views/manage/user/user/product/update-product.vue")
     },
     {
       path: "user_distribution",

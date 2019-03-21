@@ -143,77 +143,77 @@ var routers = [
           icon: "iconfont icon-alert-fill"
         },
         component: () => import("@/views/manage/warn/index.vue")
-      },
-      {
-        path: "log",
-        name: "log",
-        meta: {
-          name: "日志",
-          icon: "iconfont icon-rizhi"
-        },
-        component: () => import("@/views/manage/log/index.vue")
-      },
-      {
-        path: "analyze",
-        name: "analyze",
-        meta: {
-          name: "视频图像分析",
-          icon: "iconfont icon-weibiaoti1"
-        },
-        component: () => import("@/views/manage/analyze/index.vue"),
-        children: [
-          {
-            path: "traffic",
-            name: "traffic",
-            meta: {
-              name: "客流量统计",
-              icon: "iconfont icon-tongji1"
-            },
-            component: () => import("@/views/manage/analyze/traffic/index.vue")
-          },
-          {
-            path: "behavior",
-            name: "behavior",
-            meta: {
-              name: "驾驶行为分析",
-              icon: "iconfont icon-xingweifenxi"
-            },
-            component: () =>
-              import("@/views/manage/analyze/behavior/index.vue"),
-            children: [
-              {
-                path: "behavior_statistical",
-                name: "behavior_statistical",
-                meta: {
-                  name: "统计",
-                  icon: "iconfont icon-tongji1"
-                },
-                component: () =>
-                  import("@/views/manage/analyze/behavior/statistical/index.vue")
-              },
-              {
-                path: "behavior_query",
-                name: "behavior_query",
-                meta: {
-                  name: "查询",
-                  icon: "el-icon-search"
-                },
-                component: () =>
-                  import("@/views/manage/analyze/behavior/query/index.vue")
-              }
-            ]
-          }
-        ]
-      },
-      {
-        path: "resources",
-        name: "resources",
-        meta: {
-          name: "音视频资源目录",
-          icon: "iconfont icon-ziyuanmulu"
-        },
-        component: () => import("@/views/manage/resources/index.vue")
       }
+      // {
+      //   path: "log",
+      //   name: "log",
+      //   meta: {
+      //     name: "日志",
+      //     icon: "iconfont icon-rizhi"
+      //   },
+      //   component: () => import("@/views/manage/log/index.vue")
+      // },
+      // {
+      //   path: "analyze",
+      //   name: "analyze",
+      //   meta: {
+      //     name: "视频图像分析",
+      //     icon: "iconfont icon-weibiaoti1"
+      //   },
+      //   component: () => import("@/views/manage/analyze/index.vue"),
+      //   children: [
+      //     {
+      //       path: "traffic",
+      //       name: "traffic",
+      //       meta: {
+      //         name: "客流量统计",
+      //         icon: "iconfont icon-tongji1"
+      //       },
+      //       component: () => import("@/views/manage/analyze/traffic/index.vue")
+      //     },
+      //     {
+      //       path: "behavior",
+      //       name: "behavior",
+      //       meta: {
+      //         name: "驾驶行为分析",
+      //         icon: "iconfont icon-xingweifenxi"
+      //       },
+      //       component: () =>
+      //         import("@/views/manage/analyze/behavior/index.vue"),
+      //       children: [
+      //         {
+      //           path: "behavior_statistical",
+      //           name: "behavior_statistical",
+      //           meta: {
+      //             name: "统计",
+      //             icon: "iconfont icon-tongji1"
+      //           },
+      //           component: () =>
+      //             import("@/views/manage/analyze/behavior/statistical/index.vue")
+      //         },
+      //         {
+      //           path: "behavior_query",
+      //           name: "behavior_query",
+      //           meta: {
+      //             name: "查询",
+      //             icon: "el-icon-search"
+      //           },
+      //           component: () =>
+      //             import("@/views/manage/analyze/behavior/query/index.vue")
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // },
+      // {
+      //   path: "resources",
+      //   name: "resources",
+      //   meta: {
+      //     name: "音视频资源目录",
+      //     icon: "iconfont icon-ziyuanmulu"
+      //   },
+      //   component: () => import("@/views/manage/resources/index.vue")
+      // }
     ]
   },
   {

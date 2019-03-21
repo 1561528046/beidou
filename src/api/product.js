@@ -28,10 +28,7 @@ export const getProductDetail = query => {
 };
 // 添加产品
 export const addProducts = query => {
-  var queryQS = {
-    title: query.title
-  };
-  queryQS = qs.stringify(queryQS);
+  var queryQS = qs.stringify(query);
   return ajax.post("/ordermanage/AddFees_package", queryQS);
 };
 // 添加收费单项

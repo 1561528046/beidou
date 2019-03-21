@@ -159,7 +159,16 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="车辆型号" prop="model">
-              <select-type v-model="formData.model" :vbrandName="formData.vbrandName"></select-type>
+              <!-- <select-type v-model="formData.model" :vbrandName="formData.vbrandName"></select-type> -->
+              <el-autocomplete
+                style="width:100%"
+                class="inline-input"
+                v-model="formData.model"
+                :fetch-suggestions="querySearch"
+                placeholder="请输入"
+                :trigger-on-focus="false"
+                @select="handleSelect"
+              ></el-autocomplete>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -464,7 +473,8 @@ import {
   addVehicle,
   getVehicleDetails,
   getVehicle,
-  updateVehicle
+  updateVehicle,
+  getVehicleType
 } from "@/api/index.js";
 import moment from "moment";
 import selectCity from "@/components/select-city.vue";
@@ -919,6 +929,27 @@ export default {
     }
   },
   methods: {
+    // 输入建议
+    querySearch(queryString, cb) {
+      var results = [];
+      getVehicleType({
+        brand_name: queryString,
+        brand_mold: this.formData.vbrandCode
+      }).then(res => {
+        if (res.data.code == 0) {
+          res.data.data.map(item => {
+            item.value = item.real_name;
+            results.push(item);
+          });
+          cb(results);
+        } else {
+          cb([]);
+        }
+      });
+    },
+    handleSelect(data) {
+      console.log(data);
+    },
     setBoxVal() {
       //内部尺寸长宽高其中一个为-- 都设为--
       this.formData.box_height = "--";
