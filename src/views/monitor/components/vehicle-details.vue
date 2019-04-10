@@ -160,7 +160,7 @@
   </div>
 </template>
 <script>
-import { getGroupChildrens, getGroupByUser } from "@/api/index.js";
+import { getGroupChildrens } from "@/api/index.js";
 export default {
   data() {
     return {
@@ -200,30 +200,39 @@ export default {
           }
         }
       }
-      if (!showVehicle.isShowAll) {
+
+      var groups = monitor.dict.groups.get(
+        this.currentGroupFilter || this.currentGroup
+      );
+      if (groups) {
         if (showVehicle.type == "total") {
-          if (this.group_name != "") {
-            for (let value of monitor.data) {
-              if (value[1].group_path == this.group_name) {
-                list.push(value[1]);
-              } else if (
-                value[1].group_path == "" &&
-                this.group_name == "other"
-              ) {
-                list.push(value[1]);
-              }
-            }
+          for (let sim_id of groups.get("online")) {
+            list.push(monitor.data.get(sim_id));
+          }
+          for (let sim_id of groups.get("offline")) {
+            list.push(monitor.data.get(sim_id));
+          }
+        } else {
+          for (let sim_id of groups.get(showVehicle.type)) {
+            list.push(monitor.data.get(sim_id));
           }
         }
       }
       // eslint-disable-next-line
       this.pager.total = list.length;
-      return list;
+      var start = (this.pager.current - 1) * this.pager.size;
+      var end = this.pager.current * this.pager.size;
+      if (this.searchText) {
+        list = list.filter(vehicle => {
+          return vehicle.license.indexOf(this.searchText) != -1;
+        });
+      }
+      return list.slice(start, end);
     }
   },
   watch: {
-    "showVehicle.group_id": function() {
-      if (!this.$props.showVehicle.isShowAll) {
+    "showVehicle.group_id": function(newVal) {
+      if (newVal) {
         this.getGroupSon();
       }
     },
@@ -289,20 +298,26 @@ export default {
     },
     // 初始化分组
     getGroupSon() {
-      getGroupByUser().then(res => {
-        if (res.data.code == 0) {
-          res.data.data.map(item => {
-            if (item.group_name == "根目录") {
-              res.data.data.splice(item, 1);
-            }
-          });
-          res.data.data.push({
-            group_name: "未分配车辆",
-            group_id: "other"
-          });
-          this.$set(this.$data, "currentGroupSon", res.data.data);
+      var groupChildrens = [];
+      // eslint-disable-next-line
+      for (let [key, value] of window.monitor.dict.groups) {
+        if (
+          value.get("data") &&
+          value.get("data").parent_id == this.showVehicle.group_id
+        ) {
+          groupChildrens.push(value.get("data"));
         }
-      });
+      }
+      if (groupChildrens.length == 0) {
+        groupChildrens.push(
+          window.monitor.dict.groups.get(this.showVehicle.group_id).get("data")
+        );
+      }
+      groupChildrens.push({
+        group_name: "未分配车辆",
+        group_id: "other" + this.showVehicle.group_id
+      }); //加入未分配车辆分组
+      this.$set(this.$data, "currentGroupSon", groupChildrens);
     },
     getGroupChildrens() {
       this.$set(this.$data, "currentGroupSonChildrens", []);
