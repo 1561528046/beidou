@@ -165,20 +165,21 @@ var dict = {
   get_permissions: function(key) {
     return this.permissions[key] || "--";
   },
+  // 常规终端报警类型
   alarm: {
     "1": "紧急报警",
     "2": "超速报警",
     "4": "疲劳驾驶",
-    "8": "预警", //原 危险预警
-    "16": "GNSS 模块发生故障",
-    "32": "GNSS 天线未接或被剪断",
-    "64": "GNSS 天线短路",
+    "8": "危险预警", //原 危险预警
+    "16": "GNSS模块发生故障",
+    "32": "GNSS天线未接或被剪断",
+    "64": "GNSS天线短路",
     "128": "终端主电源欠压",
     "256": "终端主电源掉电",
-    "512": "终端 LCD 或显示器故障",
-    "1024": "TTS 模块故障",
+    "512": "终端LCD或显示器故障",
+    "1024": "TTS模块故障",
     "2048": "摄像头故障",
-    "4096": "IC 卡模块故障",
+    "4096": "道路运输证IC卡模块故障",
     "8192": "超速预警",
     "16384": "疲劳驾驶预警",
     "262144": "当天累计驾驶超时",
@@ -187,7 +188,7 @@ var dict = {
     "2097152": "进出路线",
     "4194304": "路段行驶时间不足/过长",
     "8388608": "路线偏离报警",
-    "16777216": "车辆 VSS 故障",
+    "16777216": "车辆VSS故障",
     "33554432": "车辆油量异常",
     "67108864": "车辆被盗",
     "134217728": "车辆非法点火",
@@ -195,6 +196,91 @@ var dict = {
     "536870912": "碰撞侧翻报警", //原 碰撞预警
     "1073741824": "侧翻预警",
     "2147483648": "非法开门报警"
+  },
+  // 视频报警类型
+  video_alarm: {
+    "1": "视频信号丢失",
+    "2": "视频信号遮挡",
+    "4": "存储单元故障",
+    "8": "其他视频设备故障",
+    "16": "客车超员",
+    "32": "异常驾驶行为",
+    "64": "特殊录像报警达到存储阈值"
+  },
+  // 扩展报警类型
+  additional_alarm: {
+    "1": "违规行驶报警",
+    "2": "前撞报警",
+    "4": "胎压异常报警",
+    "8": "车道偏离报警"
+  },
+  // 其他报警类型
+  other_alarm: {
+    "1": "ACC信号异常报警",
+    "2": "位置信息异常报警",
+    "3": "平台（疲劳驾驶）报警"
+  },
+  // 平台报警类型
+  fence_alarm: {
+    inAlarm: "禁入",
+    outAlarm: "禁出",
+    lineOut: "线路偏移",
+    splitPolylineSpeed: "分段限速",
+    keyPoint: "关键点"
+  },
+  get_fence_alarm: function(num) {
+    return this.fence_alarm[num] || "";
+  },
+  get_other_alarm: function(num) {
+    return this.other_alarm[num] || "";
+  },
+  getAdditionalAlarmKey: function(num) {
+    var keys = [];
+    for (var key in this.additional_alarm) {
+      if ((num & key) == key) {
+        keys.push(key);
+      }
+    }
+    return keys;
+  },
+  get_additional_alarm: function(num) {
+    var str = [];
+    for (var key in this.additional_alarm) {
+      if ((num & key) == key) {
+        str.push(this.additional_alarm[key]);
+      }
+    }
+    return str.join(",");
+  },
+  get_additional_alarms: function(num) {
+    return this.additional_alarm[num] || "";
+  },
+  get_additional_alarmList: function(data) {
+    var str = [];
+    data.map(item => {
+      str.push(this.additional_alarm[item]);
+    });
+    return str.join(",");
+  },
+  get_video_alarm: function(num) {
+    var str = [];
+    for (var key in this.video_alarm) {
+      if ((num & key) == key) {
+        str.push(this.video_alarm[key]);
+      }
+    }
+    return str.join(",");
+  },
+  getAlarmList: function(str) {
+    str = str.split(",");
+    var bunch = [];
+    str.map(item => {
+      bunch.push(this.alarm[item]);
+    });
+    return bunch.join();
+  },
+  getAlarms: function(key) {
+    return this.alarm[key] || "--";
   },
   getAlarm: function(num) {
     var str = [];

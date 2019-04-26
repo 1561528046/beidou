@@ -312,7 +312,7 @@ export default {
           path: "vehiclelink-summary",
           name: "vehiclelink-summary",
           meta: {
-            name: "车辆上线下线统计表",
+            name: "车辆上线率统计表",
             icon: "iconfont icon-huizong"
           },
           component: () =>
@@ -321,7 +321,7 @@ export default {
         {
           path: "vehiclelink-details",
           name: "vehiclelink-details",
-          meta: { name: "车辆上线下线明细表", icon: "iconfont icon-mingxi" },
+          meta: { name: "车辆上下线明细表", icon: "iconfont icon-mingxi" },
           component: () =>
             import("@/views/manage/report/vehiclelink/details/index.vue")
         }

@@ -204,3 +204,9 @@ export const getUserPackage = query => {
     params: query
   });
 };
+// 获取用户登录状态
+export const GetLoginState = query => {
+  return ajax.get("/user/GetLoginState", {
+    params: query
+  });
+};

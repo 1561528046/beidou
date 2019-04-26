@@ -1,19 +1,12 @@
 <template>
-  <div class="admin-table-container">
-    <el-card shadow="always" class="admin-table-search">
-      <el-form
-        :model="tableQuery"
-        ref="baseForm"
-        :rules="rules"
-        label-width="80px"
-        label-position="left"
-        class="table-search"
-        size="small"
-      >
-        <el-row :gutter="30">
-          <el-col :span="7">
+  <div>
+    <el-card>
+      <el-form ref="baseForm" size="small" label-width="100px" :rules="rules" :model="tableQuery">
+        <el-row :gutter="20">
+          <el-col :span="6">
             <el-form-item prop="time" label="时间">
               <el-date-picker
+                style="width:100%"
                 v-model="tableQuery.time"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 format="yyyy-MM-dd HH:mm"
@@ -21,70 +14,67 @@
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                align="right"
               ></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
-            <el-form-item prop="license" label="选择车辆">
-              <el-button style=" display:inline-block; width:100%;height:32px;" @click="addFrom">
-                <el-input
-                  type="text"
-                  v-model="tableQuery.license"
-                  style="position: absolute;left: 0px; top: 0px;"
-                ></el-input>
-              </el-button>
+          <el-col :span="6">
+            <el-form-item prop="license" label="车辆">
+              <el-input @focus="selectVehicle" v-model="tableQuery.license"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
-            <el-form-item prop="alarm_type" label="报警类型">
-              <select-alarmtype style="width:100%;" v-model="tableQuery.alarm_type"></select-alarmtype>
+          <el-col :span="6">
+            <el-form-item prop="alarm_name" label="报警类型">
+              <el-input @focus="selectType" v-model="tableQuery.alarm_name"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="3" style="text-align: right;">
+          <el-col v-if="isCollapse" :span="6">
+            <el-form-item prop="source" label="报警来源">
+              <el-select clearable style="width:100%" v-model="tableQuery.source">
+                <el-option value="1" label="平台">平台</el-option>
+                <el-option value="0" label="终端">终端</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
-              <el-button type="primary" @click="getTable">查询</el-button>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+              <el-button @click="selectAlarm" type="primary">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </el-card>
-    <el-card shadow="always">
+    <el-card shadow="always" class="admin-table-search">
       <div class="admin-table-actions">
         <el-button type="primary" @click="exportExcel" size="small">
           <i class="el-icon-download"></i> 导出
         </el-button>
       </div>
       <el-table :data="list" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="license" label="车牌号" :formatter="$utils.baseFormatter">
+        <el-table-column prop="license" label="车牌号">
           <template slot-scope="scope">
             <span
               class="license-card"
               :style="$dict.get_license_color(scope.row.license_color).style"
-              @click="showDetails(scope)"
-            >{{scope.row.license}}</span>
+            >{{scope.row.license||"--"}}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="alarm_type"
-          label="报警类型"
-          :formatter="(row)=>{return this.$dict.get_alarm_type(row.alarm_type)}"
+          prop="AlarmSign"
+          label="终端报警类型"
+          :formatter="(row)=>{return this.$dict.getAlarm(JSON.stringify(row.AlarmSign))}"
         ></el-table-column>
-        <el-table-column prop="alertTime" label="报警时长" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="RegionName" label="平台报警类型" :formatter="$utils.baseFormatter"></el-table-column>
+        <!-- <el-table-column prop="RegionName" label="ACC信号异常报警" :formatter="$utils.baseFormatter"></el-table-column> -->
         <el-table-column
-          prop="start_time"
-          label="开始时间"
-          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.start_time))}"
+          prop="Time"
+          label="时间"
+          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.Time))}"
         ></el-table-column>
-        <el-table-column
-          prop="stop_time"
-          label="结束时间"
-          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"
-        ></el-table-column>
-        <el-table-column prop="start_speed" label="开始速度" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column prop="stop_speed" label="结束速度" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column prop="start_address" label="开始位置" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column prop="stop_address" label="结束位置" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="Speed" label="速度" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column label="纬度" :formatter="(row)=>{return  row.Latitude }"></el-table-column>
+        <el-table-column label="经度" :formatter="(row)=>{return row.Longitude }"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination
@@ -99,34 +89,119 @@
         ></el-pagination>
       </div>
     </el-card>
+    <!-- 选择车辆 -->
     <el-dialog
       width="50%"
-      title="选择信息"
-      :visible.sync="addDialog"
+      title="选择车辆"
+      :visible.sync="vehicleDialog"
       :append-to-body="true"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :center="true"
       class="admin-dialog"
     >
-      <choose-vehicle
-        @button="vehicleCallback"
-        @success=" () => {this.getTable();this.addDialog = false;}"
-        :key="addKey"
-      ></choose-vehicle>
+      <card-vehicle :vehicle="vehicleList" @button="storageVehicle"></card-vehicle>
+    </el-dialog>
+    <!-- 选择报警类型 -->
+    <el-dialog
+      width="50%"
+      title="选择报警类型"
+      :visible.sync="typeDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <card-type :type="alarmList" @card="storageType"></card-type>
+    </el-dialog>
+    <!-- 选择扩展报警类型 -->
+    <el-dialog
+      width="40%"
+      title="选择报警类型"
+      :visible.sync="type35658Dialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <template>
+        <el-checkbox-group v-model="typeList">
+          <el-checkbox label="1">违规行驶报警</el-checkbox>
+          <el-checkbox label="2">前撞报警</el-checkbox>
+          <el-checkbox label="4">胎压异常报警</el-checkbox>
+          <el-checkbox label="8">车道偏离报警</el-checkbox>
+        </el-checkbox-group>
+        <el-button
+          @click="extensionAlarmType"
+          style="display:block;margin:0 auto;margin-top:10px"
+          size="small"
+          type="primary"
+        >提交</el-button>
+      </template>
     </el-dialog>
   </div>
 </template>
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import { getAlarmDetailByPage } from "@/api/index.js";
+// import { location2address, gps2amap } from "@/utils/map-tools.js";
 import selectAlarmtype from "@/components/select-alarmtype.vue";
-import chooseVehicle from "@/components/choose-vehicle.vue";
-import { location2address, gps2amap } from "@/utils/map-tools.js";
+import cardVehicle from "./components/card-vehicle.vue";
+import cardType from "./components/card-type.vue";
+import { getAlarmDetailByPage, GetVehicleBySIMIDToPaper } from "@/api/index.js";
 export default {
-  components: { chooseVehicle, selectAlarmtype },
-  created() {},
+  components: { cardVehicle, cardType, selectAlarmtype },
+  data() {
+    return {
+      tableLoading: false,
+      vehicleDialog: false,
+      typeDialog: false,
+      type35658Dialog: false,
+      typeList: [],
+      vehicleList: [],
+      alarmTypes: [],
+      alarmList: [],
+      isCollapse: false,
+      tableData: {
+        data: [],
+        total: 0
+      },
+      tableQuery: {
+        platformACCErr: "",
+        time: "",
+        license: "",
+        start_time: "",
+        stop_time: "",
+        sim_ids: "",
+        alarm_name: "",
+        alarm_type: "",
+        source: "",
+        alarmType35658: "",
+        alarm35658_name: "",
+        page: 1,
+        size: 10
+      },
+      rules: {
+        ...rules,
+        time: [
+          {
+            required: true,
+            trigger: "change",
+            validator: this.validateTime
+          }
+        ],
+        license: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请选择车辆"
+          }
+        ]
+      }
+    };
+  },
   computed: {
     list: function() {
       return this.tableData.data.slice(
@@ -135,94 +210,31 @@ export default {
       );
     }
   },
-  data() {
-    return {
-      addDialog: false,
-      addKey: 0,
-      isCollapse: false,
-      tableQuery: {
-        start_time: "",
-        stop_time: "",
-        time: "",
-        license: "",
-        license_color: "",
-        speed_limit: "",
-        alarm_type: "",
-        sim_ids: "",
-        size: 10,
-        page: 1
-      },
-      rules: {
-        ...rules,
-        license: [
-          {
-            required: true,
-            trigger: "change",
-            message: "请输入车牌号"
-          }
-        ],
-        alarm_type: [
-          {
-            required: true,
-            trigger: "change",
-            message: "请选择报警类型"
-          }
-        ],
-        time: [
-          {
-            required: true,
-            trigger: "change",
-            validator: this.validateTime
-          }
-        ]
-      },
-      simss: [],
-      simee: {},
-      tableData: {
-        total: 0,
-        data: []
-      },
-      tableLoading: false,
-      userdetailShow: false,
-      dialog: true
-    };
-  },
-  watch: {
-    dialog: function() {
-      this.addDialog = this.dialog;
-    }
-  },
   methods: {
     exportExcel() {
       //导出excel
       var wsCol = [
         {
           A: "车牌号",
-          B: "报警类型",
-          C: "报警时长",
-          D: "开始时间",
-          E: "结束时间",
-          F: "开始速度",
-          G: "结束速度",
-          H: "开始位置",
-          I: "结束位置",
-          J: "开始位置经纬度",
-          K: "结束位置经纬度"
+          B: "终端报警类型",
+          C: "平台报警类型",
+          D: "时间",
+          E: "速度",
+          F: "位置",
+          G: "经纬度",
+          H: "扩展报警类型"
         }
       ];
       this.tableData.data.map(data => {
         wsCol.push({
           A: data.license,
-          B: this.$dict.get_alarm_type(data.alarm_type),
-          C: data.alertTime,
-          D: this.$utils.formatDate14(data.start_time),
-          E: this.$utils.formatDate14(data.stop_time),
-          F: data.start_speed,
-          G: data.stop_speed,
-          H: data.start_address,
-          I: data.stop_address,
-          J: data.start_longitude + "," + data.start_latitude,
-          K: data.stop_longitude + "," + data.stop_latitude
+          B: this.$dict.getAlarm(data.AlarmSign),
+          C: data.RegionName,
+          D: this.$utils.formatDate14(JSON.stringify(data.Time)),
+          E: data.Speed,
+          F: data.address,
+          G: data.Longitude + "," + data.Latitude,
+          H: this.$dict.get_additional_alarm(data.alarmType35658)
         });
       });
       this.$utils.exportExcel({
@@ -231,50 +243,37 @@ export default {
         fileName: "报警明细表.xlsx"
       });
     },
-    // 选择查询方式
-    addFrom() {
-      this.addKey++;
-      this.addDialog = true;
-      this.dialog = true;
+    extensionAlarmType() {
+      this.type35658Dialog = false;
+      this.$set(this.tableQuery, "alarmType35658", this.typeList.join(","));
+      this.$set(
+        this.tableQuery,
+        "alarm35658_name",
+        this.$dict.get_additional_alarmList(this.typeList)
+      );
     },
-    // 回来的数据
-    vehicleCallback(scope) {
-      this.dialog = scope.row.dialog;
-      this.tableQuery.license = scope.row.license;
-      if (scope.row.sim_id.length == 11) {
-        this.tableQuery.sim_ids = "0" + scope.row.sim_id;
-      } else {
-        this.tableQuery.sim_ids = scope.row.sim_id;
-      }
-      this.tableQuery.license_color = scope.row.license_color;
+    selectType35658() {
+      this.type35658Dialog = true;
     },
-    // 查询时间验证
-    validateTime(rule, value, callback) {
-      var date = moment(value[0]).add(3, "days")._d;
-      date = moment(date).format("YYYY-MM-DD HH:mm:ss");
-      if (value == "") {
-        callback(new Error("请选择时间!"));
-        return false;
-      } else if (!moment(value[1]).isBefore(date)) {
-        callback(new Error("选择时间不能大于3天!"));
-        return false;
-      } else {
-        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
-        this.tableQuery.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
-        callback();
-      }
-    },
-    //查询列表
-    getTable() {
-      if (this.tableQuery.alarm_type == "" && this.tableQuery.license == "") {
+    // 查询报警信息明细
+    selectAlarm() {
+      if (this.tableQuery.time == "" || this.tableQuery.time == null) {
         return this.$notify({
-          message: "请选择车辆和报警类型",
+          message: "请选择时间",
           title: "提示",
           type: "error"
         });
-      } else if (this.tableQuery.time == []) {
+      }
+      if (this.tableQuery.license == "") {
         return this.$notify({
-          message: "请选择时间",
+          message: "请选择车辆",
+          title: "提示",
+          type: "error"
+        });
+      }
+      if (this.tableQuery.alarm_type == "") {
+        return this.$notify({
+          message: "请选择抱紧类型",
           title: "提示",
           type: "error"
         });
@@ -286,66 +285,18 @@ export default {
           getAlarmDetailByPage(query)
             .then(res => {
               if (res.data.code == 0) {
-                var data = [];
                 res.data.data.map(item => {
-                  item.license = this.tableQuery.license;
-                  item.license_color = this.tableQuery.license_color;
-                  item.alertTime =
-                    new Date(
-                      this.$utils.formatDate14(JSON.stringify(item.stop_time))
-                    ).getTime() -
-                    new Date(
-                      this.$utils.formatDate14(JSON.stringify(item.start_time))
-                    ).getTime();
-                  item.alertTime = this.$utils.DateTime(item.alertTime);
-                  data.push(item);
-                });
-                Promise.all([
-                  gps2amap({
-                    data: data,
-                    longKey: "start_longitude",
-                    latKey: "start_latitude"
-                  }),
-                  gps2amap({
-                    data: data,
-                    longKey: "stop_longitude",
-                    latKey: "stop_latitude"
-                  })
-                ])
-                  .then(res => {
-                    data.map((item, index) => {
-                      item.start_longitude = res[0][index].split(",")[0];
-                      item.start_latitude = res[0][index].split(",")[1];
-                      item.stop_longitude = res[1][index].split(",")[0];
-                      item.stop_latitude = res[1][index].split(",")[1];
-                    });
-                  })
-                  .then(() => {
-                    Promise.all([
-                      location2address({
-                        data: data,
-                        longKey: "start_longitude",
-                        latKey: "start_latitude"
-                      }),
-                      location2address({
-                        data: data,
-                        longKey: "stop_longitude",
-                        latKey: "stop_latitude"
-                      })
-                    ]).then(addressArr => {
-                      data.map((item, index) => {
-                        item.start_address = addressArr[0][index];
-                        item.stop_address = addressArr[1][index];
-                      });
-
-                      this.$set(this.tableData, "data", Object.freeze(data));
-                      this.$set(
-                        this.tableData,
-                        "total",
-                        this.tableData.data.length
-                      );
-                    });
+                  item.license = "";
+                  item.license_color = "";
+                  GetVehicleBySIMIDToPaper({ sim_id: item.SimId }).then(res => {
+                    if (res.data.code == "0") {
+                      item.license = res.data.data[0].license;
+                      item.license_color = res.data.data[0].license_color;
+                    }
                   });
+                });
+                this.$set(this.tableData, "data", res.data.data);
+                this.$set(this.tableData, "total", res.data.count);
               } else {
                 this.$set(this.$data, "tableData", []);
                 this.$emit("error");
@@ -376,15 +327,99 @@ export default {
       });
       this.tableLoading = false;
     },
+    // 查询时间验证
+    validateTime(rule, value, callback) {
+      var date = moment(value[0]).add(3, "days")._d;
+      date = moment(date).format("YYYY-MM-DD HH:mm:ss");
+      if (value == "") {
+        callback(new Error("请选择时间!"));
+        return false;
+      } else if (!moment(value[1]).isBefore(date)) {
+        callback(new Error("选择时间不能大于3天!"));
+        return false;
+      } else {
+        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.tableQuery.stop_time = moment(value[1]).format("YYYYMMDDHHmmss");
+        callback();
+      }
+    },
+    // 选择车辆
+    selectVehicle() {
+      this.vehicleDialog = true;
+    },
+    // 选择报警类型
+    selectType() {
+      this.alarmList = this.alarmTypes;
+      this.typeDialog = true;
+    },
+    // 选择好车辆的回调
+    storageVehicle(data) {
+      this.tableQuery.license = "";
+      this.tableQuery.sim_ids = "";
+      this.vehicleDialog = false;
+      data.map(item => {
+        item.sim_id =
+          item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
+        this.tableQuery.license = this.tableQuery.license + item.license + ",";
+        this.tableQuery.sim_ids = this.tableQuery.sim_ids + item.sim_id + ",";
+      });
+      this.tableQuery.sim_ids = this.tableQuery.sim_ids.substring(
+        0,
+        this.tableQuery.sim_ids.lastIndexOf(",")
+      );
+      this.tableQuery.license = this.tableQuery.license.substring(
+        0,
+        this.tableQuery.license.lastIndexOf(",")
+      );
+    },
+    //排序
+    sortNumber(a, b) {
+      return a - b;
+    },
+    // 选择好报警类型的回调
+    storageType(data) {
+      data.sort(this.sortNumber);
+      this.alarmTypes = data;
+      this.tableQuery.alarm_name = "";
+      this.tableQuery.alarm_type = "";
+      this.typeDialog = false;
+      data.map(item => {
+        var name = this.$dict.getAlarms(item);
+        this.tableQuery.alarm_name = this.tableQuery.alarm_name + name + ",";
+        this.tableQuery.alarm_type = this.tableQuery.alarm_type + item + ",";
+      });
+      this.tableQuery.alarm_type = this.tableQuery.alarm_type.substring(
+        0,
+        this.tableQuery.alarm_type.lastIndexOf(",")
+      );
+      this.tableQuery.alarm_name = this.tableQuery.alarm_name.substring(
+        0,
+        this.tableQuery.alarm_name.lastIndexOf(",")
+      );
+    },
     // 分页
     handleSizeChange(val) {
       this.tableQuery.page = 1;
       this.tableQuery.size = val;
-      this.getTable();
+      this.tableData.data.map(itam => {
+        GetVehicleBySIMIDToPaper({ sim_id: itam.SimId }).then(res => {
+          if (res.data.code == "0") {
+            itam.license = res.data.data[0].license;
+            itam.license_color = res.data.data[0].license_color;
+          }
+        });
+      });
     },
     handleCurrentChange(val) {
       this.tableQuery.page = val;
-      this.getTable();
+      this.tableData.data.map(itam => {
+        GetVehicleBySIMIDToPaper({ sim_id: itam.SimId }).then(res => {
+          if (res.data.code == "0") {
+            itam.license = res.data.data[0].license;
+            itam.license_color = res.data.data[0].license_color;
+          }
+        });
+      });
     }
   }
 };

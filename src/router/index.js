@@ -9,6 +9,7 @@ import agreement from "@/router/agreement.js";
 import store from "@/store";
 import NProgress from "nprogress"; // progress bar
 import { Message } from "element-ui";
+import { GetLoginState } from "@/api/index.js";
 import "nprogress/nprogress.css";
 NProgress.configure({
   showSpinner: false
@@ -286,14 +287,31 @@ var router = new Router({
   routes: routers
 });
 router.beforeEach((to, from, next) => {
+  // console.log(1);
   NProgress.inc();
   if (store.getters.isLogin && localStorage.BEIDOU) {
-    if (to.name == "login") {
-      next({
-        path: "/"
-      });
-    }
-    next();
+    GetLoginState().then(res => {
+      if (res.data.code == 0) {
+        if (to.name == "login") {
+          next({
+            path: "/"
+          });
+        }
+        next();
+      } else {
+        if (to.name != "login") {
+          next({
+            name: "login"
+          });
+          Message({
+            showClose: true,
+            message: "请重新登录！",
+            type: "error"
+          });
+        }
+        next();
+      }
+    });
   } else {
     if (to.name != "login") {
       next({

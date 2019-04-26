@@ -205,3 +205,9 @@ export const AddDeviceSimToVehicle = query => {
   var queryQS = qs.stringify(query);
   return ajax.post("/vehicle/AddDeviceSimToVehicle", queryQS);
 };
+// 根据simid查询车牌号
+export const GetVehicleBySIMIDToPaper = query => {
+  return ajax.get("/vehicle/GetVehicleBySIMIDToPaper", {
+    params: query
+  });
+};

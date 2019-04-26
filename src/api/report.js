@@ -167,9 +167,9 @@ export const getDeviceLogByPage = query => {
   });
 };
 // 车辆上下线统计表
-export const GetOnlineSummaryByPage = query => {
+export const GetOnlineRateByPage = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("/report/GetOnlineSummaryByPage", queryQS, {
+  return ajax.post("/report/GetOnlineRateByPage", queryQS, {
     params: query
   });
 };
@@ -182,11 +182,14 @@ export const GetOnlineDetailByPage = query => {
 };
 //报警信息处理
 export const UpdateAlarmHandler = query => {
-  query = Object.assign({
-    id: "",
-    state: "",
-    remark: ""
-  }, query)
+  query = Object.assign(
+    {
+      id: "",
+      state: "",
+      remark: ""
+    },
+    query
+  );
   var queryQS = qs.stringify(query);
   return ajax.post("/report/UpdateAlarmHandler", queryQS, {
     params: query

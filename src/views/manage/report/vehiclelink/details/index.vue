@@ -57,11 +57,11 @@
           label="上线时间"
           :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.GoOnlineTime))}"
         ></el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="OffTime"
           label="下线时间"
           :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.OffTime))}"
-        ></el-table-column>
+        ></el-table-column>-->
       </el-table>
       <div class="admin-table-pager">
         <el-pagination
@@ -187,8 +187,8 @@ export default {
       });
       this.$utils.exportExcel({
         data: wsCol,
-        sheetName: "车辆上下线统计表",
-        fileName: "车辆上下线统计表.xlsx"
+        sheetName: "车辆上下线明细表",
+        fileName: "车辆上下线明细表.xlsx"
       });
     },
     // 选择查询方式

@@ -76,7 +76,8 @@
           :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.stop_time))}"
         ></el-table-column>
         <el-table-column prop="GoOnlineTimes" label="上线总数" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column prop="OfflineTimes" label="下线总数" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="OnlineRate" label="上线率" :formatter="$utils.baseFormatter "></el-table-column>
+        <el-table-column prop="OnlineTimes" label="上线时长" :formatter="$utils.baseFormatter "></el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination
@@ -128,7 +129,7 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import { GetOnlineSummaryByPage } from "@/api/index.js";
+import { GetOnlineRateByPage } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseUcheckbox from "@/components/choose-ucheckbox.vue";
 export default {
@@ -350,7 +351,7 @@ export default {
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
-          GetOnlineSummaryByPage(query)
+          GetOnlineRateByPage(query)
             .then(res => {
               if (res.data.code == 0) {
                 var data = [];
