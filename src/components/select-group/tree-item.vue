@@ -13,8 +13,19 @@
           style="width:120px;margin-right:10px;"
           ref="labelInput"
         ></el-input>
-        <el-button icon="el-icon-check" type="primary" size="mini" @click="edit">确认</el-button>
-        <el-button icon="el-icon-close" size="mini" @click="cancelEdit">取消</el-button>
+        <el-button
+          style="width:20px;padding-right:25px"
+          icon="el-icon-check"
+          type="primary"
+          size="mini"
+          @click="edit"
+        ></el-button>
+        <el-button
+          style="width:20px;padding-right:25px"
+          icon="el-icon-close"
+          size="mini"
+          @click="cancelEdit"
+        ></el-button>
       </div>
     </div>
     <div class="_tool" v-if="nodeData.status!=0" @click.stop>

@@ -57,7 +57,7 @@
               :group_id.sync="groupData.group_id"
               :parentid.sync="groupData.parent_id"
               @group="selectGroup"
-              style="width:200px;height:100%;"
+              style="width:280px;height:100%;"
             ></select-group>
           </div>
         </transition>

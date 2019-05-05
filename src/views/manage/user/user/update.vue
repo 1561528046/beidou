@@ -214,6 +214,9 @@ export default {
         business_no: ""
       },
       rules: {
+        industry: [
+          { required: true, message: "请选择所属行业", trigger: "change" }
+        ],
         real_name: [
           {
             required: true,

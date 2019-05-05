@@ -91,7 +91,6 @@
                   <select-industry v-model="formData.industry" style="width:100%;"></select-industry>
                 </el-form-item>
               </el-col>
-
               <el-col :span="12">
                 <el-form-item label="法人姓名" prop="corporation">
                   <el-input v-model="formData.corporation" maxlength="30"></el-input>
@@ -256,6 +255,9 @@ export default {
         business_no: ""
       },
       rules: {
+        industry: [
+          { required: true, message: "请选择所属行业", trigger: "change" }
+        ],
         user_type: [
           { required: true, message: "必须选择用户类型", trigger: "change" }
         ],

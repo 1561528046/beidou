@@ -5,7 +5,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label-width="150px" label="司机身份识别卡编号">
-              <el-input v-model="tableQuery.driver_card_id" maxlength="10"></el-input>
+              <el-input v-model="tableQuery.driver_card_id"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -117,7 +117,7 @@
       class="admin-dialog"
     >
       <update-components
-        :driver_card_id="updateId"
+        :driver_id="updateId"
         @success=" () => {this.getTable();this.updateDialog = false;this.updateId = '';}"
         :key="addKey"
       ></update-components>
@@ -190,7 +190,7 @@ export default {
     },
     bindingVehicle(scope) {
       bindingVehicle({
-        driver_card_id: this.bindingDriver.driver_card_id,
+        driver_id: this.bindingDriver.driver_id,
         vehicle_ids: scope.row.vehicle_id
       })
         .then(res => {
@@ -228,7 +228,7 @@ export default {
       //编辑
       this.addKey++;
       this.updateDialog = true;
-      this.updateId = scope.row.driver_card_id;
+      this.updateId = scope.row.driver_id;
     },
     getTable() {
       //获取列表
