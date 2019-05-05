@@ -25,7 +25,7 @@ export const initMap = function(callback) {
 };
 
 export const createMarker = function(vehicleData, AMap, stateImg) {
-  debugger;
+  console.log(vehicleData);
   var img = "/static/offline.png";
   if (vehicleData.alarmCount == "0") {
     img = "/static/alarm.png";
