@@ -18,7 +18,7 @@
         <a href="javascript:;" @click="openTab('playback')">
           <i class="iconfont icon-luxiang"></i>
           <span>录像回放</span>
-        </a> -->
+        </a>-->
       </div>
     </div>
     <el-tabs
@@ -479,6 +479,14 @@ export default {
           if (vehicle.lng - 0 < vehicle.lat - 0) {
             [vehicle.lng, vehicle.lat] = [vehicle.lat, vehicle.lng];
           }
+          vehicle.fence_alarm = {
+            alarmList: [], //是否报警（都哪些围栏触发了报警，存放对应key值） 例如 ["inAlarm","lineOut"];可通过循环此数组直接取到报警对象
+            inAlarm: [], //禁入报警  如果为true就不做判断了
+            outAlarm: [], //禁出报警(只要在符合规范的地区中的一个，就不做判断了)
+            lineOut: [], //线路偏移是否报警
+            splitPolylineSpeed: [], //分段限速是否报警
+            keyPoint: [] //关键点报警
+          };
           // vehicle.lat = 36 + Math.random() * 5;
           // vehicle.lng = 115 + Math.random() * 10;
           this.data.set(vehicle.sim_id, vehicle);
