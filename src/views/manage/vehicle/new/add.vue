@@ -759,8 +759,10 @@ export default {
   },
   watch: {
     "formData.types": function() {
-      this.$set(this.$data, "rules", new Rules(this, this.formData.types[0]));
-      this.$refs.baseForm.clearValidate();
+      if (this.formData.types.length > 0) {
+        this.formData.type = this.formData.types[0];
+        this.formData.type_son = this.formData.types[1];
+      }
     },
     // "formData.type": function(value) {
     //   if (value != "3") {
@@ -822,10 +824,20 @@ export default {
       }
     }
   },
+  mounted() {
+    if (this.$props.is_edit) {
+      console.log(this.formData);
+      this.$refs.baseForm.validate(isVaildate => {
+        if (isVaildate) {
+          console.log(1);
+        }
+      });
+    }
+  },
   created() {
     //根据不同的车辆类型生成不同的验证规则
     this.isInit = false;
-    this.$set(this.$data, "rules", new Rules(this, this.formData.types[0]));
+    this.$set(this.$data, "rules", new Rules(this));
     //编辑模式
     if (this.$props.is_edit) {
       this.loader = true;
@@ -975,10 +987,6 @@ export default {
       return isJPG && isLt2M;
     },
     formSubmit() {
-      if (this.formData.types.length > 0) {
-        this.formData.type = this.formData.types[0];
-        this.formData.type_son = this.formData.types[1];
-      }
       var loader = this.$loading({ text: "正在提交" });
       var postMethod = this.is_edit ? updateVehicle : addVehicle; //判断调用哪个方法
       this.$refs.baseForm.validate((isVaildate, errorItem) => {

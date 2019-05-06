@@ -17,7 +17,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="角色类型">
+          <el-form-item label="角色类型" prop="role_type">
             <el-select v-model="formData.role_type" style="width:100%">
               <el-option value="1" label="企业角色">企业角色</el-option>
               <el-option value="2" label="终端角色">终端角色</el-option>
@@ -150,6 +150,9 @@ export default {
       rules: {
         role_name: [
           { required: true, message: "必须填写角色名称", trigger: "change" }
+        ],
+        role_type: [
+          { required: true, message: "必须填写角色类型", trigger: "change" }
         ]
       }
     };

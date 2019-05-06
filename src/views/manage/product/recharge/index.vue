@@ -46,7 +46,7 @@
               size="small "
               type="primary "
               icon="el-icon-edit"
-              @click="topup"
+              @click="topup(scope)"
               style="margin-right:10px;"
               v-rights="3-3-1"
             >充值</el-button>
@@ -72,6 +72,7 @@
             <el-dialog
               width="15%"
               title
+              @close="amount=''"
               :visible.sync="addDialog"
               :append-to-body="true"
               :close-on-click-modal="false"
@@ -85,12 +86,7 @@
                 style=" display:inline-block; width: 236px;height: 30px;margin: 0 auto;"
                 class="dialog-footer"
               >
-                <el-button
-                  style="float:left"
-                  size="small"
-                  type="primary"
-                  @click="confirm(scope)"
-                >确 定</el-button>
+                <el-button style="float:left" size="small" type="primary" @click="confirm()">确 定</el-button>
                 <el-button style="float:right" size="small" @click="addDialog = false">取 消</el-button>
               </span>
             </el-dialog>
@@ -133,6 +129,7 @@ export default {
         size: 10,
         page: 1
       },
+      topupData: {},
       simss: [],
       simee: {},
       tableData: {
@@ -182,12 +179,13 @@ export default {
       return this.$utils.formatDate(row.cdate);
     },
     // 充值
-    topup() {
+    topup(scope) {
       this.addKey++;
       this.addDialog = true;
+      this.$set(this.$data, "topupData", scope.row);
     },
-    confirm(scope) {
-      Recharge({ user_id: scope.row.user_id, amount: this.amount }).then(
+    confirm() {
+      Recharge({ user_id: this.topupData.user_id, amount: this.amount }).then(
         res => {
           if (res.data.code == 0) {
             this.addDialog = false;

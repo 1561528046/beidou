@@ -574,8 +574,8 @@ export default {
     },
     first_date: function(newVal) {
       if (newVal) {
-        this.tableQuery.first_startdate = newVal[0];
-        this.tableQuery.first_enddate = newVal[1];
+        this.tableQuery.first_startdate = newVal[0] + "000000";
+        this.tableQuery.first_enddate = newVal[1] + "000000";
       } else {
         this.tableQuery.first_startdate = "";
         this.tableQuery.first_enddate = "";
