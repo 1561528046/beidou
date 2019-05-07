@@ -88,14 +88,14 @@
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <choose-recorder :message="recorder"></choose-recorder>
           </el-tab-pane>
-          <!-- <el-tab-pane label="高级驾驶辅助系统参数设置">
+          <el-tab-pane label="高级驾驶辅助系统参数设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <choose-adas></choose-adas>
           </el-tab-pane>
           <el-tab-pane label="驾驶员状态系统参数设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <choose-dss></choose-dss>
-          </el-tab-pane>-->
+          </el-tab-pane>
         </el-tabs>
       </div>
     </el-card>

@@ -18,7 +18,7 @@ export default {
         import("@/views/manage/user/user/product/update-product.vue")
     },
     {
-      path: "user_distribution",
+      path: "user_distribution/:id",
       name: "user_distribution",
       meta: { name: "用户分车", hidden: true },
       component: () => import("@/views/manage/user/user/binding.vue")

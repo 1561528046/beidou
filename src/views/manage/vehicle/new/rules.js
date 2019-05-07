@@ -28,7 +28,19 @@ export const Rules = function(vm) {
     // area: [{ required: true, message: "必须选择地区" }],
     sim_no: [{ required: true, message: "必须选择安装SIM卡号" }],
     device_no: [{ required: true, message: "必须选择设备" }],
-    contract_date: [{ required: true, message: "必须选择服务到期日期" }],
+    contract_date: [
+      {
+        required: true,
+        message: "请选择服务到期日期",
+        validator: function(rule, value, callback) {
+          if (value == null) {
+            callback(new Error("请选择服务到期日期"));
+          } else {
+            callback();
+          }
+        }
+      }
+    ],
     owner: [
       { required: true, message: "必须输入车主/业户" },
       { min: 2, max: 20, message: "不能小于2个字符，不能大于20个字符" },

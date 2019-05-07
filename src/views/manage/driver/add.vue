@@ -1,14 +1,16 @@
 <template>
-  <el-form status-icon :rules="rules" :model="formData" size="small" ref="baseForm" class="msg-form">
+  <el-form
+    status-icon
+    :rules="rules"
+    :model="formData"
+    size="small"
+    ref="baseForm"
+    class="msg-form"
+  >
     <el-row :gutter="30">
       <el-col :span="12">
         <el-form-item label="司机身份识别卡编号" prop="driver_card_id">
           <el-input v-model="formData.driver_card_id" maxlength="10"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="配识终端" prop="company_id">
-          <select-company v-model="formData.company_id" style="width:100%;"></select-company>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -23,20 +25,59 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label="驾驶证有效期" prop="license_validity">
-          <el-date-picker v-model="formData.license_validity" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日" value-format="yyyyMMdd" style="width:100%;">
-          </el-date-picker>
+          <el-date-picker
+            v-model="formData.validity"
+            type="daterange"
+            value-format="yyyyMMdd"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="身份证 " prop="identity_id">
-          <el-input v-model="formData.identity_id" maxlength="20"></el-input>
+        <el-form-item label="出生日期" prop="driver_birth">
+          <el-date-picker
+            style="width:100%"
+            v-model="formData.driver_birth"
+            type="datetime"
+            value-format="yyyyMMdd"
+            placeholder="选择日期时间"
+          ></el-date-picker>
         </el-form-item>
       </el-col>
-      <!-- <el-col :span="12">
-        <el-form-item label="选择车辆" prop="vehicle_id">
-          <el-input v-model="formData.vehicle_id"></el-input>
+      <el-col :span="12">
+        <el-form-item label="性别" prop="driver_sex">
+          <el-select v-model="formData.driver_sex" style="width:100%">
+            <el-option value="1" label="男">男</el-option>
+            <el-option value="2" label="女">女</el-option>
+          </el-select>
         </el-form-item>
-      </el-col> -->
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="住址" prop="address">
+          <el-input v-model="formData.address"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="准驾车型" prop="quasi_driving">
+          <el-select v-model="formData.quasi_driving" style="width:100%">
+            <el-option value="A1" label="A1"></el-option>
+            <el-option value="A2" label="A2"></el-option>
+            <el-option value="A3" label="A3"></el-option>
+            <el-option value="B1" label="B1"></el-option>
+            <el-option value="B2" label="B2"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="驾驶证号" prop="identity_id">
+          <el-input v-model="formData.identity_id"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col>
+        <el-form-item label="驾驶员正面照"></el-form-item>
+      </el-col>
     </el-row>
     <el-form-item style="text-align:center; padding-top:20px;">
       <el-button type="primary" @click="formSubmit" size="large">提交</el-button>
@@ -50,24 +91,71 @@ import selectCompany from "@/components/select-company.vue";
 export default {
   data() {
     return {
+      openCompany: {
+        postData: {
+          img1File: "",
+          img2File: "",
+          img1: "",
+          img2: "",
+          note: ""
+        },
+        visible: false,
+        company_renewal: false,
+        vehicle: {}, //厂商开通车辆
+        company: {} //厂商续费
+      },
       formData: {
-        driver_card_id: "",
-        driver_name: "",
-        tel: "",
-        license_validity: "",
-        identity_id: "",
-        vehicle_id: ""
+        driver_sex: "", //性别
+        driver_birth: "", //出生日期
+        quasi_driving: "", //准驾车型
+        identity_id: "", //驾驶证号
+        driver_card_id: "", //驾驶员身份识别卡编号
+        driver_name: "", //姓名
+        tel: "", //联系电话
+        validity: "",
+        address: "", //住址
+        begin_date: "", //驾驶证有效期开始
+        end_date: "" //驾驶证有效期结束
       },
       rules: {
         ...rules,
-        driver_card_id: [
-          { required: true, message: "必须填写司机卡ID", trigger: "change" }
+        validity: [
+          {
+            required: true,
+            trigger: "change",
+            validator: this.validateTime
+          }
         ],
-        company_id: [
-          { required: true, message: "必须选择配识终端", trigger: "change" }
+        driver_name: [
+          {
+            required: true,
+            message: "请填写姓名",
+            trigger: "change"
+          }
+        ],
+        identity_id: [
+          {
+            required: true,
+            message: "请填写驾驶证号",
+            trigger: "change"
+          }
+        ],
+        driver_card_id: [
+          {
+            required: true,
+            message: "请填写驾驶员身份识别卡编号",
+            trigger: "change"
+          }
         ],
         tel: [
           { required: true, trigger: "change", validator: this.validateTel }
+        ],
+        quasi_driving: [
+          {
+            required: true,
+            message: "请选择准驾车型",
+            trigger: "change"
+          }
         ]
       }
     };
@@ -75,6 +163,22 @@ export default {
   computed: {},
   created() {},
   methods: {
+    // 时间验证
+    validateTime(rule, value, callback) {
+      if (value == "") {
+        callback(new Error("请选择时间!"));
+        return false;
+      } else {
+        this.formData.begin_date = value[0];
+        this.formData.end_date = value[1];
+        callback();
+      }
+    },
+    // 驾驶员图片上传
+    compaynSelectImg(index, file) {
+      this.openCompany.postData["img" + index] = URL.createObjectURL(file);
+      this.openCompany.postData["img" + index + "File"] = file;
+    },
     validateTel(rule, value, callback) {
       var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
       if (!myreg.test(value)) {

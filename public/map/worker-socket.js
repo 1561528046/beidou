@@ -287,6 +287,51 @@ function x0200(buffer) {
         case 0x31:
           result.GNSSCount = buffer[i + 2];
           break;
+        case 0x64:
+          result.AdasAlarm = result.AdasAlarm || {};
+          result.AdasAlarm = {
+            alarmId:
+              SHL(buffer[i + 2], 24) +
+              (buffer[i + 3] << 16) +
+              (buffer[i + 4] << 8) +
+              buffer[i + 5],
+            markState: buffer[i + 6],
+            alarmType: buffer[i + 7],
+            alarmLevel: buffer[i + 8],
+            beforeVehicleSpeed: buffer[i + 9],
+            deviateTpye: buffer[i + 10],
+            Rsit: buffer[i + 11],
+            Rsid: buffer[i + 12],
+            vehicleSpeed: buffer[i + 13],
+            elevation: buffer[i + 14] + buffer[i + 15],
+            lat: "",
+            lng: "",
+            time: "",
+            vehicleState: "",
+            alarmLogo: ""
+          };
+          break;
+        case 0x65:
+          result.DssAlarm = result.DssAlarm || {};
+          result.DssAlarm = {
+            alarmId:
+              SHL(buffer[i + 2], 24) +
+              (buffer[i + 3] << 16) +
+              (buffer[i + 4] << 8) +
+              buffer[i + 5],
+            markState: buffer[i + 6],
+            alarmType: buffer[i + 7],
+            alarmLevel: buffer[i + 8],
+            fatigue: buffer[i + 9],
+            vehicleSpeed: buffer[i + 10],
+            elevation: buffer[i + 11] + buffer[i + 12],
+            lat: "",
+            lng: "",
+            time: "",
+            vehicleState: "",
+            alarmLogo: ""
+          };
+          break;
       }
     }
   }

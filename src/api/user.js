@@ -168,16 +168,12 @@ export const getUserVehicleUnBindByPage = query => {
 // 用户绑定车辆
 export const bindUserVehicle = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("/vehicle/BindUserVehicle", queryQS, {
-    params: query
-  });
+  return ajax.post("/vehicle/BindUserVehicle", queryQS);
 };
 // 用户解绑车辆
 export const unBindUserVehicle = query => {
   var queryQS = qs.stringify(query);
-  return ajax.post("/vehicle/UnBindUserVehicle", queryQS, {
-    params: query
-  });
+  return ajax.post("/vehicle/UnBindUserVehicle", queryQS);
 };
 
 // 获取需要登录的账号数量

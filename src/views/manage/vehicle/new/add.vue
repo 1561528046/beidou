@@ -826,7 +826,6 @@ export default {
   },
   mounted() {
     if (this.$props.is_edit) {
-      console.log(this.formData);
       this.$refs.baseForm.validate(isVaildate => {
         if (isVaildate) {
           console.log(1);

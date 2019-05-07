@@ -142,7 +142,7 @@ export default {
       // 已绑定查询
       bindTableQuery: {
         page: 1,
-        size: 10,
+        size: 20,
         user_id: "",
         license: "",
         owner: ""
@@ -150,7 +150,7 @@ export default {
       // 未绑定查询
       unbindTableQuery: {
         page: 1,
-        size: 10,
+        size: 20,
         user_id: "",
         license: "",
         owner: ""
