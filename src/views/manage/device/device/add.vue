@@ -33,6 +33,21 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
+        <el-form-item label="设备型号">
+          <el-input placeholder="设备型号" v-model="formData.model_num"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="ADAS型号">
+          <el-input placeholder="ADAS型号" v-model="formData.adas_model_num"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="DSM型号">
+          <el-input placeholder="DSM型号" v-model="formData.dsm_model_num"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="协议类型" prop="protocol_type">
           <span v-if="!formData.device_type">--</span>
           <span v-if="formData.device_type==1">808部标协议</span>
@@ -81,7 +96,10 @@ export default {
         sim_id: "",
         protocol_type: "",
         camera_num: "",
-        save_media: ""
+        save_media: "",
+        model_num: "",
+        adas_model_num: "",
+        dsm_model_num: ""
       },
       rules: {
         ...rules,

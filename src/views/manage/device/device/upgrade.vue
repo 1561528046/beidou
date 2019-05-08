@@ -14,7 +14,14 @@
               <el-button type="primary" @click="chooseVehicle" size="small">选择升级包</el-button>
             </el-form-item>
           </el-col>
-          <el-col></el-col>
+          <el-col>
+            <el-form-item label="选择升级模式">
+              <el-select v-model="formData.upgrade_mode">
+                <el-option value="1" label="自动升级">自动升级</el-option>
+                <el-option value="2" label="定时升级">定时升级</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
     </el-card>
@@ -41,7 +48,8 @@ export default {
       addKey: 0,
       vehicleDialog: false,
       formData: {
-        license: ""
+        license: "",
+        upgrade_mode: ""
       }
     };
   },
