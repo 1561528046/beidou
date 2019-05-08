@@ -24,8 +24,9 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="驾驶证有效期" prop="license_validity">
+        <el-form-item label="驾驶证有效期" prop="validity">
           <el-date-picker
+            style="width:100%"
             v-model="formData.validity"
             type="daterange"
             value-format="yyyyMMdd"
@@ -76,7 +77,24 @@
         </el-form-item>
       </el-col>
       <el-col>
-        <el-form-item label="驾驶员正面照"></el-form-item>
+        <el-form-item label="驾驶员正面照">
+          <el-upload
+            class="avatar-uploader"
+            accept="image/jpeg"
+            :headers="uploadHeaders"
+            :action="$dict.API_URL+'/driver/UploadPhotoLocal/'"
+            :show-file-list="false"
+            :on-success="(res,file)=>{uploadSuccess('photo_path',res,file)}"
+            :before-upload="uploadBefore"
+          >
+            <img
+              v-if="formData.photo_path "
+              :src="$dict.BASE_URL+formData.photo_path "
+              class="avatar"
+            >
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
       </el-col>
     </el-row>
     <el-form-item style="text-align:center; padding-top:20px;">
@@ -91,18 +109,8 @@ import selectCompany from "@/components/select-company.vue";
 export default {
   data() {
     return {
-      openCompany: {
-        postData: {
-          img1File: "",
-          img2File: "",
-          img1: "",
-          img2: "",
-          note: ""
-        },
-        visible: false,
-        company_renewal: false,
-        vehicle: {}, //厂商开通车辆
-        company: {} //厂商续费
+      uploadHeaders: {
+        Authorization: this.$store.state.user.token
       },
       formData: {
         driver_sex: "", //性别
@@ -114,6 +122,7 @@ export default {
         tel: "", //联系电话
         validity: "",
         address: "", //住址
+        photo_path: "", //驾驶员正面照
         begin_date: "", //驾驶证有效期开始
         end_date: "" //驾驶证有效期结束
       },
@@ -122,7 +131,6 @@ export default {
         validity: [
           {
             required: true,
-            trigger: "change",
             validator: this.validateTime
           }
         ],
@@ -163,9 +171,24 @@ export default {
   computed: {},
   created() {},
   methods: {
+    //  驾驶员图片上传
+    uploadSuccess(flied, res) {
+      this.formData[flied] = res.data[0].photo_path;
+    },
+    uploadBefore(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 5;
+      if (!isJPG) {
+        this.$message.error("必须上传 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 5MB!");
+      }
+      return isJPG && isLt2M;
+    },
     // 时间验证
     validateTime(rule, value, callback) {
-      if (value == "") {
+      if (value == "" || !value) {
         callback(new Error("请选择时间!"));
         return false;
       } else {
@@ -173,11 +196,6 @@ export default {
         this.formData.end_date = value[1];
         callback();
       }
-    },
-    // 驾驶员图片上传
-    compaynSelectImg(index, file) {
-      this.openCompany.postData["img" + index] = URL.createObjectURL(file);
-      this.openCompany.postData["img" + index + "File"] = file;
     },
     validateTel(rule, value, callback) {
       var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;

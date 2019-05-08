@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "echarts": "^4.2.1",
     "element-ui": "^2.4.1",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",

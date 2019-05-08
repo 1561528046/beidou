@@ -119,6 +119,9 @@
         <router-link style="margin-left:10px" :to="{name:'user-group'}">
           <el-button type="primary" size="small">用户常用分组设置</el-button>
         </router-link>
+        <router-link style="margin-left:10px" :to="{name:'device-upgrade'}">
+          <el-button icon="iconfont icon-shengji" type="primary" size="small">终端升级管理</el-button>
+        </router-link>
       </div>
       <el-table
         :data="tableData.data"

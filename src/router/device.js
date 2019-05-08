@@ -15,6 +15,16 @@ export default {
       component: () => import("@/views/manage/device/device/index.vue")
     },
     {
+      path: "upgrade",
+      name: "device-upgrade",
+      meta: {
+        name: "终端升级管理",
+        icon: "iconfont icon-shengji",
+        hidden: true
+      },
+      component: () => import("@/views/manage/device/device/upgrade.vue")
+    },
+    {
       path: "add",
       name: "device-add",
       meta: { name: "设备管理-添加", hidden: true },

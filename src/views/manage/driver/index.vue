@@ -49,11 +49,12 @@
         <el-table-column
           prop="license_validity"
           label="驾驶证有效期"
-          :formatter="(row)=>{return $utils.formatDate(row.license_validity)}"
+          :formatter="(row)=>{return $utils.formatDate(row.begin_date)+'--'+$utils.formatDate(row.end_date) } "
         ></el-table-column>
         <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column width="400" label="操作">
           <template slot-scope="scope">
+            <el-button @click="lookForm(scope)" size="small" icon="el-icon-view">查看详情</el-button>
             <el-button
               size="small"
               @click="updateForm(scope)"
@@ -122,15 +123,33 @@
         :key="addKey"
       ></update-components>
     </el-dialog>
+    <el-dialog
+      width="70%"
+      title="司机信息"
+      :visible.sync="lookDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <look-components :driver_id="lookId" :key="addKey"></look-components>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { getDriverList, delDriver, bindingVehicle } from "@/api/index.js";
 import addComponents from "./add.vue";
 import updateComponents from "./update.vue";
+import lookComponents from "./look.vue";
 import chooseVehicle from "@/components/choose-vehicle.vue";
 export default {
-  components: { addComponents, updateComponents, chooseVehicle },
+  components: {
+    addComponents,
+    updateComponents,
+    lookComponents,
+    chooseVehicle
+  },
   created() {
     this.getTable();
   },
@@ -138,9 +157,11 @@ export default {
     return {
       bindingDriver: {},
       bindingDialog: false,
+      lookDialog: false,
       addDialog: false,
       updateDialog: false,
       updateId: "",
+      lookId: "",
       isCollapse: false,
       tableLoading: true,
       addKey: 0,
@@ -158,6 +179,12 @@ export default {
     };
   },
   methods: {
+    // 查看司机信息
+    lookForm(scope) {
+      this.addKey++;
+      this.lookDialog = true;
+      this.lookId = scope.row.driver_id;
+    },
     //导出excel
     exportExcel() {
       var wsCol = [

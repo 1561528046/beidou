@@ -77,7 +77,24 @@
         </el-form-item>
       </el-col>
       <el-col>
-        <el-form-item label="驾驶员正面照"></el-form-item>
+        <el-form-item label="驾驶员正面照">
+          <el-upload
+            class="avatar-uploader"
+            accept="image/jpeg"
+            :headers="uploadHeaders"
+            :action="$dict.API_URL+'/vehicle/UploadImgLocal/'"
+            :show-file-list="false"
+            :on-success="(res,file)=>{uploadSuccess('photo_path',res,file)}"
+            :before-upload="uploadBefore"
+          >
+            <img
+              v-if="formData.photo_path "
+              :src="$dict.BASE_URL+formData.photo_path "
+              class="avatar"
+            >
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
       </el-col>
     </el-row>
     <el-form-item style="text-align:center; padding-top:20px;">
@@ -91,6 +108,9 @@ import { updateDriver, getDriver } from "@/api/index.js";
 export default {
   data() {
     return {
+      uploadHeaders: {
+        Authorization: this.$store.state.user.token
+      },
       formData: {
         driver_id: this.$props.driver_id,
         driver_sex: "", //性别
@@ -102,6 +122,7 @@ export default {
         tel: "", //联系电话
         validity: "",
         address: "", //住址
+        photo_path: "", //驾驶员正面照
         begin_date: "", //驾驶证有效期开始
         end_date: "" //驾驶证有效期结束
       },
@@ -162,6 +183,21 @@ export default {
     });
   },
   methods: {
+    //  驾驶员图片上传
+    uploadSuccess(flied, res) {
+      this.formData[flied] = res.data[0].path;
+    },
+    uploadBefore(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 5;
+      if (!isJPG) {
+        this.$message.error("必须上传 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 5MB!");
+      }
+      return isJPG && isLt2M;
+    },
     // 时间验证
     validateTime(rule, value, callback) {
       if (value == "" || !value) {
@@ -183,7 +219,6 @@ export default {
       }
     },
     formSubmit() {
-      console.log(this.formData);
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var postData = Object.assign({}, this.formData);

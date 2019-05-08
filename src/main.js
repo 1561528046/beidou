@@ -14,10 +14,12 @@ import store from "./store";
 import { dict, utils } from "./utils/base";
 import "./utils/directive";
 import Instruction from "./utils/instruction.js";
+import echarts from "echarts";
 Vue.prototype.$monitor = {};
 Vue.prototype.$ajax = ajax;
 Vue.prototype.$dict = dict;
 Vue.prototype.$utils = utils;
+Vue.prototype.$echarts = echarts;
 Vue.prototype.$instruction = new Instruction();
 window.routerDict = {};
 function createRouterMap(router, $parent) {

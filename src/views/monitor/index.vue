@@ -11,14 +11,14 @@
           <i class="iconfont icon-weilan"></i>
           <span>围栏管理</span>
         </a>
-        <!-- <a href="javascript:;" @click="openTab('monitoring')">
+        <a href="javascript:;" @click="openTab('monitoring')">
           <i class="iconfont icon-shipinjiankong"></i>
           <span>视频监控</span>
         </a>
         <a href="javascript:;" @click="openTab('playback')">
           <i class="iconfont icon-luxiang"></i>
           <span>录像回放</span>
-        </a>-->
+        </a>
       </div>
     </div>
     <el-tabs

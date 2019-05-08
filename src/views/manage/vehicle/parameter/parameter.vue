@@ -90,11 +90,11 @@
           </el-tab-pane>
           <el-tab-pane label="高级驾驶辅助系统参数设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-adas></choose-adas>
+            <choose-adas :message="adasData"></choose-adas>
           </el-tab-pane>
           <el-tab-pane label="驾驶员状态系统参数设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
-            <choose-dss></choose-dss>
+            <choose-dss :message="dssData"></choose-dss>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -181,6 +181,8 @@ export default {
       specified: [],
       recorder: [],
       fill: [],
+      adasData: [],
+      dssData: [],
       tableLoading: true
     };
   },
@@ -253,6 +255,10 @@ export default {
         this.recorder = scope;
       } else if (this.parameter_type == 12) {
         this.fill = scope;
+      } else if (this.parameter_type == 13) {
+        this.adasData = scope;
+      } else if (this.parameter_type == 14) {
+        this.dssData = scope;
       }
     },
     vehicleClick() {
@@ -291,6 +297,10 @@ export default {
         this.parameter_type = 11;
       } else if (tab.label == "终端参数设置") {
         this.parameter_type = 12;
+      } else if (tab.label == "高级驾驶辅助系统参数设置") {
+        this.parameter_type = 13;
+      } else if (tab.label == "驾驶员状态系统参数设置") {
+        this.parameter_type = 14;
       }
     },
     getTable() {
