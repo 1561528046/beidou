@@ -14,6 +14,11 @@ import store from "./store";
 import { dict, utils } from "./utils/base";
 import "./utils/directive";
 import Instruction from "./utils/instruction.js";
+import VideoPlayer from "vue-video-player";
+import "video.js/dist/video-js.css";
+// import "vue-video-player/src/custom-theme.css";
+import "videojs-flash";
+import "videojs-contrib-hls/dist/videojs-contrib-hls";
 import echarts from "echarts";
 Vue.prototype.$monitor = {};
 Vue.prototype.$ajax = ajax;
@@ -34,6 +39,7 @@ function createRouterMap(router, $parent) {
 createRouterMap(router.options.routes, router);
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
+Vue.use(VideoPlayer);
 Vue.use(contentmenu); //右键菜单
 new Vue({
   router,

@@ -7,9 +7,14 @@ export default {
     monitorAlarmVehicle: {}, //报警对应的车辆
     monitorErrorVehicle: {}, //异常对应的车辆
     monitorTrackVehicle: {}, //轨迹对应的车辆
-    setMonitorMediaVehicle: {} //媒体列表对应车辆
+    setMonitorMediaVehicle: {}, //媒体列表对应车辆
+    videoVehicle: {}
   },
   mutations: {
+    monitoringVideo(state, vehicle) {
+      state.videoVehicle = vehicle;
+      this.commit("openTab", "monitoring");
+    },
     openSingleVehicle(state, vehicle) {
       state.singleVehiclesSet.add(vehicle);
       state.currentTab = "single-" + vehicle.sim_id;

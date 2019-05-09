@@ -333,6 +333,7 @@
         <i class="iconfont icon-luyin" @click="showCard('x8804','录音')" title="录音"></i>
         <i class="iconfont icon-video" @click="showCard('x8801','拍摄')" title="拍摄"></i>
         <i class="iconfont icon-zhongduan" @click="getTerminal" title="终端属性"></i>
+        <i class="iconfont icon-shipinjiankong" @click="monitorVideo" title="视频监控"></i>
         <el-badge
           :value="parseInt(mapData.vehicle.alarm_count)||''"
           :max="99"
@@ -502,6 +503,10 @@ export default {
     }
   },
   methods: {
+    // 跳转到视频监控
+    monitorVideo() {
+      this.$store.commit("monitoringVideo", this.$props.vehicle);
+    },
     getFenceAlarmType(fence) {
       if (!fence) {
         return "";

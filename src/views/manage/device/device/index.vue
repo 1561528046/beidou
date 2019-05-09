@@ -200,6 +200,17 @@
                     @click="scrap_addFrom(scope)"
                   >设备报废</el-button>
                 </el-dropdown-item>
+                <el-dropdown-item style="padding:2px 15px;">
+                  <el-button
+                    size="small"
+                    type="primary"
+                    style="display: block;width:100%;"
+                    @click="deviceUpgrade(scope)"
+                  >设备升级</el-button>
+                </el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.device_type=='2'" style="padding:2px 15px;">
+                  <el-button @click="setChannel(scope.row)" type="success" size="small">参数设置</el-button>
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-button
@@ -298,9 +309,25 @@
     >
       <device-upload @success=" ()=> {this.getTable();this.uploadDialog = false;}" :key="addKey"></device-upload>
     </el-dialog>
+    <el-dialog
+      width="50%"
+      title="设备升级"
+      :visible.sync="packageDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
+      <upgrade-package @success="succeed" :data="deviceData" :key="addKey"></upgrade-package>
+    </el-dialog>
+    <el-dialog :visible.sync="channelDialog " title="音视频通道列表设置" :append-to-body="true ">
+      <setting-channel :key="addKey" :device="deviceData"></setting-channel>
+    </el-dialog>
   </div>
 </template>
 <script>
+import settingChannel from "./setting-channel.vue";
 import selectCompany from "@/components/select-company.vue";
 import selectUser from "@/components/select-user.vue";
 import selectDevicetype from "@/components/select-devicetype.vue";
@@ -310,9 +337,11 @@ import repairAdd from "./repair_add.vue";
 import scrapAdd from "./scrap_add.vue";
 import updateDevice from "./update.vue";
 import deviceUpload from "./upload.vue";
+import upgradePackage from "./upgrade-package.vue";
 import { getDeviceList, delDevice } from "@/api/index.js";
 export default {
   components: {
+    settingChannel,
     deviceUpload,
     addDevice,
     updateDevice,
@@ -321,13 +350,16 @@ export default {
     selectDevicetype,
     selectDevice,
     repairAdd,
-    scrapAdd
+    scrapAdd,
+    upgradePackage
   },
   created() {
     this.getTable();
   },
   data() {
     return {
+      channelDialog: false,
+      packageDialog: false,
       addDialog: false,
       parent_id: "",
       updateDialog: false,
@@ -341,6 +373,7 @@ export default {
       dateRange: "",
       tableLoading: true,
       addKey: 0,
+      deviceData: {},
       tableQuery: {
         device_type: "",
         device_id: "",
@@ -404,6 +437,26 @@ export default {
     }
   },
   methods: {
+    //音视频通道列表设置
+    setChannel(row) {
+      this.addKey++;
+      this.channelDialog = true;
+      this.$set(this.$data, "deviceData", row);
+    },
+    // 设备升级
+    deviceUpgrade(scope) {
+      this.addKey++;
+      this.packageDialog = true;
+      this.$set(this.$data, "deviceData", scope.row);
+    },
+    succeed() {
+      this.packageDialog = false;
+      this.$notify({
+        message: "终端升级指令下发成功",
+        title: "提示",
+        type: "success"
+      });
+    },
     //导出excel
     exportExcel() {
       var wsCol = [

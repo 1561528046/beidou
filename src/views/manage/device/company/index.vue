@@ -31,9 +31,6 @@
         <el-button type="primary" size="small" @click="addFrom" v-rights="2-4-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
-        <router-link style="margin-left:10px" :to="{name:'user-group'}">
-          <el-button type="primary" size="small">升级包管理</el-button>
-        </router-link>
       </div>
       <el-table
         :data="tableData.data"
@@ -44,6 +41,12 @@
         <el-table-column prop="company_name" label="终端厂商名称" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column width="300" label="操作">
           <template slot-scope="scope">
+            <router-link
+              style="margin-right:10px"
+              :to="{name:'upgrade-package',params:{id:scope.row.company_id}}"
+            >
+              <el-button type="primary" icon="el-icon-upload2" size="small">升级包管理</el-button>
+            </router-link>
             <el-button
               size="small"
               @click="updateForm(scope)"

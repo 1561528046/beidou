@@ -103,6 +103,13 @@ export default {
       component: () => import("@/views/manage/device/company/index.vue")
     },
     {
+      path: "package/:id",
+      name: "upgrade-package",
+      meta: { name: "升级包管理", hidden: true },
+      component: () =>
+        import("@/views/manage/device/company/upgrade-package.vue")
+    },
+    {
       path: "company-device-add",
       name: "company-add",
       meta: { name: "终端厂商管理-添加", hidden: true },

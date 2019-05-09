@@ -444,6 +444,7 @@ export default {
         // promiseList: new Map() //所有指令回复合集
       },
       data: new Map(), //所有数据
+      video: new Map(),
       dict: {
         //字典
         gnssCenter: new Map(), //809上级平台字典

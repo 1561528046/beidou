@@ -357,3 +357,48 @@ export const getListByNotGroupId = query => {
     params: query
   });
 };
+// 获取厂商下的升级包列表
+export const GetListByCompanyId = query => {
+  return ajax.get("/device/GetListByCompanyId", {
+    params: query
+  });
+};
+// 查询单个升级包信息
+export const GetPackageModelById = query => {
+  return ajax.get("/device/GetPackageModelById", {
+    params: query
+  });
+};
+// 添加升级包
+export const AddDeviceUpgradePackage = query => {
+  // var queryQS = qs.stringify(query);
+  return ajax.post("/device/AddDeviceUpgradePackage", query.fileData, {
+    params: query
+  });
+};
+// 修改升级包
+export const UpdateDeviceUpgradePackage = query => {
+  // var queryQS = qs.stringify(query);
+  return ajax.post("/device/UpdateDeviceUpgradePackage", query.fileData, {
+    params: query
+  });
+};
+// 删除升级包
+export const DeleteDeviceUpgradePackage = query => {
+  return ajax.get("/device/DeleteDeviceUpgradePackage", {
+    params: query
+  });
+};
+// 添加升级记录
+export const AddDeviceUpgradeRecord = query => {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/device/AddDeviceUpgradeRecord", queryQS, {
+    params: query
+  });
+};
+// 查询升级记录
+export const GetRecordList = query => {
+  return ajax.get("/device/GetRecordList", {
+    params: query
+  });
+};
