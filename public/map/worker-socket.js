@@ -287,6 +287,54 @@ function x0200(buffer) {
         case 0x31:
           result.GNSSCount = buffer[i + 2];
           break;
+        case 0x64: //高级驾驶辅助系统报警信息
+          result.additional0X64 = {
+            AlarmID: GetUintFromBytes(buffer, i + 2),
+            SignStatus: buffer[i + 6],
+            AlarmType: buffer[i + 7],
+            AlarmLevel: buffer[i + 8],
+            FrontCarSpeed: buffer[i + 9],
+            FrontCarDistance: buffer[i + 10],
+            DeviationType: buffer[i + 11],
+            RoadSignType: buffer[i + 12],
+            RoadSignNum: buffer[i + 13],
+            Speed: buffer[i + 14],
+            Altitude: GetUshortFromBytes(buffer, i + 15),
+            Latitude: GetUintFromBytes(buffer, i + 17),
+            Longitude: GetUintFromBytes(buffer, i + 21),
+            DateTime: GetDateTimeFromBCD6(buffer, i + 25),
+            VehicleStatus: GetUshortFromBytes(buffer, i + 31),
+            AlarmSign: {
+              TerminalID: byte2ascii(buffer, i + 33, 7),
+              DateTime: GetDateTimeFromBCD6(buffer, i + 40),
+              SerialNO: buffer[i + 46],
+              AttachmentCount: buffer[i + 47]
+            }
+          };
+          break;
+        case 0x65: //驾驶员状态监测系统报警信息
+          result.additional0X65 = {
+            AlarmID: GetUintFromBytes(buffer, i + 2),
+            SignStatus: buffer[i + 6],
+            AlarmType: buffer[i + 7],
+            AlarmLevel: buffer[i + 8],
+            FatigueDegree: buffer[i + 9],
+            //预留4位
+            Speed: buffer[i + 14],
+            Altitude: GetUshortFromBytes(buffer, i + 15),
+            Latitude: GetUintFromBytes(buffer, i + 17),
+            Longitude: GetUintFromBytes(buffer, i + 21),
+            DateTime: GetDateTimeFromBCD6(buffer, i + 25),
+            VehicleStatus: GetUshortFromBytes(buffer, i + 31),
+            AlarmSign: {
+              TerminalID: byte2ascii(buffer, i + 33, 7),
+              DateTime: GetDateTimeFromBCD6(buffer, i + 40),
+              SerialNO: buffer[i + 46],
+              AttachmentCount: buffer[i + 47]
+            }
+          };
+
+          break;
       }
     }
   }
@@ -353,4 +401,29 @@ function SHL(num, step) {
   result = "0".repeat(8 - result.length) + result;
   result += "0".repeat(parseInt(step));
   return parseInt(result, 2);
+}
+// 字节数组转uint
+function GetUintFromBytes(bytes, start) {
+  return (
+    SHL(bytes[start], 24) +
+    (buffer[start + 1] << 16) +
+    (buffer[start + 2] << 8) +
+    buffer[start + 3]
+  );
+}
+// 字节数组转ushort
+function GetUshortFromBytes(bytes, start) {
+  return (bytes[start] << 8) + bytes[start + 1];
+}
+// BCD[6]转时间(YYYY-MM-DD-hh-mm-ss （GMT+8 时间）)
+function GetDateTimeFromBCD6(bytes, start) {
+  return formatTime(bytes.slice(start, start + 6));
+}
+//字节数组转ascii码
+function byte2ascii(bytes, start, len) {
+  var str = "";
+  for (var i = 0; i < len; i++) {
+    str += String.fromCharCode(bytes[start + i]);
+  }
+  return str;
 }
