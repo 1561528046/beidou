@@ -36,6 +36,33 @@
     <div class="_map" v-if="$props.single">
       <div class="_map-container" ref="vehicle_map"></div>
     </div>
+    <div class="vehicle-additional-alarm" style="position:absolute;left:370px;">
+      <div
+        class="shadow-box"
+        style="background:#FFF;width:350px; font-size:12px;margin-bottom:20px;"
+        v-if="mapData.vehicle.additional0X64"
+      >
+        <h3
+          style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;"
+        >高级驾驶辅助系统报警信息</h3>
+        <div style="padding:15px;line-height:1.5;">
+          <additional0X64 :data="mapData.vehicle.additional0X64"></additional0X64>
+        </div>
+      </div>
+      <div
+        class="shadow-box"
+        style="background:#FFF;width:350px; font-size:12px;"
+        v-if="mapData.vehicle.additional0X65"
+      >
+        <h3
+          style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;"
+        >驾驶员状态监测系统报警信息</h3>
+        <div style="padding:15px;line-height:1.5;">
+          <additional0X65 :data="mapData.vehicle.additional0X65"></additional0X65>
+        </div>
+      </div>
+    </div>
+
     <div class="vehicle-info-box shadow-box" ref="box">
       <div class="_header">
         <strong class="_title">{{mapData.vehicle.info.license}}</strong>
@@ -98,6 +125,11 @@
       <div class="_other" v-if="$props.single">
         <el-row>
           <el-col :span="24">当前报警信息 {{$dict.getAlarm(mapData.vehicle.alarm)||"--"}}</el-col>
+
+          <el-col :span="24">
+            驾驶员状态监测系统报警信息
+            <additional0X65 :data="mapData.vehicle"></additional0X65>
+          </el-col>
           <el-col
             :span="24"
             v-if="mapData.vehicle.fence_alarm&&mapData.vehicle.fence_alarm.alarmList&&mapData.vehicle.fence_alarm.alarmList.length"
@@ -384,7 +416,8 @@ import chooseVehicle from "@/components/choose-vehicle.vue";
 import x8804 from "./x8804.vue";
 import x8801 from "./x8801.vue";
 import x0702 from "./x0702.vue";
-
+import additional0X64 from "./additional0x64.vue";
+import additional0X65 from "./additional0x65.vue";
 export default {
   components: {
     deviceCard,
@@ -394,7 +427,9 @@ export default {
     x8804,
     x8801,
     x0702,
-    repairCard
+    repairCard,
+    additional0X64,
+    additional0X65
   },
   data() {
     return {

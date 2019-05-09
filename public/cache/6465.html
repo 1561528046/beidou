@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <label>
+      <input
+        type="radio"
+        checked
+        name="type"
+        value=""
+        onclick="changeType(64)"
+      />0x64
+    </label>
+    <label>
+      <input type="radio" name="type" value="" onclick="changeType(65)" />0x65
+    </label>
+    <div id="app" style="float:left; width:400px;"></div>
+    <textarea
+      id="output"
+      style="display: block; width:400px;height:300px;"
+    ></textarea>
+    <script>
+      /* 7E0200002A0159306161030010E001F005AC1AFB0301CB998E068251210322029E001E19050909405001040001E848020200640302029ED27E*/
+      // 7E 02 00 00 2A 01 59 30 61 61 03 00 10 E0 01 F0 05 AC 1A FB 03 01 CB 99 8E 06 82 51 21 03 22 02 9E 00 1E 19 05 09 09 40 50 01 04 00 01 E8 48 02 02 00 64 03 02 02 9E D2 7E
+
+      var simId = "06 48 67 95 31 03";
+      var time = "19 05 10 09 40 50";
+      var type = "64";
+
+      var x64 = [
+        {
+          name: "报警ID",
+          value: "00 00 00 01"
+        },
+        {
+          name: "标志状态",
+          value: "01" //00 01
+        },
+        {
+          name: "报警/事件类型",
+          value: "01"
+        },
+        {
+          name: "报警级别",
+          value: "01"
+        },
+        {
+          name: "前车车速",
+          value: "01"
+        },
+        {
+          name: "前车/行人距离",
+          value: "01"
+        },
+        {
+          name: "偏离类型",
+          value: "01"
+        },
+        {
+          name: "道路标志识别类型",
+          value: "01"
+        },
+        {
+          name: "道路标志识别数据",
+          value: "01"
+        },
+        {
+          name: "车速",
+          value: "01"
+        },
+        {
+          name: "高程",
+          value: "00 64"
+        },
+        {
+          name: "纬度",
+          value: "00 00 00 01"
+        },
+        {
+          name: "经度",
+          value: "00 00 00 01"
+        },
+        {
+          name: "日期时间",
+          value: time
+        },
+        {
+          name: "车辆状态",
+          value: "00 01"
+        },
+        {
+          name: "报警标识号-终端ID ",
+          value: "61 62 63 64 65 66 67"
+        },
+        {
+          name: "报警标识号-日期时间",
+          value: time
+        },
+        {
+          name: "报警标识号-序号",
+          value: "01"
+        },
+        {
+          name: "报警标识号-附件数量",
+          value: "00"
+        },
+        {
+          name: "报警标识号-预留",
+          value: "00"
+        }
+      ];
+      document.addEventListener("change", function(ev) {
+        if (ev.target.tagName == "INPUT" && ev.target.type == "text") {
+          x64[ev.target.name].value = ev.target.value;
+        }
+        renderBuffer();
+      });
+
+      renderBuffer();
+      function changeType(newType) {
+        type = newType;
+        renderBuffer();
+      }
+      function renderBuffer() {
+        var html = "";
+        x64.map((item, index) => {
+          if (type == 64) {
+            html += `<span style="display:inline-block;width:12em;">${
+              item.name
+            }</span><input name="${index}" value="${item.value}" /> <br>`;
+          } else {
+            var name = item.name;
+            if (index == 4) {
+              name = "疲劳程度";
+            }
+            if (index > 4 && index < 9) {
+              name = "保留";
+            }
+            html += `<span style="display:inline-block;width:12em;">${name}</span><input name="${index}" value="${
+              item.value
+            }" /> <br>`;
+          }
+        });
+        document.querySelector("#app").innerHTML = html;
+        var result = `
+E0 01 F0 05 
+AC 1A FB 03 
+01 CB 99 8E 
+06 82 51 21 
+03 22 
+02 9E 
+00 1E 
+${time} 
+01 04 00 01 E8 48 02 02 00 64 03 02 02 9E 
+`;
+        result += `${type} 2f `;
+        x64.map(item => {
+          result += item.value + " ";
+        });
+
+        //拼装头
+        var totalLength = result.split(" ").length;
+        result =
+          `7E 02 00 00 ${totalLength.toString(16)} ${simId} 00 10 ` + result;
+
+        //拼装尾
+        result += getCode(result);
+        result += " 7E";
+        result = result.replace(/\n/g, "");
+
+        console.log(result);
+        document.querySelector("#output").innerHTML = result;
+      }
+      function word() {
+        RandomNumBoth(1, 65535);
+      }
+
+      function RandomNumBoth(Min, Max) {
+        var Range = Max - Min;
+        var Rand = Math.random();
+        var num = Min + Math.round(Rand * Range); //四舍五入
+        return num;
+      }
+      // var a =
+      //   "7E 02 00 00 2A 01 59 30 61 61 03 00 10 E0 01 F0 05 AC 1A FB 03 01 CB 99 8E 06 82 51 21 03 22 02 9E 00 1E 19 05 09 09 40 50 01 04 00 01 E8 48 02 02 00 64 03 02 02 9E D2 7E";
+      // var a =
+      //   "7E 02 00 00 5b 01 59 30 61 61 03 00 10 E0 01 F0 05 AC 1A FB 03 01 CB 99 8E 06 82 51 21 03 22 02 9E 00 1E 19 05 09 09 40 50 01 04 00 01 E8 48 02 02 00 64 03 02 02 9E 64 2f 00 00 00 01 01 01 01 01 01 01 01 01 01 00 01 00 00 00 01 00 00 00 01 19 05 09 09 40 50 00 01 01 02 03 04 05 06 07 19 05 09 09 40 50 01 00 00 2b 7E";
+      // getCode(a);
+      function getCode(arrStr) {
+        //校验码
+        var arr = arrStr.split(" ");
+        var temp = parseInt(arr[1], 16);
+        for (var i = 2; i < arr.length; i++) {
+          temp = temp ^ parseInt(arr[i], 16);
+          // console.log(temp.toString(16));
+        }
+        temp = temp.toString(16);
+        temp = "0".repeat(2 - temp.length) + temp;
+        return temp;
+      }
+    </script>
+  </body>
+</html>
