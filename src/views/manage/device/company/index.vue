@@ -1,7 +1,14 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" label-width="80px" label-position="left" class="table-search" @submit.native.prevent size="small">
+      <el-form
+        :model="tableQuery"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        @submit.native.prevent
+        size="small"
+      >
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="厂商名称">
@@ -24,26 +31,73 @@
         <el-button type="primary" size="small" @click="addFrom" v-rights="2-4-1">
           <i class="el-icon-upload el-icon--right"></i> 添加
         </el-button>
+        <router-link style="margin-left:10px" :to="{name:'user-group'}">
+          <el-button type="primary" size="small">升级包管理</el-button>
+        </router-link>
       </div>
-      <el-table :data="tableData.data" v-loading="tableLoading" style="width: 100%" class="admin-table-list">
-        <el-table-column prop="company_name" label="终端厂商名称" :formatter="$utils.baseFormatter"> </el-table-column>
+      <el-table
+        :data="tableData.data"
+        v-loading="tableLoading"
+        style="width: 100%"
+        class="admin-table-list"
+      >
+        <el-table-column prop="company_name" label="终端厂商名称" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column width="300" label="操作">
           <template slot-scope="scope">
-            <el-button size="small" @click="updateForm(scope)" type="primary" icon="el-icon-edit" v-rights="2-4-3">编辑</el-button>
+            <el-button
+              size="small"
+              @click="updateForm(scope)"
+              type="primary"
+              icon="el-icon-edit"
+              v-rights="2-4-3"
+            >编辑</el-button>
             <el-button size="small" icon="el-icon-delete" @click="delRow(scope)" v-rights="2-4-2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="admin-table-pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="tableQuery.page" :page-sizes="[10, 20, 50, 100]" :page-size="tableQuery.size" :total="tableData.total" layout="total, sizes, prev, pager, next, jumper" background>
-        </el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="tableQuery.page"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="tableQuery.size"
+          :total="tableData.total"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+        ></el-pagination>
       </div>
     </el-card>
-    <el-dialog width="29%" title="添加" :visible.sync="addDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <add-components @success=" ()=> {this.getTable();this.company=[];this.loadAll();this.addDialog = false;}" :key="addKey"></add-components>
+    <el-dialog
+      width="29%"
+      title="添加"
+      :visible.sync="addDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
+      <add-components
+        @success=" ()=> {this.getTable();this.company=[];this.loadAll();this.addDialog = false;}"
+        :key="addKey"
+      ></add-components>
     </el-dialog>
-    <el-dialog width="29%" title="编辑" :visible.sync="updateDialog " :append-to-body="true " :close-on-click-modal="false " :close-on-press-escape="false " :center="true " class="admin-dialog">
-      <update-components :company_id="updateId" @success=" ()=> {this.getTable();this.company=[];this.loadAll();this.updateDialog = false;this.updateId=''}" :key="addKey"></update-components>
+    <el-dialog
+      width="29%"
+      title="编辑"
+      :visible.sync="updateDialog "
+      :append-to-body="true "
+      :close-on-click-modal="false "
+      :close-on-press-escape="false "
+      :center="true "
+      class="admin-dialog"
+    >
+      <update-components
+        :company_id="updateId"
+        @success=" ()=> {this.getTable();this.company=[];this.loadAll();this.updateDialog = false;this.updateId=''}"
+        :key="addKey"
+      ></update-components>
     </el-dialog>
   </div>
 </template>
