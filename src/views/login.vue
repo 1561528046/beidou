@@ -27,12 +27,7 @@
 import { rules } from "@/utils/rules.js";
 import { loginIn } from "@/api/index.js";
 export default {
-  created() {
-    if (process.env.NODE_ENV != "production") {
-      this.formData.user_name = "admin";
-      this.formData.pass_word = "zjtscccts@2019";
-    }
-  },
+  created() {},
   data() {
     return {
       loading: false,
