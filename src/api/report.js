@@ -196,6 +196,46 @@ export const UpdateAlarmHandler = query => {
   });
 };
 
+/**
+ * 省标0x64 0x65报警 分析图接口
+ */
+// 基本情况
+export const getAdditionalAlarmChartBase = query => {
+  return ajax.get("/AdditionalAlarmChart/GetBase", {
+    params: query
+  });
+};
+// 高级驾驶辅助系统报警分布(车辆饼状图)x64
+export const getAdditionalAlarmChartPieVehicle = query => {
+  return ajax.get("/AdditionalAlarmChart/PieVehicle", {
+    params: query
+  });
+};
+// 车辆报警TOP5(车辆柱状图)x64
+export const getAdditionalAlarmChartBarVehicle = query => {
+  return ajax.get("/AdditionalAlarmChart/BarVehicle", {
+    params: query
+  });
+};
+// 驾驶员状态监测系统报警分布(司机饼状图)x65
+export const getAdditionalAlarmChartPieDriver = query => {
+  return ajax.get("/AdditionalAlarmChart/PieDriver", {
+    params: query
+  });
+};
+// 驾驶员报警TOP5(司机柱状图)x65
+export const getAdditionalAlarmChartBarDriver = query => {
+  return ajax.get("/AdditionalAlarmChart/BarDriver", {
+    params: query
+  });
+};
+// 报警趋势
+export const getAdditionalAlarmChartAll = query => {
+  return ajax.get("/AdditionalAlarmChart/GetAll", {
+    params: query
+  });
+};
+
 // 导出在线时长统计
 // 导出用户登录明细
 // 导出用户操作日志
