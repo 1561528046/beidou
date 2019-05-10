@@ -209,6 +209,9 @@ var dict = {
     "10": "道路标志识别事件",
     "11": "主动抓拍事件"
   },
+  get_additional_alarm_64: function(key) {
+    return this.additional_alarm_64[key] || "";
+  },
   additional_alarm_64_road_sign: {
     //省标协议中0x64 道路标志识别类型
     "1": "限速标志",
@@ -225,6 +228,9 @@ var dict = {
     "6": "无驾驶员",
     "10": "自动抓拍事件",
     "11": "驾驶员变更事件"
+  },
+  get_additional_alarm_65: function(key) {
+    return this.additional_alarm_65[key] || "";
   },
   // 视频报警类型
   video_alarm: {

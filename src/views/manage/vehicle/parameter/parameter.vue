@@ -88,6 +88,9 @@
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <choose-recorder :message="recorder"></choose-recorder>
           </el-tab-pane>
+          <el-tab-pane label="系统设置">
+            <choose-system></choose-system>
+          </el-tab-pane>
           <el-tab-pane label="高级驾驶辅助系统参数设置">
             <select-vehicle @choose="selectVehicle"></select-vehicle>
             <choose-adas :message="adasData"></choose-adas>
@@ -118,8 +121,10 @@ import chooseRecorder from "./choose-recorder.vue";
 import chooseFill from "./choose-fill.vue";
 import chooseAdas from "./choose-adas.vue";
 import chooseDss from "./choose-dss.vue";
+import chooseSystem from "./choose-system.vue";
 export default {
   components: {
+    chooseSystem,
     chooseAdas,
     chooseDss,
     selectVehicle,

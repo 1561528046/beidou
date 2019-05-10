@@ -700,9 +700,8 @@ export default {
               var data = {};
               var src =
                 "rtmp://60.10.139.122/live/livestream/" +
-                "0" +
                 this.deviceData.sim_id +
-                "/" +
+                "_" +
                 row.LogicChannel;
               data = {
                 MessageID: "x9201",

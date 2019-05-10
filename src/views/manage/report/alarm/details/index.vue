@@ -378,23 +378,36 @@ export default {
     },
     // 选择好报警类型的回调
     storageType(data) {
-      data.sort(this.sortNumber);
+      var alarmName = "";
+      for (var key in data) {
+        if (key == "alarm") {
+          data[key].map(itam => {
+            alarmName = alarmName + this.$dict.getAlarms(itam) + ",";
+          });
+        } else if (key == "alarm_64") {
+          data[key].map(itam => {
+            alarmName =
+              alarmName + this.$dict.get_additional_alarm_64(itam) + ",";
+          });
+        } else if (key == "alarm_65") {
+          data[key].map(itam => {
+            alarmName =
+              alarmName + this.$dict.get_additional_alarm_65(itam) + ",";
+          });
+        }
+      }
+      // data.sort(this.sortNumber);
       this.alarmTypes = data;
       this.tableQuery.alarm_name = "";
       this.tableQuery.alarm_type = "";
       this.typeDialog = false;
-      data.map(item => {
-        var name = this.$dict.getAlarms(item);
-        this.tableQuery.alarm_name = this.tableQuery.alarm_name + name + ",";
-        this.tableQuery.alarm_type = this.tableQuery.alarm_type + item + ",";
-      });
-      this.tableQuery.alarm_type = this.tableQuery.alarm_type.substring(
+      // this.tableQuery.alarm_type = this.tableQuery.alarm_type.substring(
+      //   0,
+      //   this.tableQuery.alarm_type.lastIndexOf(",")
+      // );
+      this.tableQuery.alarm_name = alarmName.substring(
         0,
-        this.tableQuery.alarm_type.lastIndexOf(",")
-      );
-      this.tableQuery.alarm_name = this.tableQuery.alarm_name.substring(
-        0,
-        this.tableQuery.alarm_name.lastIndexOf(",")
+        alarmName.lastIndexOf(",")
       );
     },
     // 分页

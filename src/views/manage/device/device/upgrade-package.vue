@@ -9,7 +9,7 @@
         </el-col>
         <el-col :span="10">
           <el-form-item label="版本号">
-            <el-input></el-input>
+            <el-input v-model="tableQuery.version"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="2">
@@ -20,9 +20,8 @@
       </el-row>
     </el-form>
     <el-table :data="tableData.data" style="width: 100%">
-      <el-table-column prop label="厂商名称"></el-table-column>
       <el-table-column prop="version" label="版本号"></el-table-column>
-      <el-table-column prop label="操作">
+      <el-table-column prop label="操作" width="180">
         <template slot-scope="scope">
           <el-button size="small" @click="choosePackage(scope)" type="primary">选择</el-button>
         </template>
@@ -55,7 +54,8 @@ export default {
     return {
       deviceData: {},
       tableQuery: {
-        company_id: ""
+        company_id: "",
+        version: ""
       },
       tableData: {
         data: [],

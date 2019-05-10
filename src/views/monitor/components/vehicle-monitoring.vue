@@ -788,6 +788,7 @@ export default {
             row.sim_id +
             "_" +
             item.logical_channel;
+
           data = {
             MessageID: "x9101",
             SimID: "0" + row.sim_id,
@@ -945,7 +946,7 @@ export default {
       var src =
         "rtmp://60.10.139.122/live/livestream/" +
         row.sim_id +
-        "/" +
+        "_" +
         row.logical_channel;
       videoPrintscreen({
         sim_id: row.sim_id,
@@ -1429,10 +1430,10 @@ export default {
     channelPlay(row) {
       var src =
         "rtmp://60.10.139.122/live/livestream/" +
-        "0" +
         this.vehicleData.sim_id +
-        "/" +
+        "_" +
         row.logical_channel;
+      console.log(src);
       var data = {};
       var storage = {};
       if (row.state) {

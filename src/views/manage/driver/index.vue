@@ -38,6 +38,7 @@
         </el-button>
       </div>
       <el-table
+        @sort-change="sorting"
         :data="tableData.data"
         v-loading="tableLoading"
         style="width: 100%"
@@ -52,6 +53,11 @@
           :formatter="(row)=>{return $utils.formatDate(row.begin_date)+'--'+$utils.formatDate(row.end_date) } "
         ></el-table-column>
         <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column sortable="custom" prop="num_fatigue_driving" label="疲劳驾驶"></el-table-column>
+        <el-table-column sortable="custom" prop="num_100km_alarm" label="百公里报警"></el-table-column>
+        <el-table-column sortable="custom" prop="num_abnormal_driving" label="异常驾驶行为"></el-table-column>
+        <el-table-column sortable="custom" prop="num_punctuality" label="准点率"></el-table-column>
+        <el-table-column sortable="custom" prop="num_total" label="综合评分"></el-table-column>
         <el-table-column width="400" label="操作">
           <template slot-scope="scope">
             <el-button @click="lookForm(scope)" size="small" icon="el-icon-view">查看详情</el-button>
@@ -165,10 +171,18 @@ export default {
       isCollapse: false,
       tableLoading: true,
       addKey: 0,
+      sadsad: "",
+      num_fatigue_driving: "",
+      num_bestkm_alarm: "",
+      num_abnormal_driving: "",
+      num_punctuality: "",
+      num_total: "",
       tableQuery: {
         driver_name: "",
         driver_card_id: "",
         identity_id: "",
+        order_field: "",
+        order: "",
         size: 10,
         page: 1
       },
@@ -179,6 +193,32 @@ export default {
     };
   },
   methods: {
+    // 排序
+    sorting(column) {
+      switch (column.column.label) {
+        case "疲劳驾驶":
+          this.tableQuery.order_field = 2;
+          break;
+        case "百公里报警":
+          this.tableQuery.order_field = 4;
+          break;
+        case "异常驾驶行为":
+          this.tableQuery.order_field = 3;
+          break;
+        case "准点率":
+          this.tableQuery.order_field = 5;
+          break;
+        case "综合":
+          this.tableQuery.order_field = 1;
+          break;
+      }
+      if (column.order == "ascending") {
+        this.tableQuery.order = 1;
+      } else if (column.order == "descending") {
+        this.tableQuery.order = 2;
+      }
+      this.getTable();
+    },
     // 查看司机信息
     lookForm(scope) {
       this.addKey++;

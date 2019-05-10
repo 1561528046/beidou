@@ -44,3 +44,15 @@ export const bindingVehicle = query => {
     params: query
   });
 };
+// 异常驾驶行为评分
+export const GetAbnormal = query => {
+  return ajax.get("/driver/GetAbnormal", {
+    params: query
+  });
+};
+// 驾驶员评分
+export const GetStatistics = query => {
+  return ajax.get("/driver/GetStatistics", {
+    params: query
+  });
+};
