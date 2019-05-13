@@ -338,7 +338,11 @@ import scrapAdd from "./scrap_add.vue";
 import updateDevice from "./update.vue";
 import deviceUpload from "./upload.vue";
 import upgradePackage from "./upgrade-package.vue";
-import { getDeviceList, delDevice } from "@/api/index.js";
+import {
+  getDeviceList,
+  delDevice,
+  AddDeviceUpgradeRecord
+} from "@/api/index.js";
 export default {
   components: {
     settingChannel,
@@ -449,13 +453,34 @@ export default {
       this.packageDialog = true;
       this.$set(this.$data, "deviceData", scope.row);
     },
-    succeed() {
+    succeed(data) {
       this.packageDialog = false;
+      var upgrade = {};
       this.$notify({
         message: "终端升级指令下发成功",
         title: "提示",
         type: "success"
       });
+      if (data) {
+        upgrade = {
+          sim_ids: this.deviceData.sim_id,
+          user_ids: "",
+          external_type: data.external_type,
+          up_type: 2,
+          package_id: data.rowid,
+          package_version: data.version,
+          up_timer: ""
+        };
+        AddDeviceUpgradeRecord(upgrade).then(res => {
+          if (res.data.code != 0) {
+            return this.$notify({
+              message: res.data.msg,
+              title: "提示",
+              type: "error"
+            });
+          }
+        });
+      }
     },
     //导出excel
     exportExcel() {

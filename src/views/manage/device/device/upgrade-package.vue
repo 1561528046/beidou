@@ -94,6 +94,7 @@ export default {
           CommandWord: "1",
           CommandParameters: str
         };
+        this.$emit("success", scope.row);
         this.$instruction.send(JSON.stringify(data));
       } else {
         this.$emit("success", scope.row);
