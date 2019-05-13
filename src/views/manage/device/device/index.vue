@@ -55,6 +55,11 @@
               <el-input placeholder="请输入分组名称"></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item label="设备型号">
+              <el-input v-model="tableQuery.model_num"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
@@ -379,6 +384,7 @@ export default {
       addKey: 0,
       deviceData: {},
       tableQuery: {
+        model_num: "",
         device_type: "",
         device_id: "",
         company_name: "",

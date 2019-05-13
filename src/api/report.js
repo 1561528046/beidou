@@ -236,6 +236,21 @@ export const getAdditionalAlarmChartAll = query => {
   });
 };
 
-// 导出在线时长统计
-// 导出用户登录明细
-// 导出用户操作日志
+// 驾驶员上传记录表
+export const GetDriverCheckListByPage = query => {
+  return ajax.get("/driver/GetDriverCheckListByPage", {
+    params: query
+  });
+};
+// 查询单个司机数据
+export const GetDriverCheckByID = query => {
+  return ajax.get("/driver/GetDriverCheckByID", {
+    params: query
+  });
+};
+// 单个司机基本信息
+export const GetDriverByDriverDocument = query => {
+  return ajax.get("/driver/GetDriverByDriverDocument", {
+    params: query
+  });
+};

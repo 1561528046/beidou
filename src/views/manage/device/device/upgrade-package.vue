@@ -21,6 +21,16 @@
     </el-form>
     <el-table :data="tableData.data" style="width: 100%">
       <el-table-column prop="version" label="版本号"></el-table-column>
+      <el-table-column prop="external_type" label="设备类型">
+        <template slot-scope="scope">
+          <label v-if="scope.row.external_type=='01'">终端</label>
+          <label v-if="scope.row.external_type=='02'">保留</label>
+          <label v-if="scope.row.external_type=='03'">ADAS</label>
+          <label v-if="scope.row.external_type=='04'">DSM</label>
+          <label v-if="scope.row.external_type=='05'">BSD</label>
+          <label v-if="scope.row.external_type=='06'">TPMS</label>
+        </template>
+      </el-table-column>
       <el-table-column prop label="操作" width="180">
         <template slot-scope="scope">
           <el-button size="small" @click="choosePackage(scope)" type="primary">选择</el-button>
@@ -46,13 +56,14 @@ export default {
     this.$instruction.on("x8105", evt => {
       var data = JSON.parse(evt.data);
       if (data.code == 0) {
-        this.$emit("success");
+        this.$emit("success", this.upgradeData);
       }
     });
   },
   data() {
     return {
       deviceData: {},
+      upgradeData: {},
       tableQuery: {
         company_id: "",
         version: ""
@@ -94,7 +105,7 @@ export default {
           CommandWord: "1",
           CommandParameters: str
         };
-        this.$emit("success", scope.row);
+        this.$set(this.$data, "upgradeData", scope.row);
         this.$instruction.send(JSON.stringify(data));
       } else {
         this.$emit("success", scope.row);

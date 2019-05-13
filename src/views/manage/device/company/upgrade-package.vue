@@ -22,6 +22,16 @@
       </div>
       <el-table :data="tableData.data" style="width: 100%">
         <el-table-column prop="version" label="版本号"></el-table-column>
+        <el-table-column prop="external_type" label="设备类型">
+          <template slot-scope="scope">
+            <label v-if="scope.row.external_type=='01'">终端</label>
+            <label v-if="scope.row.external_type=='02'">保留</label>
+            <label v-if="scope.row.external_type=='03'">ADAS</label>
+            <label v-if="scope.row.external_type=='04'">DSM</label>
+            <label v-if="scope.row.external_type=='05'">BSD</label>
+            <label v-if="scope.row.external_type=='06'">TPMS</label>
+          </template>
+        </el-table-column>
         <el-table-column prop label="操作" width="180">
           <template slot-scope="scope">
             <el-button type="primary" @click="updateForm(scope)" size="small">编辑</el-button>

@@ -10,7 +10,7 @@
         <el-checkbox v-for="(val,key) in $dict.additional_alarm_64" :key="key" :label="key">{{val}}</el-checkbox>
       </el-checkbox-group>
     </el-form-item>
-    <el-form-item label="高级驾驶辅助报警类型：">
+    <el-form-item label="驾驶员状态监控报警类型：">
       <el-checkbox-group v-model="alarm_65">
         <el-checkbox v-for="(val,key) in $dict.additional_alarm_65" :key="key" :label="key">{{val}}</el-checkbox>>
       </el-checkbox-group>

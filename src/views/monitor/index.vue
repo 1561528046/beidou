@@ -21,11 +21,16 @@
         </a>
       </div>
     </div>
-    <el-tabs v-model="$store.state.monitor.currentTab" style="height:100%;" class="monitor-tabs" @tab-remove="tabRemove">
+    <el-tabs
+      v-model="$store.state.monitor.currentTab"
+      style="height:100%;"
+      class="monitor-tabs"
+      @tab-remove="tabRemove"
+    >
       <el-tab-pane label="监控" :closable="false" name="index">
         <div class="monitor">
           <!-- <qa-list></qa-list> -->
-          <!-- <monitor-info></monitor-info> -->
+          <monitor-info></monitor-info>
           <!-- <div class="shadow-box monitor-map-tools">
             <el-radio-group v-model="mapTools" @change="changeTools" size="small">
               <el-radio-button style="margin:5px;" label="current" title="查找当前终端">查找当前终端</el-radio-button>
@@ -34,13 +39,33 @@
           </div>-->
           <div id="container" style="width:100%;height:100%;"></div>
           <div class="vehicle-search shadow-box">
-            <el-autocomplete v-model="searchVehicle" clearable :fetch-suggestions="vehicleSearch" placeholder="搜索车辆车牌号" @select="vehicleSelected" size="small" prefix-icon="el-icon-search" style="width:100%;"></el-autocomplete>
+            <el-autocomplete
+              v-model="searchVehicle"
+              clearable
+              :fetch-suggestions="vehicleSearch"
+              placeholder="搜索车辆车牌号"
+              @select="vehicleSelected"
+              size="small"
+              prefix-icon="el-icon-search"
+              style="width:100%;"
+            ></el-autocomplete>
           </div>
           <transition-group name="list-complete" tag="div" class="current-vehicle-container">
-            <vehicle-monitor class="list-complete-item" @close="removeCurrentVehicle(vehicle.sim_id)" v-for="(vehicle,index) in currentVehicles" :vehicle="vehicle" :index="index" :key="vehicle.vehicle_id"></vehicle-monitor>
+            <vehicle-monitor
+              class="list-complete-item"
+              @close="removeCurrentVehicle(vehicle.sim_id)"
+              v-for="(vehicle,index) in currentVehicles"
+              :vehicle="vehicle"
+              :index="index"
+              :key="vehicle.vehicle_id"
+            ></vehicle-monitor>
           </transition-group>
 
-          <el-card :body-style="{padding:0 }" class="status-container shadow-box" @change="toggleUserList">
+          <el-card
+            :body-style="{padding:0 }"
+            class="status-container shadow-box"
+            @change="toggleUserList"
+          >
             <div class="clearfix _header">
               <span class="_global-status" @click.stop="showVehicleAll('total')">
                 车辆总数：
@@ -103,53 +128,139 @@
             </div>-->
           </el-card>
           <transition name="fade" enter-active-class="fadeInLeft" leave-active-class="fadeOutLeft">
-            <vehicle-details @instruction="contextmenuInstruction" @close="closeShowVehicle" @open-single="addSingleVehicle" :vehicle="currentGroup" :show-vehicle="showVehicle"></vehicle-details>
+            <vehicle-details
+              @instruction="contextmenuInstruction"
+              @close="closeShowVehicle"
+              @open-single="addSingleVehicle"
+              :vehicle="currentGroup"
+              :show-vehicle="showVehicle"
+            ></vehicle-details>
           </transition>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="围栏管理" :closable="true" name="fence" v-if="$store.state.monitor.tabs.indexOf('fence') !=-1">
+      <el-tab-pane
+        label="围栏管理"
+        :closable="true"
+        name="fence"
+        v-if="$store.state.monitor.tabs.indexOf('fence') !=-1"
+      >
         <vehicle-area></vehicle-area>
       </el-tab-pane>
-      <el-tab-pane label="报警车辆" :closable="true" name="alarm" v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1">
-        <vehicle-alarm :vehicle="$store.state.monitor.monitorAlarmVehicle" :actived="$store.state.monitor.currentTab=='alarm'" :key="$store.state.monitor.monitorAlarmVehicle.sim_id"></vehicle-alarm>
+      <el-tab-pane
+        label="报警车辆"
+        :closable="true"
+        name="alarm"
+        v-if="$store.state.monitor.tabs.indexOf('alarm') !=-1"
+      >
+        <vehicle-alarm
+          :vehicle="$store.state.monitor.monitorAlarmVehicle"
+          :actived="$store.state.monitor.currentTab=='alarm'"
+          :key="$store.state.monitor.monitorAlarmVehicle.sim_id"
+        ></vehicle-alarm>
       </el-tab-pane>
-      <el-tab-pane label="轨迹回放" :closable="true" name="track" v-if="$store.state.monitor.tabs.indexOf('track') !=-1">
+      <el-tab-pane
+        label="轨迹回放"
+        :closable="true"
+        name="track"
+        v-if="$store.state.monitor.tabs.indexOf('track') !=-1"
+      >
         <vehicle-track :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-track>
       </el-tab-pane>
       <!-- <el-tab-pane label="数据异常" :closable="true" name="error" v-if="$store.state.monitor.tabs.indexOf('error') !=-1">
         <vehicle-error :vehicle="$store.state.monitor.monitorErrorVehicle"></vehicle-error>
       </el-tab-pane>-->
-      <el-tab-pane label="媒体列表" :closable="true" name="media" v-if="$store.state.monitor.tabs.indexOf('media') !=-1">
+      <el-tab-pane
+        label="媒体列表"
+        :closable="true"
+        name="media"
+        v-if="$store.state.monitor.tabs.indexOf('media') !=-1"
+      >
         <vehicle-media :vehicle="$store.state.monitor.monitorMediaVehicle"></vehicle-media>
       </el-tab-pane>
       <!-- 单车标签 -->
-      <el-tab-pane :label="vehicle.license" :closable="true" v-for="vehicle in $store.getters.singleVehicles" :name="'single-'+vehicle.sim_id" :key="'single-'+vehicle.sim_id">
+      <el-tab-pane
+        :label="vehicle.license"
+        :closable="true"
+        v-for="vehicle in $store.getters.singleVehicles"
+        :name="'single-'+vehicle.sim_id"
+        :key="'single-'+vehicle.sim_id"
+      >
         <vehicle-single :vehicle="vehicle"></vehicle-single>
       </el-tab-pane>
-      <el-tab-pane label="视频监控" :closable="true" name="monitoring" v-if="$store.state.monitor.tabs.indexOf('monitoring') !=-1">
+      <el-tab-pane
+        label="视频监控"
+        :closable="true"
+        name="monitoring"
+        v-if="$store.state.monitor.tabs.indexOf('monitoring') !=-1"
+      >
         <vehicle-monitoring :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-monitoring>
       </el-tab-pane>
-      <el-tab-pane label="录像回放" :closable="true" name="playback" v-if="$store.state.monitor.tabs.indexOf('playback') !=-1">
+      <el-tab-pane
+        label="录像回放"
+        :closable="true"
+        name="playback"
+        v-if="$store.state.monitor.tabs.indexOf('playback') !=-1"
+      >
         <vehicle-playback :vehicle="$store.state.monitor.monitorTrackVehicle"></vehicle-playback>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog :title="instructionCard.title" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="instructionCard.show" width="50%">
-      <div :is="instructionCard.component" :key="instructionCard.vehicle.sim_id" :vehicle="instructionCard.vehicle" v-if="instructionCard.vehicle"></div>
+    <el-dialog
+      :title="instructionCard.title"
+      append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="instructionCard.show"
+      width="50%"
+    >
+      <div
+        :is="instructionCard.component"
+        :key="instructionCard.vehicle.sim_id"
+        :vehicle="instructionCard.vehicle"
+        v-if="instructionCard.vehicle"
+      ></div>
     </el-dialog>
-    <el-dialog @close="down()" title="查找当前终端" width="25%" :visible.sync="currentDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog
+      @close="down()"
+      title="查找当前终端"
+      width="25%"
+      :visible.sync="currentDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
       <template>
         <el-table :data="tableData" style="width: 100%">
           <el-table-column prop="license" label="车牌号"></el-table-column>
         </el-table>
       </template>
     </el-dialog>
-    <el-dialog @close="down()" title="查找历史终端" width="40%" :visible.sync="historyDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog
+      @close="down()"
+      title="查找历史终端"
+      width="40%"
+      :visible.sync="historyDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
       <template>
         <el-form ref="form">
           <el-row>
             <el-col :span="14">
               <el-form-item label="时间">
-                <el-date-picker size="small" style="width:80%" v-model="time" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+                <el-date-picker
+                  size="small"
+                  style="width:80%"
+                  v-model="time"
+                  type="datetimerange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -166,13 +277,30 @@
           </el-row>
         </el-form>
         <el-table v-loading="areaLoading" :data="tableHistory" style="width: 100%">
-          <el-table-column prop="time" label="时间" :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"></el-table-column>
+          <el-table-column
+            prop="time"
+            label="时间"
+            :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.time))}"
+          ></el-table-column>
           <el-table-column prop="license" label="车牌号"></el-table-column>
-          <el-table-column prop :formatter="(row)=>{return (row.longitude+','+row.latitude)}" label="位置"></el-table-column>
+          <el-table-column
+            prop
+            :formatter="(row)=>{return (row.longitude+','+row.latitude)}"
+            label="位置"
+          ></el-table-column>
         </el-table>
       </template>
     </el-dialog>
-    <el-dialog title="选择车辆" width="50%" :visible.sync="vehicleDialog" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" :center="true" class="admin-dialog">
+    <el-dialog
+      title="选择车辆"
+      width="50%"
+      :visible.sync="vehicleDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
       <choose-vehicle @button="bindingVehicle"></choose-vehicle>
     </el-dialog>
   </div>

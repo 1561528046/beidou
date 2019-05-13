@@ -47,11 +47,7 @@
         <el-col :span="6">
           <el-form-item label="驾驶员正面照">
             <div style="width:220px;height:220px">
-              <img
-                :src="$dict.BASE_URL+'/Upload/Photo/201905/132017506568640000.jpg'"
-                style="width:100%;height:100%"
-                alt
-              >
+              <img :src="$dict.BASE_URL+formData.photo_path" style="width:100%;height:100%" alt>
             </div>
           </el-form-item>
         </el-col>
@@ -67,15 +63,15 @@
               <el-card class="box-card">
                 每项满分100，分数一月一重置
                 疲劳驾驶：
-                打哈欠每次扣0.5分
-                超过连续驾驶时长，每小时扣1分
-                异常驾驶行为：
-                抽烟每次扣1分
-                打电话每次扣1分
-                百公里报警：（每次报警：由报警开始时间到报警结束为一次）
-                每次1分
-                准点率：
-                每次扣1分
+                <br>分神驾驶每次扣0.5分
+                <br>疲劳驾驶每次扣1分
+                <br>异常驾驶行为：
+                <br>抽烟每次扣1分
+                <br>打电话每次扣1分
+                <br>百公里报警：（每次报警：由报警开始时间到报警结束为一次）
+                <br>每次1分
+                <br>准点率：
+                <br>每次扣1分
               </el-card>
             </el-col>
             <el-col :span="15" style="margin-top:20px">
@@ -93,7 +89,7 @@
             <el-col :span="9">
               <el-card class="box-card">
                 驾驶员评分：
-                疲劳驾驶*0.3 + 百公里报警*0.3 + 准点率*0.1 + 异常驾驶行为*0.3
+                <br>疲劳驾驶*0.3 + 百公里报警*0.3 + 准点率*0.1 + 异常驾驶行为*0.3
               </el-card>
             </el-col>
           </el-row>

@@ -1,27 +1,105 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search">
-      <el-form :model="tableQuery" label-position="left" class="table-search" size="small">
+      <el-form
+        :model="tableQuery"
+        label-width="150px"
+        label-position="left"
+        class="table-search"
+        size="small"
+      >
         <el-row :gutter="30">
           <el-col :span="6">
-            <el-form-item label-width="150px" label="司机身份识别卡编号">
+            <el-form-item label="司机身份识别卡编号">
               <el-input v-model="tableQuery.driver_card_id"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label-width="100px" label="司机姓名">
+            <el-form-item label="司机姓名">
               <el-input v-model="tableQuery.driver_name" placeholder="司机姓名"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label-width="100px" label="身份证号">
+            <el-form-item label="身份证号">
               <el-input v-model="tableQuery.identity_id" placeholder="身份证号"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col v-show="isCollapse" :span="6">
+            <el-form-item label="综合评分">
+              <el-input
+                min="0"
+                max="100"
+                v-model="tableQuery.num_total_begin"
+                style="display:inline-block; width:48%"
+              ></el-input>-
+              <el-input
+                :min="0"
+                :max="100"
+                v-model="tableQuery.num_total_end"
+                style="display:inline-block; width:48%"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col v-show="isCollapse" :span="6">
+            <el-form-item label="疲劳驾驶">
+              <el-input
+                :min="0"
+                v-model="tableQuery.num_fatigue_driving_begin"
+                style="display:inline-block; width:48%"
+              ></el-input>-
+              <el-input
+                :max="100"
+                v-model="tableQuery.num_fatigue_driving_end"
+                style="display:inline-block; width:48%"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col v-show="isCollapse" :span="6">
+            <el-form-item label="百公里报警">
+              <el-input
+                :min="0"
+                v-model="tableQuery.num_100km_alarm_begin"
+                style="display:inline-block; width:48%"
+              ></el-input>-
+              <el-input
+                :max="100"
+                v-model="tableQuery.num_100km_alarm_end"
+                style="display:inline-block; width:48%"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col v-show="isCollapse" :span="6">
+            <el-form-item label="异常驾驶行为">
+              <el-input
+                :min="0"
+                v-model="tableQuery.num_abnormal_driving_begin"
+                style="display:inline-block; width:48%"
+              ></el-input>-
+              <el-input
+                :max="100"
+                v-model="tableQuery.num_abnormal_driving_end"
+                style="display:inline-block; width:48%"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col v-show="isCollapse" :span="6">
+            <el-form-item label="准点率">
+              <el-input
+                :min="0"
+                v-model="tableQuery.num_punctuality_begin"
+                style="display:inline-block; width:48%"
+              ></el-input>-
+              <el-input
+                :max="100"
+                v-model="tableQuery.num_punctuality_end"
+                style="display:inline-block; width:48%"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
-              <!-- <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
-              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>-->
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="isCollapse">收起</el-button>
+              <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
               <el-button type="primary" @click="getTable">查询</el-button>
             </el-form-item>
           </el-col>
@@ -178,6 +256,16 @@ export default {
       num_punctuality: "",
       num_total: "",
       tableQuery: {
+        num_fatigue_driving_begin: "", //疲劳驾驶最小值
+        num_fatigue_driving_end: "", //疲劳驾驶最大值
+        num_abnormal_driving_begin: "", //异常驾驶行为最小值
+        num_abnormal_driving_end: "", //异常驾驶行为最大值
+        num_100km_alarm_begin: "", //百公里报警最小值
+        num_100km_alarm_end: "", //百公里报警最大值
+        num_punctuality_begin: "", //准点率最小值
+        num_punctuality_end: "", //准点率最大值
+        num_total_begin: "", //综合评分最小值
+        num_total_end: "", //综合评分最大值
         driver_name: "",
         driver_card_id: "",
         identity_id: "",

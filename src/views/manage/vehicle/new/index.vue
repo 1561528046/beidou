@@ -35,7 +35,11 @@
               <el-input v-model="tableQuery.sim_no" placeholder="安装SIM卡号"></el-input>
             </el-form-item>
           </el-col>
-
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item label="设备型号">
+              <el-input v-model="tableQuery.model_num"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="6" v-show="isCollapse">
             <el-form-item label="所属地区">
               <select-city-input :area.sync="area" :select-all="true" style="width:100%;" clearable></select-city-input>
@@ -498,6 +502,7 @@ export default {
       first_date: [],
       area: [],
       tableQuery: {
+        model_num: "",
         device_no: "",
         province_id: "",
         city_id: "",

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card>
-      <el-form ref="baseForm" size="small" label-width="100px" :rules="rules" :model="tableQuery">
+      <el-form ref="baseForm" size="small" label-width="110px" :rules="rules" :model="tableQuery">
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item prop="time" label="时间">
@@ -35,6 +35,19 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item prop label="报警等级">
+              <el-select clearable v-model="tableQuery.alarm_lev" style="width:100%">
+                <el-option value="1" label="一级"></el-option>
+                <el-option value="2" label="二级"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6" v-if="isCollapse">
+            <el-form-item prop label="驾驶员身份证号">
+              <el-input v-model="tableQuery.identity_id"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
             <el-form-item>
               <el-button type="primary" @click="isCollapse=!isCollapse" v-if="!isCollapse">展开</el-button>
@@ -66,6 +79,20 @@
           :formatter="(row)=>{return this.$dict.getAlarm(JSON.stringify(row.AlarmSign))}"
         ></el-table-column>
         <el-table-column prop="RegionName" label="平台报警类型" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="JI0x64AlarmType"
+          label="高级驾驶辅助报警类型"
+          :formatter="(row)=>{return $dict.get_additional_alarm_64(row.JI0x64AlarmType)}"
+        ></el-table-column>
+        <el-table-column
+          prop="JI0x65AlarmType"
+          label="驾驶员状态监控报警类型"
+          :formatter="(row)=>{return $dict.get_additional_alarm_65(row.JI0x65AlarmType)}"
+        ></el-table-column>
+        <!-- <el-table-column prop label="标志状态"></el-table-column>
+        <el-table-column prop label="报警级别"></el-table-column>
+        <el-table-column prop label="其他状态"></el-table-column>
+        <el-table-column prop label="是否达到平台二级报警"></el-table-column>-->
         <!-- <el-table-column prop="RegionName" label="ACC信号异常报警" :formatter="$utils.baseFormatter"></el-table-column> -->
         <el-table-column
           prop="Time"
@@ -180,6 +207,10 @@ export default {
         source: "",
         alarmType35658: "",
         alarm35658_name: "",
+        ji0x64_alarmtype: "",
+        ji0x65_alarmtype: "",
+        identity_id: "",
+        alarm_lev: "",
         page: 1,
         size: 10
       },
@@ -222,7 +253,9 @@ export default {
           E: "速度",
           F: "位置",
           G: "经纬度",
-          H: "扩展报警类型"
+          H: "扩展报警类型",
+          I: "高级驾驶辅助报警类型",
+          J: "驾驶员状态监控报警类型"
         }
       ];
       this.tableData.data.map(data => {
@@ -234,7 +267,9 @@ export default {
           E: data.Speed,
           F: data.address,
           G: data.Longitude + "," + data.Latitude,
-          H: this.$dict.get_additional_alarm(data.alarmType35658)
+          H: this.$dict.get_additional_alarm(data.alarmType35658),
+          I: this.$dict.get_additional_alarm_64(data.JI0x64AlarmType),
+          J: this.$dict.get_additional_alarm_65(data.JI0x65AlarmType)
         });
       });
       this.$utils.exportExcel({
@@ -378,33 +413,49 @@ export default {
     },
     // 选择好报警类型的回调
     storageType(data) {
+      this.alarmTypes = data;
+      this.tableQuery.alarm_name = "";
+      this.tableQuery.ji0x64_alarmtype = "";
+      this.tableQuery.ji0x65_alarmtype = "";
+      this.tableQuery.alarm_type = "";
+      this.typeDialog = false;
       var alarmName = "";
       for (var key in data) {
         if (key == "alarm") {
           data[key].map(itam => {
+            this.tableQuery.alarm_type =
+              this.tableQuery.alarm_type + itam + ",";
             alarmName = alarmName + this.$dict.getAlarms(itam) + ",";
           });
         } else if (key == "alarm_64") {
           data[key].map(itam => {
+            this.tableQuery.ji0x64_alarmtype =
+              this.tableQuery.ji0x64_alarmtype + itam + ",";
             alarmName =
               alarmName + this.$dict.get_additional_alarm_64(itam) + ",";
           });
         } else if (key == "alarm_65") {
           data[key].map(itam => {
+            this.tableQuery.ji0x65_alarmtype =
+              this.tableQuery.ji0x65_alarmtype + itam + ",";
             alarmName =
               alarmName + this.$dict.get_additional_alarm_65(itam) + ",";
           });
         }
       }
       // data.sort(this.sortNumber);
-      this.alarmTypes = data;
-      this.tableQuery.alarm_name = "";
-      this.tableQuery.alarm_type = "";
-      this.typeDialog = false;
-      // this.tableQuery.alarm_type = this.tableQuery.alarm_type.substring(
-      //   0,
-      //   this.tableQuery.alarm_type.lastIndexOf(",")
-      // );
+      this.tableQuery.alarm_type = this.tableQuery.alarm_type.substring(
+        0,
+        this.tableQuery.alarm_type.lastIndexOf(",")
+      );
+      this.tableQuery.ji0x65_alarmtype = this.tableQuery.ji0x65_alarmtype.substring(
+        0,
+        this.tableQuery.ji0x65_alarmtype.lastIndexOf(",")
+      );
+      this.tableQuery.ji0x64_alarmtype = this.tableQuery.ji0x64_alarmtype.substring(
+        0,
+        this.tableQuery.ji0x64_alarmtype.lastIndexOf(",")
+      );
       this.tableQuery.alarm_name = alarmName.substring(
         0,
         alarmName.lastIndexOf(",")

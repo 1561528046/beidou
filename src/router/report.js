@@ -333,6 +333,15 @@ export default {
             import("@/views/manage/report/vehiclelink/details/index.vue")
         }
       ]
+    },
+    {
+      path: "driver-upload",
+      name: "driver-upload",
+      meta: {
+        name: "驾驶员上传记录表",
+        icon: "iconfont icon-shangchuanjilu"
+      },
+      component: () => import("@/views/manage/report/record/index.vue")
     }
     // 视频报警报表
     // {
