@@ -406,9 +406,9 @@ function SHL(num, step) {
 function GetUintFromBytes(bytes, start) {
   return (
     SHL(bytes[start], 24) +
-    (buffer[start + 1] << 16) +
-    (buffer[start + 2] << 8) +
-    buffer[start + 3]
+    (bytes[start + 1] << 16) +
+    (bytes[start + 2] << 8) +
+    bytes[start + 3]
   );
 }
 // 字节数组转ushort
