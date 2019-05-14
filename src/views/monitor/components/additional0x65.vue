@@ -23,13 +23,15 @@
         <el-col :span="12">序号:{{viewData.AlarmSign.SerialNO}}</el-col>
         <el-col :span="12">附件数量:{{viewData.AlarmSign.AttachmentCount}}</el-col>
         <!-- <el-col :span="12">车辆状态:{{viewData.VehicleStatus}}</el-col> -->
-        <el-col :span="12">附件数量:{{viewData.AlarmSign.AttachmentCount}}</el-col>
+        <!-- <el-col :span="12">附件数量:{{viewData.AlarmSign.AttachmentCount}}</el-col> -->
         <el-col :span="12">ACC状态: {{getVehicleStatus(viewData.AlarmSign.VehicleStatus,0)?"关闭":"打开"}}</el-col>
         <el-col :span="12">左转向状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,1)?"关闭":"打开"}}</el-col>
         <el-col :span="12">右转向状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,2)?"关闭":"打开"}}</el-col>
         <el-col :span="12">雨刮器状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,3)?"关闭":"打开"}}</el-col>
         <el-col :span="12">制动状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,4)?"未制动":"制动"}}</el-col>
-        <el-col :span="12">插卡状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,5)?"未插卡":"已插卡"}}</el-col>
+        <el-col
+          :span="12"
+        >插卡状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,5)?"未插卡":"已插卡"}}</el-col>
       </template>
     </el-row>
   </div>

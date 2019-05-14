@@ -362,14 +362,14 @@
               class="iconfont icon-pingbizi"
             ></i>
           </li>
-          <li>
+          <!-- <li>
             <i
               title="报警联动设置"
               @click="setLinkage"
               style="font-size:24px;cursor:pointer"
               class="iconfont icon-nav-strategy"
             ></i>
-          </li>
+          </li>-->
         </ul>
       </div>
       <div style="margin-top:10px">
