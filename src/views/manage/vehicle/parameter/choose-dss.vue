@@ -78,11 +78,29 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="报警使能"></el-form-item>
+          <el-col :span="24">
+            <el-form-item label="报警使能">
+              <el-checkbox-group v-model="alarmList">
+                <el-checkbox label="0">疲劳驾驶一级报警</el-checkbox>
+                <el-checkbox label="1">疲劳驾驶二级报警</el-checkbox>
+                <el-checkbox label="2">接打电话一级报警</el-checkbox>
+                <el-checkbox label="3">接打电话二级报警</el-checkbox>
+                <el-checkbox label="4">抽烟一级报警</el-checkbox>
+                <el-checkbox label="5">抽烟二级报警</el-checkbox>
+                <el-checkbox label="6">分神驾驶一级报警</el-checkbox>
+                <el-checkbox label="7">分神驾驶二级报警</el-checkbox>
+                <el-checkbox label="8">驾驶员异常一级报警</el-checkbox>
+                <el-checkbox label="9" style="margin-left:0">驾驶员异常二级报警</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="事件使能"></el-form-item>
+          <el-col :span="24">
+            <el-form-item label="事件使能">
+              <el-checkbox-group v-model="eventList">
+                <el-checkbox label="0">驾驶员更换事件</el-checkbox>
+                <el-checkbox label="1">主动拍照事件</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="吸烟报警判断时间间隔">
@@ -275,7 +293,7 @@
       </el-form>
     </div>
     <div style="width:160px; margin:0 auto">
-      <el-button size="small" type="primary">设置</el-button>
+      <el-button size="small" type="primary" @click="setInstruction">设置</el-button>
       <el-button size="small" @click="collectInstruction" type="primary">采集</el-button>
     </div>
   </div>
@@ -283,9 +301,19 @@
 <script>
 export default {
   created() {
-    this.$instruction.on(evt => {
+    this.$instruction.on("x0104", evt => {
       var data = JSON.parse(evt.data);
       console.log(data);
+    });
+    this.$instruction.on("x8103", evt => {
+      var data = JSON.parse(evt.data);
+      if (data.code == 0 && data.ParameterId == 101) {
+        return this.$notify({
+          message: "驾驶员状态系统参数设置指令下发成功",
+          title: "提示",
+          type: "success"
+        });
+      }
     });
   },
   props: {
@@ -294,7 +322,6 @@ export default {
   watch: {
     message: {
       handler: function() {
-        console.log(this.$props.message);
         this.$set(this.$data, "communication", this.$props.message);
       },
       deep: true
@@ -303,7 +330,12 @@ export default {
   data() {
     return {
       communication: [],
+      alarmList: [],
+      eventList: [],
       formData: {
+        MessageID: "x8103",
+        SimID: "",
+        ParameterId: 101,
         AlarmJudgmentSpeedThreshold: "", //报警判断速度阈值
         AlarmVolume: "", //报警音量
         ActivePhotographyStrategy: "", //主动拍照策略
@@ -343,6 +375,31 @@ export default {
     };
   },
   methods: {
+    setInstruction() {
+      if (this.communication.length > 0) {
+        var alarm = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        var event = [0, 0];
+        this.alarmList.map(item => {
+          alarm[item] = 1;
+        });
+        this.eventList.map(itbm => {
+          event[itbm] = 1;
+        });
+        this.formData.AlarmEnable = parseInt(alarm.reverse().join(""), 2);
+        this.formData.EventEnabling = parseInt(event.reverse().join(""), 2);
+        this.communication.map(itcm => {
+          this.formData.SimID =
+            itcm.sim_id.length > 11 ? itcm.sim_id : "0" + itcm.sim_id;
+          this.$instruction.send(JSON.stringify(this.formData));
+        });
+      } else {
+        return this.$notify({
+          message: "请选择车辆",
+          title: "提示",
+          type: "error"
+        });
+      }
+    },
     collectInstruction() {
       var data = {};
       var simId = "";

@@ -80,21 +80,6 @@
         ></el-table-column>
         <el-table-column prop="RegionName" label="平台报警类型" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column
-          prop="JI0x64AlarmType"
-          label="高级驾驶辅助报警类型"
-          :formatter="(row)=>{return $dict.get_additional_alarm_64(row.JI0x64AlarmType)}"
-        ></el-table-column>
-        <el-table-column
-          prop="JI0x65AlarmType"
-          label="驾驶员状态监控报警类型"
-          :formatter="(row)=>{return $dict.get_additional_alarm_65(row.JI0x65AlarmType)}"
-        ></el-table-column>
-        <!-- <el-table-column prop label="标志状态"></el-table-column>
-        <el-table-column prop label="报警级别"></el-table-column>
-        <el-table-column prop label="其他状态"></el-table-column>
-        <el-table-column prop label="是否达到平台二级报警"></el-table-column>-->
-        <!-- <el-table-column prop="RegionName" label="ACC信号异常报警" :formatter="$utils.baseFormatter"></el-table-column> -->
-        <el-table-column
           prop="Time"
           label="时间"
           :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.Time))}"
@@ -252,10 +237,7 @@ export default {
           D: "时间",
           E: "速度",
           F: "位置",
-          G: "经纬度",
-          H: "扩展报警类型",
-          I: "高级驾驶辅助报警类型",
-          J: "驾驶员状态监控报警类型"
+          G: "经纬度"
         }
       ];
       this.tableData.data.map(data => {
@@ -266,10 +248,7 @@ export default {
           D: this.$utils.formatDate14(JSON.stringify(data.Time)),
           E: data.Speed,
           F: data.address,
-          G: data.Longitude + "," + data.Latitude,
-          H: this.$dict.get_additional_alarm(data.alarmType35658),
-          I: this.$dict.get_additional_alarm_64(data.JI0x64AlarmType),
-          J: this.$dict.get_additional_alarm_65(data.JI0x65AlarmType)
+          G: data.Longitude + "," + data.Latitude
         });
       });
       this.$utils.exportExcel({
@@ -302,13 +281,6 @@ export default {
       if (this.tableQuery.license == "") {
         return this.$notify({
           message: "请选择车辆",
-          title: "提示",
-          type: "error"
-        });
-      }
-      if (this.tableQuery.alarm_type == "") {
-        return this.$notify({
-          message: "请选择抱紧类型",
           title: "提示",
           type: "error"
         });
@@ -415,50 +387,21 @@ export default {
     storageType(data) {
       this.alarmTypes = data;
       this.tableQuery.alarm_name = "";
-      this.tableQuery.ji0x64_alarmtype = "";
-      this.tableQuery.ji0x65_alarmtype = "";
       this.tableQuery.alarm_type = "";
       this.typeDialog = false;
-      var alarmName = "";
-      for (var key in data) {
-        if (key == "alarm") {
-          data[key].map(itam => {
-            this.tableQuery.alarm_type =
-              this.tableQuery.alarm_type + itam + ",";
-            alarmName = alarmName + this.$dict.getAlarms(itam) + ",";
-          });
-        } else if (key == "alarm_64") {
-          data[key].map(itam => {
-            this.tableQuery.ji0x64_alarmtype =
-              this.tableQuery.ji0x64_alarmtype + itam + ",";
-            alarmName =
-              alarmName + this.$dict.get_additional_alarm_64(itam) + ",";
-          });
-        } else if (key == "alarm_65") {
-          data[key].map(itam => {
-            this.tableQuery.ji0x65_alarmtype =
-              this.tableQuery.ji0x65_alarmtype + itam + ",";
-            alarmName =
-              alarmName + this.$dict.get_additional_alarm_65(itam) + ",";
-          });
-        }
-      }
+      data.map(item => {
+        this.tableQuery.alarm_name =
+          this.tableQuery.alarm_name + this.$dict.getAlarms(item) + ",";
+        this.tableQuery.alarm_type = this.tableQuery.alarm_type + item + ",";
+      });
       // data.sort(this.sortNumber);
       this.tableQuery.alarm_type = this.tableQuery.alarm_type.substring(
         0,
         this.tableQuery.alarm_type.lastIndexOf(",")
       );
-      this.tableQuery.ji0x65_alarmtype = this.tableQuery.ji0x65_alarmtype.substring(
+      this.tableQuery.alarm_name = this.tableQuery.alarm_name.substring(
         0,
-        this.tableQuery.ji0x65_alarmtype.lastIndexOf(",")
-      );
-      this.tableQuery.ji0x64_alarmtype = this.tableQuery.ji0x64_alarmtype.substring(
-        0,
-        this.tableQuery.ji0x64_alarmtype.lastIndexOf(",")
-      );
-      this.tableQuery.alarm_name = alarmName.substring(
-        0,
-        alarmName.lastIndexOf(",")
+        this.tableQuery.alarm_name.lastIndexOf(",")
       );
     },
     // 分页

@@ -82,7 +82,45 @@ var routers = [
       product,
       user,
       agreement,
-
+      {
+        path: "analysis",
+        name: "analysis",
+        meta: {
+          name: "数据分析",
+          icon: "iconfont icon-shujufenxi"
+        },
+        component: () => import("@/views/manage/analysis/index.vue"),
+        children: [
+          {
+            path: "additional-alarm",
+            name: "additional-alarm",
+            meta: {
+              name: "主动安全分析",
+              icon: "iconfont icon-baojing"
+            },
+            component: () =>
+              import("@/views/manage/analysis/additional-alarm/index.vue")
+          },
+          {
+            path: "adas-alarm",
+            name: "adas-alarm",
+            meta: {
+              name: "高级驾驶辅助报警",
+              icon: "iconfont icon-baojing"
+            },
+            component: () => import("@/views/manage/analysis/adas/index.vue")
+          },
+          {
+            path: "dss-alarm",
+            name: "dss-alarm",
+            meta: {
+              name: "驾驶员状态监控报警",
+              icon: "iconfont icon-baojing"
+            },
+            component: () => import("@/views/manage/analysis/dss/index.vue")
+          }
+        ]
+      },
       {
         path: "group_binding",
         name: "group_binding",

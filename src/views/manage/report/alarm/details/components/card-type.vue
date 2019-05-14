@@ -1,18 +1,12 @@
 <template>
   <el-form status-icon @submit.native.prevent size="small" ref="baseForm" class="msg-form">
-    <el-form-item label="常规报警类型：">
-      <el-checkbox-group v-model="alarm">
-        <el-checkbox v-for="(val,key) in $dict.alarm" :key="key" :label="key">{{val}}</el-checkbox>
-      </el-checkbox-group>
-    </el-form-item>
-    <el-form-item label="高级驾驶辅助报警类型：">
-      <el-checkbox-group v-model="alarm_64">
-        <el-checkbox v-for="(val,key) in $dict.additional_alarm_64" :key="key" :label="key">{{val}}</el-checkbox>
-      </el-checkbox-group>
-    </el-form-item>
-    <el-form-item label="驾驶员状态监控报警类型：">
-      <el-checkbox-group v-model="alarm_65">
-        <el-checkbox v-for="(val,key) in $dict.additional_alarm_65" :key="key" :label="key">{{val}}</el-checkbox>>
+    <el-form-item>
+      <el-checkbox-group v-model="alarmList">
+        <el-row>
+          <el-col :span="8" v-for="(val,key) in $dict.alarm" :key="key">
+            <el-checkbox :label="key">{{val}}</el-checkbox>
+          </el-col>
+        </el-row>
       </el-checkbox-group>
     </el-form-item>
     <el-form-item style="text-align:center; margin-top:20px;margin-bottom:-10px;">
@@ -26,20 +20,12 @@ export default {
   mounted() {},
   data() {
     return {
-      alarm: [],
-      alarm_64: [],
-      alarm_65: []
+      alarmList: []
     };
   },
   methods: {
     formSubmit() {
-      var data = {};
-      data = {
-        alarm: this.alarm,
-        alarm_64: this.alarm_64,
-        alarm_65: this.alarm_65
-      };
-      this.$emit("card", data);
+      this.$emit("card", this.alarmList);
     }
   },
   watch: {

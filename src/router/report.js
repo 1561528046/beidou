@@ -8,13 +8,6 @@ export default {
   },
   component: () => import("@/views/manage/report/index.vue"),
   children: [
-    {
-      path: "additional-alarm",
-      name: "additional-alarm",
-      meta: { name: "主动安全分析", icon: "iconfont icon-baojing", p: "7-1-1" },
-      component: () =>
-        import("@/views/manage/report/additional-alarm/index.vue")
-    },
     // 报警报表
     {
       path: "alarm",

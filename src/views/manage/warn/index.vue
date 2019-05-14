@@ -108,7 +108,6 @@ export default {
     dateRange: function() {
       this.tableQuery.StartTime = this.dateRange[0];
       this.tableQuery.EndTime = this.dateRange[1];
-      console.log(this.tableQuery);
     }
   },
   data() {
