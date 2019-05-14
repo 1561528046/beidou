@@ -20,13 +20,13 @@
       </el-col>
       <el-col :span="12">道路标志识别数据:{{viewData.RoadSignNum}}</el-col>
       <el-col :span="12">车速:{{viewData.Speed}}</el-col>
-      <el-col :span="12">纬度:{{viewData.Altitude}}</el-col>
-      <el-col :span="12">经度:{{viewData.Latitude}}</el-col>
+      <el-col :span="12">高程:{{viewData.Altitude}}</el-col>
+      <el-col :span="12">纬度:{{viewData.Latitude}}</el-col>
+      <el-col :span="12">经度:{{viewData.Longitude}}</el-col>
       <el-col :span="12">日期时间:{{viewData.DateTime}}</el-col>
       <el-col :span="12">终端ID:{{viewData.AlarmSign.TerminalID}}</el-col>
       <el-col :span="12">时间:{{viewData.AlarmSign.DateTime}}</el-col>
       <el-col :span="12">序号:{{viewData.AlarmSign.SerialNO}}</el-col>
-      <el-col :span="12">附件数量:{{viewData.AlarmSign.AttachmentCount}}</el-col>
       <!-- <el-col :span="12">车辆状态:{{viewData.VehicleStatus}}</el-col> -->
       <el-col :span="12">附件数量:{{viewData.AlarmSign.AttachmentCount}}</el-col>
       <el-col :span="12">ACC状态: {{getVehicleStatus(viewData.AlarmSign.VehicleStatus,0)?"关闭":"打开"}}</el-col>
