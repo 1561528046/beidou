@@ -300,8 +300,10 @@ function x0200(buffer) {
             RoadSignNum: buffer[i + 13],
             Speed: buffer[i + 14],
             Altitude: GetUshortFromBytes(buffer, i + 15),
-            Latitude: GetUintFromBytes(buffer, i + 17),
-            Longitude: GetUintFromBytes(buffer, i + 21),
+            Latitude:
+              (GetUintFromBytes(buffer, i + 17) / 1000000).toFixed(5) - 0,
+            Longitude:
+              (GetUintFromBytes(buffer, i + 21) / 1000000).toFixed(5) - 0,
             DateTime: GetDateTimeFromBCD6(buffer, i + 25),
             VehicleStatus: GetUshortFromBytes(buffer, i + 31),
             AlarmSign: {
@@ -322,8 +324,10 @@ function x0200(buffer) {
             //预留4位
             Speed: buffer[i + 14],
             Altitude: GetUshortFromBytes(buffer, i + 15),
-            Latitude: GetUintFromBytes(buffer, i + 17),
-            Longitude: GetUintFromBytes(buffer, i + 21),
+            Latitude:
+              (GetUintFromBytes(buffer, i + 17) / 1000000).toFixed(5) - 0,
+            Longitude:
+              (GetUintFromBytes(buffer, i + 21) / 1000000).toFixed(5) - 0,
             DateTime: GetDateTimeFromBCD6(buffer, i + 25),
             VehicleStatus: GetUshortFromBytes(buffer, i + 31),
             AlarmSign: {
