@@ -14,8 +14,9 @@
       <el-col :span="12" v-if="viewData.alarmType==1">疲劳程度:{{viewData.FatigueDegree}}</el-col>
 
       <el-col :span="12">车速:{{viewData.Speed}}</el-col>
-      <el-col :span="12">纬度:{{viewData.Altitude}}</el-col>
-      <el-col :span="12">经度:{{viewData.Latitude}}</el-col>
+      <el-col :span="12">高程:{{viewData.Altitude}}</el-col>
+      <el-col :span="12">纬度:{{viewData.Latitude}}</el-col>
+      <el-col :span="12">经度:{{viewData.Longitude}}</el-col>
       <el-col :span="12">日期时间:{{viewData.DateTime}}</el-col>
       <template v-if="viewData.AlarmSign">
         <el-col :span="12">终端ID:{{viewData.AlarmSign.TerminalID}}</el-col>
