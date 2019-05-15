@@ -35,17 +35,17 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-if="isCollapse">
+          <!-- <el-col :span="6" v-if="isCollapse">
             <el-form-item prop label="报警等级">
               <el-select clearable v-model="tableQuery.alarm_lev" style="width:100%">
                 <el-option value="1" label="一级"></el-option>
                 <el-option value="2" label="二级"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="6" v-if="isCollapse">
-            <el-form-item prop label="驾驶员身份证号">
-              <el-input v-model="tableQuery.identity_id"></el-input>
+          </el-col>-->
+          <el-col v-show="isCollapse" :span="6">
+            <el-form-item label="驾驶员身份证">
+              <el-input @focus="selectDriver" v-model="tableQuery.identity_id"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="isCollapse?24:6" style="text-align: right;">
@@ -74,6 +74,11 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="license_color"
+          label="车牌颜色"
+          :formatter="(row)=>{return $dict.get_color(row.license_color)}"
+        ></el-table-column>
+        <el-table-column
           prop="AlarmSign"
           label="终端报警类型"
           :formatter="(row)=>{return this.$dict.getAlarm(JSON.stringify(row.AlarmSign))}"
@@ -81,12 +86,13 @@
         <el-table-column prop="RegionName" label="平台报警类型" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column
           prop="Time"
-          label="时间"
+          label="报警时间"
           :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.Time))}"
         ></el-table-column>
         <el-table-column prop="Speed" label="速度" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column label="纬度" :formatter="(row)=>{return  row.Latitude }"></el-table-column>
         <el-table-column label="经度" :formatter="(row)=>{return row.Longitude }"></el-table-column>
+        <el-table-column label="纬度" :formatter="(row)=>{return  row.Latitude }"></el-table-column>
+        <el-table-column label="高程" :formatter="(row)=>{return row.Altitude}"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination
@@ -127,6 +133,19 @@
     >
       <card-type :type="alarmList" @card="storageType"></card-type>
     </el-dialog>
+    <!-- 选择驾驶员 -->
+    <el-dialog
+      width="50%"
+      title="选择驾驶员"
+      :visible.sync="driverDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <choose-driver @save="saveDriver" :key="addKey"></choose-driver>
+    </el-dialog>
     <!-- 选择扩展报警类型 -->
     <el-dialog
       width="40%"
@@ -162,11 +181,23 @@ import moment from "moment";
 import selectAlarmtype from "@/components/select-alarmtype.vue";
 import cardVehicle from "./components/card-vehicle.vue";
 import cardType from "./components/card-type.vue";
+import chooseDriver from "@/components/choose-driver.vue";
 import { getAlarmDetailByPage, GetVehicleBySIMIDToPaper } from "@/api/index.js";
 export default {
-  components: { cardVehicle, cardType, selectAlarmtype },
+  components: { cardVehicle, cardType, selectAlarmtype, chooseDriver },
+  created() {
+    var alarm = [];
+    for (var key in this.$dict.alarm) {
+      alarm.push(key);
+    }
+    this.$set(this.tableQuery, "alarm_type", alarm.join(","));
+    this.$set(this.$data, "alarmType", alarm.join(","));
+  },
   data() {
     return {
+      addKey: 0,
+      alarmType: "",
+      driverDialog: false,
       tableLoading: false,
       vehicleDialog: false,
       typeDialog: false,
@@ -232,23 +263,27 @@ export default {
       var wsCol = [
         {
           A: "车牌号",
-          B: "终端报警类型",
-          C: "平台报警类型",
-          D: "时间",
-          E: "速度",
-          F: "位置",
-          G: "经纬度"
+          B: "车牌颜色",
+          C: "终端报警类型",
+          D: "平台报警类型",
+          E: "报警时间",
+          F: "速度",
+          G: "经度",
+          H: "纬度",
+          I: "高程"
         }
       ];
       this.tableData.data.map(data => {
         wsCol.push({
           A: data.license,
-          B: this.$dict.getAlarm(data.AlarmSign),
-          C: data.RegionName,
-          D: this.$utils.formatDate14(JSON.stringify(data.Time)),
-          E: data.Speed,
-          F: data.address,
-          G: data.Longitude + "," + data.Latitude
+          B: this.$dict.get_color(data.license_color),
+          C: this.$dict.getAlarm(data.AlarmSign),
+          D: data.RegionName,
+          E: this.$utils.formatDate14(data.Time),
+          F: data.Speed,
+          G: data.Longitude,
+          H: data.Latitude,
+          I: data.Altitude
         });
       });
       this.$utils.exportExcel({
@@ -265,6 +300,15 @@ export default {
         "alarm35658_name",
         this.$dict.get_additional_alarmList(this.typeList)
       );
+    },
+    // 选择驾驶员
+    selectDriver() {
+      this.addKey++;
+      this.driverDialog = true;
+    },
+    saveDriver(data) {
+      this.driverDialog = false;
+      this.$set(this.tableQuery, "identity_id", data.identity_id);
     },
     selectType35658() {
       this.type35658Dialog = true;
@@ -284,6 +328,9 @@ export default {
           title: "提示",
           type: "error"
         });
+      }
+      if (this.tableQuery.alarm_type == "") {
+        this.tableQuery.alarm_type = this.alarmType;
       }
       this.tableLoading = true;
       this.$refs.baseForm.validate((isVaildate, errorItem) => {

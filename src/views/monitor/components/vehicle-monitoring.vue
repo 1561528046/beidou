@@ -1433,7 +1433,6 @@ export default {
         this.vehicleData.sim_id +
         "_" +
         row.logical_channel;
-      console.log(src);
       var data = {};
       var storage = {};
       if (row.state) {

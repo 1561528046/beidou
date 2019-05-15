@@ -27,14 +27,14 @@
               <el-input @focus="selectType" v-model="tableQuery.alarm_name"></el-input>
             </el-form-item>
           </el-col>
-          <el-col v-show="isCollapse" :span="6">
+          <!-- <el-col v-show="isCollapse" :span="6">
             <el-form-item label="报警来源">
               <el-select clearable style="width:100%" v-model="tableQuery.source">
                 <el-option value="1" label="平台">平台</el-option>
                 <el-option value="0" label="终端">终端</el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col>-->
           <el-col v-show="isCollapse" :span="6">
             <el-form-item label="报警等级">
               <el-select clearable v-model="tableQuery.alarm_lev" style="width:100%">
@@ -44,7 +44,7 @@
             </el-form-item>
           </el-col>
           <el-col v-show="isCollapse" :span="6">
-            <el-form-item label="驾驶员">
+            <el-form-item label="驾驶员身份证">
               <el-input @focus="selectDriver" v-model="tableQuery.identity_id"></el-input>
             </el-form-item>
           </el-col>
@@ -67,20 +67,54 @@
       </div>
       <el-table :data="tableData.data" style="width: 100%">
         <el-table-column prop="license" label="车牌号"></el-table-column>
-        <el-table-column prop="license_color" label="车牌颜色"></el-table-column>
+        <el-table-column
+          prop="license_color"
+          :formatter="(row)=>{return $dict.get_color(row.license_color)}"
+          label="车牌颜色"
+        ></el-table-column>
+        <el-table-column
+          prop="Time"
+          label="时间"
+          :formatter="(row)=>{return  $utils.formatDate14(row.Time)}"
+        ></el-table-column>
         <el-table-column
           prop="JI0x64AlarmType"
           label="报警类型"
           :formatter="(row)=>{return $dict.get_additional_alarm_64(row.JI0x64AlarmType)}"
         ></el-table-column>
-        <el-table-column
-          prop="Time"
-          label="时间"
-          :formatter="(row)=>{return this.$utils.formatDate14(JSON.stringify(row.Time))}"
-        ></el-table-column>
+        <el-table-column prop="JI0x64AlarmLevel" label="终端报警级别">
+          <template slot-scope="scope">
+            <label v-if="scope.row.JI0x64AlarmLevel==0">无</label>
+            <label v-if="scope.row.JI0x64AlarmLevel==1">一级报警</label>
+            <label v-if="scope.row.JI0x64AlarmLevel==2">二级报警</label>
+          </template>
+        </el-table-column>
+        <el-table-column prop="JIPlatformAlarmLev2" label="平台判断二级报警">
+          <template slot-scope="scope">
+            <label v-if="scope.row.JIPlatformAlarmLev2==0">否</label>
+            <label v-if="scope.row.JIPlatformAlarmLev2==1">是</label>
+          </template>
+        </el-table-column>
+        <el-table-column prop="JI0x64SignStatus" label="开始时间">
+          <template slot-scope="scope">
+            <label
+              v-if="scope.row.JI0x64SignStatus==1"
+            >{{ $utils.formatDate14(JSON.stringify(scope.row.Time))}}</label>
+            <label v-if="scope.row.JI0x64SignStatus!=1">--</label>
+          </template>
+        </el-table-column>
+        <el-table-column prop="JI0x64SignStatus" label="结束时间">
+          <template slot-scope="scope">
+            <label
+              v-if="scope.row.JI0x64SignStatus==2"
+            >{{ $utils.formatDate14(JSON.stringify(scope.row.Time))}}</label>
+            <label v-if="scope.row.JI0x64SignStatus!=2">--</label>
+          </template>
+        </el-table-column>
         <el-table-column prop="Speed" label="速度" :formatter="$utils.baseFormatter "></el-table-column>
-        <el-table-column label="纬度" :formatter="(row)=>{return  row.Latitude }"></el-table-column>
-        <el-table-column label="经度" :formatter="(row)=>{return row.Longitude }"></el-table-column>
+        <el-table-column prop="Latitude" label="纬度" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Longitude" label="经度" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Altitude" label="高程" :formatter="$utils.baseFormatter"></el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination
@@ -137,7 +171,7 @@
         style="margin:0 auto;display:block"
       >提交</el-button>
     </el-dialog>
-    <!-- 选择车辆 -->
+    <!-- 选择驾驶员 -->
     <el-dialog
       width="50%"
       title="选择驾驶员"
@@ -180,7 +214,7 @@ export default {
         source: "",
         alarmType35658: "",
         alarm35658_name: "",
-        ji0x64_alarmtype: "",
+        ji0x64_alarmtype: "1,2,3,4,5,6,7,10,11",
         ji0x65_alarmtype: "",
         identity_id: "",
         alarm_lev: "",
@@ -229,6 +263,9 @@ export default {
     },
     //   查询
     getTable() {
+      if (this.tableQuery.ji0x64_alarmtype == "") {
+        this.tableQuery.ji0x64_alarmtype = "1,2,3,4,5,6,7,10,11";
+      }
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
           var query = Object.assign({}, this.tableQuery);
@@ -308,21 +345,45 @@ export default {
           A: "车牌号",
           B: "车牌颜色",
           C: "报警类型",
-          D: "时间",
-          E: "速度",
-          F: "经度",
-          G: "纬度"
+          D: "终端报警级别",
+          E: "平台判断二级报警",
+          F: "开始时间",
+          G: "结束时间",
+          H: "速度",
+          I: "纬度",
+          J: "经度",
+          K: "高程",
+          L: "时间"
         }
       ];
       this.tableData.data.map(data => {
+        var level = "";
+        if (data.JI0x64AlarmLevel == 0) {
+          level = "无";
+        } else if (data.JI0x64AlarmLevel == 1) {
+          level = "一级报警";
+        } else if (data.JI0x64AlarmLevel == 2) {
+          level = "二级报警";
+        }
         wsCol.push({
           A: data.license,
           B: this.$dict.get_color(data.license_color),
           C: this.$dict.get_additional_alarm_64(data.JI0x64AlarmType),
-          D: this.$utils.formatDate14(JSON.stringify(data.Time)),
-          E: data.Speed,
-          F: data.Longitude,
-          G: data.Latitude
+          D: level,
+          E: data.JIPlatformAlarmLev2 == 0 ? "否" : "是",
+          F:
+            data.JI0x64SignStatus == 1
+              ? this.$utils.formatDate14(JSON.stringify(data.Time))
+              : "--",
+          G:
+            data.JI0x64SignStatus == 2
+              ? this.$utils.formatDate14(JSON.stringify(data.Time))
+              : "--",
+          H: data.Speed,
+          I: data.Latitude,
+          J: data.Longitude,
+          K: data.Altitude,
+          L: this.$utils.formatDate14(JSON.stringify(data.Time))
         });
       });
       this.$utils.exportExcel({
@@ -341,6 +402,8 @@ export default {
       var license = "";
       var sim_ids = "";
       data.map(item => {
+        item.sim_id =
+          item.sim_id.length == 11 ? "0" + item.sim_id : item.sim_id;
         license = license + item.license + ",";
         sim_ids = sim_ids + item.sim_id + ",";
       });
