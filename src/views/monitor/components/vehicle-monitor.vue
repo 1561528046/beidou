@@ -38,40 +38,23 @@
         style="background:#FFF;width:350px; font-size:12px;margin-bottom:20px;"
         v-if="mapData.vehicle.additional0X64"
       >
-<<<<<<< HEAD
         <h3 style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;">高级驾驶辅助系统报警信息</h3>
-=======
-        <h3
-          style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;"
-        >高级驾驶辅助系统报警信息</h3>
         <span style="margin-left:95%">
           <router-link :to="{name:'adas-alarm'}">
             <i style="font-size:16px" class="iconfont icon-tiaozhuan"></i>
           </router-link>
         </span>
->>>>>>> 2fdf08ad4b70cd40d4d3e7ac8b6bead819c9a0a8
         <div style="padding:15px;line-height:1.5;">
           <additional0X64 :data="mapData.vehicle.additional0X64"></additional0X64>
         </div>
       </div>
-<<<<<<< HEAD
       <div class="shadow-box" style="background:#FFF;width:350px; font-size:12px;" v-if="mapData.vehicle.additional0X65">
         <h3 style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;">驾驶员状态监测系统报警信息</h3>
-=======
-      <div
-        class="shadow-box"
-        style="background:#FFF;width:350px; font-size:12px;"
-        v-if="mapData.vehicle.additional0X65"
-      >
-        <h3
-          style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;"
-        >驾驶员状态监测系统报警信息</h3>
         <span style="margin-left:95%">
           <router-link :to="{name:'dss-alarm'}">
             <i style="font-size:16px" class="iconfont icon-tiaozhuan"></i>
           </router-link>
         </span>
->>>>>>> 2fdf08ad4b70cd40d4d3e7ac8b6bead819c9a0a8
         <div style="padding:15px;line-height:1.5;">
           <additional0X65 :data="mapData.vehicle.additional0X65"></additional0X65>
         </div>
