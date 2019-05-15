@@ -27,10 +27,7 @@
         道路标志识别类型:
         {{$dict.additional_alarm_64_road_sign[viewData.RoadSignType]}}
       </el-col>
-      <el-col
-        :span="12"
-        v-if="viewData.AlarmType==6||viewData.AlarmType==10"
-      >道路标志识别数据:{{viewData.RoadSignNum}}</el-col>
+      <el-col :span="12">道路标志识别数据:{{viewData.RoadSignNum}}</el-col>
       <el-col :span="12">车速:{{viewData.Speed}}</el-col>
       <el-col :span="12">高程:{{viewData.Altitude}}</el-col>
       <el-col :span="12">纬度:{{viewData.Latitude}}</el-col>

@@ -119,6 +119,9 @@ export default {
     }
     return date;
   },
+  formatDate6(date) {
+    return date.substring(0, 4) + "-" + date.substring(4, 6) || "--";
+  },
   formatDate14(date, separator = "-") {
     if (date) {
       date = date.toString();

@@ -130,6 +130,11 @@
           label="驾驶证有效期"
           :formatter="(row)=>{return $utils.formatDate(row.begin_date)+'--'+$utils.formatDate(row.end_date) } "
         ></el-table-column>
+        <el-table-column
+          prop="date"
+          label="月份 "
+          :formatter="(row)=>{return $utils.formatDate6(row.date)}"
+        ></el-table-column>
         <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column sortable="custom" prop="num_fatigue_driving" label="疲劳驾驶"></el-table-column>
         <el-table-column sortable="custom" prop="num_100km_alarm" label="百公里报警"></el-table-column>
