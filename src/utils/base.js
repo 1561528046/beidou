@@ -2,6 +2,7 @@ var BASE_URL = "http://192.168.88.100:10029/";
 var API_URL = "http://192.168.88.100:10029/api";
 var MONITOR_URL = "ws://192.168.88.125:5002";
 var INSTRUCTION_URL = "ws://192.168.88.125:5000";
+var VIDEO_REPLAY_URL = "http://192.168.88.60:9998/play";
 
 // var BASE_URL = "http://192.168.88.88:10462/";
 // var API_URL = "http://192.168.88.88:10462/api";
@@ -12,6 +13,7 @@ if (process.env.NODE_ENV == "production") {
   API_URL = "http://60.10.139.110:51023/api";
   INSTRUCTION_URL = "ws://60.10.139.108:5000";
   MONITOR_URL = "ws://60.10.139.108:5002";
+  VIDEO_REPLAY_URL = "http://60.10.139.122:9998/play";
 }
 var dict = {
   //全局字典
@@ -21,6 +23,7 @@ var dict = {
   API_URL: API_URL, //API具体路径
   MONITOR_URL: MONITOR_URL, //监控端websocket地址
   INSTRUCTION_URL: INSTRUCTION_URL, //指令websocket地址
+  VIDEO_REPLAY_URL: VIDEO_REPLAY_URL, //视频回放地址
   ONLINE_TIMEOUT: "300000", //300000 = 5分钟上线超时时间（当前系统时间-定为时间 < 5分钟  即为上线）
   license_color: {
     "1": {

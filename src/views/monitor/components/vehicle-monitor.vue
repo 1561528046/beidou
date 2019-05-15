@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="vehicle-info-container"
-    :class="{'single':$props.single}"
-    :style="{left:position.left+'px',top:position.top+'px'}"
-  >
+  <div class="vehicle-info-container" :class="{'single':$props.single}" :style="{left:position.left+'px',top:position.top+'px'}">
     <div class="_tools shadow-box" v-if="$props.single">
       <el-radio-group v-model="mapTools" @change="changeTools" size="mini">
         <el-radio-button label="big" title="拉框放大">
@@ -42,9 +38,7 @@
         style="background:#FFF;width:350px; font-size:12px;margin-bottom:20px;"
         v-if="mapData.vehicle.additional0X64"
       >
-        <h3
-          style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;"
-        >高级驾驶辅助系统报警信息</h3>
+        <h3 style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;">高级驾驶辅助系统报警信息</h3>
         <span style="margin-left:95%">
           <router-link :to="{name:'adas-alarm'}">
             <i style="font-size:16px" class="iconfont icon-tiaozhuan"></i>
@@ -54,14 +48,8 @@
           <additional0X64 :data="mapData.vehicle.additional0X64"></additional0X64>
         </div>
       </div>
-      <div
-        class="shadow-box"
-        style="background:#FFF;width:350px; font-size:12px;"
-        v-if="mapData.vehicle.additional0X65"
-      >
-        <h3
-          style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;"
-        >驾驶员状态监测系统报警信息</h3>
+      <div class="shadow-box" style="background:#FFF;width:350px; font-size:12px;" v-if="mapData.vehicle.additional0X65">
+        <h3 style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;">驾驶员状态监测系统报警信息</h3>
         <span style="margin-left:95%">
           <router-link :to="{name:'dss-alarm'}">
             <i style="font-size:16px" class="iconfont icon-tiaozhuan"></i>
@@ -102,10 +90,7 @@
             <label v-if="mapData.vehicle.overSpeedPositionType===3">多边形区域</label>
             <label v-if="mapData.vehicle.overSpeedPositionType===4">路段</label>
           </el-col>
-          <el-col
-            v-if="mapData.vehicle.overSpeedPositionType!==0"
-            :span="12"
-          >区域或路段ID：{{mapData.vehicle.overSpeedAreaId||"--"}}</el-col>
+          <el-col v-if="mapData.vehicle.overSpeedPositionType!==0" :span="12">区域或路段ID：{{mapData.vehicle.overSpeedAreaId||"--"}}</el-col>
           <template v-if="mapData.vehicle.runTimeAlarm && mapData.vehicle.inoutAlarm ">
             <el-col>进出区域/路线报警附加信息</el-col>
             <el-col :span="12">
@@ -136,10 +121,6 @@
         <el-row>
           <el-col :span="24">当前报警信息 {{$dict.getAlarm(mapData.vehicle.alarm)||"--"}}</el-col>
 
-          <el-col :span="24">
-            驾驶员状态监测系统报警信息
-            <additional0X65 :data="mapData.vehicle"></additional0X65>
-          </el-col>
           <el-col
             :span="24"
             v-if="mapData.vehicle.fence_alarm&&mapData.vehicle.fence_alarm.alarmList&&mapData.vehicle.fence_alarm.alarmList.length"
@@ -201,92 +182,59 @@
           <!-- 扩展车辆信号状态位 -->
           <el-col :span="12">
             制动信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,4)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,4)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             喇叭信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,8)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,8)"></span>
             <span class="_off" v-else></span>
           </el-col>
 
           <el-col :span="12">
             空挡信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,10)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,10)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             倒档信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,5)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,5)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             近光灯信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,0)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,0)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             远光灯信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,1)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,1)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             右转向灯信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,2)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,2)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             左转向灯信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,3)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,3)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             雾灯信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,6)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,6)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             示廓灯:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,7)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,7)"></span>
             <span class="_off" v-else></span>
           </el-col>
 
           <el-col :span="12">
             空调信号:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,9)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,9)"></span>
             <span class="_off" v-else></span>
           </el-col>
 
@@ -314,34 +262,22 @@
 
           <el-col :span="12">
             缓速器工作:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,11)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,11)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             ABS 工作:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,12)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,12)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             加热器工作:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,13)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,13)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <el-col :span="12">
             离合器状态:
-            <span
-              class="_on"
-              v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,14)"
-            ></span>
+            <span class="_on" v-if="$utils.getVehicleSignalState(mapData.vehicle.vehicleSignal,14)"></span>
             <span class="_off" v-else></span>
           </el-col>
           <!-- IO 状态位 -->
@@ -384,11 +320,7 @@
         >
           <i class="iconfont icon-alert-fill" @click="openCard('alarm')" title="报警信息"></i>
         </el-badge>
-        <i
-          class="iconfont icon-error-fill _error"
-          @click="showCard('repairCard','故障申报')"
-          title="故障申报"
-        ></i>
+        <i class="iconfont icon-error-fill _error" @click="showCard('repairCard','故障申报')" title="故障申报"></i>
         <!-- <i class="iconfont icon-video" @click="openCard('media')" title="媒体列表"></i> -->
       </div>
       <el-dialog
