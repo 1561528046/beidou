@@ -3,7 +3,7 @@
     <div style=" width:100%; position:absolute;right:0;top:0;bottom:0; z-index:1;" ref="map"></div>
     <div class="structure_tree">
       <div style="margin-top:10px">
-        <el-form :model="formData" size="small" label-width="85px">
+        <el-form :model="formData" size="small" label-width="85px" v-loading="searchLoading">
           <el-row>
             <el-col>
               <el-form-item label="终端">
@@ -13,12 +13,7 @@
             <el-col>
               <el-form-item label="通道号">
                 <el-select clearable v-model="formData.channel" style="width:100%">
-                  <el-option
-                    v-for="item in formData.channelList"
-                    :key="item.device_id"
-                    :value="item"
-                    :label="item"
-                  ></el-option>
+                  <el-option v-for="item in formData.channelList" :key="item.device_id" :value="item" :label="item"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -28,6 +23,7 @@
                   style="width:100%"
                   v-model="formData.time"
                   value-format="yyyyMMddHHmmss"
+                  :default-time="['00:00:00', '23:59:59']"
                   type="datetimerange"
                   range-separator="至"
                   start-placeholder="开始日期"
@@ -41,7 +37,6 @@
                 <el-radio v-model="formData.location" :label="2">终端</el-radio>
               </el-form-item>
             </el-col>
-            <el-col v-if="formData.location==1"></el-col>
             <el-col v-if="formData.location==2">
               <div>
                 <el-form :model="deviceForm" size="small" label-width="85px">
@@ -106,102 +101,46 @@
     <div class="video_area">
       <div class="header">
         <ul style="list-style:none;">
-          <li>
-            <i
-              v-if="oneType"
-              @click="Uniform(1)"
-              style="font-size:33px"
-              class="iconfont icon-1fenge"
-            ></i>
-            <i
-              v-if="!oneType"
-              @click="Uniform(1)"
-              style="font-size:33px;color:#3697ec"
-              class="iconfont icon-1fenge"
-            ></i>
-          </li>
-          <li>
-            <i
-              v-if="fourType"
-              @click="Uniform(4)"
-              style="font-size:33px"
-              class="iconfont icon-4fenge"
-            ></i>
-            <i
-              v-if="!fourType"
-              @click="Uniform(4)"
-              style="font-size:33px;color:#3697ec"
-              class="iconfont icon-4fenge"
-            ></i>
-          </li>
-          <li>
-            <i
-              v-if="sixType"
-              @click="Uniform(6)"
-              style="font-size:33px"
-              class="iconfont icon-6fenge"
-            ></i>
-            <i
-              v-if="!sixType"
-              @click="Uniform(6)"
-              style="font-size:33px;color:#3697ec"
-              class="iconfont icon-6fenge"
-            ></i>
-          </li>
-          <li>
-            <i
-              v-if="nineType"
-              @click="Uniform(9)"
-              style="font-size:33px"
-              class="iconfont icon-9fenge"
-            ></i>
-            <i
-              v-if="!nineType"
-              @click="Uniform(9)"
-              style="font-size:33px;color:#3697ec"
-              class="iconfont icon-9fenge"
-            ></i>
-          </li>
-          <li>
-            <i
-              v-if="tenType"
-              @click="Uniform(10)"
-              style="font-size:22px"
-              class="iconfont icon-fenping"
-            ></i>
-            <i
-              v-if="!tenType"
-              @click="Uniform(10)"
-              style="font-size:22px;color:#3697ec"
-              class="iconfont icon-fenping"
-            ></i>
-          </li>
-          <li>
-            <i
-              v-if="sixteenType"
-              @click="Uniform(16)"
-              style="font-size:33px"
-              class="iconfont icon-16fenge"
-            ></i>
-            <i
-              v-if="!sixteenType"
-              @click="Uniform(16)"
-              style="font-size:33px;color:#3697ec"
-              class="iconfont icon-16fenge"
-            ></i>
-          </li>
-          <li>
-            <i
-              title="音视频参数设置"
-              @click="setting"
-              style="font-size:30px;cursor:pointer"
-              class="iconfont icon-shezhi2"
-            ></i>
+          <template v-if="formData.location==1">
+            <li v-for="size in [1,4,6,9,10,16]" :key="size">
+              <i
+                @click="()=>{videoScreenSize = size}"
+                style="font-size:33px"
+                :style="{color:videoScreenSize==size?'#3697ec':'#000'}"
+                :class="'iconfont '+'icon-'+size+'fenge'"
+              ></i>
+            </li>
+          </template>
+          <li v-if="formData.location==2">
+            <i title="音视频参数设置" @click="setting" style="font-size:30px;cursor:pointer" class="iconfont icon-shezhi2"></i>
           </li>
         </ul>
       </div>
       <div style="margin-top:4px;">
-        <div :is="videoName" :video="video" style="height:580px"></div>
+        <video-screen
+          ref="videoScreen"
+          :size="videoScreenSize"
+          :video="video"
+          style="height:580px"
+          @changeCurrentIndex="(index)=>{videoScreenCurrentIndex = index; }"
+        ></video-screen>
+        <!-- 服务器视频列表 -->
+        <el-table v-if="formData.location==1" size="mini" :data="fileData" height="178px">
+          <el-table-column prop="license" label="车牌号"></el-table-column>
+          <el-table-column prop="alarm_type" label="报警状态"></el-table-column>
+          <el-table-column prop="video_channel" label="监控通道"></el-table-column>
+          <el-table-column prop="begin_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(row.begin_time)}"></el-table-column>
+          <el-table-column prop="end_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(row.end_time)}"></el-table-column>
+          <el-table-column prop="size" label="文件大小/M"></el-table-column>
+          <!-- <el-table-column prop="time_length" width="120" label="报警时长/分钟"></el-table-column> -->
+          <el-table-column align="center" width="300" label="操作">
+            <template slot-scope="scope">
+              <el-button @click="addVideo2Screen(1,scope.row)">播放</el-button>
+              <el-button @click="addVideo2Screen(1,scope.row,true)">播放关键帧</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 终端视频列表 -->
         <el-table v-if="formData.location==2" size="mini" :data="fileData" height="178px">
           <el-table-column prop="license" label="车牌号"></el-table-column>
           <el-table-column
@@ -210,16 +149,8 @@
             :formatter="(row)=>{return this.$dict.getAlarm(JSON.stringify(row.WarningMark))}"
           ></el-table-column>
           <el-table-column prop="LogicChannel" label="监控通道"></el-table-column>
-          <el-table-column
-            prop="StartTime"
-            label="开始时间"
-            :formatter="(row)=>{return this.$utils.formatDate14(row.StartTime)}"
-          ></el-table-column>
-          <el-table-column
-            prop="EndTime"
-            label="结束时间"
-            :formatter="(row)=>{return this.$utils.formatDate14(row.EndTime)}"
-          ></el-table-column>
+          <el-table-column prop="StartTime" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(row.StartTime)}"></el-table-column>
+          <el-table-column prop="EndTime" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(row.EndTime)}"></el-table-column>
           <el-table-column prop="FileSize" label="文件大小/M"></el-table-column>
           <el-table-column prop="device_no" label="终端ID"></el-table-column>
           <el-table-column prop="time_length" width="120" label="报警时长/分钟"></el-table-column>
@@ -227,36 +158,10 @@
           <el-table-column align="center" width="300" prop label="操作">
             <template slot-scope="scope">
               <el-button @click="fileUpload(scope.row)" type="primary" size="small">文件上传</el-button>
-              <el-button
-                size="small"
-                :loading="scope.row.state"
-                @click="playback(scope.row)"
-                type="primary"
-              >播放</el-button>
+              <el-button size="small" :loading="scope.row.state" @click="playback(scope.row)" type="primary">播放</el-button>
+              <el-button size="small" :loading="scope.row.state" @click="playback(scope.row,true)" type="primary">播放关键帧</el-button>
             </template>
           </el-table-column>
-        </el-table>
-        <el-table v-if="formData.location==1" size="mini" :data="fileData" height="178px">
-          <el-table-column prop="license" label="车牌号"></el-table-column>
-          <el-table-column
-            prop="alarm_type"
-            label="报警状态"
-            :formatter="(row)=>{return this.$dict.getAlarm(row.alarm_type)}"
-          ></el-table-column>
-          <el-table-column prop="video_channel" label="监控通道"></el-table-column>
-          <el-table-column
-            prop="begin_time"
-            label="开始时间"
-            :formatter="(row)=>{return this.$utils.formatDate14(row.begin_time)}"
-          ></el-table-column>
-          <el-table-column
-            prop="end_time"
-            label="结束时间"
-            :formatter="(row)=>{return this.$utils.formatDate14(row.end_time)}"
-          ></el-table-column>
-          <el-table-column prop="size" label="文件大小/M"></el-table-column>
-          <el-table-column prop="time_length" width="120" label="报警时长/分钟"></el-table-column>
-          <el-table-column align="center" width="300" prop label="操作"></el-table-column>
         </el-table>
       </div>
     </div>
@@ -283,11 +188,7 @@
           <el-button size="small" @click="upFile" type="primary">提交</el-button>
         </el-col>
         <el-col v-if="!loading">
-          <div
-            style="width:100px;height:100px;margin:0 auto"
-            v-loading="!instructionBtn"
-            element-loading-text="上传中"
-          ></div>
+          <div style="width:100px;height:100px;margin:0 auto" v-loading="!instructionBtn" element-loading-text="上传中"></div>
         </el-col>
         <el-col v-if="!loading" style="text-align:center">
           <el-button @click="fileControl(0)" v-if="!instructionBtn" size="small" type="primary">暂停</el-button>
@@ -300,33 +201,23 @@
 </template>
 <script>
 /*eslint-disable*/
+import axios from "axios";
 import {
   getChannelByDeviceID,
-  getLicenseByDeviceNo,
   getAlarmDetailByPageVedio,
   addVideo,
   getVideoInfo
 } from "@/api/index.js";
 import { initMap } from "@/utils/map.js";
 import moment from "moment";
-import videoOne from "./video/screen/video-one.vue";
-import videoFour from "./video/screen/video-four.vue";
-import videoSix from "./video/screen/video-six.vue";
-import videoNine from "./video/screen/video-nine.vue";
-import videoTen from "./video/screen/video-ten.vue";
-import videoSixteen from "./video/screen/video-sixteen.vue";
+import videoScreen from "./video/screen/video-screen.vue";
 import videoFile from "./video/video-file.vue";
 import videoSetting from "./video/video-setting.vue";
 import videoDevice from "./video/video-device.vue";
 import { location2address, gps2amap } from "@/utils/map-tools.js";
 export default {
   components: {
-    videoOne,
-    videoFour,
-    videoSix,
-    videoNine,
-    videoTen,
-    videoSixteen,
+    videoScreen,
     videoFile,
     videoSetting,
     videoDevice
@@ -334,6 +225,10 @@ export default {
   created() {
     this.$instruction.on("x1205", eve => {
       var data = JSON.parse(eve.data);
+      var license = "";
+      try {
+        license = window.monitor.data.get(data.SimID.substring(1)).license;
+      } catch (err) {}
       data.ResourcesLists.map(item => {
         item.StartTime = "20" + item.StartTime;
         item.EndTime = "20" + item.EndTime;
@@ -341,7 +236,8 @@ export default {
         var startTime = moment(item.StartTime, "YYYY-MM-DD HH:mm:ss");
         var endTime = moment(item.EndTime, "YYYY-MM-DD HH:mm:ss");
         item.state = false;
-        item.license = this.license; //车牌号
+        item.FileSize = (item.FileSize / 1024 / 1024).toFixed(2) || "--";
+        item.license = license; //车牌号
         item.time_length = endTime.diff(startTime, "seconds"); //报警时长
         item.device_no = this.deviceData.device_no; //终端id
         // item.FileSize = (item.FileSize / (1024 * 1024)).toFixed(2); //文件大小
@@ -372,6 +268,9 @@ export default {
   },
   data() {
     return {
+      searchLoading: false, //查询列表loading
+      videoScreenCurrentIndex: 0, //当前选中的屏幕
+      videoScreenSize: 4, //视频矩阵数量
       videoData: {
         sim_id: "",
         video_channel: "",
@@ -397,9 +296,9 @@ export default {
       },
       deviceForm: {
         alarmMark: "",
-        type: "",
-        stream: "",
-        memory: ""
+        type: "0",
+        stream: "0",
+        memory: "0"
       },
       deviceData: {},
       mapData: {
@@ -445,16 +344,9 @@ export default {
       loading: true,
       instructionBtn: false,
       fileDialog: false,
-      oneType: true,
-      fourType: true,
-      sixType: true,
-      tenType: true,
-      nineType: true,
-      sixteenType: true,
       settingDialog: false,
       deviceDialog: false,
       uploadDialog: false,
-      videoName: videoFour,
       settingType: 0,
       taskList: [], //任务执行条件
       video: {
@@ -469,7 +361,9 @@ export default {
   },
   watch: {
     "formData.location": function() {
+      this.videoScreenSize = 1;
       this.$set(this.$data, "fileData", []);
+      this.clearVideoScreen();
     }
   },
   mounted() {
@@ -482,6 +376,18 @@ export default {
     });
   },
   methods: {
+    clearVideoScreen() {
+      this.$refs.videoScreen.clearScreen();
+    },
+    addVideo2Screen(location, data, isKeyframe) {
+      //视频加入到当前选中的屏幕
+      var src = isKeyframe ? data.keyframeSrc : data.src;
+      this.$refs.videoScreen.setSources(
+        this.videoScreenCurrentIndex,
+        src,
+        location
+      );
+    },
     // 音视频参数设置
     setting() {
       if (!this.deviceData.sim_id) {
@@ -506,22 +412,6 @@ export default {
     // 文件上传
     upFile() {
       this.saveVideo(this.fileForm, 1);
-    },
-    // 查询车牌号
-    getLicense() {
-      getLicenseByDeviceNo({ device_no: this.deviceData.device_no }).then(
-        res => {
-          if (res.data.code == 0) {
-            this.$set(this.$data, "license", res.data.data[0].license);
-          } else {
-            return this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
-            });
-          }
-        }
-      );
     },
     // 查询报警信息
     getAlarm(row) {
@@ -573,8 +463,9 @@ export default {
                   item.amap_latitude = res[index].split(",")[1];
                 });
               })
-              .catch(() => {
+              .catch(err => {
                 loader.close();
+                console.error(err);
               })
               .then(() => {
                 loader.close();
@@ -585,13 +476,17 @@ export default {
                   data: data,
                   longKey: "amap_longitude",
                   latKey: "amap_latitude"
-                }).then(addressArr => {
-                  loader.close();
-                  data.map((item, index) => {
-                    item.address = addressArr[index];
+                })
+                  .then(addressArr => {
+                    loader.close();
+                    data.map((item, index) => {
+                      item.address = addressArr[index];
+                    });
+                    row.address = data[0].address;
+                  })
+                  .catch(err => {
+                    console.error(err);
                   });
-                  row.address = data[0].address;
-                });
               });
           } else {
             this.alarm_address.push({});
@@ -634,13 +529,18 @@ export default {
       this.$instruction.send(JSON.stringify(data));
     },
     // 远程录像回放请求
-    playback(row) {
-      this.saveVideo(row, 2);
+    playback(row, isKeyframe) {
+      var src =
+        "rtmp://60.10.139.122/live/livestream/" +
+        this.deviceData.sim_id +
+        "_" +
+        row.LogicChannel;
+      this.addVideo2Screen(2, { src: src, keyframeSrc: "" }); //视频流加入到当前屏幕中
+      this.saveVideo(row, 2, isKeyframe);
     },
     // 远程录像回放控制
     stopback(row) {
-      var data = {};
-      data = {
+      var data = {
         MessageID: "x9202",
         SimID: "0" + this.deviceData.sim_id,
         Channel: row.LogicChannel, //音视频通道号
@@ -651,7 +551,7 @@ export default {
       this.$instruction.send(JSON.stringify(data));
     },
     // 保存视频信息
-    saveVideo(row, state) {
+    saveVideo(row, state, isKeyframe) {
       this.videoData.sim_id = "0" + this.deviceData.sim_id;
       this.videoData.video_channel = row.LogicChannel;
       this.videoData.type = row.ResourcesType; //音视频类型（1视频，2音频，3照片抓拍）
@@ -698,11 +598,6 @@ export default {
               break;
             case 2:
               var data = {};
-              var src =
-                "rtmp://60.10.139.122/live/livestream/" +
-                this.deviceData.sim_id +
-                "_" +
-                row.LogicChannel;
               data = {
                 MessageID: "x9201",
                 SimID: "0" + this.deviceData.sim_id,
@@ -713,20 +608,11 @@ export default {
                 AudioAndVideoType: row.ResourcesType, // 音视频类型
                 CodeStreamType: row.StreamType, // 码流类型
                 StorageType: row.StorageType, // 存储器类型
-                PlaybackMode: "0", // 回放方式
+                PlaybackMode: isKeyframe ? "3" : "0", // 回放方式
                 Multiple: "0", // 快进或快退倍数
                 StartTime: row.StartTime.substr(2), // 开始时间
                 EndTime: row.EndTime.substr(2) //结束时间
               };
-              this.video.src = "0" + this.deviceData.sim_id + row.LogicChannel;
-              window.monitor.video.set(
-                "0" + this.deviceData.sim_id + row.LogicChannel,
-                src
-              );
-              this.videoAll.push({
-                sim_id: "0" + this.deviceData.sim_id,
-                logical_channel: row.LogicChannel
-              });
               this.$instruction.send(JSON.stringify(data));
               break;
           }
@@ -745,34 +631,62 @@ export default {
     },
     // 查询录像回放文件列表
     selectHistory() {
-      this.getLicense();
       var startTime = "";
       var endTime = "";
       var data = {};
-      if (this.formData.time) {
-        startTime = this.formData.time[0].substring(2);
-        endTime = this.formData.time[1].substring(2);
+      if (!this.formData.time) {
+        this.$message.warning("请选择时间！");
+        return false;
       }
+      if (!this.deviceData.sim_id || !this.deviceData.device_id) {
+        this.$message.warning("请选择设备");
+        return false;
+      }
+      if (!this.formData.channel) {
+        this.$message.warning("请选择通道");
+        return false;
+      }
+
+      startTime = this.formData.time[0].substring(2);
+      endTime = this.formData.time[1].substring(2);
       if (this.formData.location == 1) {
         data = {
-          page: 1,
-          size: 10,
-          sim_id: "0" + this.deviceData.sim_id,
-          begin_time: this.formData.time[0].substr(2),
-          end_time: this.formData.time[1].substr(2),
+          sim_id: this.deviceData.sim_id,
+          begin_time: moment(this.formData.time[0], "YYYYMMDDHHmmss").format(
+            "x"
+          ),
+          end_time: moment(this.formData.time[1], "YYYYMMDDHHmmss").format("x"),
           video_channel: this.formData.channel
         };
-        getVideoInfo(data).then(res => {
-          if (res.data.code == 0) {
-            this.$set(this.$data, "fileData", res.data.data);
-          } else {
-            return this.$notify({
-              message: res.data.msg,
-              title: "提示",
-              type: "error"
+        this.searchLoading = true;
+        axios
+          .get(this.$dict.VIDEO_REPLAY_URL + "/flvlist", {
+            params: data
+          })
+          .then(res => {
+            this.searchLoading = false;
+            res.data.map(item => {
+              item.video_channel = data.video_channel;
+              item.begin_time = item.fileName.replace(".flv", "");
+              item.end_time = moment(
+                item.lastUpdateTime,
+                "YYYYMMDDHHmmss"
+              ).format("YYYY-MM-DD HH:mm:ss");
+              item.alarm_type = "--";
+              item.size = (item.fileSize / 1024 / 1024).toFixed(2);
+              item.license = window.monitor.data.get(data.sim_id).license;
+              item.keyframeSrc = `${this.$dict.VIDEO_REPLAY_URL}/key/${
+                data.sim_id
+              }_${data.video_channel}/${item.fileName}`;
+              item.src = `${this.$dict.VIDEO_REPLAY_URL}/video/${data.sim_id}_${
+                data.video_channel
+              }/${item.fileName}`;
             });
-          }
-        });
+            this.$set(this.$data, "fileData", res.data);
+          })
+          .catch(() => {
+            this.searchLoading = false;
+          });
       } else if (this.formData.location == 2) {
         var alarm = [];
         for (var i = 0; i < 64; i++) {
@@ -818,42 +732,7 @@ export default {
     },
     // 分屏按钮
     Uniform(code) {
-      switch (code) {
-        case 1:
-          this.oneType = false;
-          this.fourType = true;
-          this.nineType = true;
-          this.sixteenType = true;
-          this.videoName = videoOne;
-          break;
-        case 4:
-          this.oneType = true;
-          this.fourType = false;
-          this.nineType = true;
-          this.sixteenType = true;
-          this.videoName = videoFour;
-          break;
-        case 6:
-          this.videoName = videoSix;
-          break;
-        case 9:
-          this.oneType = true;
-          this.fourType = true;
-          this.nineType = false;
-          this.sixteenType = true;
-          this.videoName = videoNine;
-          break;
-        case 10:
-          this.videoName = videoTen;
-          break;
-        case 16:
-          this.oneType = true;
-          this.fourType = true;
-          this.nineType = true;
-          this.sixteenType = false;
-          this.videoName = videoSixteen;
-          break;
-      }
+      this.videoScreenSize = code;
     },
     // 查看文件列表信息
     lookFile() {
