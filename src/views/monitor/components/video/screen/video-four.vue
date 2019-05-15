@@ -52,8 +52,9 @@ export default {
       playerOptions: {
         screen1: {
           overNative: true,
-          autoplay: false,
+          autoplay: true,
           controls: true,
+          preload: "auto",
           aspectRatio: "16:8",
           techOrder: ["flash", "html5"],
           sourceOrder: true,
@@ -75,15 +76,16 @@ export default {
           controlBar: {
             timeDivider: false, // 时间分割线
             durationDisplay: false, // 总时间
-            progressControl: false // 进度条
-            // customControlSpacer: true, // 未知
-            // fullscreenToggle: true // 全屏
+            progressControl: false, // 进度条
+            customControlSpacer: true, // 未知
+            fullscreenToggle: true // 全屏
           }
         },
         screen2: {
           overNative: true,
-          autoplay: false,
+          autoplay: true,
           controls: true,
+          preload: "auto",
           aspectRatio: "16:8",
           techOrder: ["flash", "html5"],
           sourceOrder: true,
@@ -105,15 +107,16 @@ export default {
           controlBar: {
             timeDivider: false, // 时间分割线
             durationDisplay: false, // 总时间
-            progressControl: false // 进度条
-            // customControlSpacer: true, // 未知
-            // fullscreenToggle: true // 全屏
+            progressControl: false, // 进度条
+            customControlSpacer: true, // 未知
+            fullscreenToggle: true // 全屏
           }
         },
         screen3: {
           overNative: true,
-          autoplay: false,
+          autoplay: true,
           controls: true,
+          preload: "auto",
           aspectRatio: "16:8",
           techOrder: ["flash", "html5"],
           sourceOrder: true,
@@ -135,15 +138,16 @@ export default {
           controlBar: {
             timeDivider: false, // 时间分割线
             durationDisplay: false, // 总时间
-            progressControl: false // 进度条
-            // customControlSpacer: true, // 未知
-            // fullscreenToggle: true // 全屏
+            progressControl: false, // 进度条
+            customControlSpacer: true, // 未知
+            fullscreenToggle: true // 全屏
           }
         },
         screen4: {
           overNative: true,
-          autoplay: false,
+          autoplay: true,
           controls: true,
+          preload: "auto",
           aspectRatio: "16:8",
           techOrder: ["flash", "html5"],
           sourceOrder: true,
@@ -165,9 +169,9 @@ export default {
           controlBar: {
             timeDivider: false, // 时间分割线
             durationDisplay: false, // 总时间
-            progressControl: false // 进度条
-            // customControlSpacer: true, // 未知
-            // fullscreenToggle: true // 全屏
+            progressControl: false, // 进度条
+            customControlSpacer: true, // 未知
+            fullscreenToggle: true // 全屏
           }
         }
       }
@@ -189,7 +193,6 @@ export default {
           this.playerOptions[name].sources[0].src = window.monitor.video.get(
             this.$props.video.src
           );
-          this.playerOptions[name].autoplay = true;
         }
       },
       deep: true
@@ -203,7 +206,6 @@ export default {
           this.playerOptions[name].sources[0].src = window.monitor.video.get(
             item
           );
-          this.playerOptions[name].autoplay = true;
         });
       },
       deep: true

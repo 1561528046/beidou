@@ -45,6 +45,11 @@
         <h3
           style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;"
         >高级驾驶辅助系统报警信息</h3>
+        <span style="margin-left:95%">
+          <router-link :to="{name:'adas-alarm'}">
+            <i style="font-size:16px" class="iconfont icon-tiaozhuan"></i>
+          </router-link>
+        </span>
         <div style="padding:15px;line-height:1.5;">
           <additional0X64 :data="mapData.vehicle.additional0X64"></additional0X64>
         </div>
@@ -57,6 +62,11 @@
         <h3
           style="border-bottom:1px solid #ddd; height:40px; line-height:40px;text-align:center;"
         >驾驶员状态监测系统报警信息</h3>
+        <span style="margin-left:95%">
+          <router-link :to="{name:'dss-alarm'}">
+            <i style="font-size:16px" class="iconfont icon-tiaozhuan"></i>
+          </router-link>
+        </span>
         <div style="padding:15px;line-height:1.5;">
           <additional0X65 :data="mapData.vehicle.additional0X65"></additional0X65>
         </div>
