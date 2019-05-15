@@ -136,16 +136,16 @@ function serialize(buffer) {
   switch (result.msgId) {
     case 0x0200:
       arr.push(
-        Object.assign(result, x0200(buffer.slice(13, buffer.length - 1)))
+        Object.assign(result, x0200(buffer.slice(13, buffer.length - 2)))
       );
       break;
     case 0x0201:
       arr.push(
-        Object.assign(result, x0200(buffer.slice(15, buffer.length - 1)))
+        Object.assign(result, x0200(buffer.slice(15, buffer.length - 2)))
       );
       break;
     case 0x0704:
-      var results = x0704(buffer.slice(13, buffer.length - 1));
+      var results = x0704(buffer.slice(13, buffer.length - 2));
       results.map(item => {
         arr.push(Object.assign(result, item));
       });
