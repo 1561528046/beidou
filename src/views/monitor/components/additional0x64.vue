@@ -13,23 +13,23 @@
       <el-col :span="12">报警级别:{{viewData.AlarmLevel}}</el-col>
       <el-col
         :span="12"
-        v-if="viewData.alarmType==1||viewData.alarmType==2||viewData.alarmType==4"
+        v-if="viewData.AlarmType==1||viewData.AlarmType==2||viewData.AlarmType==4"
       >前车车速:{{viewData.FrontCarSpeed}}</el-col>
       <el-col
         :span="12"
-        v-if="viewData.alarmType==1||viewData.alarmType==2||viewData.alarmType==4"
+        v-if="viewData.AlarmType==1||viewData.AlarmType==2||viewData.AlarmType==4"
       >前车/行人距离:{{viewData.FrontCarDistance}}</el-col>
       <el-col
         :span="12"
-        v-if="viewData.alarmType==2"
+        v-if="viewData.AlarmType==2"
       >偏离类型:{{viewData.DeviationType==1?"左侧偏离":"右侧偏离"}}</el-col>
-      <el-col :span="12" v-if="viewData.alarmType==6||viewData.alarmType==10">
+      <el-col :span="12" v-if="viewData.AlarmType==6||viewData.AlarmType==10">
         道路标志识别类型:
         {{$dict.additional_alarm_64_road_sign[viewData.RoadSignType]}}
       </el-col>
       <el-col
         :span="12"
-        v-if="viewData.alarmType==6||viewData.alarmType==10"
+        v-if="viewData.AlarmType==6||viewData.AlarmType==10"
       >道路标志识别数据:{{viewData.RoadSignNum}}</el-col>
       <el-col :span="12">车速:{{viewData.Speed}}</el-col>
       <el-col :span="12">高程:{{viewData.Altitude}}</el-col>
@@ -56,7 +56,7 @@ export default {
   props: ["data"],
   data() {
     return {
-      alarmTypeDict: {}
+      AlarmTypeDict: {}
     };
   },
   computed: {

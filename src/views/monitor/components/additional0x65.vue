@@ -11,7 +11,7 @@
         {{$dict.additional_alarm_65[viewData.AlarmType]}}
       </el-col>
       <el-col :span="12">报警级别:{{viewData.AlarmLevel}}</el-col>
-      <el-col :span="12" v-if="viewData.alarmType==1">疲劳程度:{{viewData.FatigueDegree}}</el-col>
+      <el-col :span="12" v-if="viewData.AlarmType==1">疲劳程度:{{viewData.FatigueDegree}}</el-col>
 
       <el-col :span="12">车速:{{viewData.Speed}}</el-col>
       <el-col :span="12">高程:{{viewData.Altitude}}</el-col>
