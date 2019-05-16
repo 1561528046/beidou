@@ -8,6 +8,7 @@
             <el-input size="small" placeholder="请输入车牌号" v-model="tableQuery.license"></el-input>
             <el-tree
               ref="tree"
+              style="padding:10px"
               :accordion="true"
               :data="groupData"
               :default-expanded-keys="[1,10]"
@@ -388,10 +389,11 @@
         </ul>
       </div>
       <div style="margin-top:10px">
-        <div :is="videoName" :video="video" :videos="videos" :style="{'filter':event}"></div>
+        <!-- <div :is="videoName" :video="video" :videos="videos" :style="{'filter':event}"></div> -->
+        <video-live :size="videoScreenSize" style="height:580px"></video-live>
         <el-tabs type="border-card">
           <el-tab-pane label="音视频流量统计">
-            <el-table size="mini" height="135px" :data="trafficData" style="width: 100%">
+            <el-table size="mini" height="160px" :data="trafficData" style="width: 100%">
               <el-table-column prop="flow" label="流量"></el-table-column>
               <el-table-column prop="license" label="车牌号"></el-table-column>
               <el-table-column prop="device_no" label="终端ID"></el-table-column>
@@ -403,7 +405,7 @@
             </el-table>
           </el-tab-pane>
           <el-tab-pane label="视频抓拍">
-            <el-table :data="snapData" height="135px" size="mini">
+            <el-table :data="snapData" height="160px" size="mini">
               <el-table-column
                 prop="cdate"
                 label="时间"
@@ -555,6 +557,7 @@ import {
   getVideoPrintscreenList
 } from "@/api/index.js";
 import { initMap } from "@/utils/map.js";
+import videoLive from "./video/screen/video-live.vue";
 import videoOne from "./video/screen/video-one.vue";
 import videoFour from "./video/screen/video-four.vue";
 import videoSix from "./video/screen/video-six.vue";
@@ -584,7 +587,8 @@ export default {
     videoLinkage,
     videoAnalysis,
     videoSpecial,
-    deviceDormancy
+    deviceDormancy,
+    videoLive
   },
   created() {
     var arr = [];

@@ -10,7 +10,12 @@
         :class="{active:currentIndex==index}"
       >
         <div style="height:100%;position:relative;" @click="()=>{currentIndex = index}">
-          <a href="javascript:;" class="video-close" @click="closeVideo(index)" v-show="playerOption.sources[0].src">
+          <a
+            href="javascript:;"
+            class="video-close"
+            @click="closeVideo(index)"
+            v-show="playerOption.sources[0].src"
+          >
             <i class="el-icon-close"></i>
           </a>
           <video-player
