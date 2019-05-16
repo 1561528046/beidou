@@ -10,12 +10,7 @@
         :class="{active:currentIndex==index}"
       >
         <div style="height:100%;position:relative;" @click="()=>{currentIndex = index}">
-          <a
-            href="javascript:;"
-            class="video-close"
-            @click="closeVideo(index)"
-            v-show="playerOption.sources[0].src"
-          >
+          <a href="javascript:;" class="video-close" @click="closeVideo(index)" v-show="playerOption.sources[0].src">
             <i class="el-icon-close"></i>
           </a>
           <video-player
@@ -135,7 +130,8 @@ export default {
         sources: [
           {
             src: ""
-            // type: "rtmp/mp4",
+            // src: "http://192.168.88.156:5000/caca.flv"
+            // type: "flv-application/octet-stream"
             // src: "http://192.168.88.156:5000/key.flv"
             // src: "rtmp://60.10.139.122/live/livestream"
           }
