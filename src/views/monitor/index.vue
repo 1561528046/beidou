@@ -540,7 +540,25 @@ export default {
       },
       initInstructionListen() {
         //初始化各种组件的指令监听
-
+        vm.$instruction.on("lev2_01", evy => {
+          var data = JSON.parse(evt.data);
+          var name = "";
+          GetVehicleBySIMIDToPaper({ sim_id: data.SimID }).then(res => {
+            if (res.data.code == 0) {
+              name =
+                res.data.data[0].license +
+                ":" +
+                "平台二级报警" +
+                "备注：" +
+                data.Value;
+            }
+          });
+          vm.$notify({
+            title: "报警通知",
+            message: name,
+            type: "error"
+          });
+        });
         vm.$instruction.on("x1004", evt => {
           //主链路关闭
           var data = JSON.parse(evt.data);
