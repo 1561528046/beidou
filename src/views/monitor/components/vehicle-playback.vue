@@ -281,7 +281,7 @@ export default {
         item.time_length = endTime.diff(startTime, "seconds"); //报警时长
         item.device_no = this.deviceData.device_no; //终端id
         // item.FileSize = (item.FileSize / (1024 * 1024)).toFixed(2); //文件大小
-        this.getAlarm(item);
+        // this.getAlarm(item);
       });
       this.$set(this.$data, "serialNumber", data.SerialNumber); //流水号
       this.$set(this.$data, "fileData", data.ResourcesLists);
@@ -493,7 +493,7 @@ export default {
             //1、gps坐标转高德坐标
             //2、高德坐标转成地址
             gps2amap({
-              data: data,
+              data: [data[0]],
               longKey: "Longitude",
               latKey: "Latitude"
             })
@@ -519,10 +519,7 @@ export default {
                 })
                   .then(addressArr => {
                     loader.close();
-                    data.map((item, index) => {
-                      item.address = addressArr[index];
-                    });
-                    row.address = data[0].address;
+                    row.address = addressArr[0];
                   })
                   .catch(err => {
                     console.error(err);
