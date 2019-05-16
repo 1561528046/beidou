@@ -7,6 +7,7 @@
         class="video-item"
         :span="getSpan()"
         :style="{height:getHeight()}"
+        :class="{active:currentIndex==index}"
       >
         <div style="height:100%;position:relative;" @click="()=>{currentIndex = index}">
           <a class="video-close" v-show="playerOption.sources[0].src" href="javascript:;">
@@ -35,9 +36,6 @@ export default {
     };
   },
   watch: {
-    currentIndex: function() {
-      console.log(this.currentIndex);
-    },
     "$props.size": {
       handler: function() {
         this.$set(this.$data, "videoSize", this.$props.size);
