@@ -8,8 +8,8 @@
         :span="getSpan()"
         :style="{height:getHeight()}"
       >
-        <div style="height:100%;position:relative;">
-          <a v-show="playerOption.sources[0].src" href="javascript:;" class="video-close">
+        <div style="height:100%;position:relative;" @click="()=>{currentIndex = index}">
+          <a class="video-close" v-show="playerOption.sources[0].src" href="javascript:;">
             <i class="el-icon-close"></i>
           </a>
           <video-player
@@ -29,11 +29,15 @@ export default {
   },
   data() {
     return {
+      currentIndex: 0,
       videoSize: 4,
       playerOptions: []
     };
   },
   watch: {
+    currentIndex: function() {
+      console.log(this.currentIndex);
+    },
     "$props.size": {
       handler: function() {
         this.$set(this.$data, "videoSize", this.$props.size);
@@ -46,6 +50,11 @@ export default {
     size: Number
   },
   methods: {
+    setSources(src) {
+      var videoData = this.playerOptions[this.currentIndex];
+      videoData.sources[0].src = src;
+      this.$set(this.playerOptions, this.currentIndex, videoData);
+    },
     getSpan() {
       if (this.$props.size == 1) {
         return 24;
@@ -66,8 +75,16 @@ export default {
     },
     setPlayerOptions() {
       var arr = [];
+      var playingList = this.playerOptions.filter(item => {
+        //过滤正在播放的视频列表
+        return !!item.sources[0].src;
+      });
       for (var i = 0; i < this.videoSize; i++) {
-        arr.push(this.getCleanOption());
+        if (playingList[i]) {
+          arr.push(playingList[i]);
+        } else {
+          arr.push(this.getCleanOption());
+        }
       }
       this.$set(this.$data, "playerOptions", arr);
     },

@@ -27,12 +27,17 @@ export default {
         state.dataVersion++;
         data.alarmKeys = keys;
         data.alarmText = dict.getAlarm(data.alarm);
-        data.alarmText += dict.get_additional_alarm_64(
-          data.additional0X64.AlarmType
-        );
-        data.alarmText += dict.get_additional_alarm_65(
-          data.additional0X65.AlarmType
-        );
+        if (data.additional0X64) {
+          data.alarmText += dict.get_additional_alarm_64(
+            data.additional0X64.AlarmType
+          );
+        }
+        if (data.additional0X65) {
+          data.alarmText += dict.get_additional_alarm_65(
+            data.additional0X65.AlarmType
+          );
+        }
+
         state.data.set(data.sim_id, data);
       }
     },

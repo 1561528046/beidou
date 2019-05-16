@@ -1,11 +1,28 @@
 <template>
   <div class="admin-table-container">
     <el-card shadow="always" class="admin-table-search" style="margin-bottom:20px;">
-      <el-form :model="tableQuery" ref="baseForm" :rules="rules" label-width="80px" label-position="left" class="table-search" size="small">
+      <el-form
+        :model="tableQuery"
+        ref="baseForm"
+        :rules="rules"
+        label-width="80px"
+        label-position="left"
+        class="table-search"
+        size="small"
+      >
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item prop="time" label="时间">
-              <el-date-picker v-model="tableQuery.time" value-format="yyyy-MM-dd" format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right"></el-date-picker>
+              <el-date-picker
+                v-model="tableQuery.time"
+                value-format="yyyy-MM-dd"
+                format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -25,8 +42,18 @@
           <el-col :span="4">
             <el-form-item prop="alarm_type" label="报警类型">
               <el-select v-model="tableQuery.alarm_type" multiple collapse-tags>
-                <el-option :label="val" :value="'x64-'+key" v-for=" (val,key)  in $dict.additional_alarm_64" :key="'x64-'+key"></el-option>
-                <el-option :label="val" :value="'x65-'+key" v-for=" (val,key)  in $dict.additional_alarm_65" :key="'x65-'+key"></el-option>
+                <el-option
+                  :label="val"
+                  :value="'x64-'+key"
+                  v-for=" (val,key)  in $dict.additional_alarm_64"
+                  :key="'x64-'+key"
+                ></el-option>
+                <el-option
+                  :label="val"
+                  :value="'x65-'+key"
+                  v-for=" (val,key)  in $dict.additional_alarm_65"
+                  :key="'x65-'+key"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -39,19 +66,19 @@
       </el-form>
     </el-card>
     <el-row :gutter="20">
-      <el-col :span="12">
+      <!-- <el-col :span="12">
         <el-card>
           <div slot="header">基本情况</div>
           <bar-base :query="queryData" style="height:300px;"></bar-base>
         </el-card>
-      </el-col>
-      <el-col :span="6">
+      </el-col>-->
+      <el-col :span="12">
         <el-card>
           <div slot="header">驾驶员状态监测系统报警分布</div>
           <pie-driver :query="queryData" style="height:300px;"></pie-driver>
         </el-card>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="12">
         <el-card>
           <div slot="header">高级驾驶辅助系统报警分布</div>
           <pie-vehicle :query="queryData" style="height:300px;"></pie-vehicle>
@@ -183,8 +210,8 @@ export default {
         callback(new Error("选择时间不能大于3天!"));
         return false;
       } else {
-        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDD");
-        this.tableQuery.end_time = moment(value[1]).format("YYYYMMDD");
+        this.tableQuery.start_time = moment(value[0]).format("YYYYMMDDHHmmss");
+        this.tableQuery.end_time = moment(value[1]).format("YYYYMMDDHHmmss");
         callback();
       }
     }

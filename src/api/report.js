@@ -207,35 +207,39 @@ export const getAdditionalAlarmChartBase = query => {
 };
 // 高级驾驶辅助系统报警分布(车辆饼状图)x64
 export const getAdditionalAlarmChartPieVehicle = query => {
-  return ajax.get("/AdditionalAlarmChart/PieVehicle", {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/AdditionalAlarmChart/PieVehicle", queryQS, {
     params: query
   });
 };
 // 车辆报警TOP5(车辆柱状图)x64
 export const getAdditionalAlarmChartBarVehicle = query => {
-  return ajax.get("/AdditionalAlarmChart/BarVehicle", {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/AdditionalAlarmChart/BarVehicle", queryQS, {
     params: query
   });
 };
 // 驾驶员状态监测系统报警分布(司机饼状图)x65
 export const getAdditionalAlarmChartPieDriver = query => {
-  return ajax.get("/AdditionalAlarmChart/PieDriver", {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/AdditionalAlarmChart/PieDriver", queryQS, {
     params: query
   });
 };
 // 驾驶员报警TOP5(司机柱状图)x65
 export const getAdditionalAlarmChartBarDriver = query => {
-  return ajax.get("/AdditionalAlarmChart/BarDriver", {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/AdditionalAlarmChart/BarDriver", queryQS, {
     params: query
   });
 };
 // 报警趋势
 export const getAdditionalAlarmChartAll = query => {
-  return ajax.get("/AdditionalAlarmChart/GetAll", {
+  var queryQS = qs.stringify(query);
+  return ajax.post("/AdditionalAlarmChart/GetAll", queryQS, {
     params: query
   });
 };
-
 // 驾驶员上传记录表
 export const GetDriverCheckListByPage = query => {
   return ajax.get("/driver/GetDriverCheckListByPage", {
