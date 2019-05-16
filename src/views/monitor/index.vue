@@ -31,12 +31,22 @@
         <div class="monitor">
           <!-- <qa-list></qa-list> -->
           <monitor-info></monitor-info>
-          <!-- <div class="shadow-box monitor-map-tools">
-            <el-radio-group v-model="mapTools" @change="changeTools" size="small">
-              <el-radio-button style="margin:5px;" label="current" title="查找当前终端">查找当前终端</el-radio-button>
-              <el-radio-button label="history" title="查找历史终端">查找历史终端</el-radio-button>
-            </el-radio-group>
-          </div>-->
+          <div class="shadow-box monitor-map-tools">
+            <span>
+              <i
+                @click="controlVoice(0)"
+                v-if="voice"
+                class="iconfont icon-shengyin"
+                style="font-size:23px"
+              ></i>
+              <i
+                @click="controlVoice(1)"
+                v-if="!voice"
+                class="iconfont icon-jingyin"
+                style="font-size:23px"
+              ></i>
+            </span>
+          </div>
           <div id="container" style="width:100%;height:100%;"></div>
           <div class="vehicle-search shadow-box">
             <el-autocomplete
@@ -308,6 +318,22 @@
 
 <script>
 /*eslint-disable*/
+import { Howl } from "howler";
+
+// 声音引擎
+var player = {
+  warning: new Howl({ src: ["/static/warning.wav"] }),
+  online: new Howl({ src: ["/static/online.mp3"] }),
+  offline: new Howl({ src: ["/static/offline.mp3"] }),
+  onmain: new Howl({ src: ["/static/onmain.wav"] }),
+  offmain: new Howl({ src: ["/static/offmain.wav"] }),
+  onfrom: new Howl({ src: ["/static/onfrom.wav"] }),
+  offfrom: new Howl({ src: ["/static/offfrom.wav"] }),
+  play: function(type) {
+    this[type].play();
+  }
+};
+
 import {
   getInitVehicle,
   getUserList,
@@ -361,6 +387,7 @@ export default {
   },
   data() {
     return {
+      voice: true, //是否静音
       mapData: {
         map: {}
       },
@@ -543,6 +570,9 @@ export default {
         vm.$instruction.on("lev2_01", evy => {
           var data = JSON.parse(evt.data);
           var name = "";
+          if (vm.voice) {
+            player.play("onmain");
+          }
           GetVehicleBySIMIDToPaper({ sim_id: data.SimID }).then(res => {
             if (res.data.code == 0) {
               name =
@@ -1175,6 +1205,7 @@ export default {
             vehicleData.additional0X65
           ) {
             //进出围栏报警、或者车机自身报警加入到监控对象列表中，以及报警的store中
+
             this.setAlarm(vehicleData);
             vm.$store.commit("alarm/add", vehicleData);
           }
@@ -1224,6 +1255,9 @@ export default {
         vm.vehicleCount.alarm = this.dict.alarm.size;
       },
       setAlarm(vehicleData) {
+        if (vm.voice) {
+          player.play("warning");
+        }
         var vehicle = this.data.get(vehicleData.sim_id);
         vehicle.alarm_count = parseInt(vehicle.alarm_count || 0) + 1;
         this.dict.alarm.add(vehicle.sim_id);
@@ -1234,6 +1268,17 @@ export default {
   },
 
   methods: {
+    // 控制声音
+    controlVoice(num) {
+      switch (num) {
+        case 0:
+          this.voice = false;
+          break;
+        case 1:
+          this.voice = true;
+          break;
+      }
+    },
     according() {
       this.showVehicle.type = type;
       this.showVehicle.isShowAll = true;
@@ -1670,12 +1715,13 @@ export default {
 }
 .monitor-map-tools {
   position: absolute;
-  width: 17%;
+  // width: 17%;
+  padding: 10px 10px;
   right: 20px;
   bottom: 0;
   background-color: #f5f7fa;
   border: 1px solid #e4e7ed;
-  height: 41px;
+  // height: 41px;
   z-index: 99;
 }
 .monitor-nav {
