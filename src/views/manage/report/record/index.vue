@@ -66,7 +66,11 @@
             <label v-if="scope.row.state=='2'">从业资格证 IC 卡拔出</label>
           </template>
         </el-table-column>
-        <el-table-column prop="time" label="时间" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="time"
+          label="时间"
+          :formatter="(row)=>{return $utils.formatDate14(row.time)}"
+        ></el-table-column>
         <el-table-column prop label="操作">
           <template slot-scope="scope">
             <el-button type="primary" @click="lookDriver(scope)" size="small">查看详情</el-button>

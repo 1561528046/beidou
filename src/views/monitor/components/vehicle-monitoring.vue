@@ -237,7 +237,7 @@
       </el-collapse>
     </div>
     <div class="video_area">
-      <div class="header">
+      <!-- <div class="header">
         <ul style="list-style:none;">
           <li>
             <i
@@ -323,6 +323,21 @@
               class="iconfont icon-16fenge"
             ></i>
           </li>
+
+        </ul>
+      </div>-->
+      <div class="header">
+        <ul style="list-style:none;">
+          <template>
+            <li v-for="size in [1,4,6,9,10,16]" :key="size">
+              <i
+                @click="()=>{videoScreenSize = size}"
+                style="font-size:33px"
+                :style="{color:videoScreenSize==size?'#3697ec':'#000'}"
+                :class="'iconfont '+'icon-'+size+'fenge'"
+              ></i>
+            </li>
+          </template>
           <li>
             <i
               @click="notDialog=true"
@@ -638,6 +653,7 @@ export default {
   },
   data() {
     return {
+      videoScreenSize: 4, //视频矩阵数量
       updateid: "", //视频截图编辑所需id
       videoSimIds: [],
       timeOut: "",

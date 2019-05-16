@@ -338,6 +338,14 @@ export default {
     },
     //   导出
     exportExcel() {
+      var start_time = moment(this.tableQuery.time[0]).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      var stop_time = moment(this.tableQuery.time[1]).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      var name =
+        start_time + "-" + stop_time + " " + this.$store.state.user.real_name;
       //导出excel
       var wsCol = [
         {
@@ -388,7 +396,7 @@ export default {
       this.$utils.exportExcel({
         data: wsCol,
         sheetName: "驾驶员状态监控报警",
-        fileName: "驾驶员状态监控报警.xlsx"
+        fileName: "驾驶员状态监控报警" + name + ".xlsx"
       });
     },
     //  选择车辆
