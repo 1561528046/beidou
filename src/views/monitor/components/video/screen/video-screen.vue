@@ -86,7 +86,7 @@ export default {
       if (this.$props.size == 1) {
         return "100%";
       }
-      if (this.$props.size == 6) {
+      if (this.$props.size == 9) {
         return "50%";
       }
       return (1 / Math.sqrt(this.$props.size)) * 100 + "%";
@@ -106,7 +106,6 @@ export default {
         //过滤正在播放的视频列表
         return !!item.sources[0].src;
       });
-
       for (var i = 0; i < this.$props.size; i++) {
         if (playingList[i]) {
           arr.push(playingList[i]);

@@ -390,7 +390,7 @@
       </div>
       <div style="margin-top:10px">
         <!-- <div :is="videoName" :video="video" :videos="videos" :style="{'filter':event}"></div> -->
-        <video-live :size="videoScreenSize" style="height:580px"></video-live>
+        <video-live ref="videoLive" :size="videoScreenSize" style="height:580px"></video-live>
         <el-tabs type="border-card">
           <el-tab-pane label="音视频流量统计">
             <el-table size="mini" height="160px" :data="trafficData" style="width: 100%">
@@ -1471,8 +1471,6 @@ export default {
           channel: row.logical_channel,
           rtmp: src
         };
-        //全局对象中删除播放对象
-        window.monitor.video.delete(row.sim_id + row.logical_channel);
         // 删除
         this.videoData = this.videoData.filter(i => {
           return i.sim_id !== row.sim_id;
@@ -1488,19 +1486,7 @@ export default {
           DataType: "0",
           CodeStreamType: "0"
         };
-        storage = {
-          sim_id: row.sim_id,
-          MessageID: "start",
-          channel: row.logical_channel,
-          rtmp: src
-        };
-        this.video.src = row.sim_id + row.logical_channel;
-        window.monitor.video.set(row.sim_id + row.logical_channel, src);
-        this.videoData.push({
-          sim_id: row.sim_id,
-          logical_channel: row.logical_channel
-        });
-        // this.$instructionStorage.send(JSON.stringify(storage));
+        this.$refs.videoLive.setSources(src);
         this.$instruction.send(JSON.stringify(data));
       }
     },
