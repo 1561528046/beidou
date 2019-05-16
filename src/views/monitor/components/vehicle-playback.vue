@@ -117,13 +117,7 @@
         </ul>
       </div>
       <div style="margin-top:4px;">
-        <video-screen
-          ref="videoScreen"
-          :size="videoScreenSize"
-          :video="video"
-          style="height:580px"
-          @changeCurrentIndex="(index)=>{videoScreenCurrentIndex = index; }"
-        ></video-screen>
+        <video-screen ref="videoScreen" :size="videoScreenSize" :video="video" style="height:580px"></video-screen>
         <!-- 服务器视频列表 -->
         <el-table v-if="formData.location==1" size="mini" :data="fileData" height="178px">
           <el-table-column prop="license" label="车牌号"></el-table-column>
@@ -151,7 +145,7 @@
           <el-table-column prop="LogicChannel" label="监控通道"></el-table-column>
           <el-table-column prop="StartTime" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(row.StartTime)}"></el-table-column>
           <el-table-column prop="EndTime" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(row.EndTime)}"></el-table-column>
-          <el-table-column prop="FileSize" label="文件大小/M"></el-table-column>
+          <el-table-column prop="size" label="文件大小/M"></el-table-column>
           <el-table-column prop="device_no" label="终端ID"></el-table-column>
           <el-table-column prop="time_length" width="120" label="报警时长/分钟"></el-table-column>
           <el-table-column prop="address" width="200" label="报警位置"></el-table-column>
@@ -236,7 +230,7 @@ export default {
         var startTime = moment(item.StartTime, "YYYY-MM-DD HH:mm:ss");
         var endTime = moment(item.EndTime, "YYYY-MM-DD HH:mm:ss");
         item.state = false;
-        item.FileSize = (item.FileSize / 1024 / 1024).toFixed(2) || "--";
+        item.size = (item.FileSize / 1024 / 1024).toFixed(2) || "--";
         item.license = license; //车牌号
         item.time_length = endTime.diff(startTime, "seconds"); //报警时长
         item.device_no = this.deviceData.device_no; //终端id
@@ -269,7 +263,6 @@ export default {
   data() {
     return {
       searchLoading: false, //查询列表loading
-      videoScreenCurrentIndex: 0, //当前选中的屏幕
       videoScreenSize: 4, //视频矩阵数量
       videoData: {
         sim_id: "",
@@ -382,11 +375,7 @@ export default {
     addVideo2Screen(location, data, isKeyframe) {
       //视频加入到当前选中的屏幕
       var src = isKeyframe ? data.keyframeSrc : data.src;
-      this.$refs.videoScreen.setSources(
-        this.videoScreenCurrentIndex,
-        src,
-        location
-      );
+      this.$refs.videoScreen.setSources(src, location);
     },
     // 音视频参数设置
     setting() {
