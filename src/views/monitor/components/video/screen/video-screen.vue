@@ -67,19 +67,20 @@ export default {
     closeVideo(index) {
       this.$set(this.playerOptions, index, this.getCleanOption());
     },
-    setSources(index, src, type) {
-      this.closeVideo(index);
+    setSources(src, type) {
+      var currentOption = this.playerOptions[this.currentIndex];
+      this.closeVideo(this.currentIndex);
       // type  1服务器  2终端（rtmp）
-      this.playerOptions[index].sources[0].src = src;
+      currentOption.sources[0].src = src;
       if (type == 1) {
-        delete this.playerOptions[index].sources[0].type;
-        this.playerOptions[index].controlBar.progressControl = true;
+        delete currentOption.sources[0].type;
+        currentOption.controlBar.progressControl = true;
       } else {
-        this.playerOptions[index].sources[0].type = "rtmp/mp4";
-        this.playerOptions[index].controlBar.progressControl = false;
+        currentOption.sources[0].type = "rtmp/mp4";
+        currentOption.controlBar.progressControl = false;
       }
 
-      this.$set(this.playerOptions, index, this.playerOptions[index]);
+      this.$set(this.playerOptions, this.currentIndex, currentOption);
     },
     getHeight() {
       if (this.$props.size == 1) {

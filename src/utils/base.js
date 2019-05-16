@@ -2,7 +2,7 @@ var BASE_URL = "http://192.168.88.100:10029/";
 var API_URL = "http://192.168.88.100:10029/api";
 var MONITOR_URL = "ws://192.168.88.125:5002";
 var INSTRUCTION_URL = "ws://192.168.88.125:5000";
-var VIDEO_REPLAY_URL = "http://192.168.88.60:9998/play";
+var VIDEO_REPLAY_URL = "http://60.10.139.122:9998/play";
 
 // var BASE_URL = "http://192.168.88.88:10462/";
 // var API_URL = "http://192.168.88.88:10462/api";
