@@ -258,3 +258,15 @@ export const GetDriverByDriverDocument = query => {
     params: query
   });
 };
+//报警附件-根据报警ID获取报警附件信息
+export const GetInfoByPlatformAlarmId = query => {
+  return ajax.get("/report/GetInfoByPlatformAlarmId", {
+    params: query
+  });
+};
+//报警附件-获取报警附件列表
+export const GetFilesByIdInfo = query => {
+  return ajax.get("/report/GetFilesByIdInfo", {
+    params: query
+  });
+};

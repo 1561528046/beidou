@@ -328,7 +328,7 @@ var player = {
   onmain: new Howl({ src: ["/static/onmain.wav"] }),
   offmain: new Howl({ src: ["/static/offmain.wav"] }),
   onfrom: new Howl({ src: ["/static/onfrom.wav"] }),
-  offfrom: new Howl({ src: ["/static/offfrom.wav"] }),
+  offfrom: new Howl({ src: ["/static/offfrom.mp3"] }),
   play: function(type) {
     this[type].play();
   }
@@ -567,7 +567,7 @@ export default {
       },
       initInstructionListen() {
         //初始化各种组件的指令监听
-        vm.$instruction.on("lev2_01", evy => {
+        vm.$instruction.on("lev2_01", evt => {
           var data = JSON.parse(evt.data);
           var name = "";
           if (vm.voice) {

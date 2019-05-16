@@ -115,6 +115,36 @@
         <el-table-column prop="Latitude" label="纬度" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="Longitude" label="经度" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="Altitude" label="高程" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-popover ref="popover4" placement="right" width="400" trigger="click">
+              <el-table :data="attachmentList">
+                <el-table-column prop="file_name" label="文件名称"></el-table-column>
+                <el-table-column prop="file_size" label="文件大小"></el-table-column>
+                <el-table-column prop="file_type" label="文件类型">
+                  <template slot-scope="scope">
+                    <label v-if="scope.row.file_type=='0'">图片</label>
+                    <label v-if="scope.row.file_type=='1'">音频</label>
+                    <label v-if="scope.row.file_type=='2'">视频</label>
+                    <label v-if="scope.row.file_type=='3'">文本</label>
+                    <label v-if="scope.row.file_type=='4'">其他</label>
+                  </template>
+                </el-table-column>
+                <el-table-column prop label="操作">
+                  <template slot-scope="scope">
+                    <a :href="$dict.BASE_URL+scope.row.file_path" download>下载</a>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-popover>
+            <el-button
+              type="primary"
+              @click="selectAttachment(scope)"
+              v-popover:popover4
+              size="small"
+            >查看附件</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="admin-table-pager">
         <el-pagination
@@ -189,7 +219,12 @@
 <script>
 import { rules } from "@/utils/rules.js";
 import moment from "moment";
-import { getAlarmDetailByPage, GetVehicleBySIMIDToPaper } from "@/api/index.js";
+import {
+  getAlarmDetailByPage,
+  GetVehicleBySIMIDToPaper,
+  GetInfoByPlatformAlarmId,
+  GetFilesByIdInfo
+} from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseDriver from "@/components/choose-driver.vue";
 export default {
@@ -202,6 +237,7 @@ export default {
       vehicleDialog: false,
       isCollapse: false,
       alarmList: [],
+      attachmentList: [],
       tableQuery: {
         platformACCErr: "",
         time: "",
@@ -245,6 +281,35 @@ export default {
     };
   },
   methods: {
+    selectAttachment(scope) {
+      GetInfoByPlatformAlarmId({
+        platform_alarm_id: scope.row.JI0x64PlatformAlarmId
+      }).then(res => {
+        if (res.data.code == 0) {
+          if (res.data.data.length > 0) {
+            GetFilesByIdInfo({ id_info: res.data.data[0].id_info }).then(
+              res => {
+                if (res.data.code == 0) {
+                  this.$set(this.$data, "attachmentList", res.data.data);
+                } else {
+                  return this.$notify({
+                    message: res.data.msg,
+                    title: "提示",
+                    type: "error"
+                  });
+                }
+              }
+            );
+          }
+        } else {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
+        }
+      });
+    },
     // 查询时间验证
     validateTime(rule, value, callback) {
       var date = moment(value[0]).add(3, "days")._d;
