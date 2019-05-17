@@ -74,6 +74,27 @@ var dict = {
   get_color: function(key) {
     return this.color[key] || "--";
   },
+  logical_channel: {
+    "1": "驾驶员",
+    "2": "车辆正前方",
+    "3": "车前门",
+    "4": "车厢前部",
+    "5": "车厢后部",
+    "6": "车后门",
+    "7": "行李舱",
+    "8": "车辆左侧",
+    "9": "车辆右侧",
+    "10": "车辆正后方",
+    "11": "车厢中部",
+    "12": "车中门",
+    "13": "驾驶席车门",
+    "33": "驾驶员",
+    "36": "车厢前部",
+    "37": "车厢后部"
+  },
+  get_logical_channel: function(key) {
+    return this.logical_channel[key] || "--";
+  },
   permissions: {
     "1-1-1": "车辆-添加",
     "1-1-2": "车辆-删除",
@@ -209,8 +230,8 @@ var dict = {
     "5": "频繁变道报警",
     "6": "道路标识超限报警",
     "7": "障碍物报警",
-    "10": "道路标志识别事件",
-    "11": "主动抓拍事件"
+    "16": "道路标志识别事件",
+    "17": "主动抓拍事件"
   },
   get_additional_alarm_64: function(key) {
     return this.additional_alarm_64[key] || "";
@@ -229,8 +250,8 @@ var dict = {
     "4": "分神驾驶报警",
     "5": "驾驶员异常报警",
     "6": "无驾驶员",
-    "10": "自动抓拍事件",
-    "11": "驾驶员变更事件"
+    "16": "自动抓拍事件",
+    "17": "驾驶员变更事件"
   },
   get_additional_alarm_65: function(key) {
     return this.additional_alarm_65[key] || "";

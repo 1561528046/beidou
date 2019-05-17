@@ -154,7 +154,9 @@ export default {
           logical_channel: item.logical_channel, //逻辑通道号
           is_connect: item.is_connect //云台链接
         }).then(res => {
-          if (res.data.code != 0) {
+          if (res.data.code == 0) {
+            this.$emit("success");
+          } else {
             return this.$notify({
               message: res.data.msg,
               title: "提示",

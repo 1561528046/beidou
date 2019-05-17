@@ -390,7 +390,12 @@
       </div>
       <div style="margin-top:10px">
         <!-- <div :is="videoName" :video="video" :videos="videos" :style="{'filter':event}"></div> -->
-        <video-live ref="videoLive" :size="videoScreenSize" style="height:580px"></video-live>
+        <video-live
+          ref="videoLive"
+          :size="videoScreenSize"
+          style
+          :style="{'height':'580px','filter':event}"
+        ></video-live>
         <el-tabs type="border-card">
           <el-tab-pane label="音视频流量统计">
             <el-table size="mini" height="160px" :data="trafficData" style="width: 100%">

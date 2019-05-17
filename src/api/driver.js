@@ -56,3 +56,9 @@ export const GetStatistics = query => {
     params: query
   });
 };
+// 司机评分列表
+export const GetListStatisticsByPage = query => {
+  return ajax.get("/driver/GetListStatisticsByPage", {
+    params: query
+  });
+};
