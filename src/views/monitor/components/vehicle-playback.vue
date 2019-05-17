@@ -13,12 +13,7 @@
             <el-col>
               <el-form-item label="通道号">
                 <el-select clearable v-model="formData.channel" style="width:100%">
-                  <el-option
-                    v-for="item in formData.channelList"
-                    :key="item.device_id"
-                    :value="item"
-                    :label="item"
-                  ></el-option>
+                  <el-option v-for="item in formData.channelList" :key="item.device_id" :value="item" :label="item"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -117,12 +112,7 @@
             </li>
           </template>
           <li v-if="formData.location==2">
-            <i
-              title="音视频参数设置"
-              @click="setting"
-              style="font-size:30px;cursor:pointer"
-              class="iconfont icon-shezhi2"
-            ></i>
+            <i title="音视频参数设置" @click="setting" style="font-size:30px;cursor:pointer" class="iconfont icon-shezhi2"></i>
           </li>
         </ul>
       </div>
@@ -133,22 +123,15 @@
           :video="video"
           style="height:580px"
           @changeCurrentIndex="(index)=>{videoScreenCurrentIndex = index; }"
+          @close="stopback"
         ></video-screen>
         <!-- 服务器视频列表 -->
         <el-table v-if="formData.location==1" size="mini" :data="fileData" height="178px">
           <el-table-column prop="license" label="车牌号"></el-table-column>
           <el-table-column prop="alarm_type" label="报警状态"></el-table-column>
           <el-table-column prop="video_channel" label="监控通道"></el-table-column>
-          <el-table-column
-            prop="begin_time"
-            label="开始时间"
-            :formatter="(row)=>{return this.$utils.formatDate14(row.begin_time)}"
-          ></el-table-column>
-          <el-table-column
-            prop="end_time"
-            label="结束时间"
-            :formatter="(row)=>{return this.$utils.formatDate14(row.end_time)}"
-          ></el-table-column>
+          <el-table-column prop="begin_time" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(row.begin_time)}"></el-table-column>
+          <el-table-column prop="end_time" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(row.end_time)}"></el-table-column>
           <el-table-column prop="size" label="文件大小/M"></el-table-column>
           <!-- <el-table-column prop="time_length" width="120" label="报警时长/分钟"></el-table-column> -->
           <el-table-column align="center" width="300" label="操作">
@@ -167,35 +150,17 @@
             :formatter="(row)=>{return this.$dict.getAlarm(JSON.stringify(row.WarningMark))}"
           ></el-table-column>
           <el-table-column prop="LogicChannel" label="监控通道"></el-table-column>
-          <el-table-column
-            prop="StartTime"
-            label="开始时间"
-            :formatter="(row)=>{return this.$utils.formatDate14(row.StartTime)}"
-          ></el-table-column>
-          <el-table-column
-            prop="EndTime"
-            label="结束时间"
-            :formatter="(row)=>{return this.$utils.formatDate14(row.EndTime)}"
-          ></el-table-column>
-          <el-table-column prop="FileSize" label="文件大小/M"></el-table-column>
+          <el-table-column prop="StartTime" label="开始时间" :formatter="(row)=>{return this.$utils.formatDate14(row.StartTime)}"></el-table-column>
+          <el-table-column prop="EndTime" label="结束时间" :formatter="(row)=>{return this.$utils.formatDate14(row.EndTime)}"></el-table-column>
+          <el-table-column prop="size" label="文件大小/M"></el-table-column>
           <el-table-column prop="device_no" label="终端ID"></el-table-column>
           <el-table-column prop="time_length" width="120" label="报警时长/分钟"></el-table-column>
           <el-table-column prop="address" width="200" label="报警位置"></el-table-column>
           <el-table-column align="center" width="300" prop label="操作">
             <template slot-scope="scope">
               <el-button @click="fileUpload(scope.row)" type="primary" size="small">文件上传</el-button>
-              <el-button
-                size="small"
-                :loading="scope.row.state"
-                @click="playback(scope.row)"
-                type="primary"
-              >播放</el-button>
-              <el-button
-                size="small"
-                :loading="scope.row.state"
-                @click="playback(scope.row,true)"
-                type="primary"
-              >播放关键帧</el-button>
+              <el-button size="small" :loading="scope.row.state" @click="playback(scope.row)" type="primary">播放</el-button>
+              <el-button size="small" :loading="scope.row.state" @click="playback(scope.row,true)" type="primary">播放关键帧</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -224,11 +189,7 @@
           <el-button size="small" @click="upFile" type="primary">提交</el-button>
         </el-col>
         <el-col v-if="!loading">
-          <div
-            style="width:100px;height:100px;margin:0 auto"
-            v-loading="!instructionBtn"
-            element-loading-text="上传中"
-          ></div>
+          <div style="width:100px;height:100px;margin:0 auto" v-loading="!instructionBtn" element-loading-text="上传中"></div>
         </el-col>
         <el-col v-if="!loading" style="text-align:center">
           <el-button @click="fileControl(0)" v-if="!instructionBtn" size="small" type="primary">暂停</el-button>
@@ -273,10 +234,10 @@ export default {
         item.StartTime = "20" + item.StartTime;
         item.EndTime = "20" + item.EndTime;
         item.address = "";
-        var startTime = moment(item.StartTime, "YYYY-MM-DD HH:mm:ss");
-        var endTime = moment(item.EndTime, "YYYY-MM-DD HH:mm:ss");
+        var startTime = moment(item.StartTime, "YYYYMMDDHHmmss");
+        var endTime = moment(item.EndTime, "YYYYMMDDHHmmss");
         item.state = false;
-        item.FileSize = (item.FileSize / 1024 / 1024).toFixed(2) || "--";
+        item.size = (item.FileSize / 1024 / 1024).toFixed(2) || "--";
         item.license = license; //车牌号
         item.time_length = endTime.diff(startTime, "seconds"); //报警时长
         item.device_no = this.deviceData.device_no; //终端id
@@ -419,14 +380,10 @@ export default {
     clearVideoScreen() {
       this.$refs.videoScreen.clearScreen();
     },
-    addVideo2Screen(location, data, isKeyframe) {
+    addVideo2Screen(location, data, isKeyframe, row) {
       //视频加入到当前选中的屏幕
       var src = isKeyframe ? data.keyframeSrc : data.src;
-      this.$refs.videoScreen.setSources(
-        this.videoScreenCurrentIndex,
-        src,
-        location
-      );
+      this.$refs.videoScreen.setSources(src, location, row);
     },
     // 音视频参数设置
     setting() {
@@ -568,15 +525,20 @@ export default {
     // 远程录像回放请求
     playback(row, isKeyframe) {
       var src =
-        "rtmp://60.10.139.122/live/livestream/" +
+        "rtmp://60.10.139.122/live/backstream/" +
         this.deviceData.sim_id +
         "_" +
         row.LogicChannel;
-      this.addVideo2Screen(2, { src: src, keyframeSrc: "" }); //视频流加入到当前屏幕中
+      this.addVideo2Screen(2, { src: src, keyframeSrc: "" }, false, row); //视频流加入到当前屏幕中
       this.saveVideo(row, 2, isKeyframe);
     },
     // 远程录像回放控制
-    stopback(row) {
+    stopback(videoOption) {
+      if (videoOption.location != 2) {
+        //只有查询终端才发送9202指令到终端
+        return false;
+      }
+      var row = videoOption.row;
       var data = {
         MessageID: "x9202",
         SimID: "0" + this.deviceData.sim_id,

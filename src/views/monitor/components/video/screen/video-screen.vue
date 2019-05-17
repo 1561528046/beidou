@@ -60,13 +60,17 @@ export default {
       });
     },
     closeVideo(index) {
+      this.$emit("close", this.playerOptions[this.currentIndex]);
       this.$set(this.playerOptions, index, this.getCleanOption());
     },
-    setSources(src, type) {
+    setSources(src, type, row) {
+      //row 服务端回放时附加的对象信息
       var currentOption = this.playerOptions[this.currentIndex];
       this.closeVideo(this.currentIndex);
       // type  1服务器  2终端（rtmp）
       currentOption.sources[0].src = src;
+      currentOption.row = row;
+      currentOption.location = type;
       if (type == 1) {
         delete currentOption.sources[0].type;
         currentOption.controlBar.progressControl = true;
@@ -116,7 +120,7 @@ export default {
         autoplay: true,
         controls: true,
         aspectRatio: "16:8",
-        techOrder: ["flash", "html5"],
+        techOrder: ["html5", "flash"],
         sourceOrder: true,
         notSupportedMessage: "暂无视频",
         flash: {
