@@ -42,21 +42,18 @@
                 <el-form :model="deviceForm" size="small" label-width="85px">
                   <el-row>
                     <el-col>
-                      <el-form-item label="报警标志"></el-form-item>
+                      <el-form-item label="报警标志">
+                        <el-select v-model="alarmList" style="width:100%" multiple collapse-tags>
+                          <el-option
+                            :value="alarm.alarm_id"
+                            :key="alarm.alarm_id"
+                            :label="alarm.alarm_name"
+                            v-for="alarm in alarmData"
+                          ></el-option>
+                        </el-select>
+                      </el-form-item>
                     </el-col>
-                    <el-col>
-                      <el-table
-                        @select="selectHandler"
-                        ref="multipleTable"
-                        height="500"
-                        :data="alarmData"
-                        tooltip-effect="dark"
-                        style="width: 100%"
-                      >
-                        <el-table-column align="center" type="selection" width="55"></el-table-column>
-                        <el-table-column align="center" prop="alarm_name" label="报警类型"></el-table-column>
-                      </el-table>
-                    </el-col>
+
                     <el-col>
                       <el-form-item label="资源类型">
                         <el-select v-model="deviceForm.type" style="width:100%">
@@ -625,9 +622,9 @@ export default {
       });
     },
     // 选择报警标志
-    selectHandler(selection, row) {
-      this.$set(this.$data, "alarmList", selection);
-    },
+    // selectHandler(selection, row) {
+    //   this.$set(this.$data, "alarmList", selection);
+    // },
     // 查询录像回放文件列表
     selectHistory() {
       var startTime = "";
@@ -687,12 +684,9 @@ export default {
             this.searchLoading = false;
           });
       } else if (this.formData.location == 2) {
-        var alarm = [];
-        for (var i = 0; i < 64; i++) {
-          alarm.push(0);
-        }
-        this.alarmList.map(itam => {
-          alarm[itam.alarm_id] = 1;
+        var alarm = new Array(64).fill(0);
+        this.alarmList.map(item => {
+          alarm[item] = 1;
         });
         alarm = parseInt(alarm.join(""), 2);
         var data = {
