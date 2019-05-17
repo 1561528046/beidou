@@ -117,8 +117,8 @@
         <el-table-column prop="Altitude" label="高程" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-popover ref="popover4" placement="right" width="400" trigger="click">
-              <el-table :data="attachmentList">
+            <el-popover ref="popover4" placement="left" width="500" trigger="click">
+              <el-table height="300" :data="attachmentList">
                 <el-table-column prop="file_name" label="文件名称"></el-table-column>
                 <el-table-column prop="file_size" label="文件大小"></el-table-column>
                 <el-table-column prop="file_type" label="文件类型">
@@ -130,9 +130,39 @@
                     <label v-if="scope.row.file_type=='4'">其他</label>
                   </template>
                 </el-table-column>
+                <el-table-column label="内容">
+                  <template slot-scope="scope">
+                    <el-button
+                      size="mini"
+                      v-if="scope.row.file_format=='.bin'"
+                      @click="lookBin(scope)"
+                    >查看列表</el-button>
+                    <el-button
+                      size="mini"
+                      v-if="scope.row.file_type=='2'"
+                      @click="lookVideo(scope)"
+                    >查看视频</el-button>
+                    <img
+                      v-if="scope.row.file_type=='0'"
+                      style="width:100px;height:100px"
+                      :src="scope.row.file_path"
+                      alt
+                    >
+                  </template>
+                </el-table-column>
                 <el-table-column prop label="操作">
                   <template slot-scope="scope">
-                    <a :href="$dict.BASE_URL+scope.row.file_path" download>下载</a>
+                    <el-button
+                      v-if="scope.row.file_format=='.bin'"
+                      size="mini"
+                      @click="exportBin"
+                    >下载</el-button>
+                    <a
+                      :href="scope.row.file_path"
+                      v-if="scope.row.file_format!='.bin'"
+                      target="_blank"
+                      download
+                    >下载</a>
                   </template>
                 </el-table-column>
               </el-table>
@@ -191,8 +221,8 @@
         <el-checkbox style="margin-left:0" label="5">频繁变道报警</el-checkbox>
         <el-checkbox label="6">道路标识超限报警</el-checkbox>
         <el-checkbox style="margin-left:2px" label="7">障碍物报警</el-checkbox>
-        <el-checkbox style="margin-left:44px" label="10">道路标志识别事件</el-checkbox>
-        <el-checkbox style="margin-left:0" label="11">主动抓拍事件</el-checkbox>
+        <el-checkbox style="margin-left:44px" label="16">道路标志识别事件</el-checkbox>
+        <el-checkbox style="margin-left:0" label="17">主动抓拍事件</el-checkbox>
       </el-checkbox-group>
       <el-button
         size="small"
@@ -214,6 +244,47 @@
     >
       <choose-driver @save="saveDriver" :key="addKey"></choose-driver>
     </el-dialog>
+    <!-- 查看bin文件列表 -->
+    <el-dialog
+      width="50%"
+      title="查看"
+      :visible.sync="binDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <el-table height="400" :data="binData">
+        <el-table-column
+          prop="AlarmSign"
+          label="报警标志"
+          :formatter="(row)=>{return $dict.getAlarm(row.AlarmSign)}"
+        ></el-table-column>
+        <el-table-column prop="Longitude" label="经度" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Latitude" label="纬度" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Altitude" label="高程" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Speed" label="速度" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="Time"
+          label="时间"
+          :formatter="(row)=>{return $utils.formatDate14(row.Time)}"
+        ></el-table-column>
+      </el-table>
+    </el-dialog>
+    <!-- 查看视频 -->
+    <el-dialog
+      width="50%"
+      title="查看"
+      :visible.sync="videoDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <video width="100%" height="510" autoplay :src="videoSrc" loop controls></video>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -223,7 +294,8 @@ import {
   getAlarmDetailByPage,
   GetVehicleBySIMIDToPaper,
   GetInfoByPlatformAlarmId,
-  GetFilesByIdInfo
+  GetFilesByIdInfo,
+  GetBinInfoByIdFiles
 } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseDriver from "@/components/choose-driver.vue";
@@ -240,12 +312,16 @@ export default {
   data() {
     return {
       addKey: 0,
+      binDialog: false,
       driverDialog: false,
       alarmDialog: false,
       vehicleDialog: false,
       isCollapse: false,
+      videoDialog: false,
       alarmList: [],
       attachmentList: [],
+      binData: [],
+      videoSrc: "",
       tableQuery: {
         platformACCErr: "",
         time: "",
@@ -289,6 +365,56 @@ export default {
     };
   },
   methods: {
+    lookBin(scope) {
+      this.binDialog = true;
+      GetBinInfoByIdFiles({ id_files: scope.row.id_files }).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.$data, "binData", res.data.data);
+        } else {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
+        }
+      });
+    },
+    lookVideo(scope) {
+      // item.file_path =
+      //                 this.$dict.BASE_URL +
+      //                 "alarm_attachments" +
+      //                 item.file_path +
+      //                 item.file_name;
+      this.videoDialog = true;
+      this.$set(this.$data, "videoSrc", scope.row.file_path);
+    },
+    exportBin() {
+      var wsCol = [
+        {
+          A: "报警标志",
+          B: "经度",
+          C: "纬度",
+          D: "高程",
+          E: "速度",
+          F: "时间"
+        }
+      ];
+      this.binData.map(data => {
+        wsCol.push({
+          A: this.$dict.getAlarm(data.AlarmSign),
+          B: data.Longitude,
+          C: data.Latitude,
+          D: data.Altitude,
+          E: data.Speed,
+          F: this.$utils.formatDate14(data.Time)
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "附件文本信息表",
+        fileName: "附件文本信息表.xlsx"
+      });
+    },
     selectAttachment(scope) {
       GetInfoByPlatformAlarmId({
         platform_alarm_id: scope.row.JI0x64PlatformAlarmId
@@ -298,6 +424,29 @@ export default {
             GetFilesByIdInfo({ id_info: res.data.data[0].id_info }).then(
               res => {
                 if (res.data.code == 0) {
+                  res.data.data.map(item => {
+                    item.file_path =
+                      this.$dict.BASE_URL +
+                      "alarm_attachments" +
+                      item.file_path +
+                      item.file_name;
+
+                    if (item.file_format == ".bin") {
+                      GetBinInfoByIdFiles({ id_files: item.id_files }).then(
+                        res => {
+                          if (res.data.code == 0) {
+                            this.$set(this.$data, "binData", res.data.data);
+                          } else {
+                            return this.$notify({
+                              message: res.data.msg,
+                              title: "提示",
+                              type: "error"
+                            });
+                          }
+                        }
+                      );
+                    }
+                  });
                   this.$set(this.$data, "attachmentList", res.data.data);
                 } else {
                   return this.$notify({
@@ -337,7 +486,7 @@ export default {
     //   查询
     getTable() {
       if (this.tableQuery.ji0x64_alarmtype == "") {
-        this.tableQuery.ji0x64_alarmtype = "1,2,3,4,5,6,7,10,11";
+        this.tableQuery.ji0x64_alarmtype = "1,2,3,4,5,6,7,16,17";
       }
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {

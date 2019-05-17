@@ -10,7 +10,12 @@
         :class="{active:currentIndex==index}"
       >
         <div style="height:100%;position:relative;" @click="()=>{currentIndex = index}">
-          <a class="video-close" v-show="playerOption.sources[0].src" href="javascript:;">
+          <a
+            class="video-close"
+            v-show="playerOption.sources[0].src"
+            @click="closeVideo(index)"
+            href="javascript:;"
+          >
             <i class="el-icon-close"></i>
           </a>
           <video-player
@@ -48,6 +53,10 @@ export default {
     size: Number
   },
   methods: {
+    closeVideo(index) {
+      this.$emit("close", this.playerOptions[this.currentIndex]);
+      this.$set(this.playerOptions, index, this.getCleanOption());
+    },
     setSources(src) {
       var videoData = this.playerOptions[this.currentIndex];
       videoData.sources[0].src = src;

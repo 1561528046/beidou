@@ -270,3 +270,9 @@ export const GetFilesByIdInfo = query => {
     params: query
   });
 };
+// 报警附件-获取bin文件信息
+export const GetBinInfoByIdFiles = query => {
+  return ajax.get("/report/GetBinInfoByIdFiles", {
+    params: query
+  });
+};

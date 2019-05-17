@@ -51,7 +51,6 @@
         <el-table-column prop="driver_name" label="姓名" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="tel" label="联系电话" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column
-          prop="license_validity"
           label="驾驶证有效期"
           :formatter="(row)=>{return $utils.formatDate(row.begin_date)+'--'+$utils.formatDate(row.end_date) } "
         ></el-table-column>
@@ -196,7 +195,10 @@ export default {
           A: data.driver_card_id,
           B: data.driver_name,
           C: data.tel,
-          D: this.$utils.formatDate(data.license_validity),
+          D:
+            this.$utils.formatDate(data.begin_date) +
+            "--" +
+            this.$utils.formatDate(data.end_date),
           E: data.identity_id
         });
       });
