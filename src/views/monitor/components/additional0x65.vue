@@ -33,6 +33,9 @@
         <el-col
           :span="12"
         >插卡状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,5)?"未插卡":"已插卡"}}</el-col>
+        <el-col
+          :span="12"
+        >定位状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,10)?"未定位":"已定位"}}</el-col>
       </template>
     </el-row>
   </div>

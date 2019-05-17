@@ -327,7 +327,7 @@
       <upgrade-package @success="succeed" :data="deviceData" :key="addKey"></upgrade-package>
     </el-dialog>
     <el-dialog :visible.sync="channelDialog " title="音视频通道列表设置" :append-to-body="true ">
-      <setting-channel :key="addKey" :device="deviceData"></setting-channel>
+      <setting-channel @success="()=>{this.channelDialog=false}" :key="addKey" :device="deviceData"></setting-channel>
     </el-dialog>
   </div>
 </template>
@@ -364,6 +364,16 @@ export default {
   },
   created() {
     this.getTable();
+    this.$instruction.on("x8103", evt => {
+      var data = JSON.parse(evt.data);
+      if (data.code == 0 && data.ParameterId == 118) {
+        return this.$notify({
+          message: "音视频通道列表设置指令发送成功",
+          title: "提示",
+          type: "success"
+        });
+      }
+    });
   },
   data() {
     return {

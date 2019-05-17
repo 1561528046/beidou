@@ -151,25 +151,49 @@ var routers = [
           name: "司机信息管理",
           icon: "iconfont icon-driver"
         },
-        component: () => import("@/views/manage/driver/index.vue")
-      },
-      {
-        path: "driver_add",
-        name: "driver_add",
-        meta: {
-          name: "添加司机",
-          hidden: true
-        },
-        component: () => import("@/views/manage/driver/add.vue")
-      },
-      {
-        path: "driver_update/:driver_card_id",
-        name: "driver_update",
-        meta: {
-          name: "编辑司机",
-          hidden: true
-        },
-        component: () => import("@/views/manage/driver/update.vue")
+        component: () => import("@/views/manage/driver/index.vue"),
+        children: [
+          {
+            path: "driver-archives",
+            name: "driver-archives",
+            meta: {
+              name: "驾驶员档案管理",
+              icon: "iconfont icon-dangan"
+            },
+            component: () => import("@/views/manage/driver/archives/index.vue"),
+            children: [
+              {
+                path: "driver_add",
+                name: "driver_add",
+                meta: {
+                  name: "添加司机",
+                  hidden: true
+                },
+                component: () =>
+                  import("@/views/manage/driver/archives/add.vue")
+              },
+              {
+                path: "driver_update/:driver_card_id",
+                name: "driver_update",
+                meta: {
+                  name: "编辑司机",
+                  hidden: true
+                },
+                component: () =>
+                  import("@/views/manage/driver/archives/update.vue")
+              }
+            ]
+          },
+          {
+            path: "driver-score",
+            name: "driver-score",
+            meta: {
+              name: "驾驶员评分管理",
+              icon: "iconfont icon-pingfen"
+            },
+            component: () => import("@/views/manage/driver/score/index.vue")
+          }
+        ]
       },
       report,
       {

@@ -250,7 +250,7 @@ export default {
         alarmType35658: "",
         alarm35658_name: "",
         ji0x64_alarmtype: "",
-        ji0x65_alarmtype: "1,2,3,4,5,6,10,11",
+        ji0x65_alarmtype: "1,2,3,4,5,6,16,17",
         identity_id: "",
         alarm_lev: "",
         page: 1,

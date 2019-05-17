@@ -44,6 +44,7 @@
       <el-col :span="12">雨刮器状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,3)?"关闭":"打开"}}</el-col>
       <el-col :span="12">制动状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,4)?"未制动":"制动"}}</el-col>
       <el-col :span="12">插卡状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,5)?"未插卡":"已插卡"}}</el-col>
+      <el-col :span="12">定位状态: {{getVehicleStatus(viewData.AlarmSign.vehicleStatus,10)?"未定位":"已定位"}}</el-col>
     </el-row>
   </div>
 </template>
