@@ -65,7 +65,7 @@
           <i class="el-icon-download"></i> 导出
         </el-button>
       </div>
-      <el-table :data="tableData.data" style="width: 100%">
+      <el-table :data="list" style="width: 100%">
         <el-table-column prop="license" label="车牌号"></el-table-column>
         <el-table-column
           prop="license_color"
@@ -228,6 +228,14 @@ import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseDriver from "@/components/choose-driver.vue";
 export default {
   components: { chooseVcheckbox, chooseDriver },
+  computed: {
+    list: function() {
+      return this.tableData.data.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
+  },
   data() {
     return {
       addKey: 0,
