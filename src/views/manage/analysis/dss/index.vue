@@ -65,7 +65,7 @@
           <i class="el-icon-download"></i> 导出
         </el-button>
       </div>
-      <el-table :data="tableData.data" style="width: 100%">
+      <el-table :data="list" style="width: 100%">
         <el-table-column prop="license" label="车牌号"></el-table-column>
         <el-table-column
           prop="license_color"
@@ -118,7 +118,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-popover ref="popover4" placement="right" width="400" trigger="click">
-              <el-table :data="attachmentList">
+              <el-table height="300" :data="attachmentList">
                 <el-table-column prop="file_name" label="文件名称"></el-table-column>
                 <el-table-column prop="file_size" label="文件大小"></el-table-column>
                 <el-table-column prop="file_type" label="文件类型">
@@ -132,7 +132,17 @@
                 </el-table-column>
                 <el-table-column prop label="操作">
                   <template slot-scope="scope">
-                    <a :href="$dict.BASE_URL+scope.row.file_path" download>下载</a>
+                    <el-button
+                      size="mini"
+                      v-if="scope.row.file_format=='.bin'"
+                      @click="lookBin(scope)"
+                    >查看详情</el-button>
+                    <a
+                      :href="scope.row.file_path"
+                      v-if="scope.row.file_format!='.bin'"
+                      target="_blank"
+                      download
+                    >下载</a>
                   </template>
                 </el-table-column>
               </el-table>
@@ -190,8 +200,8 @@
         <el-checkbox label="4">分神驾驶报警</el-checkbox>
         <el-checkbox style="margin-left:0" label="5">驾驶员异常报警</el-checkbox>
         <el-checkbox label="6">无驾驶员</el-checkbox>
-        <el-checkbox style="margin-left:2px" label="10">自动抓拍事件</el-checkbox>
-        <el-checkbox style="margin-left:44px" label="11">驾驶员变更事件</el-checkbox>
+        <el-checkbox style="margin-left:2px" label="16">自动抓拍事件</el-checkbox>
+        <el-checkbox style="margin-left:44px" label="17">驾驶员变更事件</el-checkbox>
       </el-checkbox-group>
       <el-button
         size="small"
@@ -213,6 +223,34 @@
     >
       <choose-driver @save="saveDriver" :key="addKey"></choose-driver>
     </el-dialog>
+    <!-- 查看bin文件列表 -->
+    <el-dialog
+      width="50%"
+      title="查看"
+      :visible.sync="binDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <el-table height="400" :data="binData">
+        <el-table-column
+          prop="AlarmSign"
+          label="报警类型"
+          :formatter="(row)=>{return $dict.getAlarm(row.AlarmSign)}"
+        ></el-table-column>
+        <el-table-column prop="Longitude" label="经度" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Latitude" label="纬度" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Altitude" label="高程" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="Speed" label="速度" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="Time"
+          label="时间"
+          :formatter="(row)=>{return $utils.formatDate14(row.Time)}"
+        ></el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -222,12 +260,21 @@ import {
   getAlarmDetailByPage,
   GetVehicleBySIMIDToPaper,
   GetInfoByPlatformAlarmId,
-  GetFilesByIdInfo
+  GetFilesByIdInfo,
+  GetBinInfoByIdFiles
 } from "@/api/index.js";
 import chooseVcheckbox from "@/components/choose-vcheckbox.vue";
 import chooseDriver from "@/components/choose-driver.vue";
 export default {
   components: { chooseVcheckbox, chooseDriver },
+  computed: {
+    list: function() {
+      return this.tableData.data.slice(
+        (this.tableQuery.page - 1) * this.tableQuery.size,
+        this.tableQuery.page * this.tableQuery.size
+      );
+    }
+  },
   data() {
     return {
       addKey: 0,
@@ -235,6 +282,8 @@ export default {
       alarmDialog: false,
       vehicleDialog: false,
       isCollapse: false,
+      binDialog: false,
+      binData: [],
       alarmList: [],
       attachmentList: [],
       tableQuery: {
@@ -280,6 +329,20 @@ export default {
     };
   },
   methods: {
+    lookBin(scope) {
+      this.binDialog = true;
+      GetBinInfoByIdFiles({ id_files: scope.row.id_files }).then(res => {
+        if (res.data.code == 0) {
+          this.$set(this.$data, "binData", res.data.data);
+        } else {
+          return this.$notify({
+            message: res.data.msg,
+            title: "提示",
+            type: "error"
+          });
+        }
+      });
+    },
     selectAttachment(scope) {
       GetInfoByPlatformAlarmId({
         platform_alarm_id: scope.row.JI0x65PlatformAlarmId
@@ -328,7 +391,7 @@ export default {
     //   查询
     getTable() {
       if (this.tableQuery.ji0x65_alarmtype == "") {
-        this.tableQuery.ji0x65_alarmtype = "1,2,3,4,5,6,10,11";
+        this.tableQuery.ji0x65_alarmtype = "1,2,3,4,5,6,16,17";
       }
       this.$refs.baseForm.validate((isVaildate, errorItem) => {
         if (isVaildate) {
