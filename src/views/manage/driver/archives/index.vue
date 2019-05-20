@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-table-container">
+  <div class="admin-table-container" style="padding-top:0">
     <el-card shadow="always" class="admin-table-search">
       <el-form
         :model="tableQuery"
@@ -20,8 +20,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="身份证号">
-              <el-input v-model="tableQuery.identity_id" placeholder="身份证号"></el-input>
+            <el-form-item label="驾驶证号">
+              <el-input v-model="tableQuery.identity_id" placeholder="驾驶证号"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6" style="text-align: right;">
@@ -50,6 +50,7 @@
         <el-table-column prop="driver_card_id" label="司机卡编号" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="driver_name" label="姓名" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="tel" label="联系电话" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="identity_id" label="驾驶证号" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column
           label="驾驶证有效期"
           :formatter="(row)=>{return $utils.formatDate(row.begin_date)+'--'+$utils.formatDate(row.end_date) } "
@@ -187,7 +188,7 @@ export default {
           B: "姓名",
           C: "联系电话",
           D: "驾驶证有效期",
-          E: "身份证"
+          E: "驾驶证号"
         }
       ];
       this.tableData.data.map(data => {

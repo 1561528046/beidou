@@ -20,8 +20,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="身份证号">
-              <el-input v-model="tableQuery.identity_id" placeholder="身份证号"></el-input>
+            <el-form-item label="驾驶证号">
+              <el-input v-model="tableQuery.identity_id" placeholder="驾驶证号"></el-input>
             </el-form-item>
           </el-col>
           <el-col v-show="isCollapse" :span="6">
@@ -114,7 +114,7 @@
         class="admin-table-list"
       >
         <el-table-column prop="driver_name" label="司机姓名" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="identity_id" label="身份证 " :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column prop="identity_id" label="驾驶证号 " :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column
           prop="date"
           label="月份 "

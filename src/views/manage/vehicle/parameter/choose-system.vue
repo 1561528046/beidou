@@ -8,7 +8,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="一级报警连续时间内数量限制（分钟）">
+          <el-form-item label="一级报警连续时间内数量限制（条）">
             <el-input v-model="count"></el-input>
           </el-form-item>
         </el-col>

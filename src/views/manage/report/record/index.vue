@@ -50,7 +50,11 @@
         <el-table-column prop="agency_name" label="发证机构名称" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="job_no" label="从业资格证编码" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column prop="driver_document" label="驾驶员身份证编码" :formatter="$utils.baseFormatter"></el-table-column>
-        <el-table-column prop="valid_date" label="证件有效期" :formatter="$utils.baseFormatter"></el-table-column>
+        <el-table-column
+          prop="valid_date"
+          label="证件有效期"
+          :formatter="(row)=>{return $utils.formatDate(row.valid_date)}"
+        ></el-table-column>
         <el-table-column prop="IC_result" label="IC卡读取结果" :formatter="$utils.baseFormatter">
           <template slot-scope="scope">
             <label v-if="scope.row.IC_result=='0'">IC卡读卡成功</label>
@@ -186,7 +190,7 @@ export default {
           B: data.agency_name,
           C: data.job_no,
           D: data.driver_document,
-          E: this.$utils.formatDate14(JSON.stringify(data.valid_date)),
+          E: this.$utils.formatDate(JSON.stringify(data.valid_date)),
           F: type,
           G:
             data.state == "1" ? "从业资格证 IC 卡插入" : "从业资格证 IC 卡拔出",

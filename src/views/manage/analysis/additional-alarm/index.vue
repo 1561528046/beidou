@@ -74,14 +74,14 @@
       </el-col>-->
       <el-col :span="12">
         <el-card>
-          <div slot="header">驾驶员状态监测系统报警分布</div>
-          <pie-driver :query="queryData" style="height:300px;"></pie-driver>
+          <div slot="header">高级驾驶辅助系统报警分布</div>
+          <pie-vehicle :query="queryData" style="height:300px;"></pie-vehicle>
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card>
-          <div slot="header">高级驾驶辅助系统报警分布</div>
-          <pie-vehicle :query="queryData" style="height:300px;"></pie-vehicle>
+          <div slot="header">驾驶员状态监测系统报警分布</div>
+          <pie-driver :query="queryData" style="height:300px;"></pie-driver>
         </el-card>
       </el-col>
     </el-row>
