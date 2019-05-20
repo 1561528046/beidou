@@ -380,11 +380,6 @@ export default {
       });
     },
     lookVideo(scope) {
-      // item.file_path =
-      //                 this.$dict.BASE_URL +
-      //                 "alarm_attachments" +
-      //                 item.file_path +
-      //                 item.file_name;
       this.videoDialog = true;
       this.$set(this.$data, "videoSrc", scope.row.file_path);
     },

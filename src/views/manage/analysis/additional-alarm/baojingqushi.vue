@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import echarts from "echarts";
 import { getAdditionalAlarmChartAll } from "@/api/index";
 export default {
@@ -82,12 +83,12 @@ export default {
       });
 
       data.data.list.map(item => {
-        xAxis.push(item.date);
+        xAxis.push(moment(item.date).format("YYYY-MM-DD"));
       });
-
       var option = {
         tooltip: {
-          trigger: "axis"
+          trigger: "axis",
+          confine: "overflow:hidden"
         },
         legend: {
           data: legend

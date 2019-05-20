@@ -1,13 +1,13 @@
 <template>
   <div>
-    <el-form label-width="200px" size="small">
+    <el-form label-width="250px" size="small">
       <el-row :gutter="20">
-        <el-col :span="6">
+        <el-col :span="8">
           <el-form-item label="一级报警连续时间限制（分钟）">
             <el-input v-model="time"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="8">
           <el-form-item label="一级报警连续时间内数量限制（分钟）">
             <el-input v-model="count"></el-input>
           </el-form-item>

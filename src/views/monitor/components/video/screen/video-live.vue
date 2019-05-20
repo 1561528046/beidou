@@ -35,8 +35,8 @@ export default {
   },
   data() {
     return {
-      currentIndex: 0,
-      videoSize: 4,
+      currentIndex: 0, //当前播放的屏幕位置
+      videoSize: 4, //分屏数量
       playerOptions: []
     };
   },

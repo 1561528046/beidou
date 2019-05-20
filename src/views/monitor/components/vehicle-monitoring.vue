@@ -45,17 +45,16 @@
                     class="iconfont icon-shezhi2"
                   ></i>
                   <i
-                    v-if="!data.state"
                     @click="channelPlay(data)"
                     style="font-size:16px;margin-left:5px"
                     class="iconfont icon-kaishi"
                   ></i>
-                  <i
+                  <!-- <i
                     v-if="data.state"
                     @click="channelPlay(data)"
                     style="font-size:16px; margin-left:5px"
                     class="iconfont icon-jieshu"
-                  ></i>
+                  ></i>-->
                   <i
                     @click="videoSnap(data)"
                     style="font-size:16px; margin-left:7px"
@@ -391,6 +390,7 @@
       <div style="margin-top:10px">
         <!-- <div :is="videoName" :video="video" :videos="videos" :style="{'filter':event}"></div> -->
         <video-live
+          @close="stopMonitoring"
           ref="videoLive"
           :size="videoScreenSize"
           style
@@ -800,6 +800,19 @@ export default {
     clearInterval(this.traffTimer);
   },
   methods: {
+    stopMonitoring(videoData) {
+      var videoSrc = videoData.sources[0].src;
+      var data = {};
+      data = {
+        MessageID: "x9102",
+        SimID: "0" + videoSrc.substr(videoSrc.length - 13, 11),
+        LogicChannel: videoSrc.substr(videoSrc.length - 1), //逻辑通道号
+        ControlCommand: "0", //控制指令
+        CloseType: "0", //关闭音视频类型
+        SwitchStream: "0" //切换码流类型
+      };
+      this.$instruction.send(JSON.stringify(data));
+    },
     // 双击事件
     storageDetail(row) {
       if (row.license) {
@@ -1460,40 +1473,35 @@ export default {
         row.logical_channel;
       var data = {};
       var storage = {};
-      if (row.state) {
-        row.state = false;
-        data = {
-          MessageID: "x9102",
-          SimID: row.sim_id,
-          LogicChannel: row.logical_channel,
-          ControlCommand: "0",
-          CloseType: "0",
-          SwitchStream: "0"
-        };
-        storage = {
-          sim_id: row.sim_id,
-          MessageID: "stop",
-          channel: row.logical_channel,
-          rtmp: src
-        };
-        // 删除
-        this.videoData = this.videoData.filter(i => {
-          return i.sim_id !== row.sim_id;
-        });
-        // this.$instructionStorage.send(JSON.stringify(storage));
-        this.$instruction.send(JSON.stringify(data));
-      } else {
-        row.state = true;
-        data = {
-          MessageID: "x9101",
-          SimID: row.sim_id,
-          LogicChannel: row.logical_channel,
-          DataType: "0",
-          CodeStreamType: "0"
-        };
-        this.$refs.videoLive.setSources(src);
-        this.$instruction.send(JSON.stringify(data));
-      }
+      // data = {
+      //   MessageID: "x9102",
+      //   SimID: row.sim_id,
+      //   LogicChannel: row.logical_channel,
+      //   ControlCommand: "0",
+      //   CloseType: "0",
+      //   SwitchStream: "0"
+      // };
+      // storage = {
+      //   sim_id: row.sim_id,
+      //   MessageID: "stop",
+      //   channel: row.logical_channel,
+      //   rtmp: src
+      // };
+      // // 删除
+      // this.videoData = this.videoData.filter(i => {
+      //   return i.sim_id !== row.sim_id;
+      // });
+      // this.$instructionStorage.send(JSON.stringify(storage));
+      // this.$instruction.send(JSON.stringify(data));
+      data = {
+        MessageID: "x9101",
+        SimID: row.sim_id,
+        LogicChannel: row.logical_channel,
+        DataType: "0",
+        CodeStreamType: "0"
+      };
+      this.$refs.videoLive.setSources(src);
+      this.$instruction.send(JSON.stringify(data));
     },
     // 分屏按钮
     Uniform(code) {

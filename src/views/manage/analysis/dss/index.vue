@@ -117,7 +117,7 @@
         <el-table-column prop="Altitude" label="高程" :formatter="$utils.baseFormatter"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-popover ref="popover4" placement="right" width="400" trigger="click">
+            <el-popover ref="popover4" placement="left" width="500" trigger="click">
               <el-table height="300" :data="attachmentList">
                 <el-table-column prop="file_name" label="文件名称"></el-table-column>
                 <el-table-column prop="file_size" label="文件大小"></el-table-column>
@@ -130,13 +130,33 @@
                     <label v-if="scope.row.file_type=='4'">其他</label>
                   </template>
                 </el-table-column>
-                <el-table-column prop label="操作">
+                <el-table-column label="内容">
                   <template slot-scope="scope">
                     <el-button
                       size="mini"
                       v-if="scope.row.file_format=='.bin'"
                       @click="lookBin(scope)"
-                    >查看详情</el-button>
+                    >查看列表</el-button>
+                    <el-button
+                      size="mini"
+                      v-if="scope.row.file_type=='2'"
+                      @click="lookVideo(scope)"
+                    >查看视频</el-button>
+                    <img
+                      v-if="scope.row.file_type=='0'"
+                      style="width:100px;height:100px"
+                      :src="scope.row.file_path"
+                      alt
+                    >
+                  </template>
+                </el-table-column>
+                <el-table-column prop label="操作">
+                  <template slot-scope="scope">
+                    <el-button
+                      v-if="scope.row.file_format=='.bin'"
+                      size="mini"
+                      @click="exportBin"
+                    >下载</el-button>
                     <a
                       :href="scope.row.file_path"
                       v-if="scope.row.file_format!='.bin'"
@@ -251,6 +271,19 @@
         ></el-table-column>
       </el-table>
     </el-dialog>
+    <!-- 查看视频 -->
+    <el-dialog
+      width="50%"
+      title="查看"
+      :visible.sync="videoDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :center="true"
+      class="admin-dialog"
+    >
+      <video width="100%" height="510" autoplay :src="videoSrc" loop controls></video>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -278,6 +311,8 @@ export default {
   data() {
     return {
       addKey: 0,
+      videoDialog: false,
+      videoSrc: "",
       driverDialog: false,
       alarmDialog: false,
       vehicleDialog: false,
@@ -343,6 +378,37 @@ export default {
         }
       });
     },
+    lookVideo(scope) {
+      this.videoDialog = true;
+      this.$set(this.$data, "videoSrc", scope.row.file_path);
+    },
+    exportBin() {
+      var wsCol = [
+        {
+          A: "报警标志",
+          B: "经度",
+          C: "纬度",
+          D: "高程",
+          E: "速度",
+          F: "时间"
+        }
+      ];
+      this.binData.map(data => {
+        wsCol.push({
+          A: this.$dict.getAlarm(data.AlarmSign),
+          B: data.Longitude,
+          C: data.Latitude,
+          D: data.Altitude,
+          E: data.Speed,
+          F: this.$utils.formatDate14(data.Time)
+        });
+      });
+      this.$utils.exportExcel({
+        data: wsCol,
+        sheetName: "附件文本信息表",
+        fileName: "附件文本信息表.xlsx"
+      });
+    },
     selectAttachment(scope) {
       GetInfoByPlatformAlarmId({
         platform_alarm_id: scope.row.JI0x65PlatformAlarmId
@@ -352,6 +418,29 @@ export default {
             GetFilesByIdInfo({ id_info: res.data.data[0].id_info }).then(
               res => {
                 if (res.data.code == 0) {
+                  res.data.data.map(item => {
+                    item.file_path =
+                      this.$dict.BASE_URL +
+                      "alarm_attachments" +
+                      item.file_path +
+                      item.file_name;
+                    if (item.file_format == ".bin") {
+                      GetBinInfoByIdFiles({ id_files: item.id_files }).then(
+                        res => {
+                          if (res.data.code == 0) {
+                            this.$set(this.$data, "binData", res.data.data);
+                          } else {
+                            return this.$notify({
+                              message: res.data.msg,
+                              title: "提示",
+                              type: "error"
+                            });
+                          }
+                        }
+                      );
+                    }
+                  });
+
                   this.$set(this.$data, "attachmentList", res.data.data);
                 } else {
                   return this.$notify({
@@ -362,6 +451,8 @@ export default {
                 }
               }
             );
+          } else {
+            this.$set(this.$data, "attachmentList", []);
           }
         } else {
           return this.$notify({
