@@ -5,11 +5,17 @@
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item v-for="route in $route.matched" :to="route" :key="route.path">
           <i v-if="route.meta.icon" :class="route.meta.icon"></i>
-          {{route.meta.name}}</el-breadcrumb-item>
-        <el-button size="mini" class="admin-back" @click="$router.replace('.')" icon="el-icon-arrow-left">返回</el-button>
+          {{route.meta.name}}
+        </el-breadcrumb-item>
+        <el-button
+          size="mini"
+          class="admin-back"
+          @click="$router.replace('.')"
+          icon="el-icon-arrow-left"
+        >返回</el-button>
       </el-breadcrumb>
     </div>
-
+    <div></div>
     <!-- 视图路由 -->
     <base-routeing :routes="routes" v-if="routerDict[this.$route.name].children"></base-routeing>
 
