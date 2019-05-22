@@ -15,7 +15,6 @@
         >返回</el-button>
       </el-breadcrumb>
     </div>
-    <div></div>
     <!-- 视图路由 -->
     <base-routeing :routes="routes" v-if="routerDict[this.$route.name].children"></base-routeing>
 
